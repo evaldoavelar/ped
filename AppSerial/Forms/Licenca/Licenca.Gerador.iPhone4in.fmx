@@ -1,0 +1,105 @@
+inherited FrmGerador_iPhone4in: TFrmGerador_iPhone4in
+  ClientHeight = 548
+  ClientWidth = 320
+  DesignerMasterStyle = 0
+  inherited lytBase: TLayout
+    Size.Width = 320.000000000000000000
+    Size.Height = 548.000000000000000000
+    inherited Layout1: TLayout
+      Size.Width = 320.000000000000000000
+      Size.Height = 548.000000000000000000
+      inherited DetailToolbar: TToolBar
+        Size.Width = 320.000000000000000000
+        Size.Height = 44.000000000000000000
+        inherited DetailLabel: TLabel
+          Size.Width = 320.000000000000000000
+          Size.Height = 44.000000000000000000
+        end
+        inherited MasterButton: TSpeedButton
+          Size.Width = 44.000000000000000000
+          Size.Height = 44.000000000000000000
+        end
+      end
+      inherited Layout2: TLayout
+        Position.Y = 54.000000000000000000
+        Size.Width = 320.000000000000000000
+        inherited Layout3: TLayout
+          Size.Width = 320.000000000000000000
+          inherited lblName: TLabel
+            Size.Width = 300.000000000000000000
+          end
+          inherited edtCnpj: TEdit
+            Size.Width = 300.000000000000000000
+            Size.Height = 30.000000000000000000
+          end
+        end
+      end
+      inherited Layout4: TLayout
+        Position.Y = 143.000000000000000000
+        Size.Width = 320.000000000000000000
+        inherited Layout5: TLayout
+          Size.Width = 320.000000000000000000
+          inherited Label1: TLabel
+            Size.Width = 300.000000000000000000
+          end
+          inherited edtDataInicio: TDateEdit
+            Size.Width = 300.000000000000000000
+            Size.Height = 30.000000000000000000
+          end
+        end
+      end
+      inherited Layout6: TLayout
+        Position.Y = 321.000000000000000000
+        Size.Width = 320.000000000000000000
+        inherited Layout7: TLayout
+          Size.Width = 320.000000000000000000
+          inherited btn1: TButton
+            Size.Width = 300.000000000000000000
+          end
+        end
+      end
+      inherited Layout8: TLayout
+        Position.Y = 232.000000000000000000
+        Size.Width = 320.000000000000000000
+        inherited Layout9: TLayout
+          Size.Width = 320.000000000000000000
+          inherited Label3: TLabel
+            Size.Width = 300.000000000000000000
+          end
+          inherited edtFim: TDateEdit
+            Size.Width = 300.000000000000000000
+            Size.Height = 30.000000000000000000
+          end
+        end
+      end
+      inherited Layout10: TLayout
+        Position.Y = 502.000000000000000000
+        Size.Width = 320.000000000000000000
+        inherited ToolBar1: TToolBar
+          Size.Width = 320.000000000000000000
+          Size.Height = 44.000000000000000000
+          inherited btnDown: TSpeedButton
+            Position.X = 271.000000000000000000
+            Size.Width = 44.000000000000000000
+            Size.Height = 44.000000000000000000
+          end
+        end
+        inherited lblSerial: TLabel
+          Size.Width = 320.000000000000000000
+        end
+      end
+    end
+    inherited MultiView1: TMultiView
+      Visible = False
+      inherited MasterToolbar: TToolBar
+        Size.Height = 44.000000000000000000
+        inherited MasterLabel: TLabel
+          Size.Height = 44.000000000000000000
+        end
+      end
+      inherited ListView1: TListView
+        Size.Height = 436.000000000000000000
+      end
+    end
+  end
+end

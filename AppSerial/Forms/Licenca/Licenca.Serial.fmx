@@ -1,0 +1,442 @@
+inherited FrmGeraSerial: TFrmGeraSerial
+  Caption = 'FrmCadastroBase1'
+  OnClose = FormClose
+  DesignerMasterStyle = 3
+  inherited lytBase: TLayout
+    inherited tbcPrincipal: TTabControl
+      TabIndex = 1
+      TabPosition = Dots
+      Sizes = (
+        320s
+        480s
+        320s
+        480s
+        320s
+        480s)
+      inherited tabListagem: TTabItem
+        IsSelected = False
+        Size.Width = 8.000000000000000000
+        Size.Height = 8.000000000000000000
+        ExplicitSize.cx = 160.000000000000000000
+        ExplicitSize.cy = 49.000000000000000000
+        inherited tlbListagem: TToolBar
+          object lblTitulo: TLabel
+            Align = Contents
+            Size.Width = 320.000000000000000000
+            Size.Height = 48.000000000000000000
+            Size.PlatformDefault = False
+            TextSettings.HorzAlign = Center
+            Text = 'Clientes'
+          end
+          object btnSearch: TSpeedButton
+            Align = Right
+            Position.X = 272.000000000000000000
+            Size.Width = 48.000000000000000000
+            Size.Height = 48.000000000000000000
+            Size.PlatformDefault = False
+            StyleLookup = 'searchtoolbutton'
+            OnClick = btnSearchClick
+          end
+        end
+        object lvListagemItem: TListView
+          ItemAppearanceClassName = 'TImageListItemBottomDetailAppearance'
+          ItemEditAppearanceClassName = 'TImageListItemBottomDetailShowCheckAppearance'
+          HeaderAppearanceClassName = 'TListHeaderObjects'
+          FooterAppearanceClassName = 'TListHeaderObjects'
+          ItemIndex = 6
+          ScrollViewPos = 23.000000000000000000
+          Align = Client
+          Size.Width = 320.000000000000000000
+          Size.Height = 432.000000000000000000
+          Size.PlatformDefault = False
+          TabOrder = 1
+          ItemAppearance.ItemHeight = 65
+          ItemAppearanceObjects.ItemObjects.Image.Align = Trailing
+          ItemAppearanceObjects.ItemObjects.Image.Visible = False
+          StyleLookup = 'listviewstyle'
+          CanSwipeDelete = False
+          OnItemClick = lvListagemItemItemClick
+          SelectionCrossfade = True
+        end
+      end
+      inherited tabEdicao: TTabItem
+        IsSelected = True
+        Size.Width = 8.000000000000000000
+        Size.Height = 8.000000000000000000
+        ExplicitSize.cx = 160.000000000000000000
+        ExplicitSize.cy = 49.000000000000000000
+        object tlb1: TToolBar
+          Size.Width = 320.000000000000000000
+          Size.Height = 48.000000000000000000
+          Size.PlatformDefault = False
+          TabOrder = 2
+          object btnVoltarListagem: TSpeedButton
+            Align = Left
+            Size.Width = 48.000000000000000000
+            Size.Height = 48.000000000000000000
+            Size.PlatformDefault = False
+            StyleLookup = 'backtoolbutton'
+            OnClick = btnVoltarListagemClick
+          end
+          object SpeedButton1: TSpeedButton
+            Action = actNovaLicenca
+            Align = Right
+            Enabled = True
+            ImageIndex = -1
+            Position.X = 224.000000000000000000
+            Size.Width = 48.000000000000000000
+            Size.Height = 48.000000000000000000
+            Size.PlatformDefault = False
+            StyleLookup = 'addtoolbutton'
+            Visible = True
+          end
+          object btn2: TSpeedButton
+            Align = Right
+            Position.X = 272.000000000000000000
+            Size.Width = 48.000000000000000000
+            Size.Height = 48.000000000000000000
+            Size.PlatformDefault = False
+            StyleLookup = 'trashtoolbutton'
+            OnClick = btn2Click
+          end
+        end
+        object lvListagemLicencas: TListView
+          OnTap = lvListagemLicencasTap
+          ItemAppearanceClassName = 'TImageListItemBottomDetailAppearance'
+          ItemEditAppearanceClassName = 'TImageListItemBottomDetailShowCheckAppearance'
+          HeaderAppearanceClassName = 'TListHeaderObjects'
+          FooterAppearanceClassName = 'TListHeaderObjects'
+          ItemIndex = 0
+          Align = Client
+          Size.Width = 320.000000000000000000
+          Size.Height = 432.000000000000000000
+          Size.PlatformDefault = False
+          TabOrder = 3
+          ItemAppearance.ItemHeight = 65
+          ItemAppearanceObjects.ItemObjects.Text.TextColor = claSteelblue
+          ItemAppearanceObjects.ItemObjects.Detail.PlaceOffset.X = 20.000000000000000000
+          ItemAppearanceObjects.ItemObjects.Detail.PlaceOffset.Y = 15.000000000000000000
+          ItemAppearanceObjects.ItemObjects.Accessory.Visible = False
+          ItemAppearanceObjects.ItemObjects.Image.Visible = False
+          ItemAppearanceObjects.ItemEditObjects.GlyphButton.ButtonType = Delete
+          ItemAppearanceObjects.ItemEditObjects.GlyphButton.Enabled = False
+          ItemAppearanceObjects.ItemEditObjects.GlyphButton.Visible = False
+          StyleLookup = 'lvListagemLicencasStyle1'
+          PullToRefresh = True
+          NativeOptions = [Styled]
+        end
+      end
+      object tabListagemLicencas: TTabItem
+        CustomIcon = <
+          item
+          end>
+        IsSelected = False
+        Size.Width = 8.000000000000000000
+        Size.Height = 8.000000000000000000
+        Size.PlatformDefault = False
+        StyleLookup = ''
+        TabOrder = 0
+        Text = 'tabListagemLicencas'
+        ExplicitSize.cx = 151.000000000000000000
+        ExplicitSize.cy = 49.000000000000000000
+        object ToolBar1: TToolBar
+          Size.Width = 320.000000000000000000
+          Size.Height = 48.000000000000000000
+          Size.PlatformDefault = False
+          TabOrder = 6
+          object Label2: TLabel
+            Align = Contents
+            Size.Width = 320.000000000000000000
+            Size.Height = 48.000000000000000000
+            Size.PlatformDefault = False
+            TextSettings.HorzAlign = Center
+            Text = 'Software Engineer'
+          end
+          object btnVoltarEdicao: TSpeedButton
+            Align = Left
+            Size.Width = 48.000000000000000000
+            Size.Height = 48.000000000000000000
+            Size.PlatformDefault = False
+            StyleLookup = 'backtoolbutton'
+            OnClick = btnVoltarEdicaoClick
+          end
+          object SpeedButton3: TSpeedButton
+            Action = ShowShareSheetAction1
+            Align = Right
+            Enabled = True
+            ImageIndex = -1
+            Position.X = 272.000000000000000000
+            Size.Width = 48.000000000000000000
+            Size.Height = 48.000000000000000000
+            Size.PlatformDefault = False
+            StyleLookup = 'actiontoolbutton'
+            Visible = True
+          end
+        end
+        object Layout4: TLayout
+          Align = Top
+          Margins.Top = 10.000000000000000000
+          Position.Y = 58.000000000000000000
+          Size.Width = 320.000000000000000000
+          Size.Height = 79.000000000000000000
+          Size.PlatformDefault = False
+          TabOrder = 7
+          object Layout5: TLayout
+            Align = Client
+            Padding.Left = 10.000000000000000000
+            Padding.Right = 10.000000000000000000
+            Size.Width = 320.000000000000000000
+            Size.Height = 79.000000000000000000
+            Size.PlatformDefault = False
+            TabOrder = 0
+            object Label1: TLabel
+              Align = Top
+              StyledSettings = [Family, Style]
+              Position.X = 10.000000000000000000
+              Size.Width = 300.000000000000000000
+              Size.Height = 28.000000000000000000
+              Size.PlatformDefault = False
+              StyleLookup = 'listboxitemlabel'
+              TextSettings.Font.Size = 18.000000000000000000
+              TextSettings.FontColor = xFFD4AF37
+              Text = 'DATA IN'#205'CIO'
+            end
+            object edtDataInicio: TDateEdit
+              Date = 43040.000000000000000000
+              Align = Top
+              Position.X = 10.000000000000000000
+              Position.Y = 28.000000000000000000
+              Size.Width = 300.000000000000000000
+              Size.Height = 32.000000000000000000
+              Size.PlatformDefault = False
+              StyledSettings = [Family, Size, Style]
+              TabOrder = 0
+              TextSettings.FontColor = claWhite
+            end
+          end
+        end
+        object Layout8: TLayout
+          Align = Top
+          Margins.Top = 10.000000000000000000
+          Position.Y = 147.000000000000000000
+          Size.Width = 320.000000000000000000
+          Size.Height = 79.000000000000000000
+          Size.PlatformDefault = False
+          TabOrder = 1
+          object Layout9: TLayout
+            Align = Client
+            Padding.Left = 10.000000000000000000
+            Padding.Right = 10.000000000000000000
+            Size.Width = 320.000000000000000000
+            Size.Height = 79.000000000000000000
+            Size.PlatformDefault = False
+            TabOrder = 0
+            object Label3: TLabel
+              Align = Top
+              StyledSettings = [Family, Style]
+              Position.X = 10.000000000000000000
+              Size.Width = 300.000000000000000000
+              Size.Height = 28.000000000000000000
+              Size.PlatformDefault = False
+              StyleLookup = 'listboxitemlabel'
+              TextSettings.Font.Size = 18.000000000000000000
+              TextSettings.FontColor = xFFD4AF37
+              Text = 'VENCIMENTO'
+            end
+            object edtFim: TDateEdit
+              Date = 43040.000000000000000000
+              Align = Top
+              Position.X = 10.000000000000000000
+              Position.Y = 28.000000000000000000
+              Size.Width = 300.000000000000000000
+              Size.Height = 32.000000000000000000
+              Size.PlatformDefault = False
+              StyledSettings = [Family, Size, Style]
+              TabOrder = 0
+              TextSettings.FontColor = claWhite
+            end
+          end
+        end
+        object Layout6: TLayout
+          Align = Top
+          Margins.Top = 10.000000000000000000
+          Position.Y = 236.000000000000000000
+          Size.Width = 320.000000000000000000
+          Size.Height = 52.000000000000000000
+          Size.PlatformDefault = False
+          TabOrder = 8
+          object Layout7: TLayout
+            Align = Client
+            Padding.Left = 10.000000000000000000
+            Padding.Right = 10.000000000000000000
+            Size.Width = 320.000000000000000000
+            Size.Height = 52.000000000000000000
+            Size.PlatformDefault = False
+            TabOrder = 0
+            object rec1: TRectangle
+              Align = Client
+              Fill.Color = claWhite
+              Size.Width = 300.000000000000000000
+              Size.Height = 52.000000000000000000
+              Size.PlatformDefault = False
+              Stroke.Thickness = 2.000000000000000000
+              Stroke.Join = Round
+            end
+            object btn1: TButton
+              Action = actGerarLicenca
+              Align = Client
+              Enabled = True
+              ImageIndex = -1
+              Size.Width = 300.000000000000000000
+              Size.Height = 52.000000000000000000
+              Size.PlatformDefault = False
+              TabOrder = 0
+              Visible = True
+            end
+          end
+        end
+        object lblSerial: TLabel
+          Align = Top
+          StyledSettings = [Family]
+          Margins.Top = 50.000000000000000000
+          Position.Y = 338.000000000000000000
+          Size.Width = 320.000000000000000000
+          Size.Height = 40.000000000000000000
+          Size.PlatformDefault = False
+          StyleLookup = 'listboxitemlabel'
+          TextSettings.Font.Size = 18.000000000000000000
+          TextSettings.Font.StyleExt = {00070000000000000004000000}
+          TextSettings.FontColor = xFFD4AF37
+          TextSettings.HorzAlign = Center
+          TextSettings.Trimming = Word
+        end
+      end
+    end
+  end
+  inherited act1: TActionList
+    Left = 48
+    Top = 320
+    object actGerarLicenca: TAction [1]
+      Text = 'Gerar'
+      OnExecute = actGerarLicencaExecute
+    end
+    object actNovaLicenca: TAction [2]
+      OnExecute = actNovaLicencaExecute
+    end
+    object ShowShareSheetAction1: TShowShareSheetAction [3]
+      Category = 'Media Library'
+      OnBeforeExecute = ShowShareSheetAction1BeforeExecute
+    end
+    object actDelete: TAction [4]
+      OnExecute = actDeleteExecute
+    end
+  end
+  object DGClientes: TDataGeneratorAdapter
+    FieldDefs = <
+      item
+        Name = 'NOME'
+        Generator = 'ContactTitles'
+        ReadOnly = False
+      end
+      item
+        Name = 'CNPJ'
+        FieldType = ftUInteger
+        Generator = 'AlphaColors'
+        ReadOnly = False
+      end
+      item
+        Name = 'TELEFONE'
+        FieldType = ftUInteger
+        Generator = 'AlphaColors'
+        ReadOnly = False
+      end
+      item
+        Name = 'CELULAR'
+        FieldType = ftUInteger
+        Generator = 'AlphaColors'
+        ReadOnly = False
+      end
+      item
+        Name = 'CONTATO'
+        Generator = 'ContactNames'
+        ReadOnly = False
+      end>
+    Active = True
+    AutoPost = False
+    Options = [loptAllowInsert, loptAllowDelete, loptAllowModify]
+    Left = 68
+    Top = 416
+  end
+  object AdapterClientes: TAdapterBindSource
+    AutoActivate = True
+    Adapter = DGClientes
+    ScopeMappings = <>
+    Left = 56
+    Top = 360
+  end
+  object BindingsList1: TBindingsList
+    Methods = <>
+    OutputConverters = <>
+    Left = 276
+    Top = 101
+    object LinkListControlToField1: TLinkListControlToField
+      Category = 'Quick Bindings'
+      DataSource = AdapterClientes
+      FieldName = 'NOME'
+      Control = lvListagemItem
+      FillExpressions = <
+        item
+          SourceMemberName = 'CNPJ'
+          ControlMemberName = 'Detail'
+        end>
+      FillHeaderExpressions = <>
+      FillBreakGroups = <>
+    end
+    object LinkListControlToField2: TLinkListControlToField
+      Category = 'Quick Bindings'
+      DataSource = AdapterLicencas
+      FieldName = 'VENCIMENTO'
+      Control = lvListagemLicencas
+      FillExpressions = <
+        item
+          SourceMemberName = 'SERIAL'
+          ControlMemberName = 'Detail'
+        end>
+      FillHeaderExpressions = <>
+      FillBreakGroups = <>
+    end
+  end
+  object DGLicencas: TDataGeneratorAdapter
+    FieldDefs = <
+      item
+        Name = 'DATAINICIO'
+        FieldType = ftDate
+        Generator = 'Date'
+        ReadOnly = False
+      end
+      item
+        Name = 'VENCIMENTO'
+        FieldType = ftDate
+        Generator = 'Date'
+        ReadOnly = False
+      end
+      item
+        Name = 'SERIAL'
+        FieldType = ftUInteger
+        Generator = 'AlphaColors'
+        ReadOnly = False
+      end>
+    Active = True
+    AutoPost = False
+    Options = [loptAllowInsert, loptAllowDelete, loptAllowModify]
+    Left = 224
+    Top = 384
+  end
+  object AdapterLicencas: TAdapterBindSource
+    AutoActivate = True
+    Adapter = DGLicencas
+    ScopeMappings = <>
+    Left = 224
+    Top = 321
+  end
+end
