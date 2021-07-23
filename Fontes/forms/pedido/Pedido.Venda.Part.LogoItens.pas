@@ -8,6 +8,7 @@ uses
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Imaging.pngimage, Vcl.ExtCtrls;
 
 type
+
   TPedidoVendaPartLogoItens = class(TFrame, IPart)
     Image1: TImage;
   private
@@ -17,6 +18,7 @@ type
     function setParams(aObj: array of TObject): IPart;
     function setParent(aParent: TWinControl): IPart;
     function SetUp: IPart;
+    function setOnObjectChange(aCallback: TOnObjectChange): IPart;
 
   public
     class function New(aOwner: TComponent): IPart; virtual;
@@ -44,6 +46,12 @@ end;
 class function TPedidoVendaPartLogoItens.New(aOwner: TComponent): IPart;
 begin
   result := Self.Create(aOwner);
+end;
+
+function TPedidoVendaPartLogoItens.setOnObjectChange(
+  aCallback: TOnObjectChange): IPart;
+begin
+
 end;
 
 function TPedidoVendaPartLogoItens.setParams(aObj: array of TObject): IPart;

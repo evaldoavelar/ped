@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.TypInfo, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, untFrmBase, Vcl.ExtCtrls, System.Actions, Vcl.ActnList, Vcl.StdCtrls, Vcl.WinXCtrls, Vcl.Buttons, Vcl.ComCtrls,
-  JvComponentBase, JvEnterTab, Util.VclFuncoes, Vcl.Imaging.jpeg;
+  JvComponentBase, JvEnterTab, Util.VclFuncoes, Vcl.Imaging.jpeg, Pedido.Venda.IPart;
 
 type
   TState = (stEdit, StNovo, stExcluir, stBrowser);
@@ -34,6 +34,8 @@ type
     btnExcluir: TBitBtn;
     lblAtalhos: TLabel;
     Image1: TImage;
+    BitBtn1: TBitBtn;
+    actEditar: TAction;
     procedure FormCreate(Sender: TObject);
     procedure actSairExecute(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -46,11 +48,13 @@ type
     procedure edtPesquisaExit(Sender: TObject);
     procedure edtPesquisaEnter(Sender: TObject);
     procedure actExcluirExecute(Sender: TObject);
+    procedure actEditarExecute(Sender: TObject);
   private
 
     procedure ScreenActiveControlChange(Sender: TObject);
     procedure onEnter(Sender: TWinControl);
     procedure OnExit(Sender: TWinControl);
+
 
   protected
     lastFocused: TWinControl;
@@ -69,6 +73,7 @@ type
     procedure Excluir; virtual; abstract;
     procedure HabilitarControle(Controle: TControl; habilitar: Boolean);
     procedure TrataBotoes;
+     procedure ExibePart(aPart: IPart; aParent: TWinControl;      aParams: array of TObject);
     { Private declarations }
   public
     { Public declarations }
@@ -88,6 +93,14 @@ implementation
 
 uses Util.Funcoes;
 
+procedure TfrmCadastroBase.ExibePart(aPart: IPart; aParent: TWinControl; aParams: array of TObject);
+begin
+  aPart
+    .setParams(aParams)
+    .SetParent(aParent)
+    .SetUp;
+end;
+
 procedure TfrmCadastroBase.actCancelarExecute(Sender: TObject);
 begin
   if MessageDlg('Deseja cancelar a alterção?', mtConfirmation, [mbYes, mbNo], 0) = mrNo then
@@ -96,6 +109,13 @@ begin
   inherited;
   Cancelar;
 
+end;
+
+procedure TfrmCadastroBase.actEditarExecute(Sender: TObject);
+begin
+  inherited;
+ state := TState.stEdit;
+  getEntity;
 end;
 
 procedure TfrmCadastroBase.actExcluirExecute(Sender: TObject);
@@ -312,7 +332,7 @@ begin
 
     state := TState.stBrowser;
     TrataBotoes;
-    MessageDlg('Salvo Com Sucesso!', mtInformation, [mbOK], 0);
+   // MessageDlg('Salvo Com Sucesso!', mtInformation, [mbOK], 0);
 
   except
     on E: Exception do
@@ -366,11 +386,13 @@ begin
         actExcluir.Enabled := True;
         actPesquisar.Enabled := False;
         edtPesquisa.Enabled := False;
+        actEditar.Enabled := False;
         HabilitarControle(pgcPrincipal, True);
       end;
     StNovo:
       begin
         actNovo.Enabled := False;
+        actEditar.Enabled := False;
         actSalvar.Enabled := True;
         actExcluir.Enabled := False;
         actCancelar.Enabled := True;
@@ -385,6 +407,7 @@ begin
     stBrowser:
       begin
         actNovo.Enabled := True;
+        actEditar.Enabled := True;
         actSalvar.Enabled := False;
         actCancelar.Enabled := False;
         actExcluir.Enabled := False;

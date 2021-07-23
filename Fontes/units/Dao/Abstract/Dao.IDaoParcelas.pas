@@ -19,6 +19,7 @@ type
     procedure ExtornaParcelas(Parcelas: TParcelas);
     function GeTParcela(NUMPARCELA, IDPEDIDO: Integer): TParcelas;
     function GeTParcelas(IDPEDIDO: Integer): TObjectList<TParcelas>; overload;
+    function GeTParcelas(IDPEDIDO: Integer; SEQPAGTO:INTEGER): TObjectList<TParcelas>; overload;
     function GeTParcelasPorCliente(CODCLiente: string; status: string): TObjectList<TParcelas>; overload;
     function GeTParcelasVencidasPorCliente(CODCLiente: string; dataAtual: TDate): TObjectList<TParcelas>; overload;
     function GeTParcelasVencendoPorCliente(CODCLiente: string; dataAtual: TDate): TObjectList<TParcelas>; overload;

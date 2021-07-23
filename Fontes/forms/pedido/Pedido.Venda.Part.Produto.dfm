@@ -3372,7 +3372,7 @@ object PedidoPartFrameProduto: TPedidoPartFrameProduto
       Transparent = True
       Layout = tlCenter
       WordWrap = True
-      ExplicitWidth = 224
+      ExplicitWidth = 272
       ExplicitHeight = 34
     end
     object Label44: TLabel
@@ -6322,7 +6322,7 @@ object PedidoPartFrameProduto: TPedidoPartFrameProduto
       AlignWithMargins = True
       Left = 420
       Top = 35
-      Width = 109
+      Width = 107
       Height = 17
       Alignment = taCenter
       Anchors = [akTop, akRight]
@@ -6334,7 +6334,6 @@ object PedidoPartFrameProduto: TPedidoPartFrameProduto
       Font.Style = [fsBold]
       ParentFont = False
       Layout = tlCenter
-      ExplicitLeft = 217
     end
     object Label4: TLabel
       Left = 10
@@ -6375,7 +6374,7 @@ object PedidoPartFrameProduto: TPedidoPartFrameProduto
       AlignWithMargins = True
       Left = 166
       Top = 0
-      Width = 128
+      Width = 126
       Height = 20
       Alignment = taCenter
       Anchors = [akTop, akRight]
@@ -6388,7 +6387,6 @@ object PedidoPartFrameProduto: TPedidoPartFrameProduto
       ParentFont = False
       Transparent = True
       Layout = tlCenter
-      ExplicitLeft = 265
     end
     object Label50: TLabel
       Left = 187
@@ -6448,7 +6446,7 @@ object PedidoPartFrameProduto: TPedidoPartFrameProduto
       AlignWithMargins = True
       Left = 453
       Top = 35
-      Width = 109
+      Width = 107
       Height = 17
       Alignment = taCenter
       Anchors = [akTop, akRight]
@@ -6460,7 +6458,6 @@ object PedidoPartFrameProduto: TPedidoPartFrameProduto
       Font.Style = [fsBold]
       ParentFont = False
       Layout = tlCenter
-      ExplicitLeft = 217
     end
     object Label22: TLabel
       Left = 453
@@ -6484,7 +6481,7 @@ object PedidoPartFrameProduto: TPedidoPartFrameProduto
       AlignWithMargins = True
       Left = 10
       Top = 11
-      Width = 89
+      Width = 86
       Height = 17
       Alignment = taCenter
       Caption = 'VALOR TOTAL'

@@ -3,7 +3,8 @@ unit Dominio.Entidades.TFormaPagto;
 interface
 
 uses Dominio.Entidades.TEntity, Dominio.Mapeamento.Atributos,
-  Dominio.Mapeamento.Tipos;
+  Dominio.Mapeamento.Tipos, Dominio.Entidades.TFormaPagto.Tipo, System.Classes,
+  System.Generics.Collections, Dominio.Entidades.CondicaoPagto;
 
 type
 
@@ -14,6 +15,11 @@ type
     FDESCRICAO: string;
     FQUANTASVEZES: integer;
     FJUROS: Currency;
+    FTipoPagamento: TTipoPagto;
+    FTipo: integer;
+    FATIVO: Boolean;
+    FCONDICAODEPAGTO: tLIST<TCONDICAODEPAGTO>;
+    FATIVOPROXY: string;
     function getID: integer;
     procedure setID(const Value: integer);
     function getDESCRICAO: string;
@@ -22,6 +28,15 @@ type
     procedure setQUANTASVEZES(const Value: integer);
     function getJUROS: Currency;
     procedure setJUROS(const Value: Currency);
+    function getTIPOPROXY: string;
+    procedure SetTipo(const Value: integer);
+    procedure SetTipoPagamento(const Value: TTipoPagto);
+    function getTipoPagamento: TTipoPagto;
+    procedure SetATIVO(const Value: Boolean);
+    procedure SetATIVOPROXY(const Value: string);
+    procedure SetCONDICAODEPAGTO(const Value: tLIST<TCONDICAODEPAGTO>);
+  public
+    function AddCondicao: TCONDICAODEPAGTO;
   public
 
     [campo('ID', tpINTEGER, 0, 0, True)]
@@ -31,16 +46,25 @@ type
     [campo('DESCRICAO', tpVARCHAR, 200)]
     property DESCRICAO: string read getDESCRICAO write setDESCRICAO;
 
-    [campo('QUANTASVEZES', tpINTEGER, 0, 0, True)]
-    property QUANTASVEZES: integer read getQUANTASVEZES write setQUANTASVEZES;
+    [campo('TIPO', tpINTEGER, 0, 0, True)]
+    property Tipo: integer read FTipo write SetTipo;
+    property TIPOPROXY: string read getTIPOPROXY;
+    property TipoPagamento: TTipoPagto read getTipoPagamento write SetTipoPagamento;
 
-    [campo('JUROS', tpNUMERIC, 15, 4)]
-    property JUROS: Currency read getJUROS write setJUROS;
+    [campo('ATIVO', tpINTEGER, 0, 0, True, '1')]
+    property ATIVO: Boolean read FATIVO write SetATIVO;
+    property ATIVOPROXY: string read FATIVOPROXY write SetATIVOPROXY;
+
+    property CONDICAODEPAGTO: tLIST<TCONDICAODEPAGTO> read FCONDICAODEPAGTO write SetCONDICAODEPAGTO;
 
     constructor create;
+    destructor destroy; override;
   end;
 
 implementation
+
+uses
+  Utils.Rtti;
 
 { TFormaPagto }
 
@@ -48,6 +72,25 @@ constructor TFormaPagto.create;
 begin
   inherited;
   Self.InicializarPropriedades(nil);
+  FCONDICAODEPAGTO := tLIST<TCONDICAODEPAGTO>.create;
+  FTipo := Ord(TTipoPagto.Nenhum);
+end;
+
+destructor TFormaPagto.destroy;
+begin
+  TRttiUtil.ListDisposeOf<TCONDICAODEPAGTO>(FCONDICAODEPAGTO);
+  inherited;
+end;
+
+function TFormaPagto.AddCondicao: TCONDICAODEPAGTO;
+begin
+  result := TCONDICAODEPAGTO.create;
+  result.StatusBD := TCONDICAODEPAGTO.TStatusBD.stAdicionado;
+  result.IDPAGTO := Self.ID;
+  result.QUANTASVEZES := 1;
+  result.ACRESCIMO := 0;
+
+  FCONDICAODEPAGTO.Add(result);
 end;
 
 function TFormaPagto.getDESCRICAO: string;
@@ -68,6 +111,31 @@ end;
 function TFormaPagto.getQUANTASVEZES: integer;
 begin
   result := FQUANTASVEZES;
+end;
+
+function TFormaPagto.getTipoPagamento: TTipoPagto;
+begin
+  result := TTipoPagto(FTipo);
+end;
+
+function TFormaPagto.getTIPOPROXY: string;
+begin
+  result := TipoPagamento.DESCRICAO;
+end;
+
+procedure TFormaPagto.SetATIVO(const Value: Boolean);
+begin
+  FATIVO := Value;
+end;
+
+procedure TFormaPagto.SetATIVOPROXY(const Value: string);
+begin
+  FATIVOPROXY := Value;
+end;
+
+procedure TFormaPagto.SetCONDICAODEPAGTO(const Value: tLIST<TCONDICAODEPAGTO>);
+begin
+  FCONDICAODEPAGTO := Value;
 end;
 
 procedure TFormaPagto.setDESCRICAO(const Value: string);
@@ -104,6 +172,17 @@ begin
     FQUANTASVEZES := Value;
     Notify('QUANTASVEZES');
   end;
+end;
+
+procedure TFormaPagto.SetTipo(const Value: integer);
+begin
+  FTipo := Value;
+end;
+
+procedure TFormaPagto.SetTipoPagamento(const Value: TTipoPagto);
+begin
+  FTipoPagamento := Value;
+  FTipo := Ord(Value);
 end;
 
 end.

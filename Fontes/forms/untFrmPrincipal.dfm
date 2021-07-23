@@ -14462,7 +14462,7 @@ object FrmPrincipal: TFrmPrincipal
             506)
           object catbtnCadastros: TCategoryButtons
             Left = 2
-            Top = -24
+            Top = -25
             Width = 37
             Height = 527
             Cursor = crHandPoint
@@ -14570,6 +14570,7 @@ object FrmPrincipal: TFrmPrincipal
             SelectedButtonColor = clNone
             TabOrder = 0
             OnClick = catbtnCadastrosClick
+            ExplicitWidth = 337
           end
         end
         object tsConsulta: TTabSheet
@@ -14629,6 +14630,7 @@ object FrmPrincipal: TFrmPrincipal
             SelectedButtonColor = clNone
             TabOrder = 0
             OnClick = catbtnCadastrosClick
+            ExplicitWidth = 341
           end
         end
         object tsConfiguracoes: TTabSheet
@@ -14672,6 +14674,7 @@ object FrmPrincipal: TFrmPrincipal
             SelectedButtonColor = clNone
             TabOrder = 0
             OnClick = catbtnCadastrosClick
+            ExplicitWidth = 353
           end
         end
       end
@@ -14911,7 +14914,7 @@ object FrmPrincipal: TFrmPrincipal
       OnExecute = actRecebimentoExecute
     end
     object actCadFormaPagto: TAction
-      Caption = 'Formas de Parcelamento'
+      Caption = 'Formas de Pagamento'
       ImageIndex = 47
       OnExecute = actCadFormaPagtoExecute
     end
@@ -15020,7 +15023,7 @@ object FrmPrincipal: TFrmPrincipal
     end
     object actCadastroFormaPagtoParceiro: TAction
       Category = 'Menu'
-      Caption = 'Formas de Pagamento'
+      Caption = 'Formas de Pagamento (Parceiro)'
       ImageIndex = 43
       OnExecute = actCadastroFormaPagtoParceiroExecute
     end
@@ -15089,7 +15092,7 @@ object FrmPrincipal: TFrmPrincipal
     Left = 24
     Top = 484
     Bitmap = {
-      494C010135004C03CC0320002000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C010135004C03040020002000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       000000000000360000002800000080000000C001000001002000000000000080
       0300000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

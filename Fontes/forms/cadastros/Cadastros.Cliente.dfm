@@ -316,6 +316,10 @@ inherited frmCadastroCliente: TfrmCadastroCliente
       object ts2: TTabSheet
         Caption = 'Endere'#231'o Resid'#234'ncia'
         ImageIndex = 1
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object Label5: TLabel
           Left = 10
           Top = 32
@@ -532,6 +536,10 @@ inherited frmCadastroCliente: TfrmCadastroCliente
       object TabSheet1: TTabSheet
         Caption = 'Endere'#231'o Cobran'#231'a'
         ImageIndex = 3
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object Label16: TLabel
           Left = 18
           Top = 40
@@ -748,6 +756,10 @@ inherited frmCadastroCliente: TfrmCadastroCliente
       object ts3: TTabSheet
         Caption = 'Observa'#231#227'o'
         ImageIndex = 2
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object mmoObservacao: TMemo
           Left = 9
           Top = 24

@@ -24,6 +24,7 @@ type
     procedure ExtornaParcelas(Parcelas: TParcelas);
     function GeTParcela(NUMPARCELA, IDPEDIDO: Integer): TParcelas;
     function GeTParcelas(IDPEDIDO: Integer): TObjectList<TParcelas>; overload;
+    function GeTParcelas(IDPEDIDO: Integer; SEQPAGTO:INTEGER): TObjectList<TParcelas>; overload;
     function GeTParcelasPorCliente(CODCLiente: string; status: string): TObjectList<TParcelas>; overload;
     function GeTParcelasVencidasPorCliente(CODCLiente: string; dataAtual: TDate): TObjectList<TParcelas>; overload;
     function GeTParcelasVencendoPorCliente(CODCLiente: string; dataAtual: TDate): TObjectList<TParcelas>; overload;
@@ -810,11 +811,13 @@ begin
       + 'INSERT INTO Parcelas '
       + '            (NUMPARCELA, '
       + '             IDPEDIDO, '
+      + '             SEQPAGTO, '
       + '             VALOR, '
       + '             VENCIMENTO, '
       + '             CODCLIENTE) '
       + 'VALUES      ( :NUMPARCELA, '
       + '              :IDPEDIDO, '
+      + '              :SEQPAGTO, '
       + '              :VALOR, '
       + '              :VENCIMENTO, '
       + '              :CODCLIENTE)';
@@ -947,6 +950,48 @@ begin
   finally
     FreeAndNil(qry);
   end;
+end;
+
+function TDaoParcelas.GeTParcelas(IDPEDIDO,
+  SEQPAGTO: INTEGER): TObjectList<TParcelas>;
+var
+  qry: TFDQuery;
+begin
+
+  qry := TFactory.Query();
+  try
+
+    try
+      Result := TObjectList<TParcelas>.Create();
+
+      qry.SQL.Text := ''
+        + 'select *  '
+        + 'from  Parcelas '
+        + 'WHERE '
+        + '     IDPEDIDO = :IDPEDIDO '
+        + '     AND SEQPAGTO = :SEQPAGTO '
+        + 'order by NUMPARCELA ';
+
+      qry.ParamByName('IDPEDIDO').AsInteger := IDPEDIDO;
+      qry.ParamByName('SEQPAGTO').AsInteger := SEQPAGTO;
+      qry.open;
+
+      while not qry.Eof do
+      begin
+        Result.Add(ParamsToObject(qry));
+        qry.Next;
+      end;
+
+    except
+      on E: Exception do
+      begin
+        raise TDaoException.Create('Falha GeTParcelas: ' + E.Message);
+      end;
+    end;
+  finally
+    FreeAndNil(qry);
+  end;
+
 end;
 
 end.

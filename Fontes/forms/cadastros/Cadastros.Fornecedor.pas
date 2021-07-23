@@ -103,6 +103,7 @@ procedure TfrmCadastroFornecedor.AtualizarEntity;
 begin
   inherited;
   DaoFornecedor.AtualizaFornecedors(FFornecedor);
+  edtPesquisa.Text := FFornecedor.CODIGO;
 end;
 
 procedure TfrmCadastroFornecedor.Bind;
@@ -208,6 +209,7 @@ begin
   inherited;
   FFornecedor.CODIGO := DaoFornecedor.GeraID;
   DaoFornecedor.IncluiFornecedor(FFornecedor);
+  edtPesquisa.Text := FFornecedor.CODIGO;
 end;
 
 procedure TfrmCadastroFornecedor.Novo;

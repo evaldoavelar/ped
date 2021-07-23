@@ -1149,6 +1149,10 @@ end;
 
 procedure TFrmPrincipal.FormActivate(Sender: TObject);
 begin
+  try
+    CheckLicenca();
+  except
+  end;
 
   if Assigned(TFactory.VendedorLogado) then
     exit;
@@ -1156,7 +1160,7 @@ begin
   if DebugHook = 0 then
   begin
 
-  //  Self.BorderStyle := bsNone;
+    // Self.BorderStyle := bsNone;
     SendMessage(Handle, WM_SYSCOMMAND, SC_MAXIMIZE, 0);
     Application.ProcessMessages;
 
@@ -1182,6 +1186,7 @@ begin
 
   end;
   DefineLabelVendedor();
+  self.WindowState := TWindowState.wsMaximized;
 end;
 
 procedure TFrmPrincipal.FormCreate(Sender: TObject);
@@ -1282,32 +1287,30 @@ begin
 
   Self.Caption := 'Pedidos - ' + TFactory.DadosEmitente.FANTASIA;
 
-  // abri uma tarefa de backup
-  task := TTask.Create(
-    procedure()
-    var
-      arquivo: string;
-    begin
-      try
-        arquivo := RetornaNomeArquivoBackup();
-        Backup(arquivo, True);
-        lblBackup.Caption := 'Backup Realizado: ' + arquivo;
-        lblBackup.Visible := True;
-      except
-        on E: Exception do
-        begin
-          lblBackup.Caption := 'Atenção! O Backup diário não foi feito.';
+  if TFactory.Parametros.BACKUPDIARIO then
+  begin
+    // abri uma tarefa de backup
+    task := TTask.Create(
+      procedure()
+      var
+        arquivo: string;
+      begin
+        try
+          arquivo := RetornaNomeArquivoBackup();
+          Backup(arquivo, True);
+          lblBackup.Caption := 'Backup Realizado: ' + arquivo;
           lblBackup.Visible := True;
-          lblBackup.Font.Color := $002B39C0;
+        except
+          on E: Exception do
+          begin
+            lblBackup.Caption := 'Atenção! O Backup diário não foi feito.';
+            lblBackup.Visible := True;
+            lblBackup.Font.Color := $002B39C0;
+          end;
         end;
-      end;
-    end
-    );
-  task.Start;
-
-  try
-    CheckLicenca();
-  except
+      end
+      );
+    task.Start;
   end;
 
 end;

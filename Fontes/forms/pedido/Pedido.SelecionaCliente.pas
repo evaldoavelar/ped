@@ -220,8 +220,8 @@ procedure TFrmInfoCliente.actOkExecute(Sender: TObject);
 begin
   inherited;
   try
-    if (not Assigned(FCliente)) or (FCliente.CODIGO = '000000') or (FCliente.CODIGO = '') then
-      raise TValidacaoException.Create('Cliente não pode ser Padrão');
+   // if (not Assigned(FCliente)) or (FCliente.CODIGO = '000000') or (FCliente.CODIGO = '') then
+    //  raise TValidacaoException.Create('Cliente não pode ser Padrão');
 
     if TFactory.Parametros.BLOQUEARCLIENTECOMATRASO then
       if Assigned(parcelas) and (parcelas.Count > 0) then

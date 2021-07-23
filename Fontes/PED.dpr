@@ -149,7 +149,25 @@ uses
   Pedido.Venda.Part.Item in 'forms\pedido\Pedido.Venda.Part.Item.pas' {PedidoVendaFramePartItem: TFrame},
   Pedido.Venda.Part.ItemCancelamento in 'forms\pedido\Pedido.Venda.Part.ItemCancelamento.pas' {PedidoVendaPartItemCancelamento: TFrame},
   Pedido.Venda.Part.LogoItens in 'forms\pedido\Pedido.Venda.Part.LogoItens.pas' {PedidoVendaPartLogoItens: TFrame},
-  Vcl.AutoComplete in '..\AutoComplete\Vcl.AutoComplete.pas';
+  Vcl.AutoComplete in '..\AutoComplete\Vcl.AutoComplete.pas',
+  Dominio.Entidades.TFormaPagto.Tipo in 'units\Dominio\Entidades\Dominio.Entidades.TFormaPagto.Tipo.pas',
+  Utils.Rtti in 'units\Util\Utils.Rtti.pas',
+  Pedido.Pagamento in 'forms\pedido\Pedido.Pagamento.pas' {FrmPagamento},
+  Dominio.Entidades.CondicaoPagto in 'units\Dominio\Entidades\Dominio.Entidades.CondicaoPagto.pas',
+  Helper.Currency in 'units\helper\Helper.Currency.pas',
+  Pedido.Venda.Part.CondicaoPagamento in 'forms\pedido\Pedido.Venda.Part.CondicaoPagamento.pas' {ViewPartVendaFormaPagto: TFrame},
+  Dao.IDaoCondicaoPagto in 'units\Dao\Abstract\Dao.IDaoCondicaoPagto.pas',
+  Dao.TDaoCondicaoPagto in 'units\Dao\Concret\Dao.TDaoCondicaoPagto.pas',
+  Dominio.Entidades.Pedido.Pagamentos in 'units\Dominio\Entidades\Dominio.Entidades.Pedido.Pagamentos.pas',
+  Dao.IDAOPedidoPagamento in 'units\Dao\Abstract\Dao.IDAOPedidoPagamento.pas',
+  Dao.TDAOPedidoPagamento in 'units\Dao\Concret\Dao.TDAOPedidoPagamento.pas',
+  Dominio.Entidades.Pedido.Pagamentos.Pagamento in 'units\Dominio\Entidades\Dominio.Entidades.Pedido.Pagamentos.Pagamento.pas',
+  Helpers.HelperString in 'units\helper\Helpers.HelperString.pas',
+  Pedido.Venda.Part.Pagamento in 'forms\pedido\Pedido.Venda.Part.Pagamento.pas' {FramePedidoVendaPagamento: TFrame},
+  Pedido.Pagamento.Imagem in 'forms\pedido\Pedido.Pagamento.Imagem.pas' {FramePedidoPagamentoImagem: TFrame},
+  Dominio.Entidades.Observable in 'units\Dominio\Entidades\Dominio.Entidades.Observable.pas',
+  Dominio.Entidades.Observe in 'units\Dominio\Entidades\Dominio.Entidades.Observe.pas',
+  Dominio.IEntidade in 'units\Dominio\Entidades\Dominio.IEntidade.pas';
 
 {$R *.res}
 
@@ -170,7 +188,6 @@ begin
     Application.MainFormOnTaskbar := True;
     Application.Title := 'PED';
     Application.CreateForm(TFrmPrincipal, FrmPrincipal);
-  Application.CreateForm(TFrmPagtoDetalhes, FrmPagtoDetalhes);
   Application.Run;
   end;
 

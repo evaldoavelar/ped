@@ -4,14 +4,14 @@ interface
 
 uses
   System.Generics.Collections, System.SysUtils,
-
+  Dominio.Entidades.Pedido.Pagamentos.Pagamento,
   Dominio.Entidades.TItemPedido, Dominio.Entidades.TParcelas,
   Vcl.Grids;
 
 type
   TBindGrid = class
-
   public
+    class procedure BindPagamentos(grid: TStringGrid; items: Tlist<TPEDIDOPAGAMENTO>); static;
     class procedure InicializaGrid(grid: TStringGrid; Titulos: array of string; ColWidth: array of Integer);
 
     class procedure BindProdutos(grid: TStringGrid; items: TObjectList<TItemPedido>); static;
@@ -19,6 +19,7 @@ type
   end;
 
 implementation
+
 
 { TBindGrid }
 
@@ -43,6 +44,33 @@ begin
     // titulo
     grid.Cells[i, 0] := Titulos[i];
     grid.ColWidths[i] := ColWidth[i];
+  end;
+
+end;
+
+class procedure TBindGrid.BindPagamentos(grid: TStringGrid; items: Tlist<TPEDIDOPAGAMENTO>);
+const
+  Titulos: array [0 .. 5] of string = ('Seq', 'Descrição', 'Condição', 'Acrécimo', 'Valor', 'Quantas Vezes');
+  ColWidth: array [0 .. 5] of Integer = (40, 200, 200, 80, 80, 80);
+var
+  i, row: Integer;
+  item: TPEDIDOPAGAMENTO;
+begin
+
+  InicializaGrid(grid, Titulos, ColWidth);
+  grid.RowCount := items.Count + 1;
+  // linhas
+  row := 0;
+  for item in items do
+  begin
+    row := row + 1;
+
+    grid.Cells[0, row] := IntToStr(item.SEQ);
+    grid.Cells[1, row] := item.DESCRICAO;
+    grid.Cells[2, row] := item.CONDICAO;
+    grid.Cells[3, row] := FormatCurr('R$ ###,##0.00', item.ACRESCIMO);
+    grid.Cells[4, row] := FormatCurr('R$ ###,##0.00', item.Valor);
+    grid.Cells[5, row] := IntToStr(item.QUANTASVEZES);
   end;
 
 end;
@@ -97,9 +125,9 @@ begin
   begin
     row := row + 1;
 
-    grid.Cells[0, row] := Format('%.*d',[6, item.IDPEDIDO]);
+    grid.Cells[0, row] := Format('%.*d', [6, item.IDPEDIDO]);
     grid.Cells[1, row] := IntToStr(item.NUMPARCELA) + 'ª Parcela';
-    grid.Cells[2, row] := FormatCurr('R$ ###,##0.00', item.VALOR);
+    grid.Cells[2, row] := FormatCurr('R$ ###,##0.00', item.Valor);
     grid.Cells[3, row] := DateToStr(item.VENCIMENTO);
     if item.RECEBIDO = 'S' then
     begin

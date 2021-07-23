@@ -21,11 +21,16 @@ type
     FCODCLIENTE: string;
     FNOME: string;
     FVendedorRecebimento: TVendedor;
+    FIDPAGTO: INTEGER;
     procedure SetVendedorRecebimento(const Value: TVendedor);
+    procedure SetIDPAGTO(const Value: INTEGER);
 
   published
+    [ForeignKeyAttribute('FK_PARCELAS_PAGTO', 'SEQPAGTO,IDPEDIDO', 'PEDIDOPAGAMENTO', 'SEQ,IDPEDIDO', Cascade, None)]
+    [campo('SEQPAGTO', tpINTEGER, 0, 0, True)]
+    property SEQPAGTO: INTEGER read FIDPAGTO write SetIDPAGTO;
     [campo('IDPEDIDO', tpINTEGER, 0, 0, True)]
-    [PrimaryKey('PK_PARCELAS', 'IDPEDIDO,NUMPARCELA')]
+    [PrimaryKey('PK_PARCELAS', 'IDPEDIDO,NUMPARCELA,SEQPAGTO')]
     [ForeignKeyAttribute('FK_PARCELAS_PED', 'IDPEDIDO', 'PEDIDO', 'ID', Cascade, None)]
     property IDPEDIDO: INTEGER read FIDPEDIDO write FIDPEDIDO;
     [campo('NUMPARCELA', tpINTEGER, 0, 0, True)]
@@ -53,6 +58,7 @@ type
     class function CreateParcela(
       pNUMPARCELA: INTEGER;
       pIDPEDIDO: INTEGER;
+      pSEQ: INTEGER;
       pVALOR: Currency;
       pVENCIMENTO: TDateTime;
       pCLIENTE: string
@@ -71,7 +77,7 @@ begin
   Self.RECEBIDO := 'N';
 end;
 
-class function TParcelas.CreateParcela(pNUMPARCELA: INTEGER; pIDPEDIDO: INTEGER; pVALOR: Currency; pVENCIMENTO: TDateTime;
+class function TParcelas.CreateParcela(pNUMPARCELA: INTEGER; pIDPEDIDO: INTEGER; pSEQ: INTEGER; pVALOR: Currency; pVENCIMENTO: TDateTime;
   pCLIENTE: string): TParcelas;
 begin
   result := TParcelas.Create;
@@ -80,7 +86,12 @@ begin
   result.VALOR := pVALOR;
   result.VENCIMENTO := pVENCIMENTO;
   result.CODCLIENTE := pCLIENTE;
+  result.SEQPAGTO := pSEQ;
+end;
 
+procedure TParcelas.SetIDPAGTO(const Value: INTEGER);
+begin
+  FIDPAGTO := Value;
 end;
 
 procedure TParcelas.SetVendedorRecebimento(const Value: TVendedor);

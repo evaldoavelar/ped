@@ -46,6 +46,8 @@ type
     edtPrecovenda: TJvCalcEdit;
     edtPrecoAtacado: TJvCalcEdit;
     edtMargemLucro: TJvCalcEdit;
+    Label12: TLabel;
+    edtPreco1: TJvCalcEdit;
     procedure FormDestroy(Sender: TObject);
     procedure edtCodigoChange(Sender: TObject);
     procedure chkBloqueadoClick(Sender: TObject);
@@ -102,6 +104,7 @@ begin
   inherited;
   FProduto.ALTERACAO_PRECO := Now;
   DaoProduto.AtualizaProduto(FProduto);
+  edtPesquisa.Text := FProduto.CODIGO;
 end;
 
 procedure TfrmCadastroProduto.Bind;
@@ -119,6 +122,7 @@ begin
   FProduto.Bind('CUSTO_MEDIO', edtCustoMedio, 'Text');
   FProduto.Bind('PRECO_CUSTO', edtPrecoCusto, 'Value');
   FProduto.Bind('PRECO_VENDA', edtPrecovenda, 'Value');
+  FProduto.Bind('PRECO_VENDA', edtPreco1, 'Value');
   FProduto.Bind('PRECO_ATACADO', edtPrecoAtacado, 'Value');
   FProduto.Bind('MARGEM_LUCRO', edtMargemLucro, 'Value');
   FProduto.Bind('OBSERVACOES', mmoObservacao, 'Text');
@@ -269,6 +273,7 @@ begin
   FProduto.ALTERACAO_PRECO := Now;
   FProduto.DATA_CADASTRO := Now;
   DaoProduto.IncluiProduto(FProduto);
+  edtPesquisa.Text := FProduto.CODIGO;
 end;
 
 procedure TfrmCadastroProduto.Novo;

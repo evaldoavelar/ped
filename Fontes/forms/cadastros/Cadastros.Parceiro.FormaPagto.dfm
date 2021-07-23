@@ -1,5 +1,5 @@
 inherited FrmCadastroFormaPagtoParceiro: TFrmCadastroFormaPagtoParceiro
-  Caption = 'Cadastro de Formas de Pagamento'
+  Caption = 'Cadastro de Formas de Pagamento Parceiro'
   PixelsPerInch = 96
   TextHeight = 13
   inherited pnlContainer: TPanel

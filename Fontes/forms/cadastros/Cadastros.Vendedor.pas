@@ -80,6 +80,7 @@ procedure TfrmCadastroVendedor.AtualizarEntity;
 begin
   inherited;
   DaoVendedor.AtualizaVendedor(FVendedor);
+  edtPesquisa.Text := FVendedor.CODIGO;
 end;
 
 procedure TfrmCadastroVendedor.Bind;
@@ -179,6 +180,7 @@ procedure TfrmCadastroVendedor.IncluirEntity;
 begin
   inherited;
   DaoVendedor.IncluiVendedor(FVendedor);
+  edtPesquisa.Text := FVendedor.CODIGO;
 end;
 
 procedure TfrmCadastroVendedor.Novo;

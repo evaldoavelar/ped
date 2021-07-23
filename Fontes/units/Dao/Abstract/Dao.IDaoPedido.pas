@@ -10,6 +10,7 @@ uses
   Dominio.Entidades.TItemPedido,
   Dominio.Entidades.TPedido,
   Dominio.Entidades.TParcelas,
+  Dominio.Entidades.Pedido.Pagamentos,
   Helper.TProdutoVenda;
 
 type
@@ -19,7 +20,7 @@ type
     procedure AbrePedido(pedido: TPedido);
     procedure VendeItem(Item: TItemPedido);
     procedure ExcluiItem(Item: TItemPedido);
-    procedure GravaParcelas(parcelas: TObjectList<TParcelas>);
+    procedure GravaPgamento(Pagamentos: TPAGAMENTOS);
     procedure AtualizaPedido(pedido: TPedido);
     procedure AdicionaComprovante(pedido: TPedido);
     procedure FinalizaPedido(pedido: TPedido);
@@ -36,5 +37,7 @@ type
   end;
 
 implementation
+
+
 
 end.

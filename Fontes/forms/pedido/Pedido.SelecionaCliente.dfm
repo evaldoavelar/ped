@@ -7,7 +7,7 @@ inherited FrmInfoCliente: TFrmInfoCliente
   OnCreate = FormCreate
   OnShow = FormShow
   ExplicitWidth = 877
-  ExplicitHeight = 547
+  ExplicitHeight = 548
   PixelsPerInch = 96
   TextHeight = 13
   object Panel1: TPanel
@@ -682,8 +682,7 @@ inherited FrmInfoCliente: TFrmInfoCliente
       Font.Name = 'Segoe UI'
       Font.Style = []
       ParentFont = False
-      ExplicitLeft = 28
-      ExplicitTop = 7
+      ExplicitWidth = 107
     end
     object btnOk: TBitBtn
       Left = 176

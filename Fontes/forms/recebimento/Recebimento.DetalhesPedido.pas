@@ -13,7 +13,7 @@ uses
   Vcl.Mask, JvExMask, JvToolEdit,
   JvBaseEdits, JvExStdCtrls, JvTextListBox,
   System.Actions, Vcl.ActnList, Vcl.Grids, Vcl.ExtDlgs, Vcl.Imaging.jpeg,
-  Vcl.Imaging.pngimage, Util.VclFuncoes;
+  Vcl.Imaging.pngimage, Util.VclFuncoes, Dominio.Entidades.Pedido.Pagamentos.Pagamento;
 
 type
   TfrmDetalhesPedido = class(TfrmBase)
@@ -99,13 +99,16 @@ type
     lbl1: TLabel;
     lblObservacaoCliente: TLabel;
     Label4: TLabel;
-    edtValorEntrada: TJvCalcEdit;
+    edtTroco: TJvCalcEdit;
     pnlAviso: TPanel;
     lblCanceladoPorVendedor: TLabel;
     lblCanceladoPor: TLabel;
     Label9: TLabel;
     lblNomeParceiro: TLabel;
     lblCodigoParceiro: TLabel;
+    tsPagamento: TTabSheet;
+    strGridPagamentos: TStringGrid;
+    Panel7: TPanel;
     procedure FormShow(Sender: TObject);
     procedure actOkExecute(Sender: TObject);
     procedure actAnexarComprovanteExecute(Sender: TObject);
@@ -183,6 +186,9 @@ begin
 end;
 
 procedure TfrmDetalhesPedido.Bind;
+var
+  pagto: TPEDIDOPAGAMENTO;
+  parcela: TParcelas;
 begin
   FPedido.BindReadOnly('NUMERO', lblNumero, 'Caption');
   FPedido.BindReadOnly('HORAPEDIDO', lblHora, 'Caption');
@@ -191,7 +197,7 @@ begin
   FPedido.BindReadOnly('VALORBRUTO', edtValorBruto, 'Value');
   FPedido.BindReadOnly('VALORDESC', edtValorDesconto, 'Value');
   FPedido.BindReadOnly('VALORLIQUIDO', edtValorLiquido, 'Value');
-  FPedido.BindReadOnly('VALORENTRADA', edtValorEntrada, 'Value');
+  FPedido.BindReadOnly('TROCO', edtTroco, 'Value');
 
   FPedido.Vendedor.BindReadOnly('NOME', lblVendendor, 'Caption');
   FPedido.Vendedor.BindReadOnly('CODIGO', lblCodVendedor, 'Caption');
@@ -234,7 +240,10 @@ begin
   end;
 
   TBindGrid.BindProdutos(strGridProdutos, FPedido.itens);
-  TBindGrid.BindParcelas(strGridParcelas, FPedido.parcelas);
+  TBindGrid.BindPagamentos(strGridPagamentos, FPedido.Pagamentos.FormasDePagamento);
+
+  for pagto in FPedido.Pagamentos.FormasDePagamento do
+    TBindGrid.BindParcelas(strGridParcelas, pagto.Parcelas);
 
   if FPedido.STATUS = 'C' then
   begin

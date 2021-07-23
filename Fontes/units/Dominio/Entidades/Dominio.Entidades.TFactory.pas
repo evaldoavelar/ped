@@ -16,7 +16,8 @@ uses SysUtils,
   Dao.TDaoPedidoPeriodo, Dominio.Entidades.TOrcamento, Dao.IDaoOrcamento, Dao.TDaoOrcamento, FireDAC.Comp.Script, Dao.IDaoParceiro, Dao.TDaoParceiro,
   Dominio.Entidades.TParceiro, Dao.IDaoParceiro.FormaPagto, Dao.TDaoParceiro.FormaPagto, Dominio.Entidades.TParceiro.FormaPagto, Dominio.Entidades.TParceiroVenda,
   Dao.IDaoParceiroVenda,
-  Dao.IDoParceiroVenda.Pagamentos, Dao.TDaoParceiroVenda.Pagamentos, Dao.TDaoParceiroVenda;
+  Dao.IDoParceiroVenda.Pagamentos, Dao.TDaoParceiroVenda.Pagamentos, Dao.TDaoParceiroVenda,
+  Dao.TDAOPedidoPagamento, Dao.IDAOPedidoPagamento;
 
 type
 
@@ -71,6 +72,8 @@ type
     class function DaoParceiroFormaPagto(): IDaoParceiroFormaPagto;
     class function DaoParceiroVendaPagto(): IDaoParceiroVendaPagto;
     class function DaoParceiroVenda(): IDaoParceiroVenda;
+    class function DAOPedidoPagamento(): IDAOPedidoPagamento;
+
 
     class function PosPrinter(): TACBrPosPrinter;
 
@@ -174,6 +177,11 @@ end;
 class function TFactory.DaoPedido: IDaoPedido;
 begin
   result := TDaoPedido.Create(TFactory.Conexao);
+end;
+
+class function TFactory.DAOPedidoPagamento: IDAOPedidoPagamento;
+begin
+  result := TDAOPedidoPagamento.Create(TFactory.Conexao);
 end;
 
 class function TFactory.DaoPedidoPeriodo: IDAOPedidoPeriodo;

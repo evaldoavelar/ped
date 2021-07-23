@@ -86,8 +86,8 @@
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
         <BT_BuildType>Debug</BT_BuildType>
-        <VerInfo_Build>10</VerInfo_Build>
-        <VerInfo_Keys>CompanyName=Desenvolvido por Evaldo Avelar Marques;FileDescription=Sistema de Parcelas;FileVersion=1.0.0.10;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductVersion=1.0.0.0;Comments=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName)</VerInfo_Keys>
+        <VerInfo_Build>11</VerInfo_Build>
+        <VerInfo_Keys>CompanyName=Desenvolvido por Evaldo Avelar Marques;FileDescription=Sistema de Parcelas;FileVersion=1.0.0.11;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductVersion=1.0.0.0;Comments=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName)</VerInfo_Keys>
         <Icon_MainIcon>PED_Icon.ico</Icon_MainIcon>
         <VerInfo_Debug>true</VerInfo_Debug>
         <VerInfo_PreRelease>true</VerInfo_PreRelease>
@@ -388,6 +388,39 @@
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
         <DCCReference Include="..\AutoComplete\Vcl.AutoComplete.pas"/>
+        <DCCReference Include="units\Dominio\Entidades\Dominio.Entidades.TFormaPagto.Tipo.pas"/>
+        <DCCReference Include="units\Util\Utils.Rtti.pas"/>
+        <DCCReference Include="forms\pedido\Pedido.Pagamento.pas">
+            <Form>FrmPagamento</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="units\Dominio\Entidades\Dominio.Entidades.CondicaoPagto.pas"/>
+        <DCCReference Include="units\helper\Helper.Currency.pas"/>
+        <DCCReference Include="forms\pedido\Pedido.Venda.Part.CondicaoPagamento.pas">
+            <Form>ViewPartVendaFormaPagto</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="units\Dao\Abstract\Dao.IDaoCondicaoPagto.pas"/>
+        <DCCReference Include="units\Dao\Concret\Dao.TDaoCondicaoPagto.pas"/>
+        <DCCReference Include="units\Dominio\Entidades\Dominio.Entidades.Pedido.Pagamentos.pas"/>
+        <DCCReference Include="units\Dao\Abstract\Dao.IDAOPedidoPagamento.pas"/>
+        <DCCReference Include="units\Dao\Concret\Dao.TDAOPedidoPagamento.pas"/>
+        <DCCReference Include="units\Dominio\Entidades\Dominio.Entidades.Pedido.Pagamentos.Pagamento.pas"/>
+        <DCCReference Include="units\helper\Helpers.HelperString.pas"/>
+        <DCCReference Include="forms\pedido\Pedido.Venda.Part.Pagamento.pas">
+            <Form>FramePedidoVendaPagamento</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="forms\pedido\Pedido.Pagamento.Imagem.pas">
+            <Form>FramePedidoPagamentoImagem</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="units\Dominio\Entidades\Dominio.Entidades.Observable.pas"/>
+        <DCCReference Include="units\Dominio\Entidades\Dominio.Entidades.Observe.pas"/>
+        <DCCReference Include="units\Dominio\Entidades\Dominio.IEntidade.pas"/>
         <RcItem Include="..\imagens\cesta.jpg">
             <ResourceType>RCDATA</ResourceType>
             <ResourceId>JpgImage_1</ResourceId>
@@ -447,8 +480,8 @@
                     <Source Name="MainSource">PED.dpr</Source>
                 </Source>
                 <Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k240.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp240.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k260.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp260.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
                 </Excluded_Packages>
             </Delphi.Personality>
             <Deployment Version="3">

@@ -5,9 +5,9 @@ interface
 uses
   ACBrUtil, ACBrValidador, System.SysUtils, System.Generics.Collections,
   Relatorio.TRBase,
-  Dominio.Entidades.TPedido, Dominio.Entidades.TEmitente,
+  Dominio.Entidades.TPedido, Dominio.Entidades.TEmitente, Dominio.Entidades.Pedido.Pagamentos.Pagamento,
   Dominio.Entidades.TItemPedido, Dominio.Entidades.TParcelas,
-  Dominio.Entidades.TCliente;
+  Dominio.Entidades.TCliente, Pedido.Pagamento;
 
 type
 
@@ -21,6 +21,9 @@ type
     procedure GerarDadosPedido(Pedido: TPedido; via: Integer);
     procedure GerarCodigoBarras(Pedido: TPedido);
     procedure GerarDadosConsumidor(Emitente: TEmitente; Pedido: TPedido);
+    procedure GerarPagamento(Pedido: TPedido);
+    function TemParcelas(Pedido: TPedido): boolean;
+    procedure GerarAssinatura(Emitente: TEmitente; Pedido: TPedido);
   public
     procedure ImprimeCupom(Emitente: TEmitente; Pedido: TPedido; ParcelasAtrasadas: TObjectList<TParcelas>);
   end;
@@ -32,20 +35,31 @@ implementation
 uses Util.Funcoes;
 
 procedure TRPedido.ImprimeCupom(Emitente: TEmitente; Pedido: TPedido; ParcelasAtrasadas: TObjectList<TParcelas>);
+var LTemParcela : boolean;
 begin
   inherited;
+  LTemParcela :=  TemParcelas(Pedido);
+
   Self.Cabecalho(Emitente);
   Self.GerarDadosPedido(Pedido, 1);
   Self.GerarItens(Pedido.itens);
   Self.GerarTotais(Pedido);
-  Self.GerarParcelas(Pedido);
+  Self.GerarPagamento(Pedido);
+
+  if LTemParcela then
+    Self.GerarParcelas(Pedido);
   Self.GerarDadosConsumidor(Emitente, Pedido);
   Self.GerarObsCliente(Pedido);
-  Self.GerarObsParcela(ParcelasAtrasadas);
+
+  if LTemParcela then
+  begin
+    GerarAssinatura(Emitente, Pedido);
+    Self.GerarObsParcela(ParcelasAtrasadas);
+  end;
   Self.SobePapel;
   Self.Rodape;
 
-  if FParametrosImpressora.IMPRIMIR2VIAS then
+  if FParametrosImpressora.IMPRIMIR2VIAS and LTemParcela then
   begin
 
     Self.Cabecalho(Emitente);
@@ -55,8 +69,10 @@ begin
     Self.GerarItens(Pedido.itens);
 
     Self.GerarTotais(Pedido);
+    Self.GerarPagamento(Pedido);
     Self.GerarParcelas(Pedido);
     Self.GerarDadosConsumidor(Emitente, Pedido);
+    Self.GerarAssinatura(Emitente, Pedido);
     Self.GerarCodigoBarras(Pedido);
     Self.SobePapel;
     Self.Rodape;
@@ -118,7 +134,7 @@ begin
     sVlrProduto := FormatFloatBr(item.VALOR_TOTAL, '###,###,##0.00');
     sCodigo := item.CODPRODUTO;
     sVlrUnitario := FloatToStrF(item.VALOR_UNITA, ffNumber, 9, 3);
-    sQuantidade := FloatToStrF(item.QTD, ffNumber, 9, 2);
+    sQuantidade := FloatToStrF(item.QTD, ffNumber, 9, 3);
 
     LinhaCmd := sItem + ' ' + sCodigo + ' ' + sDescricao;
     Buffer.Add(escAlignLeft + esc20Cpi + LinhaCmd);
@@ -142,6 +158,21 @@ begin
   end;
 end;
 
+procedure TRPedido.GerarPagamento(Pedido: TPedido);
+begin
+
+  Buffer.Add(esc20Cpi + PadSpace('FORMA DE PAGAMENTO|VALOR PAGO R$', Self.ColunasFonteCondensada, '|'));
+
+  for VAR Pagto in Pedido.Pagamentos.FormasDePagamento do
+  begin
+    Buffer.Add(esc20Cpi + PadSpace(Pagto.DESCRICAO + '|' + FormatFloat('#,###,##0.00',
+      Pagto.Valor), Self.ColunasFonteCondensada, '|'));
+  end;
+
+  Buffer.Add(esc20Cpi + PadSpace('Troco|' + FormatFloat('-#,###,##0.00',
+    Pedido.Troco), Self.ColunasFonteCondensada, '|'));
+end;
+
 procedure TRPedido.GerarTotais(Pedido: TPedido);
 begin
   Buffer.Add(Self.LinhaSimples);
@@ -151,16 +182,24 @@ begin
   Buffer.Add(esc20Cpi + PadSpace('Subtotal|' + FormatFloat('#,###,##0.00',
     Pedido.ValorBruto), Self.ColunasFonteCondensada, '|'));
 
-  Buffer.Add(esc20Cpi + PadSpace('Entrada|' + FormatFloat('-#,###,##0.00',
-    Pedido.ValorEntrada), Self.ColunasFonteCondensada, '|'));
-
   Buffer.Add(esc20Cpi + PadSpace('Descontos|' + FormatFloat('-#,###,##0.00',
     Pedido.VALORDESC), Self.ColunasFonteCondensada, '|'));
 
-  Buffer.Add(esc20Cpi + escBoldOn + escAlignLeft +
-    PadSpace('VALOR A PARCELAR R$|' + FormatFloat('#,###,##0.00',
-    Pedido.ValorLiquido), Self.ColunasFonteCondensada, '|') + escBoldOff +
-    esc20Cpi);
+  Buffer.Add(esc20Cpi + PadSpace('Acréscimos|' + FormatFloat('+#,###,##0.00',
+    Pedido.VALORACRESCIMO), Self.ColunasFonteCondensada, '|'));
+
+end;
+
+function TRPedido.TemParcelas(Pedido: TPedido): boolean;
+begin
+  result := false;
+  for VAR Pagto in Pedido.Pagamentos.FormasDePagamento do
+    if Pagto.Parcelas.Count > 0 then
+    begin
+      result := true;
+      break;
+    end;
+
 end;
 
 procedure TRPedido.GerarParcelas(Pedido: TPedido);
@@ -171,18 +210,30 @@ var
 begin
   // Total := 0;
 
-  Buffer.Add(escNewLine);
-
-  Buffer.Add(escAlignLeft + esc20Cpi + PadSpace('PARCELA|VENCIMENTO|VALOR',
-    Self.ColunasFonteCondensada, '|'));
-
-  for parcela in Pedido.Parcelas do
+  for VAR Pagto in Pedido.Pagamentos.FormasDePagamento do
   begin
-    Buffer.Add(esc20Cpi + ACBrStr(PadSpace(IntToStr(parcela.NUMPARCELA) +
-      'ª      ' + '|' + DateToStr(parcela.VENCIMENTO) + '|' +
-      FormatFloat('R$ #,###,##0.00', parcela.VALOR),
-      Self.ColunasFonteCondensada, '|')));
-    // Total := Total + FpNFe.pag.Items[i].vPag;
+
+    if Pagto.Parcelas.Count = 0 then
+      Continue;
+
+    Buffer.Add(escNewLine);
+
+    Buffer.Add(esc20Cpi + escBoldOn + escAlignLeft +
+      PadSpace('VALOR A PARCELAR R$|' + FormatFloat('#,###,##0.00',
+      Pagto.Valor), Self.ColunasFonteCondensada, '|') + escBoldOff +
+      esc20Cpi);
+
+    Buffer.Add(escAlignLeft + esc20Cpi + PadSpace('PARCELA|VENCIMENTO|VALOR',
+      Self.ColunasFonteCondensada, '|'));
+
+    for parcela in Pagto.Parcelas do
+    begin
+      Buffer.Add(esc20Cpi + ACBrStr(PadSpace(IntToStr(parcela.NUMPARCELA) +
+        'ª      ' + '|' + DateToStr(parcela.VENCIMENTO) + '|' +
+        FormatFloat('R$ #,###,##0.00', parcela.Valor),
+        Self.ColunasFonteCondensada, '|')));
+      // Total := Total + FpNFe.pag.Items[i].vPag;
+    end;
   end;
 
 end;
@@ -212,7 +263,7 @@ begin
   // Total := 0;
 
   if Parcelas.Count = 0 then
-    Exit;
+    exit;
 
   Buffer.Add(Self.LinhaSimples);
   Buffer.Add(ACBrStr(escAlignCenter + esc20Cpi + escBoldOn + 'O CLIENTE POSSUI AS SEGUINTES PARCELAS PENDENTES' +
@@ -227,11 +278,11 @@ begin
   begin
     Buffer.Add(esc20Cpi + ACBrStr(PadSpace(IntToStr(parcela.NUMPARCELA) +
       'ª      ' + '|' + DateToStr(parcela.VENCIMENTO) + '|' +
-      FormatFloat('R$ #,###,##0.00', parcela.VALOR),
+      FormatFloat('R$ #,###,##0.00', parcela.Valor),
       Self.ColunasFonteCondensada, '|')));
     // Total := Total + FpNFe.pag.Items[i].vPag;
 
-    Total := Total + parcela.VALOR;
+    Total := Total + parcela.Valor;
   end;
 
   Buffer.Add(escAlignRight + 'Total: R$ ' + FormatFloat('R$ #,###,##0.00', Total));
@@ -305,6 +356,12 @@ begin
   if LinhaCmd <> '' then
     Buffer.Add(esc20Cpi + LinhaCmd);
 
+end;
+
+procedure TRPedido.GerarAssinatura(Emitente: TEmitente; Pedido: TPedido);
+var
+  LinhaCmd: String;
+begin
   Buffer.Add(escNewLine);
 
   LinhaCmd := escAlignCenter + esc20Cpi +

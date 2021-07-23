@@ -8,7 +8,7 @@ uses
   System.Actions, Vcl.ActnList, Vcl.StdCtrls, Vcl.WinXCtrls, Vcl.Buttons,
   Vcl.ComCtrls, Vcl.ExtCtrls, Dominio.Entidades.TParceiro.FormaPagto,
   Dao.IDaoParceiro.FormaPagto, Dominio.Entidades.TFactory, Vcl.Mask, JvExMask, JvToolEdit, JvBaseEdits,
-  System.Bindings.Helper,Consulta.Parceiro.FormaPagto, Vcl.Imaging.jpeg;
+  System.Bindings.Helper, Consulta.Parceiro.FormaPagto, Vcl.Imaging.jpeg;
 
 type
   TFrmCadastroFormaPagtoParceiro = class(TfrmCadastroBase)
@@ -70,6 +70,7 @@ procedure TFrmCadastroFormaPagtoParceiro.AtualizarEntity;
 begin
   inherited;
   DaoParceiroFormaPagto.AtualizaParceiroFormaPagtos(FParceiroFormaPagto);
+  edtPesquisa.Text := FParceiroFormaPagto.ID.ToString;
 end;
 
 procedure TFrmCadastroFormaPagtoParceiro.Bind;
@@ -155,6 +156,7 @@ begin
   inherited;
   FParceiroFormaPagto.ID := DaoParceiroFormaPagto.GeraID;
   DaoParceiroFormaPagto.IncluiPagto(FParceiroFormaPagto);
+  edtPesquisa.Text := FParceiroFormaPagto.ID.ToString;
 end;
 
 procedure TFrmCadastroFormaPagtoParceiro.Novo;

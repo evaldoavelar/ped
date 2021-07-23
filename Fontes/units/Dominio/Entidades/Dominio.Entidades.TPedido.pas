@@ -12,7 +12,11 @@ uses
   Dominio.Entidades.TParcelas,
   Dominio.Mapeamento.Atributos,
   Dominio.Mapeamento.Tipos,
-  Dominio.Entidades.TParceiro;
+  Dominio.Entidades.TParceiro,
+  Dominio.Entidades.Pedido.Pagamentos.Pagamento,
+  Dominio.Entidades.Pedido.Pagamentos,
+  Dominio.Entidades.Observe,
+  Dominio.IEntidade;
 
 type
 
@@ -22,7 +26,7 @@ type
   TOnParcela = reference to procedure(parcelas: TObjectList<TParcelas>);
 
   [Tabela('Pedido')]
-  TPedido = class(TEntity)
+  TPedido = class(TEntity, IEntityObservable)
   private
     FID: Integer;
     FNUMERO: string;
@@ -35,7 +39,6 @@ type
     FCliente: TCliente;
     FVendedor: TVendedor;
     FItens: TObjectList<TItemPedido>;
-    FParcelas: TObjectList<TParcelas>;
 
     FOnVendeItem: TOnVendeItem;
     FOnExcluiItem: TOnExcluiItem;
@@ -45,12 +48,15 @@ type
     FVendedorCancelamento: TVendedor;
     FDATACANCELAMENTO: TDateTime;
     FParceiro: TParceiro;
+    FPagamentos: TPAGAMENTOS;
+    FTROCO: currency;
+    FVALORDESCONTO: currency;
+    FVALORACRESCIMO: currency;
 
     function GetValorBruto: currency;
     function getValorLiquido: currency;
     function getTotalParcelas: currency;
     function GetItens: TObjectList<TItemPedido>;
-    function RetornaVencimentoParcela(data: TDate; dias: Integer): TDate;
     function getItemCount: Integer;
     function getDesconto: currency;
     procedure SetDesconto(const Value: currency);
@@ -63,11 +69,17 @@ type
     procedure SetDATACANCELAMENTO(const Value: TDateTime);
     function getDATACANCELAMENTO: TDateTime;
     procedure SetParceiro(const Value: TParceiro);
+    procedure SetPagamentos(const Value: TPAGAMENTOS);
+    procedure SetTROCO(const Value: currency);
+    procedure SetVALORDESCONTO(const Value: currency);
+    procedure OnEfetuaPagamento(ValorRecebido, aValorAcrescimo, ValorRestante,
+      Troco: currency);
+    function getTotalAcrescimoPagamentos: currency;
+    procedure SetVALORACRESCIMO(const Value: currency);
 
   public
     constructor create;
     destructor destroy; override;
-    procedure ParcelarPedido(NumParcelas: Integer; VencimentoPrimeiraParcela: TDate);
     procedure VendeItem(Item: TItemPedido);
     procedure AddParceiro(const Value: TParceiro);
     procedure ExcluiItem(seq: Integer);
@@ -98,6 +110,14 @@ type
     [campo('STATUS', tpVARCHAR, 1)]
     property STATUS: string read FSTATUS write FSTATUS;
 
+    [campo('VALORDESCONTO', tpNUMERIC, 15, 4, True, '0')]
+    property VALORDESCONTO: currency read FVALORDESCONTO write SetVALORDESCONTO;
+
+    [campo('TROCO', tpNUMERIC, 15, 4, True, '0')]
+    property Troco: currency read FTROCO write SetTROCO;
+    [campo('VALORACRESCIMO', tpNUMERIC, 15, 4, True, '0')]
+    property VALORACRESCIMO: currency read FVALORACRESCIMO write SetVALORACRESCIMO;
+
     [campo('CODCLIENTE', tpVARCHAR, 10)]
     [ForeignKeyAttribute('FKPEDCLIENTE', 'CODCLIENTE', 'CLIENTE', 'CODIGO', None, None)]
     property Cliente: TCliente read FCliente write FCliente;
@@ -113,7 +133,7 @@ type
     property DATACANCELAMENTO: TDateTime read getDATACANCELAMENTO write SetDATACANCELAMENTO;
 
     property itens: TObjectList<TItemPedido> read GetItens;
-    property parcelas: TObjectList<TParcelas> read FParcelas write FParcelas;
+    property Pagamentos: TPAGAMENTOS read FPagamentos write SetPagamentos;
 
     property Volume: Double read getVolume;
 
@@ -129,12 +149,14 @@ type
     property OnChange: TOnChange read FOnChange write FOnChange;
     property OnParcela: TOnParcela read FOnParcela write FOnParcela;
     property OnExcluiItem: TOnExcluiItem read FOnExcluiItem write FOnExcluiItem;
+    procedure Update(const ModelBase: IEntity);
   end;
 
 implementation
 
 uses
-  Util.Funcoes, Util.Exceptions;
+  Util.Funcoes, Util.Exceptions, Dominio.Entidades.TParceiroVenda.Pagamentos,
+  Dominio.Entidades.TFormaPagto.Tipo, Dao.TDaoPedido;
 
 { TPedido }
 
@@ -158,37 +180,43 @@ begin
   Self.FItens := TObjectList<TItemPedido>.create;
   Self.FItens.OwnsObjects := True;
   Self.DATACANCELAMENTO := 0;
-  Self.FParcelas := TObjectList<TParcelas>.create();
-  Self.FParcelas.OwnsObjects := True;
+  Self.FPagamentos := TPAGAMENTOS.create();
+ // Self.FPagamentos.addObserver(Self);
+end;
+
+function TPedido.getTotalAcrescimoPagamentos: currency;
+begin
+  result := 0;
+  for var pagto in Pagamentos.FormasDePagamento do
+  begin
+    result := result + pagto.ACRESCIMO;
+  end;
+end;
+
+procedure TPedido.OnEfetuaPagamento(ValorRecebido: currency; aValorAcrescimo: currency; ValorRestante: currency; Troco: currency);
+begin
+  if Assigned(Self.FOnChange) then
+    Self.FOnChange(Self.ValorLiquido, Self.ValorBruto, Self.Volume);
 end;
 
 destructor TPedido.destroy;
-var
-  Item: TItemPedido;
-  i: Integer;
 begin
-  if Assigned(FCliente) then
-  begin
-    FreeAndNil(FCliente);
-  end;
+//  Self.FPagamentos.removeObserver(Self);
+  Self.FPagamentos.Clear;
+  Self.FPagamentos.Free;
 
   Self.FItens.OwnsObjects := True;
   Self.FItens.Clear;
   FreeAndNil(Self.FItens);
 
-  Self.FParcelas.OwnsObjects := True;
-  Self.FParcelas.Clear;
-  FreeAndNil(Self.FParcelas);
+  if Assigned(FCliente) then
+    FreeAndNil(FCliente);
 
   if Assigned(FVendedor) then
-  begin
     FreeAndNil(FVendedor);
-  end;
 
   if Assigned(FVendedorCancelamento) then
-  begin
     FreeAndNil(FVendedorCancelamento);
-  end;
 
   if Assigned(FCOMPROVANTE) then
   begin
@@ -255,13 +283,14 @@ end;
 function TPedido.getTotalParcelas: currency;
 var
   Item: TParcelas;
+  Pagtos: TPEDIDOPAGAMENTO;
 begin
   result := 0;
 
-  for Item in Self.parcelas do
-  begin
-    result := result + Item.VALOR;
-  end;
+  for Pagtos in Self.Pagamentos.FormasDePagamento do
+    if Pagtos.TipoPagamento = TTipoPagto.parcelado then
+      for Item in Pagtos.parcelas do
+        result := result + Item.VALOR;
 
 end;
 
@@ -317,73 +346,6 @@ begin
 
 end;
 
-procedure TPedido.ParcelarPedido(NumParcelas: Integer; VencimentoPrimeiraParcela: TDate);
-var
-  ValorParcelas: currency;
-  SomaParcelas: currency;
-  SomaPedido: currency;
-  i: Integer;
-  vencimento: TDate;
-begin
-  Self.parcelas.Clear;
-  SomaPedido := Self.ValorLiquido;
-  ValorParcelas := SomaPedido / NumParcelas;
-  ValorParcelas := TUtil.Truncar(ValorParcelas, 2);
-
-  try
-    Self.parcelas.Clear;
-    SomaParcelas := 0;
-    for i := 1 to NumParcelas do
-    begin
-      SomaParcelas := SomaParcelas + ValorParcelas;
-      // se for ultima parcela
-      if i = NumParcelas then
-      begin
-        // se o somatório das parcelas é menor que o valor do pedido
-        if SomaParcelas < SomaPedido then
-        begin
-          // a ultima parcela recebe a diferença
-          ValorParcelas := ValorParcelas + SomaPedido - SomaParcelas;
-        end;
-      end;
-
-      Self.parcelas.Add(
-        TParcelas.CreateParcela(
-        i,
-        Self.ID,
-        ValorParcelas,
-        RetornaVencimentoParcela(VencimentoPrimeiraParcela, i - 1), // calcular a data de vencimento
-        Self.Cliente.CODIGO
-        ));
-    end;
-
-  except
-    on E: Exception do
-    begin
-      raise TCalculoException.create('Erro no calculo de parcelas: ' + E.Message);
-    end;
-  end;
-
-  if Assigned(FOnParcela) then
-    FOnParcela(Self.parcelas);
-end;
-
-function TPedido.RetornaVencimentoParcela(data: TDate; dias: Integer): TDate;
-var
-  dataParcela: TDate;
-begin
-  // data := EncodeDate( YearOf(data),MonthOf(data),diaVencimento ) ;
-
-  dataParcela := data;
-
-  result := IncMonth(dataParcela, dias);
-
-  if DayOfWeek(result) = 7 then
-    result := result + 2
-  else if DayOfWeek(result) = 1 then
-    result := result + 1;
-end;
-
 procedure TPedido.SetDATACANCELAMENTO(const Value: TDateTime);
 begin
 
@@ -414,9 +376,41 @@ begin
   end;
 end;
 
+procedure TPedido.SetPagamentos(const Value: TPAGAMENTOS);
+begin
+  FPagamentos := Value;
+end;
+
 procedure TPedido.SetParceiro(const Value: TParceiro);
 begin
   FParceiro := Value;
+end;
+
+procedure TPedido.SetTROCO(const Value: currency);
+begin
+  if Value <> FTROCO then
+  begin
+    FTROCO := Value;
+    Notify('TROCO');
+  end;
+end;
+
+procedure TPedido.SetVALORACRESCIMO(const Value: currency);
+begin
+  if Value <> FVALORACRESCIMO then
+  begin
+    FVALORACRESCIMO := Value;
+    Notify('VALORACRESCIMO');
+  end;
+end;
+
+procedure TPedido.SetVALORDESCONTO(const Value: currency);
+begin
+  if Value <> FVALORDESCONTO then
+  begin
+    FVALORDESCONTO := Value;
+    Notify('VALORDESCONTO');
+  end;
 end;
 
 procedure TPedido.setVALORENTRADA(const Value: currency);
@@ -437,6 +431,15 @@ end;
 procedure TPedido.SetVendedorCancelamento(const Value: TVendedor);
 begin
   FVendedorCancelamento := Value;
+end;
+
+procedure TPedido.Update(const ModelBase: IEntity);
+begin
+  Self.Troco := Self.Pagamentos.Troco;
+  Self.VALORACRESCIMO := getTotalAcrescimoPagamentos;
+
+  if Assigned(Self.FOnChange) then
+    Self.FOnChange(Self.ValorLiquido, Self.ValorBruto, Self.Volume);
 end;
 
 procedure TPedido.VendeItem(Item: TItemPedido);

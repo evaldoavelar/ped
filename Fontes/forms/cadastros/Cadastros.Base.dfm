@@ -7,7 +7,7 @@ inherited frmCadastroBase: TfrmCadastroBase
   OnDestroy = FormDestroy
   OnShow = FormShow
   ExplicitWidth = 680
-  ExplicitHeight = 559
+  ExplicitHeight = 560
   PixelsPerInch = 96
   TextHeight = 13
   object pnlContainer: TPanel
@@ -73,12 +73,12 @@ inherited frmCadastroBase: TfrmCadastroBase
       Top = 8
       Width = 75
       Height = 25
-      Action = actSalvar
-      Caption = 'Salvar'
+      Action = actEditar
+      Caption = 'Editar'
       TabOrder = 1
     end
     object btnCacenlar: TBitBtn
-      Left = 207
+      Left = 319
       Top = 8
       Width = 75
       Height = 25
@@ -96,13 +96,22 @@ inherited frmCadastroBase: TfrmCadastroBase
       TabOrder = 4
     end
     object btnExcluir: TBitBtn
-      Left = 293
+      Left = 405
       Top = 8
       Width = 75
       Height = 25
       Action = actExcluir
       Caption = 'Excluir'
       TabOrder = 3
+    end
+    object BitBtn1: TBitBtn
+      Left = 208
+      Top = 8
+      Width = 75
+      Height = 25
+      Action = actSalvar
+      Caption = 'Salvar'
+      TabOrder = 5
     end
   end
   object pnlTop: TPanel
@@ -790,6 +799,10 @@ inherited frmCadastroBase: TfrmCadastroBase
       Enabled = False
       ShortCut = 46
       OnExecute = actExcluirExecute
+    end
+    object actEditar: TAction
+      Caption = 'Editar'
+      OnExecute = actEditarExecute
     end
   end
   object JvEnterAsTab1: TJvEnterAsTab

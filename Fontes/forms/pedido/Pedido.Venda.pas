@@ -14,8 +14,9 @@ uses
   Dominio.Entidades.TFactory, Dao.IDaoPedido, Dao.IDaoVendedor, Dao.IDaoProdutos, Dao.IDaoCliente, JvExExtCtrls, JvExtComponent, JvClock, JvExControls, JvNavigationPane,
   Vcl.Imaging.jpeg, Util.VclFuncoes, Dao.IDaoParcelas, Orcamento.Criar, Vcl.StdCtrls,
   Pedido.InformaParceiro, Dominio.Entidades.TParceiro, parceiro.InformaPagto,
-  Vcl.Buttons, Vcl.Imaging.pngimage, Pedido.Venda.IPart, Vcl.WinXCtrls, Pedido.Venda.Part.Item, Pedido.Venda.Part.ItemCancelamento, Pedido.Venda.Part.LogoItens, VCLTee.TeCanvas,
-  Vcl.AutoComplete;
+  Vcl.Buttons, Vcl.Imaging.pngimage, Pedido.Venda.IPart, Vcl.WinXCtrls, Pedido.Venda.Part.Item,
+  Pedido.Venda.Part.ItemCancelamento, Pedido.Venda.Part.LogoItens, VCLTee.TeCanvas,
+  Vcl.AutoComplete, Dominio.Entidades.Pedido.Pagamentos.Pagamento;
 
 type
 
@@ -131,7 +132,7 @@ type
     Label20: TLabel;
     Label22: TLabel;
     Label39: TLabel;
-    Edit_Troco: TJvCalcEdit;
+    edtTroco: TJvCalcEdit;
     edtValorRecebido: TJvCalcEdit;
     scrBoxPagamentos: TScrollBox;
     tsProduto: TTabSheet;
@@ -256,6 +257,8 @@ type
     function MontaDescricaoPesquisaProduto(const Item: TProduto): string;
 
     procedure WMGetMinmaxInfo(var Msg: TWMGetMinmaxInfo); message WM_GETMINMAXINFO;
+    procedure Pagamento;
+    procedure BindPagamento(aPagamentos: TPEDIDOPAGAMENTO);
     { Private declarations }
 
   public
@@ -271,13 +274,28 @@ implementation
 uses
   Util.Funcoes, Pedido.Parcelamento, Pedido.SelecionaCliente, Util.Exceptions,
   Consulta.Produto, Pedido.CancelarItem, Filtro.Pedidos,
-  Pedido.Observacao, Dao.IDaoEmitente, Dominio.Entidades.TEmitente, Relatorio.TRPedido;
+  Pedido.Observacao, Dao.IDaoEmitente, Dominio.Entidades.TEmitente, Relatorio.TRPedido,
+  Pedido.Pagamento, Pedido.Venda.Part.Pagamento;
 
 resourcestring
   StrPesquisa = 'PESQUISA...';
 
 {$R *.dfm}
 
+
+procedure TFrmPedidoVenda.BindPagamento(aPagamentos: TPEDIDOPAGAMENTO);
+begin
+  TFramePedidoVendaPagamento
+    .new(nil)
+    .setParams([aPagamentos])
+    .SetParent(scrBoxPagamentos)
+    .setOnObjectChange(
+    procedure(aobj: TObject)
+    begin
+      aobj.Free;
+    end)
+    .setup;
+end;
 
 procedure TFrmPedidoVenda.FinalizaVenda;
 var
@@ -291,10 +309,10 @@ begin
 
     Cliente := getClienteVenda(Pedido.Cliente);
 
-    if (not Assigned(Cliente)) or (Cliente.CODIGO = '000000') or (Cliente.CODIGO = '') then
-      exit;
+    // if (not Assigned(Cliente)) or (Cliente.CODIGO = '000000') or (Cliente.CODIGO = '') then
+    // exit;
 
-    if TFactory.Parametros.BLOQUEARCLIENTECOMATRASO then
+    if TFactory.Parametros.BLOQUEARCLIENTECOMATRASO and Assigned(Cliente) then
     begin
       TotalParcelas := daoParcelas.GetNumeroDeParcelasVencidas(now, Cliente.CODIGO);
       if TotalParcelas > 0 then
@@ -303,12 +321,15 @@ begin
 
     Pedido.Cliente := Cliente;
 
-    ParcelaPedido();
+    Pagamento();
 
-    if Pedido.parcelas.Count = 0 then
+    // ParcelaPedido();
+    //
+    if Pedido.Pagamentos.ValorRestante > 0 then
       exit;
 
-    Pedido.AddParceiro(GetParceiroVenda());
+    if TFactory.Parametros.INFORMARPARCEIRONAVENDA then
+      Pedido.AddParceiro(GetParceiroVenda());
 
     GetObservacao();
 
@@ -724,21 +745,51 @@ begin
 
 end;
 
-procedure TFrmPedidoVenda.ParcelaPedido;
+procedure TFrmPedidoVenda.Pagamento;
 begin
-  FrmParcelamento := TFrmParcelamento.Create(self);
+  LimpaScrollBox(scrBoxPagamentos);
+  pgcEsquerdo.ActivePage := tsPagamento;
+  FrmPagamento := TFrmPagamento.Create(self);
   try
-    FrmParcelamento.Pedido := Pedido;
-    FrmParcelamento.ShowModal;
+    FrmPagamento.Pedido := Pedido;
+    FrmPagamento.ShowModal;
 
-    if Pedido.parcelas.Count = 0 then
+    if Pedido.Pagamentos.FormasDePagamento.Count = 0 then
       exit;
 
-    DaoPedido.GravaParcelas(Pedido.parcelas);
+    DaoPedido.GravaPgamento(Pedido.Pagamentos);
+
+    Pedido.Troco := Pedido.Pagamentos.Troco;
+    Pedido.VALORACRESCIMO := Pedido.Pagamentos.VALORACRESCIMO;
+
+    self.edtTroco.Text := FormatCurr('R$ ###,##0.00', Pedido.Pagamentos.Troco);
+    self.edtValorRecebido.Text := FormatCurr('R$ ###,##0.00', Pedido.Pagamentos.ValorRecebido);
+
+    for var pagto in Pedido.Pagamentos.FormasDePagamento do
+    begin
+      BindPagamento(pagto);
+    end;
 
   finally
-    FrmParcelamento.Free;
+    FrmPagamento.Free;
   end;
+end;
+
+procedure TFrmPedidoVenda.ParcelaPedido;
+begin
+  // FrmParcelamento := TFrmParcelamento.Create(self);
+  // try
+  // FrmParcelamento.Pedido := Pedido;
+  // FrmParcelamento.ShowModal;
+  //
+  // if Pedido.parcelas.Count = 0 then
+  // exit;
+  //
+  // DaoPedido.GravaParcelas(Pedido.parcelas);
+  //
+  // finally
+  // FrmParcelamento.Free;
+  // end;
 end;
 
 procedure TFrmPedidoVenda.PesquisaProduto;
@@ -758,28 +809,28 @@ begin
 
       Produto.Free;
 
-//      case FForma of
-//        FLeitor:
-//          begin
-//            medtCodigo.Text := Produto.CODIGO;
-//            FreeAndNil(Produto);
-//          end;
-//        FDescricao:
-//          begin
-//            idx := cbbProduto.Items.IndexOf(Produto.DESCRICAO);
-//
-//            if idx >= 0 then
-//            begin
-//              cbbProduto.ItemIndex := idx;
-//              FreeAndNil(Produto);
-//            end
-//            else
-//            begin
-//              idx := cbbProduto.Items.AddObject(Produto.DESCRICAO, Produto);
-//              cbbProduto.ItemIndex := idx;
-//            end;
-//          end;
-    //  end;
+      // case FForma of
+      // FLeitor:
+      // begin
+      // medtCodigo.Text := Produto.CODIGO;
+      // FreeAndNil(Produto);
+      // end;
+      // FDescricao:
+      // begin
+      // idx := cbbProduto.Items.IndexOf(Produto.DESCRICAO);
+      //
+      // if idx >= 0 then
+      // begin
+      // cbbProduto.ItemIndex := idx;
+      // FreeAndNil(Produto);
+      // end
+      // else
+      // begin
+      // idx := cbbProduto.Items.AddObject(Produto.DESCRICAO, Produto);
+      // cbbProduto.ItemIndex := idx;
+      // end;
+      // end;
+      // end;
 
     end;
 
@@ -897,7 +948,7 @@ begin
   aPart
     .setParams(aParams)
     .SetParent(aParent)
-    .SetUp;
+    .setup;
 end;
 
 procedure TFrmPedidoVenda.IncializaVariaveis;
@@ -913,7 +964,11 @@ begin
   lblTotalItens.Caption := '0';
   FblEmVEnda := false;
   NSeqItem := 1;
-  FreeAndNil(Pedido);
+  if Assigned(Pedido) then
+  begin
+    // Pedido.Pagamentos.removeObserver(Pedido);
+    FreeAndNil(Pedido);
+  end;
   cbbProduto.Text := '';
 
   case FForma of
@@ -936,7 +991,7 @@ begin
   end;
 
   try
-    ExibePart(TPedidoVendaPartLogoItens.New(nil), scrItens, []);
+    ExibePart(TPedidoVendaPartLogoItens.new(nil), scrItens, []);
   except
     on E: Exception do
   end;
@@ -1054,7 +1109,7 @@ end;
 procedure TFrmPedidoVenda.OnExcluiItem(Item: TItemPedido);
 begin
   DaoPedido.ExcluiItem(Item);
-  ExibePart(TPedidoVendaPartItemCancelamento.New(nil), scrItens, [Item]);
+  ExibePart(TPedidoVendaPartItemCancelamento.new(nil), scrItens, [Item]);
 end;
 
 procedure TFrmPedidoVenda.OnParcelas(parcelas: TObjectList<TParcelas>);
@@ -1078,6 +1133,14 @@ begin
       raise Exception.Create('Falha ao obter volume no evento');
   end;
 
+  try
+    self.edtTroco.Text := FormatCurr('R$ ###,##0.00', Pedido.Pagamentos.Troco);
+    self.edtValorRecebido.Text := FormatCurr('R$ ###,##0.00', Pedido.Pagamentos.ValorRecebido);
+  except
+    on E: Exception do
+      raise Exception.Create('Falha ao obter troco no evento');
+  end;
+
 end;
 
 procedure TFrmPedidoVenda.LimpaScrollBox(aScroll: TScrollBox);
@@ -1095,7 +1158,7 @@ begin
   DaoPedido.VendeItem(Item);
   DaoPedido.AtualizaPedido(Pedido);
 
-  ExibePart(TPedidoVendaFramePartItem.New(nil), scrItens, [Item]);
+  ExibePart(TPedidoVendaFramePartItem.new(nil), scrItens, [Item]);
 
   lblValorTotalItem.Caption := FloatToStrF(Item.VALOR_TOTAL, ffNumber, 9, 2);
   lblValorUnitarioItem.Caption := FloatToStrF(Item.VALOR_UNITA, ffNumber, 9, 2);

@@ -348,9 +348,9 @@ inherited frmDetalhesPedido: TfrmDetalhesPedido
       object Label10: TLabel
         Left = 572
         Top = 311
-        Width = 122
+        Width = 113
         Height = 19
-        Caption = 'Valor Parcelar:'
+        Caption = 'Valor L'#237'quido:'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = 6047538
         Font.Height = -16
@@ -428,9 +428,9 @@ inherited frmDetalhesPedido: TfrmDetalhesPedido
       object Label4: TLabel
         Left = 394
         Top = 311
-        Width = 118
+        Width = 52
         Height = 19
-        Caption = 'Valor Entrada:'
+        Caption = 'Troco:'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = 6047538
         Font.Height = -16
@@ -578,7 +578,7 @@ inherited frmDetalhesPedido: TfrmDetalhesPedido
         TabOrder = 4
         DecimalPlacesAlwaysShown = False
       end
-      object edtValorEntrada: TJvCalcEdit
+      object edtTroco: TJvCalcEdit
         Left = 368
         Top = 336
         Width = 149
@@ -1244,6 +1244,52 @@ inherited frmDetalhesPedido: TfrmDetalhesPedido
         RowHeights = (
           17
           17)
+      end
+    end
+    object tsPagamento: TTabSheet
+      Caption = 'Pagamentos'
+      ImageIndex = 5
+      object strGridPagamentos: TStringGrid
+        Left = 0
+        Top = 25
+        Width = 698
+        Height = 362
+        Align = alClient
+        BiDiMode = bdLeftToRight
+        ColCount = 4
+        DefaultRowHeight = 17
+        FixedCols = 0
+        RowCount = 2
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = 5259564
+        Font.Height = -11
+        Font.Name = 'Tahoma'
+        Font.Style = []
+        Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goRowMoving, goTabs, goRowSelect]
+        ParentBiDiMode = False
+        ParentFont = False
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 0
+        ColWidths = (
+          76
+          93
+          107
+          96)
+        RowHeights = (
+          17
+          17)
+      end
+      object Panel7: TPanel
+        Left = 0
+        Top = 0
+        Width = 698
+        Height = 25
+        Align = alTop
+        Alignment = taLeftJustify
+        BevelOuter = bvNone
+        TabOrder = 1
+        ExplicitTop = 8
       end
     end
     object TabSheet4: TTabSheet

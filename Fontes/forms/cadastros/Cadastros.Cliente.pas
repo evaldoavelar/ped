@@ -118,6 +118,7 @@ begin
   inherited;
   Self.FCliente.CADASTRO := now;
   DaoCliente.AtualizaCliente(FCliente);
+  edtPesquisa.Text := FCliente.CODIGO;
 end;
 
 procedure TfrmCadastroCliente.Bind;
@@ -156,14 +157,14 @@ end;
 
 procedure TfrmCadastroCliente.Cancelar;
 var
-  codigo: string;
+  CODIGO: string;
 begin
   try
-    if Assigned(FCliente) and (FCliente.codigo <> '') then
+    if Assigned(FCliente) and (FCliente.CODIGO <> '') then
     begin
-      codigo := FCliente.codigo;
+      CODIGO := FCliente.CODIGO;
       FreeAndNil(FCliente);
-      FCliente := DaoCliente.GeTCliente(codigo);
+      FCliente := DaoCliente.GeTCliente(CODIGO);
       Bind;
     end
     else
@@ -217,7 +218,7 @@ procedure TfrmCadastroCliente.Excluir;
 begin
   inherited;
   try
-    DaoCliente.ExcluirCliente(FCliente.codigo);
+    DaoCliente.ExcluirCliente(FCliente.CODIGO);
     FreeAndNil(FCliente);
     Cancelar;
   except
@@ -250,8 +251,9 @@ procedure TfrmCadastroCliente.IncluirEntity;
 begin
   inherited;
   Self.FCliente.CADASTRO := now;
-  FCliente.codigo := DaoCliente.GeraID;
+  FCliente.CODIGO := DaoCliente.GeraID;
   DaoCliente.IncluiCliente(FCliente);
+  edtPesquisa.Text := FCliente.CODIGO;
 end;
 
 procedure TfrmCadastroCliente.FormDestroy(Sender: TObject);
@@ -314,8 +316,8 @@ begin
       if Assigned(frmConsultaCliente.Cliente) then
       begin
         FreeAndNil(FCliente);
-        Self.FCliente := DaoCliente.GeTCliente(frmConsultaCliente.Cliente.codigo);
-        edtPesquisa.Text := Self.FCliente.codigo;
+        Self.FCliente := DaoCliente.GeTCliente(frmConsultaCliente.Cliente.CODIGO);
+        edtPesquisa.Text := Self.FCliente.CODIGO;
         Bind();
         inherited;
       end

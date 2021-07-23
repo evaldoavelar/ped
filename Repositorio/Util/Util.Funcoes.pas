@@ -42,14 +42,170 @@ type
     // class procedure AlteraComponentsColor()
 
     class procedure ReplaceTimer(value: TDateTime); static;
-
+    class function ValidaCPF(cpfcnpj: string): Boolean;
+    class function ValidaCNPJ(CNPJ: string): Boolean; static;
     class function IFF<T>(aExpressao: Boolean; aResultFalse, aResultTrue: T): T; static;
 
   end;
 
 implementation
 
+uses
+  System.StrUtils;
+
 { TUtil }
+
+class function TUtil.ValidaCPF(cpfcnpj: string): Boolean;
+var
+  i: Integer;
+  Want: Char;
+  Wvalid: Boolean;
+  Wdigit1, Wdigit2: Integer;
+
+begin
+
+  if cpfcnpj = '' then
+  begin
+    Result := False;
+    Exit;
+  end;
+
+  Wdigit1 := 0;
+  Wdigit2 := 0;
+  Want := cpfcnpj[1]; // variavel para testar se o cpfcnpj é repetido como 111.111.111-11
+  Delete(cpfcnpj, ansipos('.', cpfcnpj), 1); // retira as mascaras se houver
+  Delete(cpfcnpj, ansipos('.', cpfcnpj), 1);
+  Delete(cpfcnpj, ansipos('-', cpfcnpj), 1);
+
+  if Length(cpfcnpj) <> 11 then
+  begin
+    Result := False;
+    Exit;
+  end;
+
+  // testar se o cpfcnpj é repetido como 111.111.111-11
+  for i := 1 to Length(cpfcnpj) do
+  begin
+    if cpfcnpj[i] <> Want then
+    begin
+      Wvalid := True; // se o cpfcnpj possui um digito diferente ele passou no primeiro teste
+      Break
+    end
+    else
+      Wvalid := False;
+  end;
+  // se o cpfcnpj é composto por numeros repetido retorna falso
+  if Wvalid = False then
+  begin
+    Result := False;
+    Exit;
+  end;
+
+  // executa o calculo para o primeiro verificador
+  for i := 1 to 9 do
+  begin
+    Wdigit1 := Wdigit1 + (StrToInt(cpfcnpj[10 - i]) * (i + 1));
+  end;
+
+  // Wdigit1 :=( (  (11 – (Wdigit1 mod 11) ) mod 11) mod 10 );
+  Wdigit1 := (((11 - (Wdigit1 mod 11)) mod 11) mod 10);
+
+  // verifica se o 1° digito confere
+  if IntToStr(Wdigit1) <> cpfcnpj[10] then
+  begin
+    Result := False;
+    Exit;
+  end;
+
+  for i := 1 to 10 do
+  begin
+    Wdigit2 := Wdigit2 + (StrToInt(cpfcnpj[11 - i]) * (i + 1));
+  end;
+  Wdigit2 := (((11 - (Wdigit2 mod 11)) mod 11) mod 10);
+  { formula do segundo verificador
+    soma=1°*2+2°*3+3°*4.. até 10°*11
+    digito1 = 11 – soma mod 11
+    se digito > 10 digito1 =0
+  }
+
+  // confere o 2° digito verificador
+  if IntToStr(Wdigit2) <> cpfcnpj[11] then
+  begin
+    Result := False;
+    Exit;
+  end;
+
+  // se chegar até aqui o cpf é valido
+  Result := True;
+end;
+
+class function TUtil.ValidaCNPJ(CNPJ: string): Boolean;
+var
+  dg1, dg2: Integer;
+  x, total: Integer;
+  ret: Boolean;
+begin
+  ret := False;
+
+  // Analisa os formatos
+  if Length(CNPJ) = 18 then
+    if (Copy(CNPJ, 3, 1) + Copy(CNPJ, 7, 1) + Copy(CNPJ, 11, 1) + Copy(CNPJ, 16, 1) = '../-') then
+    begin
+      CNPJ := Copy(CNPJ, 1, 2) + Copy(CNPJ, 4, 3) + Copy(CNPJ, 8, 3) + Copy(CNPJ, 12, 4) + Copy(CNPJ, 17, 2);
+      ret := True;
+    end;
+  if Length(CNPJ) = 14 then
+  begin
+    ret := True;
+  end;
+  // Verifica
+  if ret then
+  begin
+    try
+      // 1° digito
+      total := 0;
+      for x := 1 to 12 do
+      begin
+        if x < 5 then
+          inc(total, StrToInt(Copy(CNPJ, x, 1)) * (6 - x))
+        else
+          inc(total, StrToInt(Copy(CNPJ, x, 1)) * (14 - x));
+      end;
+      dg1 := 11 - (total mod 11);
+      if dg1 > 9 then
+        dg1 := 0;
+      // 2° digito
+      total := 0;
+      for x := 1 to 13 do
+      begin
+        if x < 6 then
+          inc(total, StrToInt(Copy(CNPJ, x, 1)) * (7 - x))
+        else
+          inc(total, StrToInt(Copy(CNPJ, x, 1)) * (15 - x));
+      end;
+      dg2 := 11 - (total mod 11);
+      if dg2 > 9 then
+        dg2 := 0;
+      // Validação final
+      if (dg1 = StrToInt(Copy(CNPJ, 13, 1))) and (dg2 = StrToInt(Copy(CNPJ, 14, 1))) then
+        ret := True
+      else
+        ret := False;
+    except
+      ret := False;
+    end;
+    // Inválidos
+    case AnsiIndexStr(CNPJ, ['00000000000000', '11111111111111', '22222222222222', '33333333333333', '44444444444444',
+      '55555555555555', '66666666666666', '77777777777777', '88888888888888', '99999999999999']) of
+
+      0 .. 9:
+        ret := False;
+
+    end;
+  end;
+  Result := ret;
+
+end;
 
 class function TUtil.IFF<T>(aExpressao: Boolean; aResultFalse, aResultTrue: T): T;
 begin

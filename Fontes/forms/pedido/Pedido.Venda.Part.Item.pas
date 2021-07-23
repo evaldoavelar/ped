@@ -27,7 +27,7 @@ type
     function setParams(aObj: array of TObject): IPart;
     function setParent(aParent: TWinControl): IPart;
     function SetUp: IPart;
-
+        function setOnObjectChange(aCallback: TOnObjectChange): IPart;
   public
     class function New(aOwner: TComponent): IPart; virtual;
     constructor Create(aOwner: TComponent); override;
@@ -54,6 +54,12 @@ end;
 class function TPedidoVendaFramePartItem.New(aOwner: TComponent): IPart;
 begin
   result := Self.Create(aOwner);
+end;
+
+function TPedidoVendaFramePartItem.setOnObjectChange(
+  aCallback: TOnObjectChange): IPart;
+begin
+
 end;
 
 function TPedidoVendaFramePartItem.setParams(aObj: array of TObject): IPart;

@@ -7,9 +7,8 @@ inherited FrmParcelamento: TFrmParcelamento
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnShow = FormShow
-  ExplicitTop = -1
   ExplicitWidth = 648
-  ExplicitHeight = 529
+  ExplicitHeight = 530
   PixelsPerInch = 96
   TextHeight = 13
   object pnlCentro: TPanel
@@ -20,8 +19,6 @@ inherited FrmParcelamento: TFrmParcelamento
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 1
-    ExplicitTop = 97
-    ExplicitHeight = 391
     object img2: TImage
       Left = 0
       Top = 3
@@ -657,7 +654,6 @@ inherited FrmParcelamento: TFrmParcelamento
       ParentBackground = False
       ShowCaption = False
       TabOrder = 3
-      ExplicitTop = 8
     end
   end
   object pnl2: TPanel
@@ -676,7 +672,7 @@ inherited FrmParcelamento: TFrmParcelamento
     object Label3: TLabel
       Left = 238
       Top = 6
-      Width = 182
+      Width = 179
       Height = 30
       Anchors = [akTop, akRight]
       Caption = 'VALOR PARCELAR'
@@ -706,7 +702,7 @@ inherited FrmParcelamento: TFrmParcelamento
     object Label6: TLabel
       Left = 462
       Top = 6
-      Width = 153
+      Width = 151
       Height = 30
       Anchors = [akTop, akRight]
       Caption = 'VALOR PEDIDO'
@@ -830,6 +826,7 @@ inherited FrmParcelamento: TFrmParcelamento
         OnEnter = edtValorEntradaEnter
         OnExit = edtValorEntradaExit
         OnKeyPress = edtValorEntradaKeyPress
+        ExplicitHeight = 30
       end
     end
   end
@@ -843,7 +840,6 @@ inherited FrmParcelamento: TFrmParcelamento
     Color = 16382457
     ParentBackground = False
     TabOrder = 2
-    ExplicitTop = 488
     object lbl1: TLabel
       Left = 11
       Top = 15

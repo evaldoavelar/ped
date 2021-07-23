@@ -49,7 +49,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
       Margins.Right = 0
       Margins.Bottom = 0
       ParentCustomHint = False
-      ActivePage = tsProduto
+      ActivePage = tsPagamento
       Align = alClient
       BiDiMode = bdRightToLeftReadingOnly
       DoubleBuffered = False
@@ -68,6 +68,10 @@ object FrmPedidoVenda: TFrmPedidoVenda
       TabOrder = 1
       object tsGeral: TTabSheet
         Caption = 'tsGeral'
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object Image3: TImage
           Left = 0
           Top = 0
@@ -3474,7 +3478,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
             AlignWithMargins = True
             Left = 424
             Top = 35
-            Width = 109
+            Width = 107
             Height = 17
             Alignment = taCenter
             Anchors = [akTop, akRight]
@@ -3486,7 +3490,6 @@ object FrmPedidoVenda: TFrmPedidoVenda
             Font.Style = [fsBold]
             ParentFont = False
             Layout = tlCenter
-            ExplicitLeft = 217
           end
           object Label20: TLabel
             Left = 424
@@ -3524,7 +3527,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
           end
           object Label39: TLabel
             AlignWithMargins = True
-            Left = 214
+            Left = 200
             Top = 11
             Width = 99
             Height = 33
@@ -3540,8 +3543,8 @@ object FrmPedidoVenda: TFrmPedidoVenda
             ParentFont = False
             Layout = tlCenter
           end
-          object Edit_Troco: TJvCalcEdit
-            Left = 132
+          object edtTroco: TJvCalcEdit
+            Left = 114
             Top = 37
             Width = 180
             Height = 39
@@ -9633,7 +9636,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
               AlignWithMargins = True
               Left = 436
               Top = 35
-              Width = 109
+              Width = 107
               Height = 17
               Alignment = taCenter
               Anchors = [akTop, akRight]
@@ -9645,7 +9648,6 @@ object FrmPedidoVenda: TFrmPedidoVenda
               Font.Style = [fsBold]
               ParentFont = False
               Layout = tlCenter
-              ExplicitLeft = 217
             end
             object lblQuantidadeItem: TLabel
               Left = 10
@@ -9686,7 +9688,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
               AlignWithMargins = True
               Left = 166
               Top = 5
-              Width = 128
+              Width = 126
               Height = 20
               Alignment = taCenter
               Anchors = [akTop, akRight]
@@ -9699,7 +9701,6 @@ object FrmPedidoVenda: TFrmPedidoVenda
               ParentFont = False
               Transparent = True
               Layout = tlCenter
-              ExplicitLeft = 150
             end
             object lblValorUnitarioItem: TLabel
               Left = 187
@@ -9752,7 +9753,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
               AlignWithMargins = True
               Left = 453
               Top = 35
-              Width = 109
+              Width = 107
               Height = 17
               Alignment = taCenter
               Anchors = [akTop, akRight]
@@ -9764,7 +9765,6 @@ object FrmPedidoVenda: TFrmPedidoVenda
               Font.Style = [fsBold]
               ParentFont = False
               Layout = tlCenter
-              ExplicitLeft = 217
             end
             object Label38: TLabel
               Left = 453
@@ -9788,7 +9788,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
               AlignWithMargins = True
               Left = 10
               Top = 11
-              Width = 89
+              Width = 86
               Height = 17
               Alignment = taCenter
               Caption = 'VALOR TOTAL'
@@ -10060,7 +10060,6 @@ object FrmPedidoVenda: TFrmPedidoVenda
       ParentBackground = False
       ShowCaption = False
       TabOrder = 1
-      ExplicitTop = 52
     end
     object Panel5: TPanel
       AlignWithMargins = True
@@ -10095,7 +10094,6 @@ object FrmPedidoVenda: TFrmPedidoVenda
         ParentBackground = False
         ShowCaption = False
         TabOrder = 0
-        ExplicitHeight = 42
         object btnIncrementaQuantidade: TSpeedButton
           Left = 96
           Top = 0
@@ -10162,7 +10160,6 @@ object FrmPedidoVenda: TFrmPedidoVenda
           Text = '1'
           OnExit = medtQuantidadeExit
           OnKeyPress = medtQuantidadeKeyPress
-          ExplicitHeight = 42
         end
       end
       object Panel3: TPanel
@@ -10180,7 +10177,6 @@ object FrmPedidoVenda: TFrmPedidoVenda
         Color = clWhite
         ParentBackground = False
         TabOrder = 1
-        ExplicitHeight = 42
         DesignSize = (
           500
           40)
@@ -10228,7 +10224,6 @@ object FrmPedidoVenda: TFrmPedidoVenda
           OnKeyUp = cbbProduto1KeyUp
           DropDownWidth = 600
           MaxRowCount = 0
-          ExplicitHeight = 21
         end
       end
     end
@@ -10247,8 +10242,6 @@ object FrmPedidoVenda: TFrmPedidoVenda
       Color = 15790320
       ParentColor = False
       TabOrder = 3
-      ExplicitTop = 58
-      ExplicitHeight = 446
       object Panel24: TPanel
         AlignWithMargins = True
         Left = 3
@@ -11674,7 +11667,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
         Font.Style = [fsBold]
         ParentFont = False
         Transparent = True
-        ExplicitWidth = 110
+        ExplicitWidth = 109
       end
       object lablIns: TLabel
         AlignWithMargins = True
@@ -11827,7 +11820,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
         Font.Style = [fsBold]
         ParentFont = False
         Transparent = True
-        ExplicitWidth = 192
+        ExplicitWidth = 191
       end
       object Panel45: TPanel
         Left = 0

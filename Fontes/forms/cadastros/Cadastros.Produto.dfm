@@ -86,8 +86,8 @@ inherited frmCadastroProduto: TfrmCadastroProduto
           ParentFont = False
         end
         object lbl2: TLabel
-          Left = 18
-          Top = 227
+          Left = 25
+          Top = 265
           Width = 64
           Height = 13
           Caption = 'Fornecedor'
@@ -104,6 +104,19 @@ inherited frmCadastroProduto: TfrmCadastroProduto
           Width = 81
           Height = 13
           Caption = 'Data Cadastro'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = 10639360
+          Font.Height = -11
+          Font.Name = 'Tahoma'
+          Font.Style = [fsBold]
+          ParentFont = False
+        end
+        object Label12: TLabel
+          Left = 2
+          Top = 217
+          Width = 87
+          Height = 13
+          Caption = 'Pre'#231'o de Venda'
           Font.Charset = DEFAULT_CHARSET
           Font.Color = 10639360
           Font.Height = -11
@@ -173,7 +186,7 @@ inherited frmCadastroProduto: TfrmCadastroProduto
           Enabled = False
           ShowButton = False
           ShowNullDate = False
-          TabOrder = 9
+          TabOrder = 10
           OnChange = edtUltimaAlteracaoChange
         end
         object edtUltimVenda: TJvDateEdit
@@ -186,7 +199,7 @@ inherited frmCadastroProduto: TfrmCadastroProduto
           Enabled = False
           ShowButton = False
           ShowNullDate = False
-          TabOrder = 10
+          TabOrder = 11
           OnChange = edtUltimaAlteracaoChange
         end
         object chkBloqueado: TCheckBox
@@ -197,32 +210,14 @@ inherited frmCadastroProduto: TfrmCadastroProduto
           Caption = 'Bloqueado'
           Color = 10639360
           ParentColor = False
-          TabOrder = 8
+          TabOrder = 9
           OnClick = chkBloqueadoClick
         end
         object edtCodFornecedor: TEdit
           Tag = 1
-          Left = 88
-          Top = 222
+          Left = 95
+          Top = 260
           Width = 109
-          Height = 24
-          CharCase = ecUpperCase
-          Color = 15524818
-          Enabled = False
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = 10639360
-          Font.Height = -13
-          Font.Name = 'MS Sans Serif'
-          Font.Style = []
-          ParentFont = False
-          TabOrder = 5
-          OnChange = edtCodigoChange
-        end
-        object edtNomeFornecedor: TEdit
-          Tag = 1
-          Left = 216
-          Top = 222
-          Width = 381
           Height = 24
           CharCase = ecUpperCase
           Color = 15524818
@@ -236,9 +231,27 @@ inherited frmCadastroProduto: TfrmCadastroProduto
           TabOrder = 6
           OnChange = edtCodigoChange
         end
+        object edtNomeFornecedor: TEdit
+          Tag = 1
+          Left = 223
+          Top = 260
+          Width = 381
+          Height = 24
+          CharCase = ecUpperCase
+          Color = 15524818
+          Enabled = False
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = 10639360
+          Font.Height = -13
+          Font.Name = 'MS Sans Serif'
+          Font.Style = []
+          ParentFont = False
+          TabOrder = 7
+          OnChange = edtCodigoChange
+        end
         object btnPesquisaCliente: TBitBtn
-          Left = 605
-          Top = 223
+          Left = 612
+          Top = 261
           Width = 20
           Height = 23
           Caption = '...'
@@ -248,7 +261,7 @@ inherited frmCadastroProduto: TfrmCadastroProduto
           Font.Name = 'MS Sans Serif'
           Font.Style = []
           ParentFont = False
-          TabOrder = 7
+          TabOrder = 8
           OnClick = btnPesquisaClienteClick
         end
         object edtDataCadastro: TJvDateEdit
@@ -261,7 +274,7 @@ inherited frmCadastroProduto: TfrmCadastroProduto
           Enabled = False
           ShowButton = False
           ShowNullDate = False
-          TabOrder = 11
+          TabOrder = 12
           OnChange = edtUltimaAlteracaoChange
         end
         object cbbUND: TComboBox
@@ -301,6 +314,26 @@ inherited frmCadastroProduto: TfrmCadastroProduto
           TabOrder = 4
           OnClick = chkBloqueadoClick
         end
+        object edtPreco1: TJvCalcEdit
+          Left = 98
+          Top = 211
+          Width = 121
+          Height = 27
+          Alignment = taLeftJustify
+          Color = 15524818
+          DisplayFormat = '###,##0.00'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = 10639360
+          Font.Height = -16
+          Font.Name = 'Tahoma'
+          Font.Style = []
+          ParentFont = False
+          ShowButton = False
+          TabOrder = 5
+          DecimalPlacesAlwaysShown = False
+          OnChange = edtCustoMedioChange
+          OnKeyPress = edtCustoMedioKeyPress
+        end
       end
       object ts2: TTabSheet
         Caption = 'Pre'#231'o'
@@ -332,7 +365,7 @@ inherited frmCadastroProduto: TfrmCadastroProduto
           ParentFont = False
         end
         object Label7: TLabel
-          Left = 35
+          Left = 34
           Top = 116
           Width = 102
           Height = 16
@@ -450,6 +483,10 @@ inherited frmCadastroProduto: TfrmCadastroProduto
       object ts3: TTabSheet
         Caption = 'Observa'#231#227'o'
         ImageIndex = 2
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object mmoObservacao: TMemo
           Left = 9
           Top = 24
@@ -474,14 +511,20 @@ inherited frmCadastroProduto: TfrmCadastroProduto
     inherited lblAtalhos: TLabel
       Font.Color = 10639360
     end
+    inherited btnSalvar: TBitBtn
+      Left = 119
+      ExplicitLeft = 119
+    end
+    inherited btnCacenlar: TBitBtn
+      Left = 312
+      ExplicitLeft = 312
+    end
+    inherited btnExcluir: TBitBtn
+      Left = 398
+      ExplicitLeft = 398
+    end
   end
   inherited pnlTop: TPanel
-    inherited Label1: TLabel
-      Font.Color = 10639360
-    end
-    inherited lblCliente: TLabel
-      Font.Color = 10639360
-    end
     inherited edtPesquisa: TSearchBox
       ParentCustomHint = False
       ParentBiDiMode = False

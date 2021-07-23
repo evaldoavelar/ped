@@ -7,13 +7,14 @@ uses
   System.SysUtils, System.Classes,
   FireDAC.Stan.Error,
   Data.DB, FireDAC.Comp.Client,
-  Dao.TDaoBase,Dao.IDaoFormaPagto,
-  Dominio.Entidades.TFormaPagto;
+  Dao.TDaoBase, Dao.IDaoFormaPagto,
+  Dominio.Entidades.TFormaPagto, Dao.TDaoCondicaoPagto, Dao.IDaoCondicaoPagto;
 
 type
 
-  TDaoFormaPagto = class(TDaoBase,IDaoFormaPagto)
+  TDaoFormaPagto = class(TDaoBase, IDaoFormaPagto)
   private
+    FDaoCondicaoPagto: IDaoCondicaoPagto;
     procedure ObjectToParams(ds: TFDQuery; FormaPagtos: TFormaPagto);
     function ParamsToObject(ds: TFDQuery): TFormaPagto;
 
@@ -27,15 +28,23 @@ type
     function Lista(): TDataSet;
     function Listar(campo, valor: string): TDataSet;
     function ListaObject(): TObjectList<TFormaPagto>;
+    function ListaAtivosObject(): TObjectList<TFormaPagto>;
     function GeraID: Integer;
-
+    constructor Create(Connection: TFDConnection); override;
   end;
 
 implementation
 
 { TDaoFormaPagto }
 
-uses Dominio.Entidades.TFactory, Util.Exceptions;
+uses Dominio.Entidades.TFactory, Util.Exceptions, Dominio.Entidades.CondicaoPagto;
+
+constructor TDaoFormaPagto.Create(Connection: TFDConnection);
+begin
+  inherited;
+
+  FDaoCondicaoPagto := TDaoCondicaoPagto.new(Connection);
+end;
 
 procedure TDaoFormaPagto.ExcluirFormaPagto(id: Integer);
 var
@@ -45,6 +54,9 @@ begin
   qry := TFactory.Query();
   try
     try
+
+      FDaoCondicaoPagto.ExcluirPorPagamento(id);
+
       qry.SQL.Text := ''
         + 'delete  '
         + 'from  FORMAPAGTO '
@@ -67,7 +79,7 @@ begin
       end;
     end;
   finally
-      FreeAndNil(qry);
+    FreeAndNil(qry);
   end;
 
 end;
@@ -75,6 +87,7 @@ end;
 procedure TDaoFormaPagto.AtualizaFormaPagtos(FormaPagtos: TFormaPagto);
 var
   qry: TFDQuery;
+  condicao: TCONDICAODEPAGTO;
 begin
 
   qry := TFactory.Query();
@@ -84,8 +97,7 @@ begin
         + 'update FORMAPAGTO '
         + '  set'
         + '     DESCRICAO = :DESCRICAO, '
-        + '     JUROS = :JUROS, '
-        + '     QUANTASVEZES = :QUANTASVEZES   '
+        + '     TIPO = :TIPO '
         + 'where       '
         + '     id = :id ';
 
@@ -94,6 +106,19 @@ begin
 
       qry.ExecSQL;
 
+      for condicao in FormaPagtos.CONDICAODEPAGTO do
+      begin
+        condicao.IDPAGTO := FormaPagtos.id;
+        case condicao.StatusBD of
+          TCONDICAODEPAGTO.TStatusBD.stAdicionado, TCONDICAODEPAGTO.TStatusBD.stCriar:
+            FDaoCondicaoPagto.Inclui(condicao);
+          TCONDICAODEPAGTO.TStatusBD.stDeletado:
+            FDaoCondicaoPagto.Excluir(condicao.id);
+          TCONDICAODEPAGTO.TStatusBD.stAtualizar:
+            FDaoCondicaoPagto.Atualiza(condicao);
+        end;
+      end;
+
     except
       on E: Exception do
       begin
@@ -101,7 +126,7 @@ begin
       end;
     end;
   finally
-      FreeAndNil(qry);
+    FreeAndNil(qry);
   end;
 
 end;
@@ -140,7 +165,7 @@ begin
       end;
     end;
   finally
-      FreeAndNil(qry);
+    FreeAndNil(qry);
   end;
 
 end;
@@ -165,7 +190,10 @@ begin
       if qry.IsEmpty then
         Result := nil
       else
+      begin
         Result := ParamsToObject(qry);
+        Result.CONDICAODEPAGTO := FDaoCondicaoPagto.ListaObject(Result.id);
+      end;
 
     except
       on E: Exception do
@@ -174,7 +202,7 @@ begin
       end;
     end;
   finally
-      FreeAndNil(qry);
+    FreeAndNil(qry);
   end;
 
 end;
@@ -182,6 +210,7 @@ end;
 procedure TDaoFormaPagto.IncluiPagto(FormaPagtos: TFormaPagto);
 var
   qry: TFDQuery;
+  condicao: TCONDICAODEPAGTO;
 begin
 
   if Self.GeTFormaByDescricao(FormaPagtos.DESCRICAO) <> nil then
@@ -194,17 +223,28 @@ begin
         + 'INSERT INTO FORMAPAGTO '
         + '            (id, '
         + '             DESCRICAO, '
-        + '            JUROS, '
-        + '             QUANTASVEZES ) '
+        + '            TIPO ) '
         + 'VALUES      (:id, '
         + '             :DESCRICAO, '
-        + '            :JUROS, '
-        + '             :QUANTASVEZES )';
+        + '            :TIPO )';
 
       ValidaForma(FormaPagtos);
       ObjectToParams(qry, FormaPagtos);
 
       qry.ExecSQL;
+
+      for condicao in FormaPagtos.CONDICAODEPAGTO do
+      begin
+        condicao.IDPAGTO := FormaPagtos.id;
+        case condicao.StatusBD of
+          TCONDICAODEPAGTO.TStatusBD.stAdicionado, TCONDICAODEPAGTO.TStatusBD.stCriar:
+            FDaoCondicaoPagto.Inclui(condicao);
+          TCONDICAODEPAGTO.TStatusBD.stDeletado:
+            FDaoCondicaoPagto.Excluir(condicao.id);
+          TCONDICAODEPAGTO.TStatusBD.stAtualizar:
+            FDaoCondicaoPagto.Atualiza(condicao);
+        end;
+      end;
 
     except
       on E: Exception do
@@ -213,7 +253,7 @@ begin
       end;
     end;
   finally
-      FreeAndNil(qry);
+    FreeAndNil(qry);
   end;
 
 end;
@@ -231,7 +271,7 @@ begin
       + 'from  FORMAPAGTO '
       + 'WHERE '
       + ' UPPER( ' + campo + ') like UPPER( ' + QuotedStr(valor) + ') '
-      + 'order by QUANTASVEZES';
+      + 'order by DESCRICAO';
 
     qry.open;
 
@@ -257,7 +297,7 @@ begin
     qry.SQL.Text := ''
       + 'select *  '
       + 'from  FORMAPAGTO '
-      + 'order by QUANTASVEZES';
+      + 'order by DESCRICAO';
 
     qry.open;
 
@@ -269,6 +309,45 @@ begin
       raise TDaoException.Create('Falha Listar Pagto: ' + E.Message);
     end;
   end;
+end;
+
+function TDaoFormaPagto.ListaAtivosObject: TObjectList<TFormaPagto>;
+var
+  qry: TFDQuery;
+  pagto: TFormaPagto;
+begin
+
+  qry := TFactory.Query();
+  Result := TObjectList<TFormaPagto>.Create();
+  try
+    try
+      qry.SQL.Text := ''
+        + 'select *  '
+        + 'from  FORMAPAGTO '
+        + 'where ativo = 1 '
+        + 'order by DESCRICAO';
+
+      qry.open;
+
+      while not qry.Eof do
+      begin
+        pagto := ParamsToObject(qry);
+        pagto.CONDICAODEPAGTO := FDaoCondicaoPagto.ListaObject(pagto.id);
+        Result.Add(pagto);
+        qry.next;
+      end;
+
+    finally
+      FreeAndNil(qry);
+    end;
+
+  except
+    on E: Exception do
+    begin
+      raise TDaoException.Create('Falha Listar Pagto: ' + E.Message);
+    end;
+  end;
+
 end;
 
 function TDaoFormaPagto.ListaObject: TObjectList<TFormaPagto>;
@@ -283,7 +362,7 @@ begin
       qry.SQL.Text := ''
         + 'select *  '
         + 'from  FORMAPAGTO '
-        + 'order by QUANTASVEZES';
+        + 'order by DESCRICAO';
 
       qry.open;
 
@@ -294,7 +373,7 @@ begin
       end;
 
     finally
-        FreeAndNil(qry);
+      FreeAndNil(qry);
     end;
 
   except
@@ -309,16 +388,16 @@ end;
 procedure TDaoFormaPagto.ObjectToParams(ds: TFDQuery; FormaPagtos: TFormaPagto);
 begin
   try
-    EntityToParams(ds,FormaPagtos);
+    EntityToParams(ds, FormaPagtos);
 
-   // if ds.Params.FindParam('ID') <> nil then
-//      ds.Params.ParamByName('ID').AsInteger := FormaPagtos.id;
-//    if ds.Params.FindParam('DESCRICAO') <> nil then
-//      ds.Params.ParamByName('DESCRICAO').AsString := FormaPagtos.DESCRICAO;
-//    if ds.Params.FindParam('QUANTASVEZES') <> nil then
-//      ds.Params.ParamByName('QUANTASVEZES').AsInteger := FormaPagtos.QUANTASVEZES;
-//    if ds.Params.FindParam('JUROS') <> nil then
-//      ds.Params.ParamByName('JUROS').AsCurrency := FormaPagtos.JUROS;
+    // if ds.Params.FindParam('ID') <> nil then
+    // ds.Params.ParamByName('ID').AsInteger := FormaPagtos.id;
+    // if ds.Params.FindParam('DESCRICAO') <> nil then
+    // ds.Params.ParamByName('DESCRICAO').AsString := FormaPagtos.DESCRICAO;
+    // if ds.Params.FindParam('QUANTASVEZES') <> nil then
+    // ds.Params.ParamByName('QUANTASVEZES').AsInteger := FormaPagtos.QUANTASVEZES;
+    // if ds.Params.FindParam('JUROS') <> nil then
+    // ds.Params.ParamByName('JUROS').AsCurrency := FormaPagtos.JUROS;
 
   except
     on E: Exception do
@@ -330,12 +409,12 @@ function TDaoFormaPagto.ParamsToObject(ds: TFDQuery): TFormaPagto;
 begin
   try
     Result := TFormaPagto.Create();
-    FieldsToEntity(ds,Result);
+    FieldsToEntity(ds, Result);
 
-   // Result.id := ds.FieldByName('ID').AsInteger;
-//    Result.DESCRICAO := ds.FieldByName('DESCRICAO').AsString;
-//    Result.QUANTASVEZES := ds.FieldByName('QUANTASVEZES').AsInteger;
-//    Result.JUROS := ds.FieldByName('JUROS').AsCurrency;
+    // Result.id := ds.FieldByName('ID').AsInteger;
+    // Result.DESCRICAO := ds.FieldByName('DESCRICAO').AsString;
+    // Result.QUANTASVEZES := ds.FieldByName('QUANTASVEZES').AsInteger;
+    // Result.JUROS := ds.FieldByName('JUROS').AsCurrency;
 
   except
     on E: Exception do
@@ -347,9 +426,6 @@ procedure TDaoFormaPagto.ValidaForma(FormaPagtos: TFormaPagto);
 begin
   if FormaPagtos.DESCRICAO = '' then
     raise Exception.Create('Descrição do Pagamento não informado');
-
-  if FormaPagtos.QUANTASVEZES <= 0 then
-    raise Exception.Create('Valor inválido para quantas vezes');
 
 end;
 

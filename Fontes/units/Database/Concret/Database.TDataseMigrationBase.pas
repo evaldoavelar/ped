@@ -50,7 +50,8 @@ uses
   Dominio.Entidades.TItemPedido,
   Dominio.Entidades.TParcelas,
   Impressao.TParametrosImpressora,
-  Util.Funcoes, Dominio.Entidades.TEmitente, Dominio.Entidades.TFornecedor, Dominio.Entidades.TFormaPagto, Dominio.Entidades.TProduto;
+  Util.Funcoes, Dominio.Entidades.TEmitente, Dominio.Entidades.TFornecedor, Dominio.Entidades.TFormaPagto, Dominio.Entidades.TProduto, Dominio.Entidades.CondicaoPagto,
+  Dominio.Entidades.Pedido.Pagamentos.Pagamento;
 
 function TDataseMigrationBase.getScript(Entity: TClass): TStringList;
 var
@@ -83,7 +84,7 @@ end;
 
 procedure TDataseMigrationBase.Migrate;
 const
-  Objetos: array [0 .. 17] of TClass = (
+  Objetos: array [0 .. 19] of TClass = (
     TAUTOINC,
     TEmitente,
     TCliente,
@@ -94,6 +95,8 @@ const
     TParceiro,
     TPedido,
     TItemPedido,
+    TCONDICAODEPAGTO,
+    TPEDIDOPAGAMENTO,
     TParcelas,
     TParametros,
     TParametrosImpressora,
@@ -173,14 +176,19 @@ begin
     FreeAndNil(Emitente);
 
     FormaPagto := TFormaPagto.create;
-    for I := 1 to 24 do
+
+    FormaPagto.ID := TFactory.DaoFormaPagto.GeraID;
+    FormaPagto.DESCRICAO := 'DINHEIRO';
+
+    with FormaPagto.AddCondicao do
     begin
-      FormaPagto.ID := TFactory.DaoFormaPagto.GeraID;
-      FormaPagto.DESCRICAO := Format('%dx', [I]);
-      FormaPagto.QUANTASVEZES := I;
-      FormaPagto.JUROS := 0;
-      TFactory.DaoFormaPagto.IncluiPagto(FormaPagto);
+      IDPAGTO := FormaPagto.ID;
+      DESCRICAO := 'À VISTA';
+      QUANTASVEZES := 1;
+      ACRESCIMO := 0;
     end;
+
+    TFactory.DaoFormaPagto.IncluiPagto(FormaPagto);
 
     FreeAndNil(FormaPagto);
 

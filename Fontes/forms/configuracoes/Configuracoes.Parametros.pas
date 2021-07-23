@@ -64,6 +64,7 @@ type
     lbl1: TLabel;
     edtValidadeOrcamento: TEdit;
     rgPesquisaPor: TRadioGroup;
+    chkInformarParceiroNaVenda: TCheckBox;
     procedure edtRazaoSocialChange(Sender: TObject);
     procedure actOkExecute(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -142,7 +143,7 @@ begin
   FParametros.Bind('Impressora.IMPRIMIRITENS2VIA', chkImprimirItens2Via, 'Checked');
   FParametros.Bind('VALIDADEORCAMENTO', edtValidadeOrcamento, 'Text');
   FParametros.Bind('PESQUISAPRODUTOPOR', rgPesquisaPor, 'ItemIndex');
-
+  FParametros.Bind('INFORMARPARCEIRONAVENDA', chkInformarParceiroNaVenda, 'Checked');
 end;
 
 procedure TFrmConfiguracoes.cbxModeloChange(Sender: TObject);

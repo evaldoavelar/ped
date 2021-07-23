@@ -7,25 +7,28 @@ uses
   Vcl.Graphics, Vcl.ExtCtrls, Vcl.Imaging.jpeg,
   Data.DB, FireDAC.Comp.Client, Dao.IDaoPedido,
   Dao.TDaoBase,
-  Dominio.Entidades.TItemPedido, Dominio.Entidades.TPedido, Dominio.Entidades.TParcelas, Helper.TProdutoVenda, Dao.IDaoParceiro, Dao.TDaoParceiro, Dao.TDaoParceiroVenda;
+  Dominio.Entidades.TItemPedido, Dominio.Entidades.TPedido, Dominio.Entidades.TParcelas,
+  Helper.TProdutoVenda, Dao.IDaoParceiro, Dao.TDaoParceiro, Dao.TDaoParceiroVenda,
+  Dominio.Entidades.Pedido.Pagamentos.Pagamento,
+  Dominio.Entidades.Pedido.Pagamentos;
 
 type
 
   TDaoPedido = class(TDaoBase, IDaoPedido)
   private
     FProperty1: Integer;
-    procedure ObjectToParams(ds: TFDQuery; pedido: TPedido);
+    procedure ObjectToParams(ds: TFDQuery; Pedido: TPedido);
     function ParamsToObject(ds: TFDQuery): TPedido;
-    procedure Valida(pedido: TPedido);
-    procedure SetProperty1(val: Integer);
+    procedure Valida(Pedido: TPedido);
+
   public
-    procedure AbrePedido(pedido: TPedido);
+    procedure AbrePedido(Pedido: TPedido);
     procedure VendeItem(Item: TItemPedido);
     procedure ExcluiItem(Item: TItemPedido);
-    procedure GravaParcelas(parcelas: TObjectList<TParcelas>);
-    procedure AtualizaPedido(pedido: TPedido);
-    procedure AdicionaComprovante(pedido: TPedido);
-    procedure FinalizaPedido(pedido: TPedido);
+    procedure GravaPgamento(Pagamentos: TPAGAMENTOS);
+    procedure AtualizaPedido(Pedido: TPedido);
+    procedure AdicionaComprovante(Pedido: TPedido);
+    procedure FinalizaPedido(Pedido: TPedido);
     function getPedido(id: Integer): TPedido;
     function GeraID: Integer;
     function Listar(campo, valor: string; dataInicio, dataFim: TDate): TDataSet; overload;
@@ -41,7 +44,7 @@ type
 implementation
 
 uses
-  Util.Exceptions, Dao.TDaoItemPedido, Dao.TDaoParcelas, Dao.TDaoVendedor, Dao.TDaoCliente, Dominio.Entidades.TFactory;
+  Util.Exceptions, Dao.TDaoItemPedido, Dao.TDaoParcelas, Dao.TDaoVendedor, Dao.TDaoCliente, Dominio.Entidades.TFactory, Dao.TDaoFormaPagto, Dao.TDAOPedidoPagamento;
 
 { TDaoPedido }
 
@@ -57,7 +60,7 @@ begin
     qry.SQL.Text := ''
       + 'SELECT pr.codigo, '
       + '       pr.descricao, '
-      + '       Count(it.codproduto) quantidade, '
+      + '       Sum(it.qtd) quantidade, '
       + '       Sum(it.valor_total)  total '
       + 'FROM   produto pr, '
       + '       itempedido it, '
@@ -101,7 +104,7 @@ begin
 
 end;
 
-procedure TDaoPedido.AdicionaComprovante(pedido: TPedido);
+procedure TDaoPedido.AdicionaComprovante(Pedido: TPedido);
 var
   qry: TFDQuery;
 begin
@@ -113,7 +116,7 @@ begin
       + 'SET    COMPROVANTE = :COMPROVANTE '
       + 'WHERE  id = :id';
 
-    ObjectToParams(qry, pedido);
+    ObjectToParams(qry, Pedido);
 
     try
       qry.ExecSQL;
@@ -129,7 +132,7 @@ begin
 
 end;
 
-procedure TDaoPedido.AtualizaPedido(pedido: TPedido);
+procedure TDaoPedido.AtualizaPedido(Pedido: TPedido);
 var
   qry: TFDQuery;
 begin
@@ -150,10 +153,12 @@ begin
       + '       DATACANCELAMENTO = :DATACANCELAMENTO,'
       + '       codcliente = :CODCLIENTE, '
       + '       HORAPEDIDO = :HORAPEDIDO, '
+      + '       TROCO = :TROCO, '
+      + '       VALORACRESCIMO = :VALORACRESCIMO, '
       + '       STATUS = :STATUS '
       + 'WHERE  id = :id';
 
-    ObjectToParams(qry, pedido);
+    ObjectToParams(qry, Pedido);
 
     try
       qry.ExecSQL;
@@ -179,15 +184,15 @@ begin
 
 end;
 
-procedure TDaoPedido.FinalizaPedido(pedido: TPedido);
+procedure TDaoPedido.FinalizaPedido(Pedido: TPedido);
 var
   qry: TFDQuery;
 begin
 
-  Valida(pedido);
+  Valida(Pedido);
 
-  if pedido.Cliente.CODIGO = '000000' then
-    raise TValidacaoException.Create('O Consulmidor do pedido precisa ser identificado');
+  // if pedido.Cliente.CODIGO = '000000' then
+  // raise TValidacaoException.Create('O Consulmidor do pedido precisa ser identificado');
 
   qry := TFactory.Query();
   try
@@ -201,10 +206,12 @@ begin
       + '       status = :STATUS, '
       + '       CODPARCEIRO = :CODPARCEIRO, '
       + '       NOMEPARCEIRO = :NOMEPARCEIRO, '
+      + '       TROCO = :TROCO, '
+      + '       VALORACRESCIMO = :VALORACRESCIMO, '
       + '       codcliente = :codcliente '
       + 'WHERE  id = :id';
 
-    ObjectToParams(qry, pedido);
+    ObjectToParams(qry, Pedido);
 
     try
       qry.ExecSQL;
@@ -259,22 +266,23 @@ begin
 
 end;
 
-procedure TDaoPedido.GravaParcelas(parcelas: TObjectList<TParcelas>);
-VAR
-  DAOParcelas: TDaoParcelas;
-  I: Integer;
+procedure TDaoPedido.GravaPgamento(Pagamentos: TPAGAMENTOS);
+var
+  DaoFormaPagto: TDAOPedidoPagamento;
+  pagto: TPEDIDOPAGAMENTO;
 begin
-  DAOParcelas := TDaoParcelas.Create(Self.FConnection);
+  DaoFormaPagto := TDAOPedidoPagamento.Create(Self.FConnection);
 
-  for I := 0 to parcelas.Count - 1 do
+  for pagto in Pagamentos.FormasDePagamento do
   begin
-    if DAOParcelas.GeTParcela(parcelas.Items[I].NUMPARCELA, parcelas.Items[I].IDPEDIDO) = nil then
-      DAOParcelas.IncluiParcelas(parcelas.Items[I])
+    if DaoFormaPagto.GetPAGTO(pagto.SEQ, pagto.IDPEDIDO) = nil then
+      DaoFormaPagto.Inclui(pagto)
     else
-      DAOParcelas.AtualizaParcelas(parcelas.Items[I]);
+      DaoFormaPagto.Atualiza(pagto);
   end;
 
-  FreeAndNil(DAOParcelas);
+  FreeAndNil(DaoFormaPagto);
+
 end;
 
 function TDaoPedido.Listar(campo, valor: string): TDataSet;
@@ -384,11 +392,11 @@ begin
 
 end;
 
-procedure TDaoPedido.AbrePedido(pedido: TPedido);
+procedure TDaoPedido.AbrePedido(Pedido: TPedido);
 var
   qry: TFDQuery;
 begin
-  Valida(pedido);
+  Valida(Pedido);
 
   qry := TFactory.Query();
   try
@@ -426,7 +434,7 @@ begin
       + '              :CODPARCEIRO, '
       + '              :HORAPEDIDO)';
 
-    ObjectToParams(qry, pedido);
+    ObjectToParams(qry, Pedido);
 
     try
       qry.ExecSQL;
@@ -441,34 +449,38 @@ begin
   end;
 end;
 
-procedure TDaoPedido.ObjectToParams(ds: TFDQuery; pedido: TPedido);
+procedure TDaoPedido.ObjectToParams(ds: TFDQuery; Pedido: TPedido);
 begin
   try
     if ds.Params.FindParam('ID') <> nil then
-      ds.Params.ParamByName('ID').AsInteger := pedido.id;
+      ds.Params.ParamByName('ID').AsInteger := Pedido.id;
     if ds.Params.FindParam('NUMERO') <> nil then
-      ds.Params.ParamByName('NUMERO').Value := pedido.NUMERO;
+      ds.Params.ParamByName('NUMERO').Value := Pedido.NUMERO;
     if ds.Params.FindParam('DATAPEDIDO') <> nil then
-      ds.Params.ParamByName('DATAPEDIDO').AsDate := pedido.DATAPEDIDO;
+      ds.Params.ParamByName('DATAPEDIDO').AsDate := Pedido.DATAPEDIDO;
     if ds.Params.FindParam('OBSERVACAO') <> nil then
-      ds.Params.ParamByName('OBSERVACAO').AsString := pedido.OBSERVACAO;
+      ds.Params.ParamByName('OBSERVACAO').AsString := Pedido.OBSERVACAO;
     if ds.Params.FindParam('VALORBRUTO') <> nil then
-      ds.Params.ParamByName('VALORBRUTO').AsCurrency := pedido.VALORBRUTO;
+      ds.Params.ParamByName('VALORBRUTO').AsCurrency := Pedido.VALORBRUTO;
+    if ds.Params.FindParam('TROCO') <> nil then
+      ds.Params.ParamByName('TROCO').AsCurrency := Pedido.TROCO;
+    if ds.Params.FindParam('VALORACRESCIMO') <> nil then
+      ds.Params.ParamByName('VALORACRESCIMO').AsCurrency := Pedido.VALORACRESCIMO;
     if ds.Params.FindParam('VALORDESC') <> nil then
-      ds.Params.ParamByName('VALORDESC').AsCurrency := pedido.VALORDESC;
+      ds.Params.ParamByName('VALORDESC').AsCurrency := Pedido.VALORDESC;
     if ds.Params.FindParam('VALORENTRADA') <> nil then
-      ds.Params.ParamByName('VALORENTRADA').AsCurrency := pedido.ValorEntrada;
+      ds.Params.ParamByName('VALORENTRADA').AsCurrency := Pedido.ValorEntrada;
     if ds.Params.FindParam('VALORLIQUIDO') <> nil then
-      ds.Params.ParamByName('VALORLIQUIDO').AsCurrency := pedido.VALORLIQUIDO;
+      ds.Params.ParamByName('VALORLIQUIDO').AsCurrency := Pedido.VALORLIQUIDO;
     if ds.Params.FindParam('STATUS') <> nil then
-      ds.Params.ParamByName('STATUS').AsString := pedido.STATUS;
+      ds.Params.ParamByName('STATUS').AsString := Pedido.STATUS;
     if ds.Params.FindParam('CODVEN') <> nil then
-      ds.Params.ParamByName('CODVEN').AsString := pedido.Vendedor.CODIGO;
+      ds.Params.ParamByName('CODVEN').AsString := Pedido.Vendedor.CODIGO;
     if ds.Params.FindParam('CODVENCANCELAMENTO') <> nil then
     begin
-      if Assigned(pedido.VendedorCancelamento) then
+      if Assigned(Pedido.VendedorCancelamento) then
       begin
-        ds.Params.ParamByName('CODVENCANCELAMENTO').AsString := pedido.VendedorCancelamento.CODIGO
+        ds.Params.ParamByName('CODVENCANCELAMENTO').AsString := Pedido.VendedorCancelamento.CODIGO
       end
       else
       begin
@@ -477,21 +489,21 @@ begin
       end;
     end;
 
-    if (ds.Params.FindParam('DATACANCELAMENTO') <> nil) and (pedido.DATACANCELAMENTO <> 0) then
-      ds.Params.ParamByName('DATACANCELAMENTO').AsDate := pedido.DATAPEDIDO;
+    if (ds.Params.FindParam('DATACANCELAMENTO') <> nil) and (Pedido.DATACANCELAMENTO <> 0) then
+      ds.Params.ParamByName('DATACANCELAMENTO').AsDate := Pedido.DATAPEDIDO;
 
     if ds.Params.FindParam('CODCLIENTE') <> nil then
-      ds.Params.ParamByName('CODCLIENTE').AsString := pedido.Cliente.CODIGO;
+      ds.Params.ParamByName('CODCLIENTE').AsString := Pedido.Cliente.CODIGO;
     if ds.Params.FindParam('HORAPEDIDO') <> nil then
-      ds.Params.ParamByName('HORAPEDIDO').AsTime := pedido.HORAPEDIDO;
+      ds.Params.ParamByName('HORAPEDIDO').AsTime := Pedido.HORAPEDIDO;
     if ds.Params.FindParam('COMPROVANTE') <> nil then
-      ds.Params.ParamByName('COMPROVANTE').Assign(pedido.COMPROVANTE.Picture.Graphic);
+      ds.Params.ParamByName('COMPROVANTE').Assign(Pedido.COMPROVANTE.Picture.Graphic);
 
-    if (ds.Params.FindParam('CODPARCEIRO') <> nil) and (pedido.ParceiroVenda <> nil) then
-      ds.Params.ParamByName('CODPARCEIRO').AsString := pedido.ParceiroVenda.CODIGO;
+    if (ds.Params.FindParam('CODPARCEIRO') <> nil) and (Pedido.ParceiroVenda <> nil) then
+      ds.Params.ParamByName('CODPARCEIRO').AsString := Pedido.ParceiroVenda.CODIGO;
 
-    if (ds.Params.FindParam('NOMEPARCEIRO') <> nil) and (pedido.ParceiroVenda <> nil) then
-      ds.Params.ParamByName('NOMEPARCEIRO').AsString := pedido.ParceiroVenda.NOME;
+    if (ds.Params.FindParam('NOMEPARCEIRO') <> nil) and (Pedido.ParceiroVenda <> nil) then
+      ds.Params.ParamByName('NOMEPARCEIRO').AsString := Pedido.ParceiroVenda.NOME;
 
   except
     on E: Exception do
@@ -518,6 +530,7 @@ var
   DaoVendedor: TDaoVendedor;
   DaoParceiro: TDaoParceiro;
   DaoCliente: TDaoCliente;
+  DaoPagamentos: TDAOPedidoPagamento;
   DaoItensPedido: TDaoItemPedido;
   DAOParcelas: TDaoParcelas;
   Stream: TMemoryStream;
@@ -530,6 +543,7 @@ begin
     DaoItensPedido := TDaoItemPedido.Create(Self.FConnection);
     DAOParcelas := TDaoParcelas.Create(Self.FConnection);
     DaoParceiro := TDaoParceiro.Create(Self.FConnection);
+    DaoPagamentos := TDAOPedidoPagamento.Create(Self.FConnection);
 
     result := TPedido.Create;
     result.id := ds.FieldByName('ID').AsInteger;
@@ -539,15 +553,16 @@ begin
     // Result.VALORBRUTO := ds.FieldByName('VALORBRUTO').AsCurrency;
     result.VALORDESC := ds.FieldByName('VALORDESC').AsCurrency;
     result.ValorEntrada := ds.FieldByName('VALORENTRADA').AsCurrency;
-    // Result.VALORLIQUIDO := ds.FieldByName('VALORLIQUIDO').AsCurrency;
+    result.TROCO := ds.FieldByName('TROCO').AsCurrency;
+    result.VALORACRESCIMO := ds.FieldByName('VALORACRESCIMO').AsCurrency;
     result.STATUS := ds.FieldByName('STATUS').AsString;
     result.Vendedor := DaoVendedor.GetVendedor(ds.FieldByName('CODVEN').AsString);
     result.VendedorCancelamento := DaoVendedor.GetVendedor(ds.FieldByName('CODVENCANCELAMENTO').AsString);
     result.Cliente := DaoCliente.GeTCliente(ds.FieldByName('CODCLIENTE').AsString);
     result.HORAPEDIDO := ds.FieldByName('HORAPEDIDO').AsDateTime;
     result.AssignedItens(DaoItensPedido.GeTItemsPedido(result.id));
-    result.parcelas := DAOParcelas.GeTParcelas(result.id);
     result.ParceiroVenda := DaoParceiro.GetParceiro(ds.FieldByName('CODPARCEIRO').AsString);
+    result.Pagamentos.AssignedPagamentos(DaoPagamentos.ListaObject(ds.FieldByName('ID').AsInteger));
 
     if not ds.FieldByName('DATACANCELAMENTO').IsNull then
       result.DATACANCELAMENTO := ds.FieldByName('DATACANCELAMENTO').AsDateTime;
@@ -581,6 +596,7 @@ begin
     FreeAndNil(DAOParcelas);
     FreeAndNil(DaoCliente);
     FreeAndNil(DaoParceiro);
+    FreeAndNil(DaoPagamentos);
   except
     on E: Exception do
       raise TDaoException.Create('Falha ao popular objeto Pedido: ' + E.Message);
@@ -599,7 +615,7 @@ begin
     try
       qry.SQL.Text := ''
 
-        + 'SELECT ''Venda Bruta''     Titulo, '
+        + 'SELECT ''Total Vendas''     Titulo, '
         + '       Sum(p.valorbruto) AS Total '
         + 'FROM   pedido p '
         + 'WHERE  p.status = ''F'' '
@@ -607,25 +623,39 @@ begin
         + '       AND p.datapedido <= :dataFim '
         + '       and p.codven = :codven '
 
+      // + 'UNION ALL '
+      //
+      // + 'SELECT ''Total Entradas'' Titulo, '
+      // + '       Sum(p.valorentrada) AS Total '
+      // + 'FROM   pedido p '
+      // + 'WHERE  p.status = ''F'' '
+      // + '       AND p.datapedido >= :dataInicio '
+      // + '       AND p.datapedido <= :dataFim '
+      // + '       and p.codven = :codven '
+
         + 'UNION ALL '
 
-        + 'SELECT ''Total Entradas'' Titulo, '
-        + '       Sum(p.valorentrada) AS Total '
+        + 'SELECT descricao Titulo, '
+        + '       Sum(valor) AS Total '
+        + 'FROM   pedidopagamento pg, '
+        + '       pedido p '
+        + 'WHERE  p.status = ''F'' '
+        + '       AND p.id = pg.idpedido '
+        + '       AND p.datapedido >= :dataInicio '
+        + '       AND p.datapedido <= :dataFim '
+        + '       AND p.codven = :codven '
+        + 'GROUP  BY descricao, '
+        + '          tipo '
+
+        + 'UNION ALL '
+
+        + 'SELECT ''Total Troco'' Titulo, '
+        + '       Sum(p.troco)  AS Total '
         + 'FROM   pedido p '
         + 'WHERE  p.status = ''F'' '
         + '       AND p.datapedido >= :dataInicio '
-        + '       AND p.datapedido <= :dataFim '
-        + '       and p.codven = :codven '
-
-        + 'UNION ALL '
-
-        + 'SELECT ''Total Parcelado''    Titulo, '
-        + '       Sum(p.valorliquido) AS Total '
-        + 'FROM   pedido p '
-        + 'WHERE  p.status = ''F'' '
-        + '       AND p.datapedido >= :dataInicio '
-        + '       AND p.datapedido <= :dataFim '
-        + '       and p.codven = :codven '
+        + '       AND p.datapedido <= :dataFim'
+        + '       AND p.codven = :codven '
 
         + 'UNION ALL '
 
@@ -709,24 +739,38 @@ begin
     try
       qry.SQL.Text := ''
 
-        + 'SELECT ''Venda Bruta''     Titulo, '
-        + '       Sum(p.valorbruto) AS Total '
-        + 'FROM   pedido p '
-        + 'WHERE  p.status = ''F'' '
-        + '       AND p.datapedido >= :dataInicio '
-        + '       AND p.datapedido <= :dataFim '
-
-        + 'UNION ALL '
-        + 'SELECT ''Entradas'' Titulo, '
-        + '       Sum(p.valorentrada) AS Total '
-        + 'FROM   pedido p '
-        + 'WHERE  p.status = ''F'' '
-        + '       AND p.datapedido >= :dataInicio '
-        + '       AND p.datapedido <= :dataFim '
-
-        + 'UNION ALL '
-        + 'SELECT ''Total Parcelado''    Titulo, '
+        + 'SELECT ''Total Vendas''     Titulo, '
         + '       Sum(p.valorliquido) AS Total '
+        + 'FROM   pedido p '
+        + 'WHERE  p.status = ''F'' '
+        + '       AND p.datapedido >= :dataInicio '
+        + '       AND p.datapedido <= :dataFim '
+
+      // + 'UNION ALL '
+      // + 'SELECT ''Entradas'' Titulo, '
+      // + '       Sum(p.valorentrada) AS Total '
+      // + 'FROM   pedido p '
+      // + 'WHERE  p.status = ''F'' '
+      // + '       AND p.datapedido >= :dataInicio '
+      // + '       AND p.datapedido <= :dataFim '
+
+        + 'UNION ALL '
+
+        + 'SELECT descricao Titulo, '
+        + '       Sum(valor) AS Total '
+        + 'FROM   pedidopagamento pg, '
+        + '       pedido p '
+        + 'WHERE  p.status = ''F'' '
+        + '       AND p.id = pg.idpedido '
+        + '       AND p.datapedido >= :dataInicio '
+        + '       AND p.datapedido <= :dataFim '
+        + 'GROUP  BY descricao, '
+        + '          tipo '
+
+        + 'UNION ALL '
+
+        + 'SELECT ''Total Troco'' Titulo, '
+        + '       Sum(p.troco)  AS Total '
         + 'FROM   pedido p '
         + 'WHERE  p.status = ''F'' '
         + '       AND p.datapedido >= :dataInicio '
@@ -816,12 +860,12 @@ begin
 
 end;
 
-procedure TDaoPedido.Valida(pedido: TPedido);
+procedure TDaoPedido.Valida(Pedido: TPedido);
 begin
-  if pedido.Vendedor = nil then
+  if Pedido.Vendedor = nil then
     raise TValidacaoException.Create('Vendedor não associado ao pedido');
 
-  if pedido.Cliente = nil then
+  if Pedido.Cliente = nil then
     raise TValidacaoException.Create('Cliente não associado ao pedido');
 
 end;
@@ -833,10 +877,6 @@ begin
   DaoItemPedido := TDaoItemPedido.Create(Self.FConnection);
   DaoItemPedido.IncluiItemPedido(Item);
   FreeAndNil(DaoItemPedido);
-end;
-
-procedure TDaoPedido.SetProperty1(val: Integer);
-begin
 end;
 
 function TDaoPedido.TotaisParceiro(dataInicio, dataFim: TDate; CodParceiro: string): TList<TPair<string, Currency>>;
@@ -857,7 +897,7 @@ begin
         + 'WHERE  p.status = ''F'' '
         + '       AND p.datapedido >= :dataInicio '
         + '       AND p.datapedido <= :dataFim '
-        + '       and p.CODPARCEIRO = :CODPARCEIRO '    ;
+        + '       and p.CODPARCEIRO = :CODPARCEIRO ';
 
       qry.ParamByName('dataInicio').AsDate := dataInicio;
       qry.ParamByName('dataFim').AsDate := dataFim;
@@ -867,7 +907,7 @@ begin
 
       while not qry.Eof do
       begin
-        result.Add(TPair<string, Currency>.Create(qry.FieldByName('Titulo').AsString,  qry.FieldByName('Total').AsCurrency));
+        result.Add(TPair<string, Currency>.Create(qry.FieldByName('Titulo').AsString, qry.FieldByName('Total').AsCurrency));
         qry.Next;
       end;
 

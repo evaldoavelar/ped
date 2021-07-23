@@ -21,6 +21,7 @@ uses
     function Lista(): TDataSet;
     function Listar(campo, valor: string): TDataSet;
     function ListaObject(): TObjectList<TFormaPagto>;
+    function ListaAtivosObject(): TObjectList<TFormaPagto>;
     function GeraID: Integer;
   end;
 

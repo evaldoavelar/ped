@@ -24,6 +24,7 @@ type
     FImpressora: TParametrosImpressora;
     FVALIDADEORCAMENTO: Integer;
     FPESQUISAPRODUTOPOR: Integer;
+    FINFORMARPARCEIRONAVENDA: Boolean;
 
     function getVENDECLIENTEBLOQUEADO: Boolean;
     procedure setVENDECLIENTEBLOQUEADO(const Value: Boolean);
@@ -40,6 +41,7 @@ type
     procedure SetVALIDADEORCAMENTO(const Value: Integer);
     procedure SetPESQUISAPRODUTOPOR(const Value: Integer);
     function getPESQUISAPRODUTOPOR: Integer;
+    procedure SetINFORMARPARCEIRONAVENDA(const Value: Boolean);
 
   public
     destructor Destroy; override;
@@ -65,6 +67,9 @@ type
 
     [campo('PESQUISAPRODUTOPOR', tpINTEGER, 0, 0, True, '0')]
     property PESQUISAPRODUTOPOR: Integer read getPESQUISAPRODUTOPOR write SetPESQUISAPRODUTOPOR;
+
+    [campo('INFORMARPARCEIRONAVENDA', tpINTEGER, 0, 0, True, '1')]
+    property INFORMARPARCEIRONAVENDA: Boolean read FINFORMARPARCEIRONAVENDA write SetINFORMARPARCEIRONAVENDA;
 
     constructor create; override;
 
@@ -155,6 +160,15 @@ end;
 procedure TParametros.setImpressora(const Value: TParametrosImpressora);
 begin
   Self.FImpressora := Value;
+end;
+
+procedure TParametros.SetINFORMARPARCEIRONAVENDA(const Value: Boolean);
+begin
+  if Value <> FINFORMARPARCEIRONAVENDA then
+  begin
+    FINFORMARPARCEIRONAVENDA := Value;
+    Notify('INFORMARPARCEIRONAVENDA');
+  end;
 end;
 
 procedure TParametros.SetPESQUISAPRODUTOPOR(const Value: Integer);

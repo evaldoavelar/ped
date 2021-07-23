@@ -7,7 +7,7 @@ inherited FrmConfiguracoes: TFrmConfiguracoes
   OnDestroy = FormDestroy
   OnShow = FormShow
   ExplicitWidth = 802
-  ExplicitHeight = 431
+  ExplicitHeight = 432
   PixelsPerInch = 96
   TextHeight = 13
   object pnl1: TPanel
@@ -39,11 +39,15 @@ inherited FrmConfiguracoes: TFrmConfiguracoes
     Top = 0
     Width = 796
     Height = 362
-    ActivePage = ts1
+    ActivePage = ts2
     Align = alClient
     TabOrder = 0
     object ts1: TTabSheet
       Caption = 'Empresa'
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label1: TLabel
         Left = 13
         Top = 3
@@ -552,7 +556,6 @@ inherited FrmConfiguracoes: TFrmConfiguracoes
         Height = 17
         Caption = 'Vender Para Cliente Bloqueado'
         TabOrder = 4
-        Visible = False
         OnClick = chkVenderClienteBloqueadoClick
       end
       object chkAtualizaClienteNaVenda: TCheckBox
@@ -593,7 +596,7 @@ inherited FrmConfiguracoes: TFrmConfiguracoes
         object cbxModelo: TComboBox
           Left = 20
           Top = 36
-          Width = 145
+          Width = 219
           Height = 21
           TabOrder = 0
           OnChange = cbxModeloChange
@@ -652,8 +655,8 @@ inherited FrmConfiguracoes: TFrmConfiguracoes
         OnChange = edtRazaoSocialChange
       end
       object rgPesquisaPor: TRadioGroup
-        Left = 16
-        Top = 136
+        Left = 13
+        Top = 159
         Width = 265
         Height = 49
         Caption = 'Pesquisar Produto na Venda  Por:'
@@ -669,6 +672,15 @@ inherited FrmConfiguracoes: TFrmConfiguracoes
         ParentFont = False
         TabOrder = 5
         OnClick = rgPesquisaPorClick
+      end
+      object chkInformarParceiroNaVenda: TCheckBox
+        Left = 16
+        Top = 125
+        Width = 217
+        Height = 17
+        Caption = 'Informar Parceiro Na Venda'
+        TabOrder = 7
+        OnClick = chkVenderClienteBloqueadoClick
       end
     end
   end

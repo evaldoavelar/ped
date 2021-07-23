@@ -9,7 +9,8 @@ uses
   JvExStdCtrls, JvEdit, JvValidateEdit, JvMaskEdit, JvCheckedMaskEdit, JvDatePickerEdit, Vcl.ActnList,
   Dao.IDaoFormaPagto,
   Dominio.Entidades.TPedido, Dominio.Entidades.TParcelas, Dominio.Entidades.TFormaPagto, Dominio.Entidades.TFactory,
-  System.Actions, Vcl.Imaging.jpeg, Util.VclFuncoes, Vcl.Imaging.pngimage;
+  System.Actions, Vcl.Imaging.jpeg, Util.VclFuncoes, Vcl.Imaging.pngimage,
+  Dominio.Entidades.Pedido.Pagamentos.Pagamento;
 
 type
   TFrmParcelamento = class(TfrmBase)
@@ -69,14 +70,17 @@ type
     pagtos: TObjectList<TFormaPagto>;
 
     daoTFormaPagto: IDaoFormaPagto;
+    FPagto: TPEDIDOPAGAMENTO;
     procedure IncializaComponentes;
     procedure PopulaLista;
     procedure ParcelaPedido;
     procedure OnPedidoChange(ValorLiquido, ValorBruto: currency; Volume: Double);
+    procedure SetPagto(const Value: TPEDIDOPAGAMENTO);
     { Private declarations }
   public
     { Public declarations }
     property Pedido: TPedido read FPedido write FPedido;
+    property Pagto: TPEDIDOPAGAMENTO read FPagto write SetPagto;
   end;
 
 var
@@ -85,7 +89,7 @@ var
 implementation
 
 uses
-  Util.Funcoes, Util.Exceptions;
+  Util.Funcoes, Util.Exceptions, Dominio.Entidades.TFormaPagto.Tipo;
 
 {$R *.dfm}
 
@@ -93,7 +97,7 @@ uses
 procedure TFrmParcelamento.actCancelarExecute(Sender: TObject);
 begin
   inherited;
-  self.Pedido.parcelas.Clear;
+  self.Pagto.parcelas.Clear;
   self.Close;
 end;
 
@@ -315,11 +319,11 @@ end;
 procedure TFrmParcelamento.ParcelaPedido;
 var
   parcela: TParcelas;
-  NumParcelas: integer;
-  VencimentoPrimeiraParcela: Tdate;
+  NumParcelas: Integer;
+  VencimentoPrimeiraParcela: TDate;
 begin
   try
-    NumParcelas := TFormaPagto(lstFormaPagto.Items.Objects[lstFormaPagto.ItemIndex]).quantasVezes;
+    NumParcelas := TFormaPagto(lstFormaPagto.Items.Objects[lstFormaPagto.ItemIndex]).CONDICAODEPAGTO[0].quantasVezes;
     try
       VencimentoPrimeiraParcela := StrToDate(medtData.Text);
     except
@@ -332,10 +336,10 @@ begin
     if VencimentoPrimeiraParcela <= Date then
       raise TValidacaoException.Create('A data de vencimento precisa ser maior que o dia de hoje');
 
-    Pedido.ParcelarPedido(NumParcelas, VencimentoPrimeiraParcela);
+    Pagto.ParcelarPedido(FPedido.Cliente.CODIGO, NumParcelas, VencimentoPrimeiraParcela);
 
     lstParcelas.Clear;
-    for parcela in Pedido.parcelas do
+    for parcela in Pagto.parcelas do
     begin
       lstParcelas.Items.Add(
         TUtil.PadR(IntToStr(parcela.NUMPARCELA) + 'ª', 25, ' ')
@@ -357,15 +361,16 @@ end;
 
 procedure TFrmParcelamento.PopulaLista;
 var
-  pagto: TFormaPagto;
-  I: integer;
+  Pagto: TFormaPagto;
+  I: Integer;
 begin
   try
     pagtos := daoTFormaPagto.ListaObject();
 
-    for pagto in pagtos do
+    for Pagto in pagtos do
     begin
-      lstFormaPagto.Items.AddObject(pagto.DESCRICAO, pagto);
+      if Pagto.TipoPagamento = TTipoPagto.Parcelado then
+        lstFormaPagto.Items.AddObject(Pagto.DESCRICAO, Pagto);
     end;
 
     medtData.Text := '  /  /    ';
@@ -375,6 +380,13 @@ begin
       raise Exception.Create('Falha ao popular lista: ' + E.Message);
   end;
 
+end;
+
+
+
+procedure TFrmParcelamento.SetPagto(const Value: TPEDIDOPAGAMENTO);
+begin
+  FPagto := Value;
 end;
 
 end.

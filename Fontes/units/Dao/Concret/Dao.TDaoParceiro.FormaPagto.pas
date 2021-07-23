@@ -1,6 +1,7 @@
 unit Dao.TDaoParceiro.FormaPagto;
 
 interface
+
 uses
   System.Generics.Collections,
   System.SysUtils, System.Classes,
@@ -11,7 +12,7 @@ uses
 
 type
 
-  TDaoParceiroFormaPagto = class(TDaoBase,IDaoParceiroFormaPagto)
+  TDaoParceiroFormaPagto = class(TDaoBase, IDaoParceiroFormaPagto)
   private
     procedure ObjectToParams(ds: TFDQuery; ParceiroFormaPagtos: TParceiroFormaPagto);
     function ParamsToObject(ds: TFDQuery): TParceiroFormaPagto;
@@ -25,7 +26,8 @@ type
     function GeTFormaByDescricao(DESCRICAO: string): TParceiroFormaPagto;
     function Lista(): TDataSet;
     function Listar(campo, valor: string): TDataSet;
-    function ListaObject(): TObjectList<TParceiroFormaPagto>;
+    function ListaObject(): TObjectList<TParceiroFormaPagto>; overload;
+    function ListarAtivasObject(): TObjectList<TParceiroFormaPagto>; overload;
     function GeraID: Integer;
 
   end;
@@ -66,7 +68,7 @@ begin
       end;
     end;
   finally
-      FreeAndNil(qry);
+    FreeAndNil(qry);
   end;
 
 end;
@@ -99,7 +101,7 @@ begin
       end;
     end;
   finally
-      FreeAndNil(qry);
+    FreeAndNil(qry);
   end;
 
 end;
@@ -138,7 +140,7 @@ begin
       end;
     end;
   finally
-      FreeAndNil(qry);
+    FreeAndNil(qry);
   end;
 
 end;
@@ -172,7 +174,7 @@ begin
       end;
     end;
   finally
-      FreeAndNil(qry);
+    FreeAndNil(qry);
   end;
 
 end;
@@ -209,7 +211,7 @@ begin
       end;
     end;
   finally
-      FreeAndNil(qry);
+    FreeAndNil(qry);
   end;
 
 end;
@@ -232,6 +234,42 @@ begin
     qry.open;
 
     Result := qry;
+
+  except
+    on E: Exception do
+    begin
+      raise TDaoException.Create('Falha Listar Pagto: ' + E.Message);
+    end;
+  end;
+
+end;
+
+function TDaoParceiroFormaPagto.ListarAtivasObject: TObjectList<TParceiroFormaPagto>;
+var
+  qry: TFDQuery;
+begin
+
+  qry := TFactory.Query();
+  Result := TObjectList<TParceiroFormaPagto>.Create();
+  try
+    try
+      qry.SQL.Text := ''
+        + 'select *  '
+        + 'from  ParceiroFormaPagto '
+        + 'where ativo = 1 '
+        + 'order by descricao';
+
+      qry.open;
+
+      while not qry.Eof do
+      begin
+        Result.Add(ParamsToObject(qry));
+        qry.next;
+      end;
+
+    finally
+      FreeAndNil(qry);
+    end;
 
   except
     on E: Exception do
@@ -290,7 +328,7 @@ begin
       end;
 
     finally
-        FreeAndNil(qry);
+      FreeAndNil(qry);
     end;
 
   except
@@ -305,7 +343,7 @@ end;
 procedure TDaoParceiroFormaPagto.ObjectToParams(ds: TFDQuery; ParceiroFormaPagtos: TParceiroFormaPagto);
 begin
   try
-    EntityToParams(ds,ParceiroFormaPagtos);
+    EntityToParams(ds, ParceiroFormaPagtos);
   except
     on E: Exception do
       raise TDaoException.Create('Falha ao associar parâmetros TParceiroFormaPagto: ' + E.Message);
@@ -316,7 +354,7 @@ function TDaoParceiroFormaPagto.ParamsToObject(ds: TFDQuery): TParceiroFormaPagt
 begin
   try
     Result := TParceiroFormaPagto.Create();
-    FieldsToEntity(ds,Result);
+    FieldsToEntity(ds, Result);
 
   except
     on E: Exception do

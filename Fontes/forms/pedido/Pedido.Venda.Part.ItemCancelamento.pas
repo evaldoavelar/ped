@@ -9,7 +9,7 @@ uses
   Pedido.Venda.IPart;
 
 type
-  TPedidoVendaPartItemCancelamento = class(TFrame,IPart)
+  TPedidoVendaPartItemCancelamento = class(TFrame, IPart)
     pnlNumero: TPanel;
     ViewPartVendaItens: TPanel;
     lblDescricao: TLabel;
@@ -20,7 +20,7 @@ type
     function setParams(aObj: array of TObject): IPart;
     function setParent(aParent: TWinControl): IPart;
     function SetUp: IPart;
-
+    function setOnObjectChange(aCallback: TOnObjectChange): IPart;
   public
     class function New(aOwner: TComponent): IPart; virtual;
     constructor Create(aOwner: TComponent); override;
@@ -46,7 +46,13 @@ end;
 
 class function TPedidoVendaPartItemCancelamento.New(aOwner: TComponent): IPart;
 begin
-  result := Self.create(aOwner);
+  result := Self.Create(aOwner);
+end;
+
+function TPedidoVendaPartItemCancelamento.setOnObjectChange(
+  aCallback: TOnObjectChange): IPart;
+begin
+
 end;
 
 function TPedidoVendaPartItemCancelamento.setParams(aObj: array of TObject): IPart;
@@ -59,7 +65,7 @@ begin
   if Length(aObj) = 0 then
     exit;
 
-  for I := 0 to Length(aObj)-1 do
+  for I := 0 to Length(aObj) - 1 do
   begin
     Item := TItemPedido(aObj[I]);
 
