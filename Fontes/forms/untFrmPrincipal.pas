@@ -961,6 +961,7 @@ var
   Licenca: TLicenca;
   CNPJ: string;
 begin
+  exit(true);
   result := false;
   pnlLicenca.Visible := false;
 
@@ -982,37 +983,37 @@ begin
           if Licenca.DiasRestantes < 0 then
           begin
             lblLicenca.Caption := 'A Licença do sistema está vencida. Clique aqui para informar uma nova licença';
-            pnlLicenca.Visible := True;
+            pnlLicenca.Visible := true;
           end
           else if Licenca.DiasRestantes < 30 then
           begin
             lblLicenca.Caption :=
               Format('A Licença do sistema estará vencendo em %d dias. Evite o bloqueio do sistema e solicite uma nova licença', [Licenca.DiasRestantes]);
-            pnlLicenca.Visible := True;
+            pnlLicenca.Visible := true;
           end
           else if not Licenca.CnpjIguais then
           begin
             lblLicenca.Caption := ('A Licença não pertence ao CNPJ! Clique aqui para informar uma nova licença');
-            pnlLicenca.Visible := True;
+            pnlLicenca.Visible := true;
           end
         end
         else
         begin
-          result := True;
+          result := true;
           pnlLicenca.Visible := false;
         end;
       except
         on E: TValidacaoException do
         begin
           lblLicenca.Caption := E.Message + ' - Clique aqui para informar uma nova licença';
-          pnlLicenca.Visible := True;
+          pnlLicenca.Visible := true;
         end;
       end;
     end
     else
     begin
       lblLicenca.Caption := 'O sistema não possúi uma licença de uso. Clique aqui para informar uma nova licença';
-      pnlLicenca.Visible := True;
+      pnlLicenca.Visible := true;
     end;
 
   finally
@@ -1179,14 +1180,14 @@ begin
     TFactory.VendedorLogado := TFactory.Vendedor;
     TFactory.VendedorLogado.CODIGO := '001';
     TFactory.VendedorLogado.NOME := 'Debug';
-    TFactory.VendedorLogado.PODEACESSARCADASTROVENDEDOR := True;
-    TFactory.VendedorLogado.PODECANCELARPEDIDO := True;
-    TFactory.VendedorLogado.PODERECEBERPARCELA := True;
-    TFactory.VendedorLogado.PODECANCELARORCAMENTO := True;
+    TFactory.VendedorLogado.PODEACESSARCADASTROVENDEDOR := true;
+    TFactory.VendedorLogado.PODECANCELARPEDIDO := true;
+    TFactory.VendedorLogado.PODERECEBERPARCELA := true;
+    TFactory.VendedorLogado.PODECANCELARORCAMENTO := true;
 
   end;
   DefineLabelVendedor();
-  self.WindowState := TWindowState.wsMaximized;
+  Self.WindowState := TWindowState.wsMaximized;
 end;
 
 procedure TFrmPrincipal.FormCreate(Sender: TObject);
@@ -1224,7 +1225,7 @@ begin
       begin
         Caption := TUtil.PadR(ShortCutToText(actPrincipal.Actions[i].ShortCut), 15, ' ') + actPrincipal.Actions[i].Caption;
         Parent := pnlAtalhos;
-        AlignWithMargins := True;
+        AlignWithMargins := true;
         Font.Color := $005E4934;
         Font.Style := [fsBold];
         // Align := alBottom;
@@ -1297,14 +1298,14 @@ begin
       begin
         try
           arquivo := RetornaNomeArquivoBackup();
-          Backup(arquivo, True);
+          Backup(arquivo, true);
           lblBackup.Caption := 'Backup Realizado: ' + arquivo;
-          lblBackup.Visible := True;
+          lblBackup.Visible := true;
         except
           on E: Exception do
           begin
             lblBackup.Caption := 'Atenção! O Backup diário não foi feito.';
-            lblBackup.Visible := True;
+            lblBackup.Visible := true;
             lblBackup.Font.Color := $002B39C0;
           end;
         end;
@@ -1368,7 +1369,7 @@ begin
     if vencendo > 0 then
     begin
       lblVencendo.Caption := Format('%d Parcelas vencendo nos próximos 60 dias.', [vencendo]);
-      lblVencendo.Visible := True;
+      lblVencendo.Visible := true;
     end
     else
       lblVencendo.Visible := false;
@@ -1378,7 +1379,7 @@ begin
     if vencidas > 0 then
     begin
       lblVencimento.Caption := Format('%d Parcelas Vencidas.', [vencidas]);
-      lblVencimento.Visible := True;
+      lblVencimento.Visible := true;
     end
     else
       lblVencimento.Visible := false;

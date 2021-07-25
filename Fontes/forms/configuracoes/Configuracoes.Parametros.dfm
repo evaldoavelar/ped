@@ -39,15 +39,11 @@ inherited FrmConfiguracoes: TFrmConfiguracoes
     Top = 0
     Width = 796
     Height = 362
-    ActivePage = ts2
+    ActivePage = ts1
     Align = alClient
     TabOrder = 0
     object ts1: TTabSheet
       Caption = 'Empresa'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label1: TLabel
         Left = 13
         Top = 3
@@ -482,16 +478,16 @@ inherited FrmConfiguracoes: TFrmConfiguracoes
       object edtTelefone: TMaskEdit
         Left = 409
         Top = 270
-        Width = 117
+        Width = 113
         Height = 21
         Color = 15524818
-        EditMask = '\(00\)0000-0000;0;_'
+        EditMask = '\(00\)0000-00000;0;_'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = 10639360
         Font.Height = -11
         Font.Name = 'Tahoma'
         Font.Style = []
-        MaxLength = 13
+        MaxLength = 14
         ParentFont = False
         TabOrder = 14
         Text = ''
