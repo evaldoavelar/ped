@@ -10082,7 +10082,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
         AlignWithMargins = True
         Left = 10
         Top = 5
-        Width = 129
+        Width = 181
         Height = 40
         Margins.Left = 10
         Margins.Top = 5
@@ -10095,7 +10095,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
         ShowCaption = False
         TabOrder = 0
         object btnIncrementaQuantidade: TSpeedButton
-          Left = 96
+          Left = 148
           Top = 0
           Width = 33
           Height = 40
@@ -10139,7 +10139,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
         object medtQuantidade: TEdit
           Left = 33
           Top = 0
-          Width = 63
+          Width = 115
           Height = 40
           Margins.Left = 0
           Margins.Top = 6
@@ -10160,11 +10160,12 @@ object FrmPedidoVenda: TFrmPedidoVenda
           Text = '1'
           OnExit = medtQuantidadeExit
           OnKeyPress = medtQuantidadeKeyPress
+          ExplicitWidth = 83
         end
       end
       object Panel3: TPanel
         AlignWithMargins = True
-        Left = 147
+        Left = 199
         Top = 5
         Width = 500
         Height = 40
@@ -10177,6 +10178,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
         Color = clWhite
         ParentBackground = False
         TabOrder = 1
+        ExplicitLeft = 147
         DesignSize = (
           500
           40)
@@ -11938,7 +11940,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
   end
   object Timer1: TTimer
     OnTimer = Timer1Timer
-    Left = 488
-    Top = 352
+    Left = 125
+    Top = 315
   end
 end

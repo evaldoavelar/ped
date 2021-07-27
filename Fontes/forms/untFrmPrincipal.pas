@@ -116,7 +116,7 @@ type
     CategoryButtons5: TCategoryButtons;
     ilIconsMenu: TImageList;
     actCadastros: TAction;
-    Action2: TAction;
+    actCaixa: TAction;
     actConsultas: TAction;
     actRelatorios: TAction;
     svSubMenu: TSplitView;
@@ -146,6 +146,15 @@ type
     Label35: TLabel;
     Panel45: TPanel;
     actMinimizar: TAction;
+    actSangria: TAction;
+    actSuprimento: TAction;
+    tsCaixa: TTabSheet;
+    CategoryButtons1: TCategoryButtons;
+    actEstoqueAtualizar: TAction;
+    actEstoque: TAction;
+    tsEstoque: TTabSheet;
+    CategoryButtons7: TCategoryButtons;
+    actConsultarEstoque: TAction;
     procedure actPedidoVendaExecute(Sender: TObject);
     procedure imgNFCEDblClick(Sender: TObject);
     procedure actSairExecute(Sender: TObject);
@@ -195,6 +204,12 @@ type
     procedure actAbreMenuExecute(Sender: TObject);
     procedure actAjudaExecute(Sender: TObject);
     procedure actMinimizarExecute(Sender: TObject);
+    procedure actSangriaExecute(Sender: TObject);
+    procedure actSuprimentoExecute(Sender: TObject);
+    procedure actCaixaExecute(Sender: TObject);
+    procedure actEstoqueAtualizarExecute(Sender: TObject);
+    procedure actEstoqueExecute(Sender: TObject);
+    procedure actConsultarEstoqueExecute(Sender: TObject);
   private
     { Private declarations }
     DaoParcelas: IDaoParcelas;
@@ -230,7 +245,9 @@ uses
   Cadastros.Vendedor, Cadastros.Produto, Cadastros.Fornecedor, Configuracoes.Parametros, Splash.Form,
   Dominio.Entidades.TEmitente, Recebimento.ListaParcelas, Sistema.TParametros, Login.FrmLogin,
   Filtro.Vencimento, Filtro.Parcelas,
-  Database.IDataseMigration, Database.TDataseMigrationBase, Filtro.Pedidos, Grafico.Pedidos;
+  Database.IDataseMigration, Database.TDataseMigrationBase, Filtro.Pedidos, Grafico.Pedidos,
+  Sangria.Suprimento.Informar, Dominio.Entidades.TSangriaSuprimento.Tipo, Estoque.Atualizar,
+  Estoque.Consultar;
 
 {$R *.dfm}
 
@@ -394,6 +411,13 @@ begin
   end;
 end;
 
+procedure TFrmPrincipal.actCaixaExecute(Sender: TObject);
+begin
+  catbtnCadastros.Color := $00955200;
+  pgcMenu.ActivePage := tsCaixa;
+  AbreSubMenu;
+end;
+
 procedure TFrmPrincipal.actParametrosExecute(Sender: TObject);
 begin
   try
@@ -445,9 +469,40 @@ begin
   end;
 end;
 
+procedure TFrmPrincipal.actConsultarEstoqueExecute(Sender: TObject);
+begin
+  ViewEstoqueMovimentacoes := TViewEstoqueMovimentacoes.Create(Self);
+  try
+    ViewEstoqueMovimentacoes.ShowModal;
+  finally
+    ViewEstoqueMovimentacoes.Free;
+  end;
+end;
+
 procedure TFrmPrincipal.actConsultasExecute(Sender: TObject);
 begin
   pgcMenu.ActivePage := tsConsulta;
+  AbreSubMenu;
+end;
+
+procedure TFrmPrincipal.actEstoqueAtualizarExecute(Sender: TObject);
+begin
+  try
+    FrmEstoqueAtualizar := TFrmEstoqueAtualizar.Create(Self);
+    try
+      FrmEstoqueAtualizar.ShowModal;
+    finally
+      FrmEstoqueAtualizar.Free;
+    end;
+  except
+    on E: Exception do
+      MessageDlg(E.Message, mtError, [mbOK], 0);
+  end;
+end;
+
+procedure TFrmPrincipal.actEstoqueExecute(Sender: TObject);
+begin
+  pgcMenu.ActivePage := tsEstoque;
   AbreSubMenu;
 end;
 
@@ -815,6 +870,28 @@ end;
 procedure TFrmPrincipal.actSairExecute(Sender: TObject);
 begin
   Self.Close;
+end;
+
+procedure TFrmPrincipal.actSangriaExecute(Sender: TObject);
+begin
+  FrmSangria := TFrmSangria.Create(Self);
+  try
+    FrmSangria.setTipo(TSangriaSuprimentoTipo.Sangria);
+    FrmSangria.ShowModal;
+  finally
+    FrmSangria.Free;
+  end;
+end;
+
+procedure TFrmPrincipal.actSuprimentoExecute(Sender: TObject);
+begin
+  FrmSangria := TFrmSangria.Create(Self);
+  try
+    FrmSangria.setTipo(TSangriaSuprimentoTipo.Suprimento);
+    FrmSangria.ShowModal;
+  finally
+    FrmSangria.Free;
+  end;
 end;
 
 procedure TFrmPrincipal.actVendasDoDiaPorVendedorExecute(Sender: TObject);

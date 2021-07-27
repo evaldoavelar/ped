@@ -167,7 +167,23 @@ uses
   Pedido.Pagamento.Imagem in 'forms\pedido\Pedido.Pagamento.Imagem.pas' {FramePedidoPagamentoImagem: TFrame},
   Dominio.Entidades.Observable in 'units\Dominio\Entidades\Dominio.Entidades.Observable.pas',
   Dominio.Entidades.Observe in 'units\Dominio\Entidades\Dominio.Entidades.Observe.pas',
-  Dominio.IEntidade in 'units\Dominio\Entidades\Dominio.IEntidade.pas';
+  Dominio.IEntidade in 'units\Dominio\Entidades\Dominio.IEntidade.pas',
+  Sangria.Suprimento.Informar in 'forms\caixa\Sangria.Suprimento.Informar.pas' {FrmSangria},
+  Dominio.Entidades.TSangriaSuprimento in 'units\Dominio\Entidades\Dominio.Entidades.TSangriaSuprimento.pas',
+  Dominio.Entidades.TSangriaSuprimento.Tipo in 'units\Dominio\Entidades\Dominio.Entidades.TSangriaSuprimento.Tipo.pas',
+  Dao.TSangriaSuprimento in 'units\Dao\Concret\Dao.TSangriaSuprimento.pas',
+  Dao.IDAOTSangriaSuprimento in 'units\Dao\Abstract\Dao.IDAOTSangriaSuprimento.pas',
+  Relatorio.TRSangriaSuprimento in 'units\relatorio\Relatorio.TRSangriaSuprimento.pas',
+  Estoque.Atualizar in 'forms\estoque\Estoque.Atualizar.pas' {FrmEstoqueAtualizar},
+  Dominio.Entidades.TEstoqueProduto in 'units\Dominio\Entidades\Dominio.Entidades.TEstoqueProduto.pas',
+  Estoque.Parts.Atualizar in 'forms\estoque\Estoque.Parts.Atualizar.pas' {FrameEstoquePartsAtualizar: TFrame},
+  Util.Thread in 'units\Util\Util.Thread.pas',
+  Dao.TDaoEstoqueProduto in 'units\Dao\Concret\Dao.TDaoEstoqueProduto.pas',
+  Dao.IDaoEstoqueProduto in 'units\Dao\Abstract\Dao.IDaoEstoqueProduto.pas',
+  Estoque.Consultar in 'forms\estoque\Estoque.Consultar.pas' {ViewEstoqueMovimentacoes},
+  Dao.TDaoEstoqueFiltro in 'units\Dao\Concret\Dao.TDaoEstoqueFiltro.pas',
+  Dao.IDaoFiltroEstoque in 'units\Dao\Abstract\Dao.IDaoFiltroEstoque.pas',
+  Utils.ArrayUtil in 'units\Util\Utils.ArrayUtil.pas';
 
 {$R *.res}
 

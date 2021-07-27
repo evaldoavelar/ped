@@ -1,12 +1,17 @@
 inherited frmCadastroProduto: TfrmCadastroProduto
   Caption = 'Cadastro Produto'
+  ClientHeight = 572
+  ExplicitHeight = 601
   PixelsPerInch = 96
   TextHeight = 13
   inherited pnlContainer: TPanel
+    Height = 456
     inherited pgcPrincipal: TPageControl
+      Height = 450
       ActivePage = ts1
       object ts1: TTabSheet
         Caption = 'Produto'
+        ExplicitHeight = 381
         object lbl3: TLabel
           Left = 55
           Top = 40
@@ -60,8 +65,8 @@ inherited frmCadastroProduto: TfrmCadastroProduto
           ParentFont = False
         end
         object Label9: TLabel
-          Left = 16
-          Top = 359
+          Left = 30
+          Top = 402
           Width = 95
           Height = 13
           Caption = #218'ltima Altera'#231#227'o'
@@ -73,8 +78,8 @@ inherited frmCadastroProduto: TfrmCadastroProduto
           ParentFont = False
         end
         object Label10: TLabel
-          Left = 216
-          Top = 359
+          Left = 230
+          Top = 402
           Width = 75
           Height = 13
           Caption = #218'ltima Venda'
@@ -86,8 +91,8 @@ inherited frmCadastroProduto: TfrmCadastroProduto
           ParentFont = False
         end
         object lbl2: TLabel
-          Left = 25
-          Top = 265
+          Left = 23
+          Top = 249
           Width = 64
           Height = 13
           Caption = 'Fornecedor'
@@ -99,8 +104,8 @@ inherited frmCadastroProduto: TfrmCadastroProduto
           ParentFont = False
         end
         object Label11: TLabel
-          Left = 405
-          Top = 359
+          Left = 419
+          Top = 402
           Width = 81
           Height = 13
           Caption = 'Data Cadastro'
@@ -112,8 +117,8 @@ inherited frmCadastroProduto: TfrmCadastroProduto
           ParentFont = False
         end
         object Label12: TLabel
-          Left = 2
-          Top = 217
+          Left = 0
+          Top = 201
           Width = 87
           Height = 13
           Caption = 'Pre'#231'o de Venda'
@@ -178,8 +183,8 @@ inherited frmCadastroProduto: TfrmCadastroProduto
         end
         object edtUltimaAlteracao: TJvDateEdit
           Tag = 1
-          Left = 116
-          Top = 357
+          Left = 130
+          Top = 400
           Width = 81
           Height = 21
           Color = 15524818
@@ -191,8 +196,8 @@ inherited frmCadastroProduto: TfrmCadastroProduto
         end
         object edtUltimVenda: TJvDateEdit
           Tag = 1
-          Left = 297
-          Top = 357
+          Left = 311
+          Top = 400
           Width = 80
           Height = 21
           Color = 15524818
@@ -202,22 +207,29 @@ inherited frmCadastroProduto: TfrmCadastroProduto
           TabOrder = 11
           OnChange = edtUltimaAlteracaoChange
         end
-        object chkBloqueado: TCheckBox
-          Left = 38
-          Top = 302
-          Width = 97
-          Height = 17
-          Caption = 'Bloqueado'
-          Color = 10639360
-          ParentColor = False
-          TabOrder = 9
-          OnClick = chkBloqueadoClick
-        end
         object edtCodFornecedor: TEdit
           Tag = 1
-          Left = 95
-          Top = 260
+          Left = 93
+          Top = 244
           Width = 109
+          Height = 24
+          CharCase = ecUpperCase
+          Color = 15524818
+          Enabled = False
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = 10639360
+          Font.Height = -13
+          Font.Name = 'MS Sans Serif'
+          Font.Style = []
+          ParentFont = False
+          TabOrder = 5
+          OnChange = edtCodigoChange
+        end
+        object edtNomeFornecedor: TEdit
+          Tag = 1
+          Left = 221
+          Top = 244
+          Width = 381
           Height = 24
           CharCase = ecUpperCase
           Color = 15524818
@@ -231,27 +243,9 @@ inherited frmCadastroProduto: TfrmCadastroProduto
           TabOrder = 6
           OnChange = edtCodigoChange
         end
-        object edtNomeFornecedor: TEdit
-          Tag = 1
-          Left = 223
-          Top = 260
-          Width = 381
-          Height = 24
-          CharCase = ecUpperCase
-          Color = 15524818
-          Enabled = False
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = 10639360
-          Font.Height = -13
-          Font.Name = 'MS Sans Serif'
-          Font.Style = []
-          ParentFont = False
-          TabOrder = 7
-          OnChange = edtCodigoChange
-        end
         object btnPesquisaCliente: TBitBtn
-          Left = 612
-          Top = 261
+          Left = 610
+          Top = 245
           Width = 20
           Height = 23
           Caption = '...'
@@ -261,20 +255,20 @@ inherited frmCadastroProduto: TfrmCadastroProduto
           Font.Name = 'MS Sans Serif'
           Font.Style = []
           ParentFont = False
-          TabOrder = 8
+          TabOrder = 7
           OnClick = btnPesquisaClienteClick
         end
         object edtDataCadastro: TJvDateEdit
           Tag = 1
-          Left = 492
-          Top = 357
+          Left = 504
+          Top = 399
           Width = 91
           Height = 21
           Color = 15524818
           Enabled = False
           ShowButton = False
           ShowNullDate = False
-          TabOrder = 12
+          TabOrder = 9
           OnChange = edtUltimaAlteracaoChange
         end
         object cbbUND: TComboBox
@@ -305,18 +299,9 @@ inherited frmCadastroProduto: TfrmCadastroProduto
             'M3'
             'MM')
         end
-        object chkFracionado: TCheckBox
-          Left = 99
-          Top = 181
-          Width = 192
-          Height = 17
-          Caption = 'Vender em Quantidade Fracionada'
-          TabOrder = 4
-          OnClick = chkBloqueadoClick
-        end
         object edtPreco1: TJvCalcEdit
-          Left = 98
-          Top = 211
+          Left = 96
+          Top = 195
           Width = 121
           Height = 27
           Alignment = taLeftJustify
@@ -329,10 +314,152 @@ inherited frmCadastroProduto: TfrmCadastroProduto
           Font.Style = []
           ParentFont = False
           ShowButton = False
-          TabOrder = 5
+          TabOrder = 4
           DecimalPlacesAlwaysShown = False
           OnChange = edtCustoMedioChange
           OnKeyPress = edtCustoMedioKeyPress
+        end
+        object Panel1: TPanel
+          AlignWithMargins = True
+          Left = 47
+          Top = 289
+          Width = 520
+          Height = 88
+          BevelOuter = bvNone
+          TabOrder = 8
+          object Panel2: TPanel
+            Left = 113
+            Top = 0
+            Width = 113
+            Height = 56
+            Align = alLeft
+            BevelOuter = bvNone
+            TabOrder = 1
+            object Label13: TLabel
+              AlignWithMargins = True
+              Left = 3
+              Top = 3
+              Width = 107
+              Height = 13
+              Align = alTop
+              Caption = 'Estoque Min'#237'mo'
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = 10639360
+              Font.Height = -11
+              Font.Name = 'Tahoma'
+              Font.Style = [fsBold]
+              ParentFont = False
+              ExplicitWidth = 89
+            end
+            object edtEstoqueMinimo: TEdit
+              AlignWithMargins = True
+              Left = 25
+              Top = 22
+              Width = 72
+              Height = 31
+              Margins.Left = 25
+              Margins.Right = 12
+              Align = alLeft
+              Alignment = taCenter
+              AutoSize = False
+              Color = clWhite
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = 5066061
+              Font.Height = -16
+              Font.Name = 'Yu Gothic Medium'
+              Font.Style = []
+              ParentFont = False
+              TabOrder = 0
+              Text = '0'
+              OnChange = edtCodigoChange
+              ExplicitTop = 23
+              ExplicitHeight = 30
+            end
+          end
+          object Panel3: TPanel
+            Left = 0
+            Top = 0
+            Width = 113
+            Height = 56
+            Align = alLeft
+            BevelOuter = bvNone
+            TabOrder = 0
+            object Label14: TLabel
+              AlignWithMargins = True
+              Left = 3
+              Top = 3
+              Width = 107
+              Height = 13
+              Align = alTop
+              Caption = 'Estoque Atual'
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = 10639360
+              Font.Height = -11
+              Font.Name = 'Tahoma'
+              Font.Style = [fsBold]
+              ParentFont = False
+              ExplicitWidth = 78
+            end
+            object edtEstoque: TEdit
+              AlignWithMargins = True
+              Left = 25
+              Top = 22
+              Width = 72
+              Height = 31
+              Margins.Left = 25
+              Margins.Right = 12
+              Align = alLeft
+              Alignment = taCenter
+              AutoSize = False
+              Color = clWhite
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = 5066061
+              Font.Height = -16
+              Font.Name = 'Yu Gothic Medium'
+              Font.Style = []
+              ParentFont = False
+              ReadOnly = True
+              TabOrder = 0
+              Text = '0'
+              OnChange = edtCodigoChange
+              ExplicitTop = 23
+              ExplicitHeight = 30
+            end
+          end
+          object chkAvisarEstoque: TCheckBox
+            AlignWithMargins = True
+            Left = 3
+            Top = 68
+            Width = 514
+            Height = 17
+            Margins.Top = 12
+            Align = alBottom
+            AllowGrayed = True
+            Caption = 'Avisa Estoque Baixo?'
+            TabOrder = 4
+            OnClick = chkBloqueadoClick
+            ExplicitLeft = 11
+          end
+          object chkBloqueado: TCheckBox
+            Left = 316
+            Top = 14
+            Width = 97
+            Height = 17
+            Caption = 'Bloqueado'
+            Color = 10639360
+            ParentColor = False
+            TabOrder = 2
+            OnClick = chkBloqueadoClick
+          end
+          object chkFracionado: TCheckBox
+            Left = 317
+            Top = 37
+            Width = 192
+            Height = 17
+            Caption = 'Vender em Quantidade Fracionada'
+            TabOrder = 3
+            OnClick = chkBloqueadoClick
+          end
         end
       end
       object ts2: TTabSheet
@@ -508,6 +635,7 @@ inherited frmCadastroProduto: TfrmCadastroProduto
     end
   end
   inherited pnlBotoes: TPanel
+    Top = 521
     inherited lblAtalhos: TLabel
       Font.Color = 10639360
     end
@@ -517,11 +645,19 @@ inherited frmCadastroProduto: TfrmCadastroProduto
     end
     inherited btnCacenlar: TBitBtn
       Left = 312
+      TabOrder = 3
       ExplicitLeft = 312
+    end
+    inherited btnSair: TBitBtn
+      TabOrder = 5
     end
     inherited btnExcluir: TBitBtn
       Left = 398
+      TabOrder = 4
       ExplicitLeft = 398
+    end
+    inherited BitBtn1: TBitBtn
+      TabOrder = 2
     end
   end
   inherited pnlTop: TPanel

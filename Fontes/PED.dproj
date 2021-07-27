@@ -5,7 +5,7 @@
         <FrameworkType>VCL</FrameworkType>
         <MainSource>PED.dpr</MainSource>
         <Base>True</Base>
-        <Config Condition="'$(Config)'==''">Release</Config>
+        <Config Condition="'$(Config)'==''">Debug</Config>
         <Platform Condition="'$(Platform)'==''">Win32</Platform>
         <TargetedPlatforms>1</TargetedPlatforms>
         <AppType>Application</AppType>
@@ -86,8 +86,8 @@
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
         <BT_BuildType>Debug</BT_BuildType>
-        <VerInfo_Build>11</VerInfo_Build>
-        <VerInfo_Keys>CompanyName=Desenvolvido por Evaldo Avelar Marques;FileDescription=Sistema de Parcelas;FileVersion=1.0.0.11;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductVersion=1.0.0.0;Comments=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName)</VerInfo_Keys>
+        <VerInfo_Build>12</VerInfo_Build>
+        <VerInfo_Keys>CompanyName=Desenvolvido por Evaldo Avelar Marques;FileDescription=Sistema de Parcelas;FileVersion=1.0.0.12;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductVersion=1.0.0.0;Comments=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName)</VerInfo_Keys>
         <Icon_MainIcon>PED_Icon.ico</Icon_MainIcon>
         <VerInfo_Debug>true</VerInfo_Debug>
         <VerInfo_PreRelease>true</VerInfo_PreRelease>
@@ -421,6 +421,35 @@
         <DCCReference Include="units\Dominio\Entidades\Dominio.Entidades.Observable.pas"/>
         <DCCReference Include="units\Dominio\Entidades\Dominio.Entidades.Observe.pas"/>
         <DCCReference Include="units\Dominio\Entidades\Dominio.IEntidade.pas"/>
+        <DCCReference Include="forms\caixa\Sangria.Suprimento.Informar.pas">
+            <Form>FrmSangria</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="units\Dominio\Entidades\Dominio.Entidades.TSangriaSuprimento.pas"/>
+        <DCCReference Include="units\Dominio\Entidades\Dominio.Entidades.TSangriaSuprimento.Tipo.pas"/>
+        <DCCReference Include="units\Dao\Concret\Dao.TSangriaSuprimento.pas"/>
+        <DCCReference Include="units\Dao\Abstract\Dao.IDAOTSangriaSuprimento.pas"/>
+        <DCCReference Include="units\relatorio\Relatorio.TRSangriaSuprimento.pas"/>
+        <DCCReference Include="forms\estoque\Estoque.Atualizar.pas">
+            <Form>FrmEstoqueAtualizar</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="units\Dominio\Entidades\Dominio.Entidades.TEstoqueProduto.pas"/>
+        <DCCReference Include="forms\estoque\Estoque.Parts.Atualizar.pas">
+            <Form>FrameEstoquePartsAtualizar</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="units\Util\Util.Thread.pas"/>
+        <DCCReference Include="units\Dao\Concret\Dao.TDaoEstoqueProduto.pas"/>
+        <DCCReference Include="units\Dao\Abstract\Dao.IDaoEstoqueProduto.pas"/>
+        <DCCReference Include="forms\estoque\Estoque.Consultar.pas">
+            <Form>ViewEstoqueMovimentacoes</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="units\Dao\Concret\Dao.TDaoEstoqueFiltro.pas"/>
+        <DCCReference Include="units\Dao\Abstract\Dao.IDaoFiltroEstoque.pas"/>
+        <DCCReference Include="units\Util\Utils.ArrayUtil.pas"/>
         <RcItem Include="..\imagens\cesta.jpg">
             <ResourceType>RCDATA</ResourceType>
             <ResourceId>JpgImage_1</ResourceId>

@@ -28,6 +28,9 @@ type
     FQUANTIDADEFRACIONADA: Boolean;
     FOBSERVACOES: string;
     FFornecedor: TFornecedor;
+    FESTOQUEMINIMO: Double;
+    FESTOQUE: Double;
+    FAVISARESTOQUEBAIXO: Boolean;
     function getBLOQUEADO: Boolean;
     procedure setBLOQUEADO(const Value: Boolean);
     function getALTERACAO_PRECO: TDateTime;
@@ -66,8 +69,11 @@ type
     procedure setFornecedor(const Value: TFornecedor);
     function getQUANTIDADEFRACIONADA: Boolean;
     procedure setQUANTIDADEFRACIONADA(const Value: Boolean);
+    procedure SetAVISARESTOQUEBAIXO(const Value: Boolean);
+    procedure SetESTOQUE(const Value: Double);
+    procedure SetESTOQUEMINIMO(const Value: Double);
   published
-    [campo('CODIGO  ', tpVARCHAR, 6,0,True)]
+    [campo('CODIGO  ', tpVARCHAR, 6, 0, True)]
     [PrimaryKey('PRODUTO_PRIMARY', 'CODIGO')]
     property CODIGO: string read getCODIGO write setCODIGO;
 
@@ -122,6 +128,15 @@ type
 
     [campo('QUANTIDADEFRACIONADA', tpSMALLINT, 0, 0)]
     property QUANTIDADEFRACIONADA: Boolean read getQUANTIDADEFRACIONADA write setQUANTIDADEFRACIONADA;
+
+    [campo('ESTOQUE', tpFLOAT, 0, 0, True, '0')]
+    property ESTOQUE: Double read FESTOQUE write SetESTOQUE;
+
+    [campo('AVISARESTOQUEBAIXO', tpSMALLINT, 0, 0, True, '0')]
+    property AVISARESTOQUEBAIXO: Boolean read FAVISARESTOQUEBAIXO write SetAVISARESTOQUEBAIXO;
+
+    [campo('ESTOQUEMINIMO', tpFLOAT)]
+    property ESTOQUEMINIMO: Double read FESTOQUEMINIMO write SetESTOQUEMINIMO;
 
   public
     constructor create();
@@ -295,6 +310,15 @@ begin
   end;
 end;
 
+procedure TProduto.SetAVISARESTOQUEBAIXO(const Value: Boolean);
+begin
+  if Value <> FAVISARESTOQUEBAIXO then
+  begin
+    FAVISARESTOQUEBAIXO := Value;
+    Notify('AVISARESTOQUEBAIXO');
+  end;
+end;
+
 procedure TProduto.setBARRAS(const Value: string);
 begin
   if Value <> FBARRAS then
@@ -355,6 +379,24 @@ begin
   begin
     FDESCRICAO := Value;
     Notify('DESCRICAO');
+  end;
+end;
+
+procedure TProduto.SetESTOQUE(const Value: Double);
+begin
+  if Value <> FESTOQUE then
+  begin
+    FESTOQUE := Value;
+    Notify('ESTOQUE');
+  end;
+end;
+
+procedure TProduto.SetESTOQUEMINIMO(const Value: Double);
+begin
+  if Value <> FESTOQUEMINIMO then
+  begin
+    FESTOQUEMINIMO := Value;
+    Notify('ESTOQUEMINIMO');
   end;
 end;
 

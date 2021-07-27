@@ -7,11 +7,11 @@ uses
   Data.DB, FireDAC.Comp.Client,
   System.Generics.Collections,
   Dao.TDaoBase,
-  Dominio.Entidades.TProduto, Dao.IDaoFornecedor,Dao.IDaoProdutos;
+  Dominio.Entidades.TProduto, Dao.IDaoFornecedor, Dao.IDaoProdutos;
 
 type
 
-  TDaoProduto = class(TDaoBase,IDaoProdutos)
+  TDaoProduto = class(TDaoBase, IDaoProdutos)
   private
     procedure ObjectToParams(ds: TFDQuery; Produto: TProduto);
     function ParamsToObject(ds: TFDQuery): TProduto;
@@ -21,12 +21,13 @@ type
     procedure AtualizaProduto(Produto: TProduto);
     function GetProdutoPorCodigo(codigo: string): TProduto;
     function GetProdutoPorDescricao(descricao: string): TProduto;
-    function GetProdutosPorDescricao(descricao: string):  TObjectList<TProduto>;
+    function GetProdutosPorDescricao(descricao: string): TObjectList<TProduto>;
     function GetProdutosPorDescricaoParcial(descricao: string): TObjectList<TProduto>;
     function Listar(campo, valor: string): TDataSet;
     procedure ValidaProduto(Produto: TProduto);
     function GetProdutoPorCodigoBarras(codBarras: string): TProduto;
     function GeraID: string;
+    function EntradaSaidaEstoque(aCODIGO: string; aQuantidade: Double; aAutoCommit: Boolean): integer;
 
   end;
 
@@ -37,7 +38,47 @@ uses
 
 { TDaoProduto }
 
+function TDaoProduto.EntradaSaidaEstoque(aCODIGO: string; aQuantidade: Double; aAutoCommit: Boolean): integer;
+var
+  aCampoValor: TDictionary<string, Variant>;
+  qry: TFDQuery;
+begin
+  qry := TFactory.Query();
+  try
 
+    aCampoValor := TDictionary<string, Variant>.Create();
+    try
+      if aAutoCommit then
+        FConnection.StartTransaction;
+
+      qry.SQL.Append('update PRODUTO ');
+      qry.SQL.Append('set  ESTOQUE = ESTOQUE + :QUANTIDADE  ');
+      qry.SQL.Append('WHERE  CODIGO = :CODIGO ');
+
+      qry.ParamByName('CODIGO').AsString := aCODIGO;
+      qry.ParamByName('QUANTIDADE').AsFloat := aQuantidade;
+
+      qry.ExecSQL;
+
+      result := qry.RowsAffected;
+
+      if aAutoCommit then
+        FConnection.Commit;
+    except
+      on E: Exception do
+      begin
+        // FLog.d(E.Message);
+        if aAutoCommit then
+          FConnection.Rollback;
+        raise TDaoException.Create(' TDaoProduto.EntradaSaidaEstoque: ' + E.Message);
+      end;
+
+    end;
+  finally
+    aCampoValor.Free;
+    FreeAndNil(qry);
+  end;
+end;
 
 procedure TDaoProduto.ExcluirProduto(codigo: string);
 var
@@ -134,9 +175,12 @@ begin
         + '       data_cadastro = :DATA_CADASTRO, '
         + '       BLOQUEADO = :BLOQUEADO, '
         + '       QUANTIDADEFRACIONADA = :QUANTIDADEFRACIONADA, '
+        + '       ESTOQUE = :ESTOQUE, '
+        + '       ESTOQUEMINIMO = :ESTOQUEMINIMO, '
+        + '       AVISARESTOQUEBAIXO = :AVISARESTOQUEBAIXO, '
         + '       observacoes = :OBSERVACOES '
         + 'where ' +
-        '        codigo = :CODIGO ';
+        '        CODIGO = :CODIGO ';
 
       ObjectToParams(qry, Produto);
       qry.ExecSQL;
@@ -155,7 +199,7 @@ end;
 
 function TDaoProduto.GeraID: string;
 begin
-  Result := Format('%.6d', [AutoIncremento('PRODUTO', 'CODIGO')]);
+  result := Format('%.6d', [AutoIncremento('PRODUTO', 'CODIGO')]);
 end;
 
 function TDaoProduto.GetProdutoPorCodigo(codigo: string): TProduto;
@@ -178,9 +222,9 @@ begin
       qry.open;
 
       if qry.IsEmpty then
-        Result := nil
+        result := nil
       else
-        Result := ParamsToObject(qry);
+        result := ParamsToObject(qry);
 
     except
       on E: Exception do
@@ -212,9 +256,9 @@ begin
       qry.open;
 
       if qry.IsEmpty then
-        Result := nil
+        result := nil
       else
-        Result := ParamsToObject(qry);
+        result := ParamsToObject(qry);
 
     except
       on E: Exception do
@@ -241,20 +285,19 @@ begin
         + 'from  Produto '
         + 'WHERE '
         + ' UPPER( descricao) CONTAINING  UPPER( :descricao ) '
-      + ' order by descricao';
+        + ' order by descricao';
 
       if Length(descricao) > 39 then
-        descricao := copy(descricao,0,39);
-
+        descricao := copy(descricao, 0, 39);
 
       qry.ParamByName('descricao').AsString := descricao;
       qry.open;
 
-      Result := TObjectList<TProduto>.Create();
+      result := TObjectList<TProduto>.Create();
 
       while not qry.Eof do
       begin
-        Result.Add(ParamsToObject(qry));
+        result.Add(ParamsToObject(qry));
         qry.Next;
       end;
 
@@ -283,20 +326,19 @@ begin
         + 'from  Produto '
         + 'WHERE '
         + ' UPPER( descricao) like  UPPER( :descricao ) '
-      + ' order by descricao';
+        + ' order by descricao';
 
       if Length(descricao) > 38 then
-        descricao := copy(descricao,0,38);
+        descricao := copy(descricao, 0, 38);
 
-
-      qry.ParamByName('descricao').AsString := descricao+'%';
+      qry.ParamByName('descricao').AsString := descricao + '%';
       qry.open;
 
-      Result := TObjectList<TProduto>.Create();
+      result := TObjectList<TProduto>.Create();
 
       while not qry.Eof do
       begin
-        Result.Add(ParamsToObject(qry));
+        result.Add(ParamsToObject(qry));
         qry.Next;
       end;
 
@@ -331,9 +373,9 @@ begin
       qry.open;
 
       if qry.IsEmpty then
-        Result := nil
+        result := nil
       else
-        Result := ParamsToObject(qry);
+        result := ParamsToObject(qry);
 
     except
       on E: Exception do
@@ -399,6 +441,9 @@ begin
         + '             ultima_venda, '
         + '             data_cadastro, '
         + '             BLOQUEADO, '
+        + '             ESTOQUE, '
+        + '             ESTOQUEMINIMO, '
+        + '             AVISARESTOQUEBAIXO, '
         + '             QUANTIDADEFRACIONADA, '
         + '             observacoes) '
         + 'VALUES     ( :CODIGO, '
@@ -416,6 +461,9 @@ begin
         + '             :ULTIMA_VENDA, '
         + '             :DATA_CADASTRO, '
         + '             :BLOQUEADO, '
+        + '             :ESTOQUE, '
+        + '             :ESTOQUEMINIMO, '
+        + '             :AVISARESTOQUEBAIXO, '
         + '             :QUANTIDADEFRACIONADA, '
         + '             :OBSERVACOES)';
 
@@ -451,7 +499,7 @@ begin
 
     qry.open;
 
-    Result := qry;
+    result := qry;
 
   except
     on E: Exception do
@@ -525,6 +573,15 @@ begin
     if ds.Params.FindParam('OBSERVACOES') <> nil then
       ds.Params.ParamByName('OBSERVACOES').AsString := Produto.OBSERVACOES;
 
+    if ds.Params.FindParam('ESTOQUE') <> nil then
+      ds.Params.ParamByName('ESTOQUE').AsFloat := Produto.ESTOQUE;
+
+    if ds.Params.FindParam('ESTOQUEMINIMO') <> nil then
+      ds.Params.ParamByName('ESTOQUEMINIMO').AsFloat := Produto.ESTOQUEMINIMO;
+
+    if ds.Params.FindParam('AVISARESTOQUEBAIXO') <> nil then
+      ds.Params.ParamByName('AVISARESTOQUEBAIXO').AsBoolean := Produto.AVISARESTOQUEBAIXO;
+
   except
     on E: Exception do
       raise TDaoException.Create('Falha ao associar parâmetros Produto: ' + E.Message);
@@ -539,8 +596,8 @@ begin
 
   try
 
-    Result := TProduto.Create();
-    FieldsToEntity(ds, Result);
+    result := TProduto.Create();
+    FieldsToEntity(ds, result);
 
     // Result.codigo := ds.FieldByName('CODIGO').AsString;
     // Result.BARRAS := ds.FieldByName('BARRAS').AsString;
@@ -560,7 +617,7 @@ begin
     // Result.QUANTIDADEFRACIONADA := ds.FieldByName('QUANTIDADEFRACIONADA').AsInteger = 1;
     // Result.OBSERVACOES := ds.FieldByName('OBSERVACOES').AsString;
 
-    Result.Fornecedor := DaoFornecedor.GeFornecedor(Result.CODFORNECEDOR);
+    result.Fornecedor := DaoFornecedor.GeFornecedor(result.CODFORNECEDOR);
 
   except
     on E: Exception do

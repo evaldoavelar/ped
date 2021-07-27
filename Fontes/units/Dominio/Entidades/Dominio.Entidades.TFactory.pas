@@ -15,9 +15,10 @@ uses SysUtils,
   Sistema.TParametros, Dao.IDaoParametros, Dao.TDaoParametros, Dao.IDAOPedidoPeriodo,
   Dao.TDaoPedidoPeriodo, Dominio.Entidades.TOrcamento, Dao.IDaoOrcamento, Dao.TDaoOrcamento, FireDAC.Comp.Script, Dao.IDaoParceiro, Dao.TDaoParceiro,
   Dominio.Entidades.TParceiro, Dao.IDaoParceiro.FormaPagto, Dao.TDaoParceiro.FormaPagto, Dominio.Entidades.TParceiro.FormaPagto, Dominio.Entidades.TParceiroVenda,
-  Dao.IDaoParceiroVenda,
+  Dao.IDaoParceiroVenda,  Dao.TDaoEstoqueProduto     ,
   Dao.IDoParceiroVenda.Pagamentos, Dao.TDaoParceiroVenda.Pagamentos, Dao.TDaoParceiroVenda,
-  Dao.TDAOPedidoPagamento, Dao.IDAOPedidoPagamento;
+  Dao.TDAOPedidoPagamento, Dao.IDAOPedidoPagamento, Dao.IDAOTSangriaSuprimento,
+  Dao.IDaoEstoqueProduto,Dao.IDaoFiltroEstoque;
 
 type
 
@@ -73,7 +74,9 @@ type
     class function DaoParceiroVendaPagto(): IDaoParceiroVendaPagto;
     class function DaoParceiroVenda(): IDaoParceiroVenda;
     class function DAOPedidoPagamento(): IDAOPedidoPagamento;
-
+    class function DAOTSangriaSuprimento(): IDAOTSangriaSuprimento;
+    class function DaoEstoqueProduto(): IDaoEstoqueProduto;
+    class function DaoFiltroEstoque(): IDaoEstoqueFiltro;
 
     class function PosPrinter(): TACBrPosPrinter;
 
@@ -88,7 +91,7 @@ implementation
 
 { TFactory }
 
-uses Util.Funcoes;
+uses Util.Funcoes, Dao.TSangriaSuprimento, Dao.TDaoEstoqueFiltro;
 
 class function TFactory.Conexao(nova: Boolean = false): TFDConnection;
 var
@@ -127,6 +130,16 @@ end;
 class function TFactory.DaoEmitente: IDaoEmitente;
 begin
   result := TDaoEmitente.Create(TFactory.Conexao);
+end;
+
+class function TFactory.DaoEstoqueProduto: IDaoEstoqueProduto;
+begin
+  result := TDaoEstoqueProduto.Create(TFactory.Conexao);
+end;
+
+class function TFactory.DaoFiltroEstoque: IDaoEstoqueFiltro;
+begin
+    result := TDaoEstoqueFiltro.Create();
 end;
 
 class function TFactory.DaoFormaPagto: IDaoFormaPagto;
@@ -192,6 +205,11 @@ end;
 class function TFactory.DaoProduto: IDaoProdutos;
 begin
   result := TDaoProduto.Create(TFactory.Conexao);
+end;
+
+class function TFactory.DAOTSangriaSuprimento: IDAOTSangriaSuprimento;
+begin
+  result := TDAOSangriaSuprimento.Create(TFactory.Conexao());
 end;
 
 class function TFactory.DaoVendedor: IDaoVendedor;

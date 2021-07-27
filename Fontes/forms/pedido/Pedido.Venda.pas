@@ -355,6 +355,7 @@ begin
     Pedido.OnExcluiItem := OnExcluiItem;
     Pedido.OnChange := OnPedidoChange;
     Pedido.OnParcela := OnParcelas;
+
     try
       TFactory.Conexao.StartTransaction;
       Pedido.ID := DaoPedido.GeraID;
@@ -638,7 +639,8 @@ begin
         except
         end;
       end;
-    end
+    end;
+    Key := #0;
   end
   else if Key = '+' then
   begin
@@ -983,7 +985,8 @@ begin
       begin
         try
           cbbProduto.ItemIndex := -1;
-          cbbProduto.SetFocus;
+          medtQuantidade.SetFocus;
+          medtQuantidade.SelectAll;
         except
           on E: Exception do
         end;
@@ -1098,6 +1101,7 @@ begin
       end;
     except
     end;
+    Key := #0;
   end;
 end;
 
@@ -1250,6 +1254,21 @@ begin
     if (Frac(self.Quantidade) <> 0) and (not Produto.QUANTIDADEFRACIONADA) then
       raise Exception.Create('ATENÇÃO: Produto Unitário com quantidade fracionada');
 
+    if Produto.AVISARESTOQUEBAIXO then
+    BEGIN
+      VAR
+      estoqueBaixo := ((Produto.ESTOQUE - self.Quantidade) <= Produto.ESTOQUEMINIMO);
+
+      if (Produto.ESTOQUE - self.Quantidade) <= 0 then
+      begin
+        if MessageDlg('PRODUTO SEM ESTOQUE!!! VENDER MESMO ASSIM?', mtConfirmation, [mbYes, mbNo], 0) = mrNo then
+          Abort;
+      end
+      else if estoqueBaixo then
+        MessageDlg('PRODUTO COM ESTOQUE BAIXO: ' + Produto.DESCRICAO, mtInformation, [mbOK], 0);
+
+    END;
+
     try
       cbbProduto.Enabled := false;
 
@@ -1286,11 +1305,11 @@ begin
         medtQuantidade.Text := '1';
 
         cbbProduto.Enabled := True;
-        cbbProduto.SetFocus;
+        medtQuantidade.SetFocus;
         cbbProduto.ItemIndex := -1;
         cbbProduto.Text := StrPesquisa;
         LiberaProdutosCbbProduto;
-        cbbProduto.SelectAll;
+        medtQuantidade.SelectAll;
       except
       end;
     end;
@@ -1368,7 +1387,7 @@ begin
       try
         medtCodigo.Enabled := True;
         medtCodigo.Text := '';
-        medtCodigo.SetFocus;
+        medtQuantidade.SetFocus;
         medtQuantidade.Text := '1';
       except
       end;
@@ -1425,7 +1444,7 @@ begin
       FLeitor:
         medtCodigo.SetFocus;
       FDescricao:
-        cbbProduto.SetFocus;
+        medtQuantidade.SetFocus;
     end;
 
   except
@@ -1466,7 +1485,7 @@ begin
   FrmCancelarItem := TFrmCancelarItem.Create(self);
   try
     FrmCancelarItem.Top := self.Top + 120;
-    FrmCancelarItem.Left := self.Left + 120;
+    FrmCancelarItem.Left := self.Left + 60;
     FrmCancelarItem.ShowModal;
 
     result := FrmCancelarItem.NumItem;

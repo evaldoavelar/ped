@@ -31,7 +31,6 @@ type
     Label9: TLabel;
     Label10: TLabel;
     edtUltimVenda: TJvDateEdit;
-    chkBloqueado: TCheckBox;
     Label5: TLabel;
     lbl2: TLabel;
     edtCodFornecedor: TEdit;
@@ -40,7 +39,6 @@ type
     Label11: TLabel;
     edtDataCadastro: TJvDateEdit;
     cbbUND: TComboBox;
-    chkFracionado: TCheckBox;
     edtCustoMedio: TJvCalcEdit;
     edtPrecoCusto: TJvCalcEdit;
     edtPrecovenda: TJvCalcEdit;
@@ -48,6 +46,16 @@ type
     edtMargemLucro: TJvCalcEdit;
     Label12: TLabel;
     edtPreco1: TJvCalcEdit;
+    Panel1: TPanel;
+    Panel2: TPanel;
+    Label13: TLabel;
+    edtEstoqueMinimo: TEdit;
+    Panel3: TPanel;
+    Label14: TLabel;
+    edtEstoque: TEdit;
+    chkAvisarEstoque: TCheckBox;
+    chkBloqueado: TCheckBox;
+    chkFracionado: TCheckBox;
     procedure FormDestroy(Sender: TObject);
     procedure edtCodigoChange(Sender: TObject);
     procedure chkBloqueadoClick(Sender: TObject);
@@ -135,6 +143,10 @@ begin
 
   FProduto.Bind('Fornecedor.CODIGO', edtCodFornecedor, 'Text');
   FProduto.Bind('Fornecedor.NOME', edtNomeFornecedor, 'Text');
+
+  FProduto.Bind('ESTOQUE', edtEstoque, 'Text');
+  FProduto.Bind('ESTOQUEMINIMO', edtEstoqueMinimo, 'Text');
+  FProduto.Bind('AVISARESTOQUEBAIXO', chkAvisarEstoque, 'Checked');
 
 end;
 

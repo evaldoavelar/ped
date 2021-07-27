@@ -41,7 +41,8 @@ type
 
     // class procedure AlteraComponentsColor()
 
-    class procedure ReplaceTimer(value: TDateTime); static;
+    class procedure ReplaceTimer(value: TDateTime); overload; static;
+    class function ReplaceTimer(value: TDateTime; Hour, Min, Sec, MSec: Word): TDateTime; overload; static;
     class function ValidaCPF(cpfcnpj: string): Boolean;
     class function ValidaCNPJ(CNPJ: string): Boolean; static;
     class function IFF<T>(aExpressao: Boolean; aResultFalse, aResultTrue: T): T; static;
@@ -221,7 +222,7 @@ end;
 
 class function TUtil.Explode(value: string; const Ch: Char): TStringList;
 var
-  c: word;
+  c: Word;
   Source: string;
 begin
   Result := TStringList.Create;
@@ -282,7 +283,7 @@ end;
 
 class function TUtil.FirstDayOfMonth(Date: TDateTime): TDateTime;
 var
-  Year, Month, Day: word;
+  Year, Month, Day: Word;
 begin
   DecodeDate(Date, Year, Month, Day);
   Result := EncodeDate(Year, Month, 1);
@@ -369,6 +370,17 @@ end;
 class function TUtil.CalcularValorPercentual(Valor: Integer; Percent: Integer): Integer;
 begin
   Result := Trunc(((Percent * Valor) / 100));
+end;
+
+class function TUtil.ReplaceTimer(value: TDateTime; Hour, Min, Sec,
+  MSec: Word): TDateTime;
+var
+  newTime: TDateTime;
+begin
+  newTime := EncodeTime(Hour, Min, Sec, MSec);
+  ReplaceTime(value, newTime);
+
+  Result := value;
 end;
 
 class function TUtil.ReplicaChar(const Ch: Char; const Len: Integer): string;

@@ -24,6 +24,7 @@ type
   TOnExcluiItem = reference to procedure(Item: TItemPedido);
   TOnChange = reference to procedure(ValorLiquido, ValorBruto: currency; Volume: Double);
   TOnParcela = reference to procedure(parcelas: TObjectList<TParcelas>);
+  TOnEstoqueBaixo = reference to procedure(aMsg: string);
 
   [Tabela('Pedido')]
   TPedido = class(TEntity, IEntityObservable)
@@ -52,6 +53,7 @@ type
     FTROCO: currency;
     FVALORDESCONTO: currency;
     FVALORACRESCIMO: currency;
+    FOnEstoqueBaixo: TOnEstoqueBaixo;
 
     function GetValorBruto: currency;
     function getValorLiquido: currency;
@@ -76,6 +78,7 @@ type
       Troco: currency);
     function getTotalAcrescimoPagamentos: currency;
     procedure SetVALORACRESCIMO(const Value: currency);
+    procedure SetOnEstoqueBaixo(const Value: TOnEstoqueBaixo);
 
   public
     constructor create;
@@ -149,7 +152,9 @@ type
     property OnChange: TOnChange read FOnChange write FOnChange;
     property OnParcela: TOnParcela read FOnParcela write FOnParcela;
     property OnExcluiItem: TOnExcluiItem read FOnExcluiItem write FOnExcluiItem;
+    property OnEstoqueBaixo: TOnEstoqueBaixo read FOnEstoqueBaixo write SetOnEstoqueBaixo;
     procedure Update(const ModelBase: IEntity);
+
   end;
 
 implementation
@@ -181,7 +186,7 @@ begin
   Self.FItens.OwnsObjects := True;
   Self.DATACANCELAMENTO := 0;
   Self.FPagamentos := TPAGAMENTOS.create();
- // Self.FPagamentos.addObserver(Self);
+  // Self.FPagamentos.addObserver(Self);
 end;
 
 function TPedido.getTotalAcrescimoPagamentos: currency;
@@ -201,7 +206,7 @@ end;
 
 destructor TPedido.destroy;
 begin
-//  Self.FPagamentos.removeObserver(Self);
+  // Self.FPagamentos.removeObserver(Self);
   Self.FPagamentos.Clear;
   Self.FPagamentos.Free;
 
@@ -374,6 +379,11 @@ begin
     FOBSERVACAO := Value;
     Notify('OBSERVACAO');
   end;
+end;
+
+procedure TPedido.SetOnEstoqueBaixo(const Value: TOnEstoqueBaixo);
+begin
+  FOnEstoqueBaixo := Value;
 end;
 
 procedure TPedido.SetPagamentos(const Value: TPAGAMENTOS);

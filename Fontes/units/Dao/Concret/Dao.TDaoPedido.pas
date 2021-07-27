@@ -20,6 +20,7 @@ type
     procedure ObjectToParams(ds: TFDQuery; Pedido: TPedido);
     function ParamsToObject(ds: TFDQuery): TPedido;
     procedure Valida(Pedido: TPedido);
+    function AtualizarEstoque(Pedido: TPedido): Integer;
 
   public
     procedure AbrePedido(Pedido: TPedido);
@@ -44,7 +45,8 @@ type
 implementation
 
 uses
-  Util.Exceptions, Dao.TDaoItemPedido, Dao.TDaoParcelas, Dao.TDaoVendedor, Dao.TDaoCliente, Dominio.Entidades.TFactory, Dao.TDaoFormaPagto, Dao.TDAOPedidoPagamento;
+  Util.Exceptions, Dao.TDaoItemPedido, Dao.TDaoParcelas, Dao.TDaoVendedor, Dao.TDaoCliente, Dominio.Entidades.TFactory, Dao.TDaoFormaPagto, Dao.TDAOPedidoPagamento,
+  Dominio.Entidades.TEstoqueProduto, Utils.ArrayUtil;
 
 { TDaoPedido }
 
@@ -168,6 +170,10 @@ begin
         raise TDaoException.Create('Falha ao Gravar Pedido: ' + E.Message);
       end;
     end;
+
+    if Pedido.STATUS = 'C' then
+      AtualizarEstoque(Pedido);
+
   finally
     FreeAndNil(qry);
   end;
@@ -221,11 +227,86 @@ begin
         raise TDaoException.Create('Falha ao Gravar Pedido: ' + E.Message);
       end;
     end;
+
+    AtualizarEstoque(Pedido);
   finally
     FreeAndNil(qry);
   end;
 
 end;
+
+function TDaoPedido.AtualizarEstoque(Pedido: TPedido): Integer;
+BEGIN
+
+  for var ProdutoServicoOS in Pedido.itens do
+  begin
+
+    VAR
+    ESTOQUE := TEstoqueProduto.Create;
+    ESTOQUE.SEQPRODUTOPEDIDO := ProdutoServicoOS.SEQ;
+    ESTOQUE.IDPEDIDO := Pedido.id;
+    ESTOQUE.CODIGOPRD := ProdutoServicoOS.CODPRODUTO;
+    ESTOQUE.DESCRICAO := ProdutoServicoOS.DESCRICAO;
+    ESTOQUE.NOTAFISCAL := '';
+    ESTOQUE.QUANTIDADE := ProdutoServicoOS.QTD;
+    ESTOQUE.TIPO := 'S';
+    ESTOQUE.STATUS := 'A';
+    ESTOQUE.Data := now;
+    ESTOQUE.StatusBD := TEstoqueProduto.TStatusBD.stCriar;
+    ESTOQUE.USUARIOCRIACAO := Pedido.Vendedor.NOME;
+
+    if Pedido.STATUS = 'C' then
+    begin
+      // Flog.d('PRODUTO DELETADO REMOVER ENTRADA DO ESTOQUE %d', [ProdutoServicoOS.DESCRICAO]);
+      TFactory.DaoEstoqueProduto.Delete(ESTOQUE);
+      // Flog.d('DEVOLVER O SALDO');
+      TFactory.DaoProduto.EntradaSaidaEstoque(ESTOQUE.CODIGOPRD, (ESTOQUE.QUANTIDADE), false);
+    end
+    else
+    begin
+      TFactory.DaoEstoqueProduto.Inclui(ESTOQUE);
+      // // Flog.d('BAIXAR O ESTOQUE');
+      TFactory.DaoProduto.EntradaSaidaEstoque(ESTOQUE.CODIGOPRD, (ESTOQUE.QUANTIDADE * -1), false);
+    end;
+
+    // case ProdutoServicoOS.StatusBD of
+    // TPedido.TStatusBD.stAdicionado, TPedido.TStatusBD.stCriar:
+    // begin
+    //
+    // // Flog.d('CRIAR MOVIMENTAÇÃO DE ESTOQUE');
+    // TFactory.DaoEstoqueProduto.Inclui(ESTOQUE);
+    // // Flog.d('BAIXAR O ESTOQUE');
+    // TFactory.DaoProduto.EntradaSaidaEstoque(ESTOQUE.CODIGOPRD, (ESTOQUE.QUANTIDADE * -1), false);
+    //
+    // end;
+    // TPedido.TStatusBD.stDeletado:
+    // BEGIN
+    //
+    //
+    // // Flog.d('PRODUTO DELETADO REMOVER ENTRADA DO ESTOQUE %d', [ProdutoServicoOS.DESCRICAO]);
+    // TFactory.DaoEstoqueProduto.Delete(ESTOQUE);
+    // // Flog.d('DEVOLVER O SALDO');
+    // TFactory.DaoProduto.EntradaSaidaEstoque(ESTOQUE.CODIGOPRD, (ESTOQUE.QUANTIDADE), false);
+    //
+    // END;
+    // TPedido.TStatusBD.stAtualizar:
+    // BEGIN
+    //
+    // // estoque somente de produto
+    // if (ProdutoServicoOS.STATUS = 'C') then
+    // begin
+    // // Flog.d('PRODUTO CANCELADO CANCELAR ENTRADA DO ESTOQUE E DEVOLVER O SALDO');
+    // TFactory.DaoEstoqueProduto.UpdateStatus(ESTOQUE.IDPEDIDO, ESTOQUE.SEQPRODUTOPEDIDO, 'C');
+    // TFactory.DaoProduto.EntradaSaidaEstoque(ESTOQUE.CODIGOPRD, (ESTOQUE.QUANTIDADE), false);
+    // end;
+    //
+    // END;
+    // end;
+
+    FreeAndNil(ESTOQUE);
+  end;
+
+END;
 
 function TDaoPedido.GeraID: Integer;
 begin
@@ -659,6 +740,19 @@ begin
 
         + 'UNION ALL '
 
+        + 'SELECT CASE '
+        + '         WHEN tipo = 1 THEN ''Sangria'' '
+        + '         WHEN tipo = 2 THEN ''Suprimento'' '
+        + '       END        Titulo, '
+        + '       Sum(valor) AS Total '
+        + 'FROM   sangriasuprimento '
+        + 'WHERE  data >= :dataInicio '
+        + '       AND data <= :dataFim '
+        + '       AND codven = :codven '
+        + 'GROUP  BY tipo '
+
+        + 'UNION ALL '
+
         + 'SELECT ''Total Parcelas Recebidas''    Titulo, '
         + '       sum(pa.valor) AS Total '
         + 'FROM   parcelas pa, '
@@ -730,6 +824,8 @@ end;
 function TDaoPedido.Totais(dataInicio, dataFim: TDate): TList<TPair<string, string>>;
 var
   qry: TFDQuery;
+  titulo: TArray<string>;
+  sinal: string;
 begin
 
   qry := TFactory.Query();
@@ -746,14 +842,6 @@ begin
         + '       AND p.datapedido >= :dataInicio '
         + '       AND p.datapedido <= :dataFim '
 
-      // + 'UNION ALL '
-      // + 'SELECT ''Entradas'' Titulo, '
-      // + '       Sum(p.valorentrada) AS Total '
-      // + 'FROM   pedido p '
-      // + 'WHERE  p.status = ''F'' '
-      // + '       AND p.datapedido >= :dataInicio '
-      // + '       AND p.datapedido <= :dataFim '
-
         + 'UNION ALL '
 
         + 'SELECT descricao Titulo, '
@@ -769,7 +857,7 @@ begin
 
         + 'UNION ALL '
 
-        + 'SELECT ''Total Troco'' Titulo, '
+        + 'SELECT ''Troco'' Titulo, '
         + '       Sum(p.troco)  AS Total '
         + 'FROM   pedido p '
         + 'WHERE  p.status = ''F'' '
@@ -777,6 +865,19 @@ begin
         + '       AND p.datapedido <= :dataFim '
 
         + 'UNION ALL '
+
+        + 'SELECT CASE '
+        + '         WHEN tipo = 1 THEN ''Sangria'' '
+        + '         WHEN tipo = 2 THEN ''Suprimento'' '
+        + '       END        Titulo, '
+        + '       Sum(valor) AS Total '
+        + 'FROM   sangriasuprimento '
+        + 'WHERE  data >= :dataInicio '
+        + '       AND data <= :dataFim '
+        + 'GROUP  BY tipo '
+
+        + 'UNION ALL '
+
         + 'SELECT ''Total de Parcelas Recebidas''    Titulo, '
         + '       Sum(pa.valor) AS Total '
         + 'FROM   parcelas pa, '
@@ -793,9 +894,17 @@ begin
 
       qry.Open;
 
+      TArrayUtil<string>.Append(titulo, 'Troco');
+      TArrayUtil<string>.Append(titulo, 'Sangria');
+
       while not qry.Eof do
       begin
-        result.Add(TPair<string, string>.Create(qry.FieldByName('Titulo').AsString, FormatCurr('R$ 0.,00', qry.FieldByName('Total').AsCurrency)));
+        if TArrayUtil<string>.Indexof(titulo, qry.FieldByName('Titulo').AsString.Trim) > -1 then
+          sinal := '-'
+        else
+          sinal := '';
+
+        result.Add(TPair<string, string>.Create(qry.FieldByName('Titulo').AsString, sinal + FormatCurr('R$ 0.,00', qry.FieldByName('Total').AsCurrency)));
         qry.Next;
       end;
 

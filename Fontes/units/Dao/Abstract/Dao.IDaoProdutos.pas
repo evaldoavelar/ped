@@ -11,7 +11,7 @@ uses
 type
 
   IDaoProdutos = interface
-  ['{EBE8B393-95CA-43A0-BC68-6E259720F0FF}']
+    ['{EBE8B393-95CA-43A0-BC68-6E259720F0FF}']
     procedure ExcluirProduto(codigo: string);
     procedure IncluiProduto(Produto: TProduto);
     procedure AtualizaProduto(Produto: TProduto);
@@ -23,6 +23,7 @@ type
     procedure ValidaProduto(Produto: TProduto);
     function GetProdutoPorCodigoBarras(codBarras: string): TProduto;
     function GeraID: string;
+    function EntradaSaidaEstoque(aCODIGO: string; aQuantidade: Double; aAutoCommit: Boolean): integer;
   end;
 
 implementation

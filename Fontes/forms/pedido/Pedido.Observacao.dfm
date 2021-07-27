@@ -5,7 +5,7 @@ inherited frmObservacao: TfrmObservacao
   ClientWidth = 397
   OnShow = FormShow
   ExplicitWidth = 403
-  ExplicitHeight = 487
+  ExplicitHeight = 488
   PixelsPerInch = 96
   TextHeight = 13
   object Panel1: TPanel
@@ -15,9 +15,6 @@ inherited frmObservacao: TfrmObservacao
     Height = 416
     Align = alClient
     TabOrder = 0
-    ExplicitLeft = -40
-    ExplicitTop = -32
-    ExplicitHeight = 280
     object lblParceiro: TLabel
       AlignWithMargins = True
       Left = 1
@@ -37,9 +34,7 @@ inherited frmObservacao: TfrmObservacao
       Font.Name = 'Segoe UI'
       Font.Style = []
       ParentFont = False
-      ExplicitLeft = 22
-      ExplicitTop = 140
-      ExplicitWidth = 372
+      ExplicitWidth = 178
     end
     object Image1: TImage
       AlignWithMargins = True
@@ -524,7 +519,7 @@ inherited frmObservacao: TfrmObservacao
       Color = 15524818
       Font.Charset = DEFAULT_CHARSET
       Font.Color = 10639360
-      Font.Height = -11
+      Font.Height = -16
       Font.Name = 'Tahoma'
       Font.Style = []
       MaxLength = 1000
@@ -532,8 +527,6 @@ inherited frmObservacao: TfrmObservacao
       ScrollBars = ssVertical
       TabOrder = 0
       OnChange = mmoObservacoesChange
-      ExplicitTop = 57
-      ExplicitHeight = 189
     end
   end
   object Panel2: TPanel
@@ -546,8 +539,6 @@ inherited frmObservacao: TfrmObservacao
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 1
-    ExplicitTop = 100
-    ExplicitWidth = 240
     object lbl1: TLabel
       Left = 18
       Top = 11

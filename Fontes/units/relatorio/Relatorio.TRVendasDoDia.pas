@@ -72,7 +72,7 @@ begin
 
   LinhaCmd := escAlignLeft + esc20Cpi +
     'Emissão: '
-    + FormatDateTime('dd/mm/yyyy', now);
+    + FormatDateTime('dd/mm/yyyy hh:mm:ss', now);
   Buffer.Add(LinhaCmd);
 
   Buffer.Add(esc20Cpi + PadSpace('Emitido por: ' + Emissor.CODIGO + '  ' +
