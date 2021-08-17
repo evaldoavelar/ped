@@ -380,6 +380,7 @@ inherited frmCadastroFormaPagto: TfrmCadastroFormaPagto
                       Color = clWhite
                       MaxLength = 30
                       TabOrder = 0
+                      ExplicitLeft = 2
                     end
                   end
                   object Panel11: TPanel
@@ -414,6 +415,7 @@ inherited frmCadastroFormaPagto: TfrmCadastroFormaPagto
                       MaxLength = 10
                       NumbersOnly = True
                       TabOrder = 0
+                      ExplicitLeft = 2
                     end
                   end
                   object Panel12: TPanel

@@ -223,9 +223,11 @@ begin
         + 'INSERT INTO FORMAPAGTO '
         + '            (id, '
         + '             DESCRICAO, '
+        + '             QUANTASVEZES, '
         + '            TIPO ) '
         + 'VALUES      (:id, '
         + '             :DESCRICAO, '
+        + '             :QUANTASVEZES, '
         + '            :TIPO )';
 
       ValidaForma(FormaPagtos);

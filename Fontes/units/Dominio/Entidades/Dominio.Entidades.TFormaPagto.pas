@@ -57,6 +57,9 @@ type
 
     property CONDICAODEPAGTO: tLIST<TCONDICAODEPAGTO> read FCONDICAODEPAGTO write SetCONDICAODEPAGTO;
 
+    [campo('QUANTASVEZES', tpINTEGER, 0, 0, True, '1')]
+    property QUANTASVEZES: integer read FQUANTASVEZES write SetQUANTASVEZES;
+
     constructor create;
     destructor destroy; override;
   end;
@@ -74,6 +77,9 @@ begin
   Self.InicializarPropriedades(nil);
   FCONDICAODEPAGTO := tLIST<TCONDICAODEPAGTO>.create;
   FTipo := Ord(TTipoPagto.Nenhum);
+  self.ATIVO := true;
+  self.FQUANTASVEZES := 1;
+
 end;
 
 destructor TFormaPagto.destroy;

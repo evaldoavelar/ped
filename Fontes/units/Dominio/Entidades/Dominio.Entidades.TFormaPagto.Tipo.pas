@@ -4,7 +4,7 @@ interface
 
 type
 
-  TTipoPagto = (Nenhum = 0, Dinheiro = 1, Debito = 2, Credito = 3, Outros = 4, Parcelado = 5);
+  TTipoPagto = (Nenhum = 0, Dinheiro = 1, Debito = 2, Credito = 3, Outros = 4, Parcelado = 5, Pix = 6);
 
   TTipoPagtoHelper = record helper for TTipoPagto
   public
@@ -31,12 +31,12 @@ begin
       Result := 'DÉBITO';
     Credito:
       Result := 'CRÉDITO';
+    Pix:
+      Result := 'PIX';
     Outros:
       Result := 'OUTROS';
   end;
 end;
-
-
 
 function TTipoPagtoHelper.ToString: string;
 begin

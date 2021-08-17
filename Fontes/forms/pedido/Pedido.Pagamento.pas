@@ -355,7 +355,7 @@ begin
   begin
     var
     condicao := TCONDICAODEPAGTO(lvCondicaoPagamento.Items.Objects[lvCondicaoPagamento.ItemIndex]);
-    edtValorPagto.Text := condicao.CalculaAcrescimo(FPedido.Pagamentos.ValorRestante).ToStrDuasCasas;
+    edtValorPagto.Text := condicao.CalculaAcrescimo(FPedido.Pagamentos.ValorRestante).ToStrDuasCasasSemPonto;
   end;
 end;
 
@@ -396,7 +396,7 @@ begin
   begin
     var
     condicao := TCONDICAODEPAGTO(lvCondicaoPagamento.Items.Objects[lvCondicaoPagamento.ItemIndex]);
-    edtValorPagto.Text := condicao.CalculaAcrescimo(FPedido.Pagamentos.ValorRestante).ToStrDuasCasas;
+    edtValorPagto.Text := condicao.CalculaAcrescimo(FPedido.Pagamentos.ValorRestante).ToStrDuasCasasSemPonto;
   end;
 end;
 

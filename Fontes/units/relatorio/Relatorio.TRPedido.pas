@@ -35,10 +35,11 @@ implementation
 uses Util.Funcoes;
 
 procedure TRPedido.ImprimeCupom(Emitente: TEmitente; Pedido: TPedido; ParcelasAtrasadas: TObjectList<TParcelas>);
-var LTemParcela : boolean;
+var
+  LTemParcela: boolean;
 begin
   inherited;
-  LTemParcela :=  TemParcelas(Pedido);
+  LTemParcela := TemParcelas(Pedido);
 
   Self.Cabecalho(Emitente);
   Self.GerarDadosPedido(Pedido, 1);
@@ -160,7 +161,7 @@ end;
 
 procedure TRPedido.GerarPagamento(Pedido: TPedido);
 begin
-
+  Buffer.Add(' ');
   Buffer.Add(esc20Cpi + PadSpace('FORMA DE PAGAMENTO|VALOR PAGO R$', Self.ColunasFonteCondensada, '|'));
 
   for VAR Pagto in Pedido.Pagamentos.FormasDePagamento do

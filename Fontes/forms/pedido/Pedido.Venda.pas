@@ -224,7 +224,7 @@ type
     procedure FinalizaVenda;
     procedure IncializaVariaveis;
     procedure IncializaComponentes;
-    procedure VendeItemPorCodigo;
+    procedure VendeItemPorCodigo(aCodigo: string);
     procedure AbrePedido;
     function getQuantidade: Double;
     procedure setQuantidade(const Value: Double);
@@ -278,7 +278,7 @@ uses
   Pedido.Pagamento, Pedido.Venda.Part.Pagamento;
 
 resourcestring
-  StrPesquisa = 'PESQUISA...';
+  StrPesquisa = '';
 
 {$R *.dfm}
 
@@ -628,7 +628,16 @@ begin
         end;
 
         VendeItemPorDescricao(Produto);
+      end
+      else
+      begin
+        VendeItemPorCodigo(cbbProduto.Text);
+        cbbProduto.Text := StrPesquisa;
+        cbbProduto.SelectAll;
+        medtQuantidade.SelectAll;
+       // cbbProduto.SetFocus;
       end;
+
     except
       on E: Exception do
       begin
@@ -1016,7 +1025,7 @@ procedure TFrmPedidoVenda.medtCodigoKeyPress(Sender: TObject; var Key: Char);
 begin
   if Key = #13 then
   begin
-    self.VendeItemPorCodigo;
+    self.VendeItemPorCodigo(medtCodigo.Text);
   end;
 end;
 
@@ -1092,14 +1101,23 @@ procedure TFrmPedidoVenda.medtQuantidadeKeyPress(Sender: TObject; var Key: Char)
 begin
   if Key = #13 then
   begin
-    try
-      case FForma of
-        FLeitor:
-          medtCodigo.SetFocus;
-        FDescricao:
-          cbbProduto.SetFocus;
+    if Length(medtQuantidade.Text) > 6 then
+    begin
+      cbbProduto.Text := medtQuantidade.Text;
+      medtQuantidade.Text := '1';
+      cbbProduto1KeyPress(Sender, Key);
+    end
+    else
+    begin
+      try
+        case FForma of
+          FLeitor:
+            medtCodigo.SetFocus;
+          FDescricao:
+            cbbProduto.SetFocus;
+        end;
+      except
       end;
-    except
     end;
     Key := #0;
   end;
@@ -1330,7 +1348,7 @@ begin
 
 end;
 
-procedure TFrmPedidoVenda.VendeItemPorCodigo;
+procedure TFrmPedidoVenda.VendeItemPorCodigo(aCodigo: string);
 var
   Produto: TProduto;
   Item: TItemPedido;
@@ -1339,12 +1357,12 @@ begin
     Produto := nil;
 
     // codigo
-    if Length(medtCodigo.Text) <= 6 then
-      Produto := DaoProduto.GetProdutoPorCodigo(medtCodigo.Text);
+    if Length(aCodigo) <= 6 then
+      Produto := DaoProduto.GetProdutoPorCodigo(aCodigo);
 
     // codigo barras
     if not Assigned(Produto) then
-      Produto := DaoProduto.GetProdutoPorCodigoBarras(medtCodigo.Text);
+      Produto := DaoProduto.GetProdutoPorCodigoBarras(aCodigo);
 
     if not Assigned(Produto) then
       raise Exception.Create('Produto não encontrado');
@@ -1354,7 +1372,7 @@ begin
       raise Exception.Create('ATENÇÃO: Produto Unitário com quantidade fracionada');
 
     try
-      medtCodigo.Enabled := false;
+      // medtCodigo.Enabled := false;
 
       if not Assigned(Pedido) then
       begin
@@ -1385,8 +1403,8 @@ begin
       FreeAndNil(Produto);
     finally
       try
-        medtCodigo.Enabled := True;
-        medtCodigo.Text := '';
+        // medtCodigo.Enabled := True;
+        // medtCodigo.Text := '';
         medtQuantidade.SetFocus;
         medtQuantidade.Text := '1';
       except

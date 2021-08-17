@@ -10160,7 +10160,6 @@ object FrmPedidoVenda: TFrmPedidoVenda
           Text = '1'
           OnExit = medtQuantidadeExit
           OnKeyPress = medtQuantidadeKeyPress
-          ExplicitWidth = 83
         end
       end
       object Panel3: TPanel
@@ -10178,7 +10177,6 @@ object FrmPedidoVenda: TFrmPedidoVenda
         Color = clWhite
         ParentBackground = False
         TabOrder = 1
-        ExplicitLeft = 147
         DesignSize = (
           500
           40)

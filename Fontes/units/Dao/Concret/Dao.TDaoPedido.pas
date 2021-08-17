@@ -824,7 +824,7 @@ end;
 function TDaoPedido.Totais(dataInicio, dataFim: TDate): TList<TPair<string, string>>;
 var
   qry: TFDQuery;
-  titulo: TArray<string>;
+  saidas: TArray<string>;
   sinal: string;
 begin
 
@@ -894,12 +894,12 @@ begin
 
       qry.Open;
 
-      TArrayUtil<string>.Append(titulo, 'Troco');
-      TArrayUtil<string>.Append(titulo, 'Sangria');
+      TArrayUtil<string>.Append(saidas, 'Troco');
+      TArrayUtil<string>.Append(saidas, 'Sangria');
 
       while not qry.Eof do
       begin
-        if TArrayUtil<string>.Indexof(titulo, qry.FieldByName('Titulo').AsString.Trim) > -1 then
+        if TArrayUtil<string>.Indexof(saidas, qry.FieldByName('Titulo').AsString.Trim) > -1 then
           sinal := '-'
         else
           sinal := '';
@@ -908,7 +908,9 @@ begin
         qry.Next;
       end;
 
-      qry.SQL.Text := ''
+      result.Add(TPair<string, string>.Create('', ''));
+
+        qry.SQL.Text := ''
         + 'SELECT ''Numero de Pedidos Concluídos'' AS Titulo, '
         + '       count(p.id)  AS Total '
         + 'FROM   pedido p '
@@ -947,58 +949,58 @@ begin
         + '       AND pa.databaixa <= :dataFim '
         ;
 
-      qry.ParamByName('dataInicio').AsDate := dataInicio;
-      qry.ParamByName('dataFim').AsDate := dataFim;
+        qry.ParamByName('dataInicio').AsDate := dataInicio;
+        qry.ParamByName('dataFim').AsDate := dataFim;
 
-      qry.Open;
+        qry.Open;
 
-      while not qry.Eof do
+        while not qry.Eof do
       begin
         result.Add(TPair<string, string>.Create(qry.FieldByName('Titulo').AsString, qry.FieldByName('Total').AsString));
         qry.Next;
       end;
-    finally
-      FreeAndNil(qry);
-    end;
-  except
-    on E: Exception do
-    begin
-      raise TDaoException.Create('Falha ao calcular Totais: ' + E.Message);
-    end;
-  end;
+        finally
+        FreeAndNil(qry);
+      end;
+        except
+        on E: Exception do
+      begin
+        raise TDaoException.Create('Falha ao calcular Totais: ' + E.Message);
+      end;
+      end;
 
-end;
+      end;
 
-procedure TDaoPedido.Valida(Pedido: TPedido);
-begin
-  if Pedido.Vendedor = nil then
-    raise TValidacaoException.Create('Vendedor não associado ao pedido');
+      procedure TDaoPedido.Valida(Pedido: TPedido);
+      begin
+        if Pedido.Vendedor = nil then
+        raise TValidacaoException.Create('Vendedor não associado ao pedido');
 
-  if Pedido.Cliente = nil then
-    raise TValidacaoException.Create('Cliente não associado ao pedido');
+      if Pedido.Cliente = nil then
+        raise TValidacaoException.Create('Cliente não associado ao pedido');
 
-end;
+      end;
 
-procedure TDaoPedido.VendeItem(Item: TItemPedido);
-var
-  DaoItemPedido: TDaoItemPedido;
-begin
-  DaoItemPedido := TDaoItemPedido.Create(Self.FConnection);
-  DaoItemPedido.IncluiItemPedido(Item);
-  FreeAndNil(DaoItemPedido);
-end;
+      procedure TDaoPedido.VendeItem(Item: TItemPedido);
+      var
+        DaoItemPedido: TDaoItemPedido;
+      begin
+        DaoItemPedido := TDaoItemPedido.Create(Self.FConnection);
+      DaoItemPedido.IncluiItemPedido(Item);
+      FreeAndNil(DaoItemPedido);
+      end;
 
-function TDaoPedido.TotaisParceiro(dataInicio, dataFim: TDate; CodParceiro: string): TList<TPair<string, Currency>>;
-var
-  qry: TFDQuery;
-begin
+      function TDaoPedido.TotaisParceiro(dataInicio, dataFim: TDate; CodParceiro: string): TList<TPair<string, Currency>>;
+      var
+        qry: TFDQuery;
+      begin
 
-  qry := TFactory.Query();
-  result := TList < TPair < string, Currency >>.Create();
+        qry := TFactory.Query();
+      result := TList < TPair < string, Currency >>.Create();
 
-  try
-    try
-      qry.SQL.Text := ''
+      try
+        try
+        qry.SQL.Text := ''
 
         + 'SELECT ''CREDIÁRIO''    Titulo, '
         + '       Sum(p.valorliquido) AS Total '
@@ -1017,19 +1019,19 @@ begin
       while not qry.Eof do
       begin
         result.Add(TPair<string, Currency>.Create(qry.FieldByName('Titulo').AsString, qry.FieldByName('Total').AsCurrency));
-        qry.Next;
+      qry.Next;
       end;
 
-    finally
-      FreeAndNil(qry);
-    end;
-  except
-    on E: Exception do
-    begin
-      raise TDaoException.Create('Falha ao calcular Totais: ' + E.Message);
-    end;
-  end;
+      finally
+        FreeAndNil(qry);
+      end;
+      except
+        on E: Exception do
+      begin
+        raise TDaoException.Create('Falha ao calcular Totais: ' + E.Message);
+      end;
+      end;
 
-end;
+      end;
 
-end.
+      end.
