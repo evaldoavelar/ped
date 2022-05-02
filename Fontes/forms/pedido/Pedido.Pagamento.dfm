@@ -110,7 +110,7 @@ inherited FrmPagamento: TFrmPagamento
       Font.Style = []
       ParentColor = True
       ParentFont = False
-      TabOrder = 0
+      TabOrder = 1
       object lblValorLiquido: TLabel
         AlignWithMargins = True
         Left = 0
@@ -143,7 +143,7 @@ inherited FrmPagamento: TFrmPagamento
       BevelOuter = bvNone
       ParentBackground = False
       ParentColor = True
-      TabOrder = 1
+      TabOrder = 0
       object lblValorTotal: TLabel
         AlignWithMargins = True
         Left = 0
@@ -537,8 +537,8 @@ inherited FrmPagamento: TFrmPagamento
       ExplicitHeight = 392
     end
     object labForma: TLabel
-      Left = 10
-      Top = 16
+      Left = 12
+      Top = 122
       Width = 156
       Height = 18
       Caption = 'Forma de Pagamento'
@@ -569,8 +569,8 @@ inherited FrmPagamento: TFrmPagamento
       Transparent = True
     end
     object Label5: TLabel
-      Left = 270
-      Top = 18
+      Left = 262
+      Top = 19
       Width = 177
       Height = 18
       Caption = 'Condi'#231#227'o de Pagamento'
@@ -584,11 +584,27 @@ inherited FrmPagamento: TFrmPagamento
       ParentFont = False
       Transparent = True
     end
+    object Label7: TLabel
+      Left = 10
+      Top = 16
+      Width = 69
+      Height = 18
+      Caption = 'Desconto'
+      Color = clBtnFace
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = 10639360
+      Font.Height = -15
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentColor = False
+      ParentFont = False
+      Transparent = True
+    end
     object lvFormaPagto: TListBox
       Left = 11
-      Top = 40
+      Top = 146
       Width = 243
-      Height = 329
+      Height = 223
       BevelKind = bkFlat
       BevelOuter = bvNone
       Color = 13290186
@@ -611,7 +627,7 @@ inherited FrmPagamento: TFrmPagamento
         '10x'
         '11x')
       ParentFont = False
-      TabOrder = 0
+      TabOrder = 3
       OnEnter = lvFormaPagtoEnter
       OnExit = lvFormaPagtoExit
       OnKeyPress = lvFormaPagtoKeyPress
@@ -639,7 +655,7 @@ inherited FrmPagamento: TFrmPagamento
         '6'#186' Parcela R$ 245,80 Vencimento 29/11/2016'
         '')
       ParentFont = False
-      TabOrder = 1
+      TabOrder = 4
       OnEnter = lvFormaPagtoEnter
       OnExit = lvCondicaoPagamentoExit
       OnKeyPress = lvCondicaoPagamentoKeyPress
@@ -652,7 +668,7 @@ inherited FrmPagamento: TFrmPagamento
       BevelOuter = bvNone
       Color = 16579836
       ParentBackground = False
-      TabOrder = 2
+      TabOrder = 5
       object edtValorPagto: TEdit
         AlignWithMargins = True
         Left = 10
@@ -676,6 +692,7 @@ inherited FrmPagamento: TFrmPagamento
         OnEnter = edtValorPagtoEnter
         OnExit = edtValorPagtoExit
         OnKeyPress = edtValorPagtoKeyPress
+        ExplicitTop = 10
       end
     end
     object Panel1: TPanel
@@ -690,7 +707,7 @@ inherited FrmPagamento: TFrmPagamento
       Color = 500714
       ParentBackground = False
       ShowCaption = False
-      TabOrder = 3
+      TabOrder = 0
     end
     object pnl3: TPanel
       Left = 0
@@ -701,7 +718,7 @@ inherited FrmPagamento: TFrmPagamento
       BevelOuter = bvNone
       Color = 16382457
       ParentBackground = False
-      TabOrder = 4
+      TabOrder = 6
       object lbl1: TLabel
         Left = 10
         Top = 13
@@ -761,7 +778,7 @@ inherited FrmPagamento: TFrmPagamento
       BorderStyle = bsNone
       Color = 16382457
       ParentColor = False
-      TabOrder = 5
+      TabOrder = 1
       object imgPagamento: TImage
         Left = 0
         Top = 0
@@ -901,6 +918,59 @@ inherited FrmPagamento: TFrmPagamento
         ExplicitWidth = 285
         ExplicitHeight = 503
       end
+    end
+    object Panel5: TPanel
+      Left = 11
+      Top = 68
+      Width = 217
+      Height = 45
+      BevelOuter = bvNone
+      Color = 16579836
+      ParentBackground = False
+      TabOrder = 2
+      object edtDesconto: TEdit
+        AlignWithMargins = True
+        Left = 10
+        Top = 9
+        Width = 204
+        Height = 33
+        Margins.Left = 10
+        Margins.Top = 9
+        Align = alClient
+        BorderStyle = bsNone
+        Font.Charset = ANSI_CHARSET
+        Font.Color = 10639360
+        Font.Height = -22
+        Font.Name = 'Tahoma'
+        Font.Style = [fsBold]
+        MaxLength = 10
+        ParentColor = True
+        ParentFont = False
+        TabOrder = 0
+        Text = '0,00'
+        OnExit = edtDescontoExit
+        OnKeyPress = edtDescontoKeyPress
+        ExplicitLeft = 9
+        ExplicitHeight = 35
+      end
+    end
+    object rbPorcentagem: TRadioButton
+      Left = 10
+      Top = 43
+      Width = 83
+      Height = 17
+      Caption = 'Porcentagem'
+      Checked = True
+      TabOrder = 7
+      TabStop = True
+    end
+    object rbValor: TRadioButton
+      Left = 125
+      Top = 42
+      Width = 68
+      Height = 17
+      Caption = 'Valor'
+      TabOrder = 8
     end
   end
   object ActionList1: TActionList

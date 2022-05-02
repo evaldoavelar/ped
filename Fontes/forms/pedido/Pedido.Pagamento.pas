@@ -48,6 +48,11 @@ type
     scrBoxPagamentos: TScrollBox;
     Label6: TLabel;
     imgPagamento: TImage;
+    Label7: TLabel;
+    Panel5: TPanel;
+    edtDesconto: TEdit;
+    rbPorcentagem: TRadioButton;
+    rbValor: TRadioButton;
     procedure actFinalizaPagamentoExecute(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure lvFormaPagtoExit(Sender: TObject);
@@ -59,6 +64,8 @@ type
     procedure edtValorPagtoEnter(Sender: TObject);
     procedure edtValorPagtoExit(Sender: TObject);
     procedure actCancelarExecute(Sender: TObject);
+    procedure edtDescontoKeyPress(Sender: TObject; var Key: Char);
+    procedure edtDescontoExit(Sender: TObject);
   private
     { Private declarations }
     FPedido: TPedido;
@@ -236,10 +243,14 @@ begin
     if FPedido.Pagamentos.FormasDePagamento.Count = 0 then
       LimpaScrollBox(scrBoxPagamentos);
 
-    VAR    forma := TFormaPagto(lvFormaPagto.Items.Objects[lvFormaPagto.ItemIndex]);
-    var    condicao := TCONDICAODEPAGTO(lvCondicaoPagamento.Items.Objects[lvCondicaoPagamento.ItemIndex]);
-    var    valorCalculoAccrescimo := TUtil.IFF<Currency>(valor < FPedido.Pagamentos.ValorRestante, FPedido.Pagamentos.ValorRestante, valor);
-    var    totalCrescimo := condicao.CalculaValorDoAcrescimo(valorCalculoAccrescimo);
+    VAR
+    forma := TFormaPagto(lvFormaPagto.Items.Objects[lvFormaPagto.ItemIndex]);
+    var
+    condicao := TCONDICAODEPAGTO(lvCondicaoPagamento.Items.Objects[lvCondicaoPagamento.ItemIndex]);
+    var
+    valorCalculoAccrescimo := TUtil.IFF<Currency>(valor < FPedido.Pagamentos.ValorRestante, FPedido.Pagamentos.ValorRestante, valor);
+    var
+    totalCrescimo := condicao.CalculaValorDoAcrescimo(valorCalculoAccrescimo);
 
     if (valor > (FPedido.Pagamentos.ValorRestante + totalCrescimo))
       and (forma.TipoPagamento <> TTipoPagto.dinheiro) then
@@ -306,6 +317,32 @@ begin
     .setup;
 end;
 
+procedure TFrmPagamento.edtDescontoExit(Sender: TObject);
+begin
+  inherited;
+  edtDesconto.Text := Format('%f', [FPedido.VALORDESC]);
+  FPedido.Pagamentos.ValorOriginal := FPedido.VALORLIQUIDO;
+  BindLabelsPagamentos(FPedido.Pagamentos.ValorRecebido, FPedido.Pagamentos.ValorAcrescimo, FPedido.Pagamentos.ValorRestante, FPedido.Pagamentos.Troco);
+end;
+
+procedure TFrmPagamento.edtDescontoKeyPress(Sender: TObject; var Key: Char);
+begin
+  inherited;
+  if Key = #13 then
+  begin
+    try
+      if rbPorcentagem.Checked then
+        FPedido.setDescontos(TTipoDesconto.tpPercentual, StrToCurrDef(edtDesconto.Text, 0))
+      else
+        FPedido.setDescontos(TTipoDesconto.tpValor, StrToCurrDef(edtDesconto.Text, 0));
+
+      lvFormaPagto.SetFocus;
+    except
+    end;
+    Key := #0
+  end
+end;
+
 procedure TFrmPagamento.edtValorPagtoEnter(Sender: TObject);
 begin
   inherited;
@@ -339,7 +376,7 @@ procedure TFrmPagamento.FormShow(Sender: TObject);
 begin
   inherited;
   try
-    lvFormaPagto.SetFocus;
+    edtDesconto.SetFocus;
   except
   end;
 

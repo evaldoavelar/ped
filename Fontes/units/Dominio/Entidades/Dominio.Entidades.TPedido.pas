@@ -19,7 +19,7 @@ uses
   Dominio.IEntidade;
 
 type
-
+  TTipoDesconto = (tpPercentual, tpValor);
   TOnVendeItem = reference to procedure(Item: TItemPedido);
   TOnExcluiItem = reference to procedure(Item: TItemPedido);
   TOnChange = reference to procedure(ValorLiquido, ValorBruto: currency; Volume: Double);
@@ -87,6 +87,7 @@ type
     procedure AddParceiro(const Value: TParceiro);
     procedure ExcluiItem(seq: Integer);
     procedure AssignedItens(itens: TObjectList<TItemPedido>);
+    procedure setDescontos(aTipo: TTipoDesconto; aValor: currency);
 
   published
     [campo('ID', tpINTEGER, 0, 0, True)]
@@ -370,6 +371,22 @@ begin
 
   if Assigned(Self.FOnChange) then
     Self.FOnChange(Self.ValorLiquido, Self.ValorBruto, Self.Volume);
+end;
+
+procedure TPedido.setDescontos(aTipo: TTipoDesconto; aValor: currency);
+begin
+  case aTipo of
+    tpPercentual:
+      begin
+        FVALORDESC := ValorBruto * (aValor / 100);
+      end;
+    tpValor:
+      begin
+        FVALORDESC := aValor;
+      end;
+  end;
+
+  FVALORDESC := TUtil.Truncar(FVALORDESC, 2);
 end;
 
 procedure TPedido.setOBSERVACAO(const Value: string);
