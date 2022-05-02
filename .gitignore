@@ -77,6 +77,8 @@ __recovery/
 
 #arquivos do pdv
 imagens
+modules
+Win32
 src/modules
 src/Win32
 

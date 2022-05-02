@@ -78,4 +78,7 @@ __recovery/
 #arquivos
 modules
 Win32
+src/modules
+src/Win32
+
 

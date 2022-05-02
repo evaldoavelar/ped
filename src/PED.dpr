@@ -1,6 +1,6 @@
 program PED;
 
-{$R *.dres}
+
 
 
 uses
