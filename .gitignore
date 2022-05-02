@@ -77,8 +77,5 @@ __recovery/
 
 #arquivos do pdv
 imagens
-Fontes/Win32
-Servidor/Win32/
-Servidor/proxy/
-Fontes/LibrarySupport/DelphiWin32/
-Fontes/ModelSupport_PED/
+src/modules
+src/Win32
