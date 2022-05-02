@@ -1,0 +1,11 @@
+{
+	"name": "PED",
+	"description": "",
+	"version": "1.0.0",
+	"homepage": "",
+	"mainsrc": "./src",
+	"projects": [],
+	"dependencies": {
+		"https://github.com/evaldoavelar/autocomplete": "^1.0"
+	}
+}

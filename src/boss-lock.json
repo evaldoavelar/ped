@@ -1,0 +1,14 @@
+{
+	"hash": "d41d8cd98f00b204e9800998ecf8427e",
+	"updated": "2022-05-02T14:03:19.1133176-03:00",
+	"installedModules": {
+		"https://github.com/evaldoavelar/autocomplete": {
+			"name": "autocomplete",
+			"version": "1.0",
+			"hash": "134731164976a65ab1f2603d4e8468db",
+			"artifacts": {},
+			"failed": false,
+			"changed": false
+		}
+	}
+}
