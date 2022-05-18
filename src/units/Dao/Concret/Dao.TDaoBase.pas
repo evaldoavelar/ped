@@ -21,7 +21,7 @@ type
     procedure FieldsToEntity(ds: TDataSet; Entity: TEntity); virtual;
   public
 
-    constructor Create(Connection: TFDConnection);virtual;
+    constructor Create(Connection: TFDConnection); virtual;
   end;
 
 implementation
@@ -43,7 +43,8 @@ begin
       qry.Connection := FConnection;
 
       qry.SQL.Clear;
-      qry.SQL.Add('SELECT VALOR FROM AUTOINC WHERE CAMPO = ' + QuotedStr(campo));
+      qry.SQL.Add('SELECT VALOR FROM AUTOINC WHERE CAMPO = ' +
+        QuotedStr(campo));
       qry.SQL.Add('      AND  TABELA = ' + QuotedStr(tabela));
       qry.Open;
       if qry.IsEmpty then
@@ -53,14 +54,16 @@ begin
         qry.SQL.Add('SELECT MAX(' + campo + ') PROX FROM ' + tabela);
         qry.Open;
 
-        if qry.IsEmpty or  qry.FieldByName('PROX').IsNull then
+        if qry.IsEmpty or qry.FieldByName('PROX').IsNull then
           inResult := 1
         else
           inResult := qry.FieldByName('PROX').AsInteger + 1;
 
         qry.Close;
         qry.SQL.Clear;
-        qry.SQL.Add('INSERT INTO AUTOINC (CAMPO, VALOR,TABELA ) VALUES (' + QuotedStr(campo) + ',' + IntToStr(inResult) + ',' + QuotedStr(tabela) + ')');
+        qry.SQL.Add('INSERT INTO AUTOINC (CAMPO, VALOR,TABELA ) VALUES (' +
+          QuotedStr(campo) + ',' + IntToStr(inResult) + ',' +
+          QuotedStr(tabela) + ')');
         qry.ExecSQL;
       end
       else
@@ -142,7 +145,7 @@ begin
       else
         Param.Value := prop.GetValue(Entity).AsVariant;
 
-       // Param.Value := prop.GetValue(Entity).AsVariant;
+      // Param.Value := prop.GetValue(Entity).AsVariant;
 
       // case prop.PropertyType.TypeKind of
       // tkUnknown:
@@ -213,7 +216,7 @@ begin
     if prop.IsWritable then
     begin
       Field := ds.Fields.FindField(prop.Name);
-      if Field <> nil then
+      if (Field <> nil) then
       begin
         if (CompareText('string', prop.PropertyType.Name)) = 0 then
           prop.SetValue(Entity, Field.AsString)
@@ -229,6 +232,8 @@ begin
           prop.SetValue(Entity, Field.AsCurrency)
         else if (CompareText('Integer', prop.PropertyType.Name)) = 0 then
           prop.SetValue(Entity, Field.AsInteger)
+        else if (prop.PropertyType.TypeKind = TTypeKind.tkClass) then
+          Continue
         else
           prop.SetValue(Entity, TValue.FromVariant(Field.Value));
       end;

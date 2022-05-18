@@ -18,7 +18,7 @@ Type
     class function Clone<T: Class>(ASource: T): T; static;
 
     class procedure ListDisposeOf<T: Class>(const aList: TList<T>); static;
-    class procedure AssignedFreeAndNil(var aObj); static;
+    class procedure AssignedFreeAndNil(var aObj: TObject); static;
     class procedure AssignedFree(aObj: TObject); static;
     class procedure Initialize<T: Class>(ASource: T);
 
@@ -484,7 +484,7 @@ begin
     aObj.Free;
 end;
 
-class procedure TRttiUtil.AssignedFreeAndNil(var aObj);
+class procedure TRttiUtil.AssignedFreeAndNil(var aObj: TObject);
 begin
   if Assigned(TObject(aObj)) then
   begin
