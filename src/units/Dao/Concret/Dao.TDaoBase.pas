@@ -142,7 +142,7 @@ begin
       else
         Param.Value := prop.GetValue(Entity).AsVariant;
 
-      // Param.Value := prop.GetValue(Entity).AsVariant;
+       // Param.Value := prop.GetValue(Entity).AsVariant;
 
       // case prop.PropertyType.TypeKind of
       // tkUnknown:
