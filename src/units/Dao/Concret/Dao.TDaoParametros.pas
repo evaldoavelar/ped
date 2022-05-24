@@ -3,7 +3,7 @@ unit Dao.TDaoParametros;
 interface
 
 uses
-  System.SysUtils, System.Classes,
+  System.SysUtils, System.Classes, Vcl.Graphics, Vcl.ExtCtrls, Vcl.Imaging.jpeg,
   Data.DB, FireDAC.Comp.Client, FireDAC.Stan.Param,
   Dao.TDaoBase, Dao.IDaoParametros,
   Sistema.TParametros;
@@ -34,20 +34,11 @@ begin
   qry := TFactory.Query();
   try
     try
-      qry.SQL.Text := ''
-        + 'UPDATE parametros '
-        + 'SET    vendeclientebloqueado = :VENDECLIENTEBLOQUEADO, '
-        + '       atualizaclientenavenda = :ATUALIZACLIENTENAVENDA, '
-        + '       BLOQUEARCLIENTECOMATRASO = :BLOQUEARCLIENTECOMATRASO, '
-        + '       BACKUPDIARIO = :BACKUPDIARIO, '
-        + '       modeloimpressora = :MODELOIMPRESSORA, '
-        + '       portaimpressora = :PORTAIMPRESSORA, '
-        + '       velocidade = :VELOCIDADE,'
-        + '       VERSAOBD = :VERSAOBD,'
-        + '       IMPRIMIR2VIAS = :IMPRIMIR2VIAS, '
-        + '       IMPRIMIRITENS2VIA = :IMPRIMIRITENS2VIA,'
-        + '       VALIDADEORCAMENTO = :VALIDADEORCAMENTO, '
-        + '       PESQUISAPRODUTOPOR = :PESQUISAPRODUTOPOR ' ;
+      qry.SQL.Text := '' + 'UPDATE parametros ' + 'SET    vendeclientebloqueado = :VENDECLIENTEBLOQUEADO, ' + '       atualizaclientenavenda = :ATUALIZACLIENTENAVENDA, ' +
+        '       BLOQUEARCLIENTECOMATRASO = :BLOQUEARCLIENTECOMATRASO, ' + '       BACKUPDIARIO = :BACKUPDIARIO, ' + '       modeloimpressora = :MODELOIMPRESSORA, ' +
+        '       portaimpressora = :PORTAIMPRESSORA, ' + '       velocidade = :VELOCIDADE,' + '       VERSAOBD = :VERSAOBD,' + '       IMPRIMIR2VIAS = :IMPRIMIR2VIAS, ' +
+        '       IMPRIMIRITENS2VIA = :IMPRIMIRITENS2VIA,' + '       VALIDADEORCAMENTO = :VALIDADEORCAMENTO, ' + '       LOGOMARCAETIQUETA = :LOGOMARCAETIQUETA, ' +
+        '       PESQUISAPRODUTOPOR = :PESQUISAPRODUTOPOR ';
 
       ObjectToParams(qry, Parametros);
 
@@ -73,9 +64,7 @@ begin
   qry := TFactory.Query();
   try
     try
-      qry.SQL.Text := ''
-        + 'select *  '
-        + 'from  Parametros ';
+      qry.SQL.Text := '' + 'select *  ' + 'from  Parametros ';
 
       qry.open;
 
@@ -104,32 +93,12 @@ begin
   qry := TFactory.Query();
   try
     try
-      qry.SQL.Text := ''
-        + 'INSERT INTO parametros '
-        + '            (vendeclientebloqueado, '
-        + '             atualizaclientenavenda, '
-        + '             BLOQUEARCLIENTECOMATRASO, '
-        + '             modeloimpressora, '
-        + '             portaimpressora, '
-        + '             BACKUPDIARIO, '
-        + '             VERSAOBD, '
-        + '             IMPRIMIR2VIAS, '
-        + '             IMPRIMIRITENS2VIA, '
-        + '             VALIDADEORCAMENTO, '
-        + '             PESQUISAPRODUTOPOR, '
-        + '             velocidade) '
-        + 'VALUES     ( :VENDECLIENTEBLOQUEADO, '
-        + '             :ATUALIZACLIENTENAVENDA, '
-        + '             :BLOQUEARCLIENTECOMATRASO, '
-        + '             :MODELOIMPRESSORA, '
-        + '             :PORTAIMPRESSORA, '
-        + '             :BACKUPDIARIO, '
-        + '             :VERSAOBD, '
-        + '             :IMPRIMIR2VIAS, '
-        + '             :IMPRIMIRITENS2VIA, '
-        + '             :VALIDADEORCAMENTO, '
-        + '             :PESQUISAPRODUTOPOR, '
-        + '             :VELOCIDADE )';
+      qry.SQL.Text := '' + 'INSERT INTO parametros ' + '            (vendeclientebloqueado, ' + '             atualizaclientenavenda, ' + '             BLOQUEARCLIENTECOMATRASO, ' +
+        '             modeloimpressora, ' + '             portaimpressora, ' + '             BACKUPDIARIO, ' + '             VERSAOBD, ' + '             IMPRIMIR2VIAS, ' +
+        '             IMPRIMIRITENS2VIA, ' + '             VALIDADEORCAMENTO, ' + '             PESQUISAPRODUTOPOR, ' + '             LOGOMARCAETIQUETA, ' + '             velocidade) ' +
+        'VALUES     ( :VENDECLIENTEBLOQUEADO, ' + '             :ATUALIZACLIENTENAVENDA, ' + '             :BLOQUEARCLIENTECOMATRASO, ' + '             :MODELOIMPRESSORA, ' +
+        '             :PORTAIMPRESSORA, ' + '             :BACKUPDIARIO, ' + '             :VERSAOBD, ' + '             :IMPRIMIR2VIAS, ' + '             :IMPRIMIRITENS2VIA, ' +
+        '             :VALIDADEORCAMENTO, ' + '             :PESQUISAPRODUTOPOR, ' + '             :LOGOMARCAETIQUETA, ' + '             :VELOCIDADE )';
 
       ObjectToParams(qry, Parametros);
 
@@ -163,7 +132,7 @@ begin
     if ds.Params.FindParam('VALIDADEORCAMENTO') <> nil then
       ds.Params.ParamByName('VALIDADEORCAMENTO').AsInteger := Parametros.VALIDADEORCAMENTO;
 
-      if ds.Params.FindParam('PESQUISAPRODUTOPOR') <> nil then
+    if ds.Params.FindParam('PESQUISAPRODUTOPOR') <> nil then
       ds.Params.ParamByName('PESQUISAPRODUTOPOR').AsInteger := Parametros.PESQUISAPRODUTOPOR;
 
     if ds.Params.FindParam('IMPRIMIR2VIAS') <> nil then
@@ -184,6 +153,12 @@ begin
 
     if ds.Params.FindParam('VERSAOBD') <> nil then
       ds.Params.ParamByName('VERSAOBD').AsString := Parametros.VERSAOBD;
+
+    if ds.Params.FindParam('LOGOMARCAETIQUETA') <> nil then
+    begin
+      if Parametros.LOGOMARCAETIQUETA <> nil then
+        ds.Params.ParamByName('LOGOMARCAETIQUETA').Assign(Parametros.LOGOMARCAETIQUETA.Picture.Graphic);
+    end;
 
   except
     on E: Exception do
@@ -208,6 +183,14 @@ begin
     Result.Impressora.IMPRIMIR2VIAS := ds.FieldByName('IMPRIMIR2VIAS').AsInteger = 1;
     Result.Impressora.IMPRIMIRITENS2VIA := ds.FieldByName('IMPRIMIRITENS2VIA').AsInteger = 1;
     Result.VERSAOBD := ds.FieldByName('VERSAOBD').AsString;
+
+    if not ds.FieldByName('LOGOMARCAETIQUETA').IsNull then
+    begin
+      Result.LOGOMARCAETIQUETA := TImage.Create(nil);
+      Result.LOGOMARCAETIQUETA.Picture.Graphic := TJpegimage.Create;
+      Result.LOGOMARCAETIQUETA.Picture.Graphic.Assign(ds.FieldByName('LOGOMARCAETIQUETA'));
+    end;
+
   except
     on E: Exception do
       raise TDaoException.Create('Falha no ParamsToObject TParametros: ' + E.Message);

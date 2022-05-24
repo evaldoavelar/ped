@@ -7,7 +7,7 @@ inherited FrmConfiguracoes: TFrmConfiguracoes
   OnDestroy = FormDestroy
   OnShow = FormShow
   ExplicitWidth = 802
-  ExplicitHeight = 432
+  ExplicitHeight = 434
   PixelsPerInch = 96
   TextHeight = 13
   object pnl1: TPanel
@@ -39,7 +39,7 @@ inherited FrmConfiguracoes: TFrmConfiguracoes
     Top = 0
     Width = 796
     Height = 362
-    ActivePage = ts1
+    ActivePage = tsLogoMarca
     Align = alClient
     TabOrder = 0
     object ts1: TTabSheet
@@ -679,6 +679,62 @@ inherited FrmConfiguracoes: TFrmConfiguracoes
         OnClick = chkVenderClienteBloqueadoClick
       end
     end
+    object tsLogoMarca: TTabSheet
+      Caption = 'Logo Marca'
+      ImageIndex = 2
+      object Label17: TLabel
+        AlignWithMargins = True
+        Left = 3
+        Top = 3
+        Width = 782
+        Height = 13
+        Align = alTop
+        Caption = 'Logo marca para Impress'#227'o em Etiquetas (130 x 43 pixels)'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = 10639360
+        Font.Height = -11
+        Font.Name = 'Tahoma'
+        Font.Style = [fsBold]
+        ParentFont = False
+        ExplicitWidth = 333
+      end
+      object imgComprovante: TImage
+        AlignWithMargins = True
+        Left = 3
+        Top = 22
+        Width = 782
+        Height = 268
+        Align = alClient
+        Center = True
+        Proportional = True
+        ExplicitLeft = 0
+        ExplicitTop = 2
+        ExplicitWidth = 698
+        ExplicitHeight = 352
+      end
+      object Panel1: TPanel
+        AlignWithMargins = True
+        Left = 3
+        Top = 296
+        Width = 782
+        Height = 35
+        Align = alBottom
+        BevelOuter = bvNone
+        TabOrder = 0
+        ExplicitLeft = 0
+        ExplicitTop = 352
+        ExplicitWidth = 698
+        object btnAnexarComprovante: TBitBtn
+          Left = 16
+          Top = 8
+          Width = 121
+          Height = 25
+          Caption = 'Carregar'
+          TabOrder = 0
+          OnClick = btnAnexarComprovanteClick
+        end
+      end
+    end
   end
   object act1: TActionList
     Left = 320
@@ -693,5 +749,24 @@ inherited FrmConfiguracoes: TFrmConfiguracoes
     OutputConverters = <>
     Left = 420
     Top = 109
+  end
+  object dlgSavePic: TSavePictureDialog
+    Filter = 
+      'All (*.gif;*.png;*.jpg;*.jpeg;*.bmp;*.jpg;*.jpeg;*.gif;*.png;*.t' +
+      'if;*.tiff;*.ico;*.emf;*.wmf)|*.gif;*.png;*.jpg;*.jpeg;*.bmp;*.jp' +
+      'g;*.jpeg;*.gif;*.png;*.tif;*.tiff;*.ico;*.emf;*.wmf|GIF Image (*' +
+      '.gif)|*.gif|Portable Network Graphics (*.png)|*.png|JPEG Image F' +
+      'ile (*.jpg)|*.jpg|JPEG Image File (*.jpeg)|*.jpeg|Bitmaps (*.bmp' +
+      ')|*.bmp|JPEG Images (*.jpg)|*.jpg|JPEG Images (*.jpeg)|*.jpeg|GI' +
+      'F Images (*.gif)|*.gif|PNG Images (*.png)|*.png|TIFF Images (*.t' +
+      'if)|*.tif|TIFF Images (*.tiff)|*.tiff|Icons (*.ico)|*.ico|Enhanc' +
+      'ed Metafiles (*.emf)|*.emf|Metafiles (*.wmf)|*.wmf'
+    Left = 192
+    Top = 240
+  end
+  object dlgOpenPic: TOpenPictureDialog
+    Filter = 'Jpg|*.jpg|*.jpeg|Todos|*.*'
+    Left = 224
+    Top = 240
   end
 end

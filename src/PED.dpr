@@ -182,7 +182,10 @@ uses
   Estoque.Consultar in 'views\estoque\Estoque.Consultar.pas' {ViewEstoqueMovimentacoes},
   Dao.TDaoEstoqueFiltro in 'units\Dao\Concret\Dao.TDaoEstoqueFiltro.pas',
   Dao.IDaoFiltroEstoque in 'units\Dao\Abstract\Dao.IDaoFiltroEstoque.pas',
-  Utils.ArrayUtil in 'units\Util\Utils.ArrayUtil.pas';
+  Utils.ArrayUtil in 'units\Util\Utils.ArrayUtil.pas',
+  Etiquetas.Modelo1 in 'views\etiquetas\Etiquetas.Modelo1.pas' {FrmEtiquetasModelo1},
+  Relatorio.FRBase in 'units\relatorio\Relatorio.FRBase.pas',
+  Relatorio.FREtiquetas.Modelo1 in 'units\relatorio\Relatorio.FREtiquetas.Modelo1.pas';
 
 {$R *.res}
 

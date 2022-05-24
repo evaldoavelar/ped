@@ -9,7 +9,8 @@ uses
   Vcl.ActnList, Vcl.ComCtrls, Vcl.Buttons, Vcl.ExtCtrls,
   ACBrPosPrinter, System.TypInfo,
   Dao.IDaoEmitente, Dominio.Entidades.TEmitente, Sistema.TParametros, Dao.IDaoParametros,
-  Data.Bind.Components, Data.Bind.EngExt, Vcl.Bind.DBEngExt, System.Actions;
+  Data.Bind.Components, Data.Bind.EngExt, Vcl.Bind.DBEngExt, System.Actions,
+  Vcl.ExtDlgs;
 
 type
   TFrmConfiguracoes = class(TfrmBase)
@@ -65,6 +66,13 @@ type
     edtValidadeOrcamento: TEdit;
     rgPesquisaPor: TRadioGroup;
     chkInformarParceiroNaVenda: TCheckBox;
+    tsLogoMarca: TTabSheet;
+    Label17: TLabel;
+    Panel1: TPanel;
+    btnAnexarComprovante: TBitBtn;
+    imgComprovante: TImage;
+    dlgSavePic: TSavePictureDialog;
+    dlgOpenPic: TOpenPictureDialog;
     procedure edtRazaoSocialChange(Sender: TObject);
     procedure actOkExecute(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -73,6 +81,7 @@ type
     procedure cbxModeloChange(Sender: TObject);
     procedure chkVenderClienteBloqueadoClick(Sender: TObject);
     procedure rgPesquisaPorClick(Sender: TObject);
+    procedure btnAnexarComprovanteClick(Sender: TObject);
   private
     { Private declarations }
     DaoEmitente: IDaoEmitente;
@@ -82,6 +91,7 @@ type
     procedure Bind;
     procedure Get();
     procedure salvar();
+    procedure Carregarlogo;
   public
     { Public declarations }
   end;
@@ -144,6 +154,37 @@ begin
   FParametros.Bind('VALIDADEORCAMENTO', edtValidadeOrcamento, 'Text');
   FParametros.Bind('PESQUISAPRODUTOPOR', rgPesquisaPor, 'ItemIndex');
   FParametros.Bind('INFORMARPARCEIRONAVENDA', chkInformarParceiroNaVenda, 'Checked');
+
+   try
+    if FParametros.LOGOMARCAETIQUETA <> nil then
+    begin
+      imgComprovante.Picture := FParametros.LOGOMARCAETIQUETA.Picture;
+    end
+  except
+    on E: Exception do
+      MessageDlg('Falha ao mapear comprovante: ' + E.Message, mtError, [mbOK], 0);
+  end;
+end;
+
+procedure TFrmConfiguracoes.btnAnexarComprovanteClick(Sender: TObject);
+begin
+  inherited;
+   Carregarlogo;
+end;
+
+procedure TFrmConfiguracoes.Carregarlogo;
+begin
+  try
+    if dlgOpenPic.Execute then
+    begin
+      FParametros.LOGOMARCAETIQUETA := TImage.Create(self);
+      FParametros.LOGOMARCAETIQUETA .Picture.LoadFromFile(dlgOpenPic.FileName);
+      imgComprovante.Picture :=FParametros.LOGOMARCAETIQUETA .Picture;
+    end;
+  except
+    on E: Exception do
+      MessageDlg(E.Message, mtError, [mbOK], 0);
+  end;
 end;
 
 procedure TFrmConfiguracoes.cbxModeloChange(Sender: TObject);

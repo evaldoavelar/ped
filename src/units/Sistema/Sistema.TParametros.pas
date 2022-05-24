@@ -3,7 +3,7 @@ unit Sistema.TParametros;
 interface
 
 uses
-  system.SysUtils,
+  system.SysUtils,   Vcl.ExtCtrls,
   Dominio.Entidades.TEntity,
   Sistema.TFormaPesquisa,
   Impressao.TParametrosImpressora,
@@ -25,6 +25,7 @@ type
     FVALIDADEORCAMENTO: Integer;
     FPESQUISAPRODUTOPOR: Integer;
     FINFORMARPARCEIRONAVENDA: Boolean;
+    FLOGOMARCAETIQUETA: TImage;
 
     function getVENDECLIENTEBLOQUEADO: Boolean;
     procedure setVENDECLIENTEBLOQUEADO(const Value: Boolean);
@@ -70,6 +71,10 @@ type
 
     [campo('INFORMARPARCEIRONAVENDA', tpINTEGER, 0, 0, True, '1')]
     property INFORMARPARCEIRONAVENDA: Boolean read FINFORMARPARCEIRONAVENDA write SetINFORMARPARCEIRONAVENDA;
+
+
+     [campo('LOGOMARCAETIQUETA', tpBLOB, 0, 9048)]
+    property LOGOMARCAETIQUETA: TImage read FLOGOMARCAETIQUETA write FLOGOMARCAETIQUETA;
 
     constructor create; override;
 

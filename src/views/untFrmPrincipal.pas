@@ -4,7 +4,8 @@ interface
 
 uses
   System.Generics.Collections,
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.UITypes,
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
+  System.UITypes,
   System.Classes, Vcl.Graphics, System.Threading,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls,
   JvExExtCtrls, JvExtComponent, JvClock, Vcl.StdCtrls, JvExControls,
@@ -12,13 +13,22 @@ uses
   Vcl.ActnList, Vcl.Menus,
   Dao.IDaoParcelas, System.Actions, Vcl.Imaging.jpeg,
   FireDAC.Stan.Def, FireDAC.Phys.IBWrapper, FireDAC.Stan.Intf, FireDAC.Phys,
-  FireDAC.Phys.IBBase, FireDAC.Phys.FB, FireDAC.Stan.Option, FireDAC.Stan.Error, FireDAC.UI.Intf, FireDAC.Stan.Pool,
+  FireDAC.Phys.IBBase, FireDAC.Phys.FB, FireDAC.Stan.Option, FireDAC.Stan.Error,
+  FireDAC.UI.Intf, FireDAC.Stan.Pool,
   FireDAC.Stan.Async, FireDAC.VCLUI.Wait, FireDAC.Comp.Client,
-  Dominio.Entidades.TParcelas, Sistema.TLicenca, Licenca.InformaSerial, Util.Exceptions, Util.VclFuncoes, Orcamento.Criar, Helper.TLiveBindingFormatCurr,
-  Filtro.Orcamentos, Relatorio.TRVendasDoDia, Filtro.Datas, Filtro.DatasVendedor, Dominio.Entidades.TVendedor,
-  FireDAC.Comp.ScriptCommands, FireDAC.Stan.Util, FireDAC.Phys.FBDef, Relatorio.TRParcelasCliente, Dominio.Entidades.TCliente, Pedido.SelecionaCliente, Filtro.Cliente,
-  Relatorio.TRProdutosVendidos, Helper.TProdutoVenda, parceiro.InformaPagto, Cadastros.parceiro,
-  Cadastros.parceiro.FormaPagto, Filtro.VendasParceiro, Relatorio.TRVendasPorParceiro, Vcl.ComCtrls, System.ImageList, Vcl.ImgList, Vcl.CategoryButtons, Vcl.WinXCtrls,
+  Dominio.Entidades.TParcelas, Sistema.TLicenca, Licenca.InformaSerial,
+  Util.Exceptions, Util.VclFuncoes, Orcamento.Criar,
+  Helper.TLiveBindingFormatCurr,
+  Filtro.Orcamentos, Relatorio.TRVendasDoDia, Filtro.Datas,
+  Filtro.DatasVendedor, Dominio.Entidades.TVendedor,
+  FireDAC.Comp.ScriptCommands, FireDAC.Stan.Util, FireDAC.Phys.FBDef,
+  Relatorio.TRParcelasCliente, Dominio.Entidades.TCliente,
+  Pedido.SelecionaCliente, Filtro.Cliente,
+  Relatorio.TRProdutosVendidos, Helper.TProdutoVenda, parceiro.InformaPagto,
+  Cadastros.parceiro,
+  Cadastros.parceiro.FormaPagto, Filtro.VendasParceiro,
+  Relatorio.TRVendasPorParceiro, Vcl.ComCtrls, System.ImageList, Vcl.ImgList,
+  Vcl.CategoryButtons, Vcl.WinXCtrls,
   Vcl.Imaging.pngimage;
 
 type
@@ -155,6 +165,10 @@ type
     tsEstoque: TTabSheet;
     CategoryButtons7: TCategoryButtons;
     actConsultarEstoque: TAction;
+    actEtiquetas: TAction;
+    tsEtiquetas: TTabSheet;
+    CategoryButtons8: TCategoryButtons;
+    actEtiquetasModelo1: TAction;
     procedure actPedidoVendaExecute(Sender: TObject);
     procedure imgNFCEDblClick(Sender: TObject);
     procedure actSairExecute(Sender: TObject);
@@ -168,7 +182,8 @@ type
     procedure actCadVendedorExecute(Sender: TObject);
     procedure actCadProdutosExecute(Sender: TObject);
     procedure actCadFornecedorExecute(Sender: TObject);
-    procedure lblVencimentoMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
+    procedure lblVencimentoMouseMove(Sender: TObject; Shift: TShiftState;
+      X, Y: Integer);
     procedure lblVencimentoMouseLeave(Sender: TObject);
     procedure lblVencimentoClick(Sender: TObject);
     procedure actParametrosExecute(Sender: TObject);
@@ -210,6 +225,8 @@ type
     procedure actEstoqueAtualizarExecute(Sender: TObject);
     procedure actEstoqueExecute(Sender: TObject);
     procedure actConsultarEstoqueExecute(Sender: TObject);
+    procedure actEtiquetasModelo1Execute(Sender: TObject);
+    procedure actEtiquetasExecute(Sender: TObject);
   private
     { Private declarations }
     DaoParcelas: IDaoParcelas;
@@ -219,7 +236,8 @@ type
     function RetornaNomeArquivoBackup(): string;
     function RetornaNomeArquivoLicenca(): string;
     procedure MigrateBD;
-    procedure ListaParcelas(ACaption: string; AParcelas: TObjectList<TParcelas>);
+    procedure ListaParcelas(ACaption: string;
+      AParcelas: TObjectList<TParcelas>);
     function CheckLicenca: Boolean;
     procedure InformarSerial;
     procedure DefineLabelVendedor;
@@ -230,7 +248,8 @@ type
     procedure FecharMenuLateralEsquerdo;
     procedure FechaSubMenu;
     procedure ExibeAtalhos;
-    procedure WMGetMinmaxInfo(var Msg: TWMGetMinmaxInfo); message WM_GETMINMAXINFO;
+    procedure WMGetMinmaxInfo(var Msg: TWMGetMinmaxInfo);
+      message WM_GETMINMAXINFO;
   public
     { Public declarations }
   end;
@@ -241,16 +260,20 @@ var
 implementation
 
 uses
-  Pedido.Venda, Util.Funcoes, Recebimento.Recebe, Dominio.Entidades.TFactory, Cadastros.Cliente, Cadastros.FormaPagto,
-  Cadastros.Vendedor, Cadastros.Produto, Cadastros.Fornecedor, Configuracoes.Parametros, Splash.Form,
-  Dominio.Entidades.TEmitente, Recebimento.ListaParcelas, Sistema.TParametros, Login.FrmLogin,
+  Pedido.Venda, Util.Funcoes, Recebimento.Recebe, Dominio.Entidades.TFactory,
+  Cadastros.Cliente, Cadastros.FormaPagto,
+  Cadastros.Vendedor, Cadastros.Produto, Cadastros.Fornecedor,
+  Configuracoes.Parametros, Splash.Form,
+  Dominio.Entidades.TEmitente, Recebimento.ListaParcelas, Sistema.TParametros,
+  Login.FrmLogin,
   Filtro.Vencimento, Filtro.Parcelas,
-  Database.IDataseMigration, Database.TDataseMigrationBase, Filtro.Pedidos, Grafico.Pedidos,
-  Sangria.Suprimento.Informar, Dominio.Entidades.TSangriaSuprimento.Tipo, Estoque.Atualizar,
-  Estoque.Consultar;
+  Database.IDataseMigration, Database.TDataseMigrationBase, Filtro.Pedidos,
+  Grafico.Pedidos,
+  Sangria.Suprimento.Informar, Dominio.Entidades.TSangriaSuprimento.Tipo,
+  Estoque.Atualizar,
+  Estoque.Consultar, Etiquetas.Modelo1;
 
 {$R *.dfm}
-
 
 procedure TFrmPrincipal.actAbreMenuExecute(Sender: TObject);
 begin
@@ -284,7 +307,8 @@ begin
   try
     arquivo := RetornaNomeArquivoBackup();
     Backup(arquivo);
-    MessageDlg(Format('Backup feito em: %s', [arquivo]), mtInformation, [mbOK], 0);
+    MessageDlg(Format('Backup feito em: %s', [arquivo]), mtInformation,
+      [mbOK], 0);
   except
     on E: Exception do
       MessageDlg(E.Message, mtError, [mbOK], 0);
@@ -294,7 +318,8 @@ end;
 procedure TFrmPrincipal.actCadastroFormaPagtoParceiroExecute(Sender: TObject);
 begin
   try
-    FrmCadastroFormaPagtoParceiro := TFrmCadastroFormaPagtoParceiro.Create(Self);
+    FrmCadastroFormaPagtoParceiro :=
+      TFrmCadastroFormaPagtoParceiro.Create(Self);
     try
 
       FrmCadastroFormaPagtoParceiro.ShowModal;
@@ -397,7 +422,8 @@ procedure TFrmPrincipal.actCadVendedorExecute(Sender: TObject);
 begin
   try
     if not TFactory.VendedorLogado.PODEACESSARCADASTROVENDEDOR then
-      raise Exception.Create('Vendedor não tem permissão para acessar cadastro de vendedores');
+      raise Exception.Create
+        ('Vendedor não tem permissão para acessar cadastro de vendedores');
 
     frmCadastroVendedor := TfrmCadastroVendedor.Create(Self);
     try
@@ -506,6 +532,27 @@ begin
   AbreSubMenu;
 end;
 
+procedure TFrmPrincipal.actEtiquetasModelo1Execute(Sender: TObject);
+begin
+  try
+    FrmEtiquetasModelo1 := TFrmEtiquetasModelo1.Create(Self);
+    try
+      FrmEtiquetasModelo1.ShowModal;
+    finally
+      FreeAndNil(FrmEtiquetasModelo1);
+    end;
+  except
+    on E: Exception do
+      MessageDlg(E.Message, mtError, [mbOK], 0);
+  end;
+end;
+
+procedure TFrmPrincipal.actEtiquetasExecute(Sender: TObject);
+begin
+  pgcMenu.ActivePage := tsEtiquetas;
+  AbreSubMenu;
+end;
+
 procedure TFrmPrincipal.actGraficoPedidosExecute(Sender: TObject);
 begin
   try
@@ -608,7 +655,8 @@ begin
 
       Licenca := TLicenca.Create;
       try
-        if not(Licenca.LicencaValida(RetornaNomeArquivoLicenca(), TFactory.DadosEmitente.CNPJ, now)) then
+        if not(Licenca.LicencaValida(RetornaNomeArquivoLicenca(),
+          TFactory.DadosEmitente.CNPJ, now)) then
           raise Exception.Create('O serial não é válido!');
         CheckLicenca;
       finally
@@ -666,7 +714,8 @@ begin
     end
     else
     begin
-      MessageDlg('É preciso uma licença para acessar a tela de pedidos!', mtError, [mbOK], 0);
+      MessageDlg('É preciso uma licença para acessar a tela de pedidos!',
+        mtError, [mbOK], 0);
     end;
   except
     on E: Exception do
@@ -679,7 +728,8 @@ begin
   try
     FechaSubMenu;
     if not TFactory.VendedorLogado.PODERECEBERPARCELA then
-      raise Exception.Create('Vendedor não tem permissão para acessar recebimento de parcelas');
+      raise Exception.Create
+        ('Vendedor não tem permissão para acessar recebimento de parcelas');
 
     frmRecebimento := TfrmRecebimento.Create(Self);
     try
@@ -715,20 +765,19 @@ begin
       frmFiltroCliente := nil;
     end;
 
-    if (not Assigned(Cliente)) or (Cliente.CODIGO = '000000') or (Cliente.CODIGO = '') then
+    if (not Assigned(Cliente)) or (Cliente.CODIGO = '000000') or
+      (Cliente.CODIGO = '') then
       abort;
 
-    parcelasVencidas := TFactory.DaoParcelas.GeTParcelasVencidasPorCliente(Cliente.CODIGO, now);
-    parcelasVencendo := TFactory.DaoParcelas.GeTParcelasVencendoPorCliente(Cliente.CODIGO, now);
+    parcelasVencidas := TFactory.DaoParcelas.GeTParcelasVencidasPorCliente
+      (Cliente.CODIGO, now);
+    parcelasVencendo := TFactory.DaoParcelas.GeTParcelasVencendoPorCliente
+      (Cliente.CODIGO, now);
 
     impressao := TRParcelasCliente.Create(TFactory.Parametros.Impressora);
 
-    impressao.Imprime(
-      Cliente,
-      TFactory.DadosEmitente,
-      parcelasVencidas,
-      parcelasVencendo
-      );
+    impressao.Imprime(Cliente, TFactory.DadosEmitente, parcelasVencidas,
+      parcelasVencendo);
 
     FreeAndNil(Cliente);
     FreeAndNil(impressao);
@@ -767,12 +816,8 @@ begin
 
     impressao := TRProdutosVendidos.Create(TFactory.Parametros.Impressora);
 
-    impressao.Imprime(
-      DataIncio,
-      DataFim,
-      TFactory.VendedorLogado,
-      TFactory.DadosEmitente,
-      ProdutosVenda);
+    impressao.Imprime(DataIncio, DataFim, TFactory.VendedorLogado,
+      TFactory.DadosEmitente, ProdutosVenda);
 
     FreeAndNil(ProdutosVenda);
     FreeAndNil(impressao);
@@ -799,7 +844,9 @@ begin
     try
       if frmFiltroVencimento.ShowModal = mrOk then
       begin
-        Parcelas := DaoParcelas.GetParcelaVencendoObj(frmFiltroVencimento.edtDataIncio.Date, frmFiltroVencimento.edtDataFim.Date);
+        Parcelas := DaoParcelas.GetParcelaVencendoObj
+          (frmFiltroVencimento.edtDataIncio.Date,
+          frmFiltroVencimento.edtDataFim.Date);
         ListaParcelas('Parcelas Vencendo', Parcelas);
 
         if Assigned(Parcelas) then
@@ -852,12 +899,8 @@ begin
 
     impressao := TRVendasDoDia.Create(TFactory.Parametros.Impressora);
 
-    impressao.Imprime(
-      DataIncio,
-      DataFim,
-      TFactory.VendedorLogado,
-      TFactory.DadosEmitente,
-      TFactory.DaoPedido.Totais(DataIncio, DataFim));
+    impressao.Imprime(DataIncio, DataFim, TFactory.VendedorLogado,
+      TFactory.DadosEmitente, TFactory.DaoPedido.Totais(DataIncio, DataFim));
 
     FreeAndNil(impressao);
 
@@ -919,13 +962,9 @@ begin
 
     impressao := TRVendasDoDia.Create(TFactory.Parametros.Impressora);
 
-    impressao.Imprime(
-      Vendedor,
-      DataIncio,
-      DataFim,
-      TFactory.VendedorLogado,
-      TFactory.DadosEmitente,
-      TFactory.DaoPedido.Totais(DataIncio, DataFim, Vendedor.CODIGO));
+    impressao.Imprime(Vendedor, DataIncio, DataFim, TFactory.VendedorLogado,
+      TFactory.DadosEmitente, TFactory.DaoPedido.Totais(DataIncio, DataFim,
+      Vendedor.CODIGO));
 
     FreeAndNil(impressao);
 
@@ -956,10 +995,7 @@ begin
 
     impressao := TRVendasPorParceiro.Create(TFactory.Parametros.Impressora);
 
-    impressao.Imprime(
-      TFactory.VendedorLogado,
-      DataIncio,
-      DataFim,
+    impressao.Imprime(TFactory.VendedorLogado, DataIncio, DataFim,
       TFactory.DadosEmitente);
 
     FreeAndNil(impressao);
@@ -993,9 +1029,11 @@ begin
 
   Licenca := TLicenca.Create;
   try
-    if (Licenca.LicencaValida(RetornaNomeArquivoLicenca(), TFactory.DadosEmitente.CNPJ, now)) then
-      MessageDlg('Licença válida de ' + DateToStr(Licenca.DataDeIncio) + ' até ' + DateToStr(Licenca.DataVencimento)
-        + #13 + 'CNPJ: ' + TUtil.PadL(Licenca.cnpjLicenca, 14, '*'), mtInformation, [mbOK], 0)
+    if (Licenca.LicencaValida(RetornaNomeArquivoLicenca(),
+      TFactory.DadosEmitente.CNPJ, now)) then
+      MessageDlg('Licença válida de ' + DateToStr(Licenca.DataDeIncio) + ' até '
+        + DateToStr(Licenca.DataVencimento) + #13 + 'CNPJ: ' +
+        TUtil.PadL(Licenca.cnpjLicenca, 14, '*'), mtInformation, [mbOK], 0)
     else
       raise Exception.Create('O sistema não possui uma licença válida');
   finally
@@ -1053,24 +1091,28 @@ begin
     if FileExists(RetornaNomeArquivoLicenca()) then
     begin
       try
-        if not Licenca.LicencaValida(RetornaNomeArquivoLicenca(), CNPJ, now) then
+        if not Licenca.LicencaValida(RetornaNomeArquivoLicenca(), CNPJ, now)
+        then
         begin
           result := (Licenca.DiasRestantes >= 0) and Licenca.CnpjIguais;
 
           if Licenca.DiasRestantes < 0 then
           begin
-            lblLicenca.Caption := 'A Licença do sistema está vencida. Clique aqui para informar uma nova licença';
+            lblLicenca.Caption :=
+              'A Licença do sistema está vencida. Clique aqui para informar uma nova licença';
             pnlLicenca.Visible := true;
           end
           else if Licenca.DiasRestantes < 30 then
           begin
             lblLicenca.Caption :=
-              Format('A Licença do sistema estará vencendo em %d dias. Evite o bloqueio do sistema e solicite uma nova licença', [Licenca.DiasRestantes]);
+              Format('A Licença do sistema estará vencendo em %d dias. Evite o bloqueio do sistema e solicite uma nova licença',
+              [Licenca.DiasRestantes]);
             pnlLicenca.Visible := true;
           end
           else if not Licenca.CnpjIguais then
           begin
-            lblLicenca.Caption := ('A Licença não pertence ao CNPJ! Clique aqui para informar uma nova licença');
+            lblLicenca.Caption :=
+              ('A Licença não pertence ao CNPJ! Clique aqui para informar uma nova licença');
             pnlLicenca.Visible := true;
           end
         end
@@ -1082,14 +1124,16 @@ begin
       except
         on E: TValidacaoException do
         begin
-          lblLicenca.Caption := E.Message + ' - Clique aqui para informar uma nova licença';
+          lblLicenca.Caption := E.Message +
+            ' - Clique aqui para informar uma nova licença';
           pnlLicenca.Visible := true;
         end;
       end;
     end
     else
     begin
-      lblLicenca.Caption := 'O sistema não possúi uma licença de uso. Clique aqui para informar uma nova licença';
+      lblLicenca.Caption :=
+        'O sistema não possúi uma licença de uso. Clique aqui para informar uma nova licença';
       pnlLicenca.Visible := true;
     end;
 
@@ -1106,7 +1150,8 @@ begin
   diretorio := TUtil.DiretorioApp + 'backup';
   if not DirectoryExists(diretorio) then
     CreateDir(diretorio);
-  result := Format('%s\bkp-%s.fbk', [diretorio, FormatDateTime('dd-mm-yyyy', now)]);
+  result := Format('%s\bkp-%s.fbk',
+    [diretorio, FormatDateTime('dd-mm-yyyy', now)]);
 end;
 
 function TFrmPrincipal.RetornaNomeArquivoLicenca: string;
@@ -1201,7 +1246,8 @@ begin
     FreeAndNil(Parcelas);
 end;
 
-procedure TFrmPrincipal.ListaParcelas(ACaption: string; AParcelas: TObjectList<TParcelas>);
+procedure TFrmPrincipal.ListaParcelas(ACaption: string;
+  AParcelas: TObjectList<TParcelas>);
 var
   Aleft, Atop: Integer;
 begin
@@ -1300,7 +1346,8 @@ begin
     begin
       with TLabel.Create(pnlAtalhos) do
       begin
-        Caption := TUtil.PadR(ShortCutToText(actPrincipal.Actions[i].ShortCut), 15, ' ') + actPrincipal.Actions[i].Caption;
+        Caption := TUtil.PadR(ShortCutToText(actPrincipal.Actions[i].ShortCut),
+          15, ' ') + actPrincipal.Actions[i].Caption;
         Parent := pnlAtalhos;
         AlignWithMargins := true;
         Font.Color := $005E4934;
@@ -1328,7 +1375,8 @@ begin
   if Erros.Count > 0 then
   begin
     ListaErros := TStringBuilder.Create;
-    ListaErros.Append('Os seguintes erros foram encontrados na atualização do banco de dados');
+    ListaErros.Append
+      ('Os seguintes erros foram encontrados na atualização do banco de dados');
     for key in Erros.Keys do
     begin
       ListaErros.Append('Erro: ' + Erros[key]);
@@ -1386,8 +1434,7 @@ begin
             lblBackup.Font.Color := $002B39C0;
           end;
         end;
-      end
-      );
+      end);
     task.Start;
   end;
 
@@ -1429,7 +1476,8 @@ begin
 
 end;
 
-procedure TFrmPrincipal.lblVencimentoMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
+procedure TFrmPrincipal.lblVencimentoMouseMove(Sender: TObject;
+Shift: TShiftState; X, Y: Integer);
 begin
   TLabel(Sender).Font.Style := TLabel(Sender).Font.Style + [fsUnderline];
 
@@ -1445,7 +1493,8 @@ begin
 
     if vencendo > 0 then
     begin
-      lblVencendo.Caption := Format('%d Parcelas vencendo nos próximos 60 dias.', [vencendo]);
+      lblVencendo.Caption :=
+        Format('%d Parcelas vencendo nos próximos 60 dias.', [vencendo]);
       lblVencendo.Visible := true;
     end
     else
@@ -1462,7 +1511,8 @@ begin
       lblVencimento.Visible := false;
   except
     on E: Exception do
-      raise Exception.Create('Falha ao verificar parcelas em vencimento: ' + E.Message);
+      raise Exception.Create('Falha ao verificar parcelas em vencimento: ' +
+        E.Message);
   end;
 end;
 

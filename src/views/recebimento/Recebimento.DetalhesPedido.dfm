@@ -13,7 +13,7 @@ inherited frmDetalhesPedido: TfrmDetalhesPedido
     Top = 0
     Width = 706
     Height = 415
-    ActivePage = TabSheet1
+    ActivePage = ts1
     Align = alClient
     TabOrder = 0
     object TabSheet1: TTabSheet

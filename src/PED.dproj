@@ -418,6 +418,12 @@
         <DCCReference Include="units\Dao\Concret\Dao.TDaoEstoqueFiltro.pas"/>
         <DCCReference Include="units\Dao\Abstract\Dao.IDaoFiltroEstoque.pas"/>
         <DCCReference Include="units\Util\Utils.ArrayUtil.pas"/>
+        <DCCReference Include="views\etiquetas\Etiquetas.Modelo1.pas">
+            <Form>FrmEtiquetasModelo1</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="units\relatorio\Relatorio.FRBase.pas"/>
+        <DCCReference Include="units\relatorio\Relatorio.FREtiquetas.Modelo1.pas"/>
         <None Include="ModelSupport_PED\default.txaPackage"/>
         <None Include="ModelSupport_PED\default.txvpck"/>
         <None Include="ModelSupport_PED\Pedido\default.txvpck"/>
@@ -469,8 +475,8 @@
                     <Source Name="MainSource">PED.dpr</Source>
                 </Source>
                 <Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k260.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp260.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k270.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp270.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
                 </Excluded_Packages>
             </Delphi.Personality>
             <Deployment Version="3">
