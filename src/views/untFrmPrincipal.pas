@@ -774,7 +774,7 @@ begin
     parcelasVencendo := TFactory.DaoParcelas.GeTParcelasVencendoPorCliente
       (Cliente.CODIGO, now);
 
-    impressao := TRParcelasCliente.Create(TFactory.Parametros.Impressora);
+    impressao := TRParcelasCliente.Create(TFactory.Parametros.ImpressoraTermica);
 
     impressao.Imprime(Cliente, TFactory.DadosEmitente, parcelasVencidas,
       parcelasVencendo);
@@ -814,7 +814,7 @@ begin
 
     ProdutosVenda := TFactory.DaoPedido.ProdutosVendidos(DataIncio, DataFim);
 
-    impressao := TRProdutosVendidos.Create(TFactory.Parametros.Impressora);
+    impressao := TRProdutosVendidos.Create(TFactory.Parametros.ImpressoraTermica);
 
     impressao.Imprime(DataIncio, DataFim, TFactory.VendedorLogado,
       TFactory.DadosEmitente, ProdutosVenda);
@@ -897,7 +897,7 @@ begin
       frmFiltroDatas.Free;
     end;
 
-    impressao := TRVendasDoDia.Create(TFactory.Parametros.Impressora);
+    impressao := TRVendasDoDia.Create(TFactory.Parametros.ImpressoraTermica);
 
     impressao.Imprime(DataIncio, DataFim, TFactory.VendedorLogado,
       TFactory.DadosEmitente, TFactory.DaoPedido.Totais(DataIncio, DataFim));
@@ -960,7 +960,7 @@ begin
     if not Assigned(Vendedor) then
       raise Exception.Create('Vendedor Não selecionado');
 
-    impressao := TRVendasDoDia.Create(TFactory.Parametros.Impressora);
+    impressao := TRVendasDoDia.Create(TFactory.Parametros.ImpressoraTermica);
 
     impressao.Imprime(Vendedor, DataIncio, DataFim, TFactory.VendedorLogado,
       TFactory.DadosEmitente, TFactory.DaoPedido.Totais(DataIncio, DataFim,
@@ -993,7 +993,7 @@ begin
       frmFiltroDatas.Free;
     end;
 
-    impressao := TRVendasPorParceiro.Create(TFactory.Parametros.Impressora);
+    impressao := TRVendasPorParceiro.Create(TFactory.Parametros.ImpressoraTermica);
 
     impressao.Imprime(TFactory.VendedorLogado, DataIncio, DataFim,
       TFactory.DadosEmitente);

@@ -39,7 +39,7 @@ inherited FrmConfiguracoes: TFrmConfiguracoes
     Top = 0
     Width = 796
     Height = 362
-    ActivePage = tsLogoMarca
+    ActivePage = ts2
     Align = alClient
     TabOrder = 0
     object ts1: TTabSheet
@@ -532,6 +532,7 @@ inherited FrmConfiguracoes: TFrmConfiguracoes
     object ts2: TTabSheet
       Caption = 'Par'#226'metros'
       ImageIndex = 1
+      ExplicitLeft = 5
       object lbl1: TLabel
         Left = 16
         Top = 211
@@ -568,7 +569,7 @@ inherited FrmConfiguracoes: TFrmConfiguracoes
         Top = 16
         Width = 249
         Height = 121
-        Caption = 'Impressora'
+        Caption = 'Impressora Termica'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = 10639360
         Font.Height = -11
@@ -589,13 +590,13 @@ inherited FrmConfiguracoes: TFrmConfiguracoes
           Font.Style = []
           ParentFont = False
         end
-        object cbxModelo: TComboBox
+        object cbxImpressoraTermicaModelo: TComboBox
           Left = 20
           Top = 36
           Width = 219
           Height = 21
           TabOrder = 0
-          OnChange = cbxModeloChange
+          OnChange = cbxImpressoraTermicaModeloChange
         end
         object chkImprimir2Vias: TCheckBox
           Left = 20
@@ -678,6 +679,41 @@ inherited FrmConfiguracoes: TFrmConfiguracoes
         TabOrder = 7
         OnClick = chkVenderClienteBloqueadoClick
       end
+      object GroupBox1: TGroupBox
+        Left = 519
+        Top = 154
+        Width = 249
+        Height = 73
+        Caption = 'Impressora Tinta/Laser'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = 10639360
+        Font.Height = -11
+        Font.Name = 'Tahoma'
+        Font.Style = []
+        ParentFont = False
+        TabOrder = 8
+        object Label18: TLabel
+          Left = 20
+          Top = 20
+          Width = 34
+          Height = 13
+          Caption = 'Modelo'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = 10639360
+          Font.Height = -11
+          Font.Name = 'Tahoma'
+          Font.Style = []
+          ParentFont = False
+        end
+        object cbbImpressoraTinta: TComboBox
+          Left = 20
+          Top = 36
+          Width = 219
+          Height = 21
+          TabOrder = 0
+          OnChange = cbxImpressoraTermicaModeloChange
+        end
+      end
     end
     object tsLogoMarca: TTabSheet
       Caption = 'Logo Marca'
@@ -721,9 +757,6 @@ inherited FrmConfiguracoes: TFrmConfiguracoes
         Align = alBottom
         BevelOuter = bvNone
         TabOrder = 0
-        ExplicitLeft = 0
-        ExplicitTop = 352
-        ExplicitWidth = 698
         object btnAnexarComprovante: TBitBtn
           Left = 16
           Top = 8
@@ -737,8 +770,8 @@ inherited FrmConfiguracoes: TFrmConfiguracoes
     end
   end
   object act1: TActionList
-    Left = 320
-    Top = 136
+    Left = 98
+    Top = 368
     object actOk: TAction
       Caption = 'actOk'
       OnExecute = actOkExecute
@@ -747,8 +780,8 @@ inherited FrmConfiguracoes: TFrmConfiguracoes
   object BindingsList1: TBindingsList
     Methods = <>
     OutputConverters = <>
-    Left = 420
-    Top = 109
+    Left = 134
+    Top = 364
   end
   object dlgSavePic: TSavePictureDialog
     Filter = 
@@ -761,12 +794,12 @@ inherited FrmConfiguracoes: TFrmConfiguracoes
       'F Images (*.gif)|*.gif|PNG Images (*.png)|*.png|TIFF Images (*.t' +
       'if)|*.tif|TIFF Images (*.tiff)|*.tiff|Icons (*.ico)|*.ico|Enhanc' +
       'ed Metafiles (*.emf)|*.emf|Metafiles (*.wmf)|*.wmf'
-    Left = 192
-    Top = 240
+    Left = 30
+    Top = 367
   end
   object dlgOpenPic: TOpenPictureDialog
     Filter = 'Jpg|*.jpg|*.jpeg|Todos|*.*'
-    Left = 224
-    Top = 240
+    Left = 62
+    Top = 367
   end
 end

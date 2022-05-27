@@ -6,7 +6,7 @@ inherited FrmSangria: TFrmSangria
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   ExplicitWidth = 306
-  ExplicitHeight = 384
+  ExplicitHeight = 386
   PixelsPerInch = 96
   TextHeight = 13
   object Label1: TLabel

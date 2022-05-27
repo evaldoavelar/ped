@@ -7,7 +7,7 @@ inherited frmParcelasVencendo: TfrmParcelasVencendo
   OnActivate = FormActivate
   OnShow = FormShow
   ExplicitWidth = 560
-  ExplicitHeight = 558
+  ExplicitHeight = 561
   PixelsPerInch = 96
   TextHeight = 13
   object pnl1: TPanel

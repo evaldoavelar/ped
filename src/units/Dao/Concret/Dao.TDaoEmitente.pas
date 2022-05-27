@@ -6,11 +6,11 @@ uses
   System.SysUtils, System.Classes,
   Data.DB, FireDAC.Comp.Client,
   Dao.TDaoBase,
-  Dominio.Entidades.TEmitente,Dao.IDaoEmitente;
+  Dominio.Entidades.TEmitente, Dao.IDaoEmitente;
 
 type
 
-  TDaoEmitente = class(TDaoBase,IDaoEmitente)
+  TDaoEmitente = class(TDaoBase, IDaoEmitente)
   private
     procedure ObjectToParams(ds: TFDQuery; Emitente: TEmitente);
     function ParamsToObject(ds: TFDQuery): TEmitente;
@@ -19,6 +19,7 @@ type
     procedure IncluiEmitente(Emitente: TEmitente);
     procedure AtualizaEmitente(Emitente: TEmitente);
     function GetEmitente(): TEmitente;
+    function GetEmitenteAsDataSet(): TDataSet;
   end;
 
 implementation
@@ -65,7 +66,7 @@ begin
       end;
     end;
   finally
-      FreeAndNil(qry);
+    FreeAndNil(qry);
   end;
 
 end;
@@ -96,9 +97,33 @@ begin
       end;
     end;
   finally
-      FreeAndNil(qry);
+    FreeAndNil(qry);
   end;
 
+end;
+
+function TDaoEmitente.GetEmitenteAsDataSet: TDataSet;
+var
+  qry: TFDQuery;
+begin
+
+  qry := TFactory.Query();
+
+  try
+    qry.SQL.Text := ''
+      + 'select *  '
+      + 'from  Emitente ';
+
+    qry.open;
+
+    Result := qry;
+
+  except
+    on E: Exception do
+    begin
+      raise TDaoException.Create('Falha GetEmitente: ' + E.Message);
+    end;
+  end;
 end;
 
 procedure TDaoEmitente.IncluiEmitente(Emitente: TEmitente);
@@ -155,7 +180,7 @@ begin
       end;
     end;
   finally
-      FreeAndNil(qry);
+    FreeAndNil(qry);
   end;
 
 end;
@@ -163,40 +188,40 @@ end;
 procedure TDaoEmitente.ObjectToParams(ds: TFDQuery; Emitente: TEmitente);
 begin
   try
-    EntityToParams(ds,Emitente);
+    EntityToParams(ds, Emitente);
 
-   // if ds.Params.FindParam('RAZAO_SOCIAL') <> nil then
-//      ds.Params.ParamByName('RAZAO_SOCIAL').AsString := Emitente.RAZAO_SOCIAL;
-//    if ds.Params.FindParam('FANTASIA') <> nil then
-//      ds.Params.ParamByName('FANTASIA').AsString := Emitente.FANTASIA;
-//    if ds.Params.FindParam('RESPONSAVEL') <> nil then
-//      ds.Params.ParamByName('RESPONSAVEL').AsString := Emitente.RESPONSAVEL;
-//    if ds.Params.FindParam('ENDERECO') <> nil then
-//      ds.Params.ParamByName('ENDERECO').AsString := Emitente.ENDERECO;
-//    if ds.Params.FindParam('COMPLEMENTO') <> nil then
-//      ds.Params.ParamByName('COMPLEMENTO').AsString := Emitente.COMPLEMENTO;
-//    if ds.Params.FindParam('NUM') <> nil then
-//      ds.Params.ParamByName('NUM').AsString := Emitente.NUM;
-//    if ds.Params.FindParam('BAIRRO') <> nil then
-//      ds.Params.ParamByName('BAIRRO').AsString := Emitente.BAIRRO;
-//    if ds.Params.FindParam('CIDADE') <> nil then
-//      ds.Params.ParamByName('CIDADE').AsString := Emitente.CIDADE;
-//    if ds.Params.FindParam('UF') <> nil then
-//      ds.Params.ParamByName('UF').AsString := Emitente.UF;
-//    if ds.Params.FindParam('CEP') <> nil then
-//      ds.Params.ParamByName('CEP').AsString := Emitente.CEP;
-//    if ds.Params.FindParam('CNPJ') <> nil then
-//      ds.Params.ParamByName('CNPJ').AsString := Emitente.CNPJ;
-//    if ds.Params.FindParam('IE') <> nil then
-//      ds.Params.ParamByName('IE').AsString := Emitente.IE;
-//    if ds.Params.FindParam('IM') <> nil then
-//      ds.Params.ParamByName('IM').AsString := Emitente.IM;
-//    if ds.Params.FindParam('TELEFONE') <> nil then
-//      ds.Params.ParamByName('TELEFONE').AsString := Emitente.TELEFONE;
-//    if ds.Params.FindParam('FAX') <> nil then
-//      ds.Params.ParamByName('FAX').AsString := Emitente.FAX;
-//    if ds.Params.FindParam('EMAIL') <> nil then
-//      ds.Params.ParamByName('EMAIL').AsString := Emitente.EMAIL;
+    // if ds.Params.FindParam('RAZAO_SOCIAL') <> nil then
+    // ds.Params.ParamByName('RAZAO_SOCIAL').AsString := Emitente.RAZAO_SOCIAL;
+    // if ds.Params.FindParam('FANTASIA') <> nil then
+    // ds.Params.ParamByName('FANTASIA').AsString := Emitente.FANTASIA;
+    // if ds.Params.FindParam('RESPONSAVEL') <> nil then
+    // ds.Params.ParamByName('RESPONSAVEL').AsString := Emitente.RESPONSAVEL;
+    // if ds.Params.FindParam('ENDERECO') <> nil then
+    // ds.Params.ParamByName('ENDERECO').AsString := Emitente.ENDERECO;
+    // if ds.Params.FindParam('COMPLEMENTO') <> nil then
+    // ds.Params.ParamByName('COMPLEMENTO').AsString := Emitente.COMPLEMENTO;
+    // if ds.Params.FindParam('NUM') <> nil then
+    // ds.Params.ParamByName('NUM').AsString := Emitente.NUM;
+    // if ds.Params.FindParam('BAIRRO') <> nil then
+    // ds.Params.ParamByName('BAIRRO').AsString := Emitente.BAIRRO;
+    // if ds.Params.FindParam('CIDADE') <> nil then
+    // ds.Params.ParamByName('CIDADE').AsString := Emitente.CIDADE;
+    // if ds.Params.FindParam('UF') <> nil then
+    // ds.Params.ParamByName('UF').AsString := Emitente.UF;
+    // if ds.Params.FindParam('CEP') <> nil then
+    // ds.Params.ParamByName('CEP').AsString := Emitente.CEP;
+    // if ds.Params.FindParam('CNPJ') <> nil then
+    // ds.Params.ParamByName('CNPJ').AsString := Emitente.CNPJ;
+    // if ds.Params.FindParam('IE') <> nil then
+    // ds.Params.ParamByName('IE').AsString := Emitente.IE;
+    // if ds.Params.FindParam('IM') <> nil then
+    // ds.Params.ParamByName('IM').AsString := Emitente.IM;
+    // if ds.Params.FindParam('TELEFONE') <> nil then
+    // ds.Params.ParamByName('TELEFONE').AsString := Emitente.TELEFONE;
+    // if ds.Params.FindParam('FAX') <> nil then
+    // ds.Params.ParamByName('FAX').AsString := Emitente.FAX;
+    // if ds.Params.FindParam('EMAIL') <> nil then
+    // ds.Params.ParamByName('EMAIL').AsString := Emitente.EMAIL;
   except
     on E: Exception do
       raise TDaoException.Create('Falha ao associar parâmetros TDaoVendedor: ' + E.Message);
@@ -207,24 +232,24 @@ function TDaoEmitente.ParamsToObject(ds: TFDQuery): TEmitente;
 begin
   try
     Result := TEmitente.Create();
-    FieldsToEntity(ds,Result);
+    FieldsToEntity(ds, Result);
 
-  //  Result.RAZAO_SOCIAL := ds.FieldByName('RAZAO_SOCIAL').AsString;
-//    Result.FANTASIA := ds.FieldByName('FANTASIA').AsString;
-//    Result.RESPONSAVEL := ds.FieldByName('RESPONSAVEL').AsString;
-//    Result.ENDERECO := ds.FieldByName('ENDERECO').AsString;
-//    Result.COMPLEMENTO := ds.FieldByName('COMPLEMENTO').AsString;
-//    Result.NUM := ds.FieldByName('NUM').AsString;
-//    Result.BAIRRO := ds.FieldByName('BAIRRO').AsString;
-//    Result.CIDADE := ds.FieldByName('CIDADE').AsString;
-//    Result.UF := ds.FieldByName('UF').AsString;
-//    Result.CEP := ds.FieldByName('CEP').AsString;
-//    Result.CNPJ := ds.FieldByName('CNPJ').AsString;
-//    Result.IE := ds.FieldByName('IE').AsString;
-//    Result.IM := ds.FieldByName('IM').AsString;
-//    Result.TELEFONE := ds.FieldByName('TELEFONE').AsString;
-//    Result.FAX := ds.FieldByName('FAX').AsString;
-//    Result.EMAIL := ds.FieldByName('EMAIL').AsString;
+    // Result.RAZAO_SOCIAL := ds.FieldByName('RAZAO_SOCIAL').AsString;
+    // Result.FANTASIA := ds.FieldByName('FANTASIA').AsString;
+    // Result.RESPONSAVEL := ds.FieldByName('RESPONSAVEL').AsString;
+    // Result.ENDERECO := ds.FieldByName('ENDERECO').AsString;
+    // Result.COMPLEMENTO := ds.FieldByName('COMPLEMENTO').AsString;
+    // Result.NUM := ds.FieldByName('NUM').AsString;
+    // Result.BAIRRO := ds.FieldByName('BAIRRO').AsString;
+    // Result.CIDADE := ds.FieldByName('CIDADE').AsString;
+    // Result.UF := ds.FieldByName('UF').AsString;
+    // Result.CEP := ds.FieldByName('CEP').AsString;
+    // Result.CNPJ := ds.FieldByName('CNPJ').AsString;
+    // Result.IE := ds.FieldByName('IE').AsString;
+    // Result.IM := ds.FieldByName('IM').AsString;
+    // Result.TELEFONE := ds.FieldByName('TELEFONE').AsString;
+    // Result.FAX := ds.FieldByName('FAX').AsString;
+    // Result.EMAIL := ds.FieldByName('EMAIL').AsString;
   except
     on E: Exception do
       raise TDaoException.Create('Falha no ParamsToObject: ' + E.Message);

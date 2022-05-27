@@ -3,12 +3,12 @@ unit Sistema.TParametros;
 interface
 
 uses
-  system.SysUtils,   Vcl.ExtCtrls,
+  system.SysUtils, Vcl.ExtCtrls,
   Dominio.Entidades.TEntity,
   Sistema.TFormaPesquisa,
-  Impressao.TParametrosImpressora,
+  Impressao.Parametros.Impressora.Termica,
   Dominio.Mapeamento.Atributos,
-  Dominio.Mapeamento.Tipos;
+  Dominio.Mapeamento.Tipos, Impressao.Parametros.Impressora.Tinta;
 
 type
 
@@ -21,18 +21,20 @@ type
     FBLOQUEARCLIENTECOMATRASO: Boolean;
 
     FVERSAOBD: string;
-    FImpressora: TParametrosImpressora;
+    FImpressora: TParametrosImpressoraTermica;
     FVALIDADEORCAMENTO: Integer;
     FPESQUISAPRODUTOPOR: Integer;
     FINFORMARPARCEIRONAVENDA: Boolean;
     FLOGOMARCAETIQUETA: TImage;
+    FImpressoraTinta: TParametrosImpressoraTinta;
+    FDIRETORIORELATORIOS: string;
 
     function getVENDECLIENTEBLOQUEADO: Boolean;
     procedure setVENDECLIENTEBLOQUEADO(const Value: Boolean);
     function getATUALIZACLIENTENAVENDA: Boolean;
     procedure setATUALIZACLIENTENAVENDA(const Value: Boolean);
-    function getImpressora: TParametrosImpressora;
-    procedure setImpressora(const Value: TParametrosImpressora);
+    function getImpressora: TParametrosImpressoraTermica;
+    procedure setImpressora(const Value: TParametrosImpressoraTermica);
     function getBACKUPDIARIO: Boolean;
     procedure setBACKUPDIARIO(const Value: Boolean);
     function getVERSAOBD: string;
@@ -43,6 +45,9 @@ type
     procedure SetPESQUISAPRODUTOPOR(const Value: Integer);
     function getPESQUISAPRODUTOPOR: Integer;
     procedure SetINFORMARPARCEIRONAVENDA(const Value: Boolean);
+    procedure SetImpressoraTinta(const Value: TParametrosImpressoraTinta);
+    procedure SetDIRETORIORELATORIOS(const Value: string);
+    function GETDIRETORIORELATORIOS: string;
 
   public
     destructor Destroy; override;
@@ -52,7 +57,8 @@ type
     [campo('ATUALIZACLIENTENAVENDA', tpINTEGER)]
     property ATUALIZACLIENTENAVENDA: Boolean read getATUALIZACLIENTENAVENDA write setATUALIZACLIENTENAVENDA;
 
-    property Impressora: TParametrosImpressora read getImpressora write setImpressora;
+    property ImpressoraTermica: TParametrosImpressoraTermica read getImpressora write setImpressora;
+    property ImpressoraTinta: TParametrosImpressoraTinta read FImpressoraTinta write SetImpressoraTinta;
 
     [campo('BACKUPDIARIO', tpSMALLINT, 0, 0, True, '0')]
     property BACKUPDIARIO: Boolean read getBACKUPDIARIO write setBACKUPDIARIO;
@@ -72,15 +78,20 @@ type
     [campo('INFORMARPARCEIRONAVENDA', tpINTEGER, 0, 0, True, '1')]
     property INFORMARPARCEIRONAVENDA: Boolean read FINFORMARPARCEIRONAVENDA write SetINFORMARPARCEIRONAVENDA;
 
-
-     [campo('LOGOMARCAETIQUETA', tpBLOB, 0, 9048)]
+    [campo('LOGOMARCAETIQUETA', tpBLOB, 0, 9048)]
     property LOGOMARCAETIQUETA: TImage read FLOGOMARCAETIQUETA write FLOGOMARCAETIQUETA;
+
+    [campo('DIRETORIORELATORIOS', tpVARCHAR, 2000)]
+    property DIRETORIORELATORIOS: string read GETDIRETORIORELATORIOS;
 
     constructor create; override;
 
   end;
 
 implementation
+
+uses
+  Util.Funcoes;
 
 { TParametros }
 
@@ -89,13 +100,17 @@ begin
   inherited;
   Self.PESQUISAPRODUTOPOR := 0;
   Self.VALIDADEORCAMENTO := 15;
-  Self.Impressora := TParametrosImpressora.create;
+  Self.ImpressoraTermica := TParametrosImpressoraTermica.create;
+  Self.ImpressoraTinta := TParametrosImpressoraTinta.create;
 end;
 
 destructor TParametros.Destroy;
 begin
   if Assigned(FImpressora) then
     FreeAndNil(FImpressora);
+
+  if Assigned(FImpressoraTinta) then
+    FreeAndNil(FImpressoraTinta);
   inherited;
 end;
 
@@ -114,7 +129,12 @@ begin
   result := FBLOQUEARCLIENTECOMATRASO;
 end;
 
-function TParametros.getImpressora: TParametrosImpressora;
+function TParametros.GETDIRETORIORELATORIOS: string;
+begin
+  result := TUtil.DiretorioApp + 'Relatorios';
+end;
+
+function TParametros.getImpressora: TParametrosImpressoraTermica;
 begin
   result := FImpressora;
 end;
@@ -162,9 +182,28 @@ begin
   end;
 end;
 
-procedure TParametros.setImpressora(const Value: TParametrosImpressora);
+procedure TParametros.SetDIRETORIORELATORIOS(const Value: string);
+begin
+  if Value <> FDIRETORIORELATORIOS then
+  begin
+    FDIRETORIORELATORIOS := Value;
+    Notify('DIRETORIORELATORIOS');
+  end;
+end;
+
+procedure TParametros.setImpressora(const Value: TParametrosImpressoraTermica);
 begin
   Self.FImpressora := Value;
+end;
+
+procedure TParametros.SetImpressoraTinta(
+  const Value: TParametrosImpressoraTinta);
+begin
+  if Value <> FImpressoraTinta then
+  begin
+    FImpressoraTinta := Value;
+    Notify('ImpressoraTinta');
+  end;
 end;
 
 procedure TParametros.SetINFORMARPARCEIRONAVENDA(const Value: Boolean);

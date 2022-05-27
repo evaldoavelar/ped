@@ -296,7 +296,7 @@ var
   Impressora: TROrcamento;
 begin
   try // todo: buscar dos parametros
-    Impressora := TROrcamento.create(TFactory.Parametros.Impressora);
+    Impressora := TROrcamento.create(TFactory.Parametros.ImpressoraTermica);
 
     try
       Impressora.ImprimeCupom(TFactory.DadosEmitente, Orcamento);

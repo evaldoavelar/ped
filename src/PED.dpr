@@ -64,7 +64,7 @@ uses
   Dao.IDaoPedido in 'units\Dao\Abstract\Dao.IDaoPedido.pas',
   Dao.IDaoProdutos in 'units\Dao\Abstract\Dao.IDaoProdutos.pas',
   Dao.IDaoVendedor in 'units\Dao\Abstract\Dao.IDaoVendedor.pas',
-  Impressao.TParametrosImpressora in 'units\Impressao\Impressao.TParametrosImpressora.pas',
+  Impressao.Parametros.Impressora.Termica in 'units\Impressao\Impressao.Parametros.Impressora.Termica.pas',
   Database.IDataseMigration in 'units\Database\Abstract\Database.IDataseMigration.pas',
   Database.TTabelaBDFB in 'units\Database\Concret\Database.TTabelaBDFB.pas',
   Dominio.Mapeamento.Atributos in 'units\Dominio\Mapeamento\Dominio.Mapeamento.Atributos.pas',
@@ -185,7 +185,9 @@ uses
   Utils.ArrayUtil in 'units\Util\Utils.ArrayUtil.pas',
   Etiquetas.Modelo1 in 'views\etiquetas\Etiquetas.Modelo1.pas' {FrmEtiquetasModelo1},
   Relatorio.FRBase in 'units\relatorio\Relatorio.FRBase.pas',
-  Relatorio.FREtiquetas.Modelo1 in 'units\relatorio\Relatorio.FREtiquetas.Modelo1.pas';
+  Relatorio.FREtiquetas.Modelo1 in 'units\relatorio\Relatorio.FREtiquetas.Modelo1.pas',
+  Impressao.Parametros.Impressora.Tinta in 'units\Impressao\Impressao.Parametros.Impressora.Tinta.pas',
+  Impressao.Etiquetas in 'units\Impressao\Impressao.Etiquetas.pas';
 
 {$R *.res}
 

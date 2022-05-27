@@ -3,9 +3,8 @@ inherited frmFiltroPedidos: TfrmFiltroPedidos
   ClientHeight = 672
   ClientWidth = 1016
   OnCreate = FormCreate
-  ExplicitTop = -155
   ExplicitWidth = 1032
-  ExplicitHeight = 710
+  ExplicitHeight = 713
   PixelsPerInch = 96
   TextHeight = 13
   inherited splEsquerda: TSplitter

@@ -1433,7 +1433,7 @@ var
   ParcelasAtrasadas: TObjectList<TParcelas>;
 begin
   try // todo: buscar dos parametros
-    Impressora := TRPedido.Create(TFactory.Parametros.Impressora);
+    Impressora := TRPedido.Create(TFactory.Parametros.ImpressoraTermica);
     ParcelasAtrasadas := TFactory.daoParcelas.GeTParcelasVencidasPorCliente(Pedido.Cliente.CODIGO, now);
     Emitente := TFactory.DadosEmitente;
 

@@ -132,10 +132,6 @@ Coordinates=202,214,177,58
 [chkAtualizaClienteNaVenda]
 Coordinates=399,10,174,58
 
-[cbxModelo]
-Coordinates=620,410,101,124
-Visible=True
-
 [BindingsList1]
 Coordinates=622,1,91,36
 
@@ -150,4 +146,8 @@ Coordinates=763,1,190,58
 
 [chkImprimirItens2Via]
 Coordinates=630,78,135,58
+
+[cbxImpressoraTermicaModelo]
+Coordinates=620,410,101,124
+Visible=True
 

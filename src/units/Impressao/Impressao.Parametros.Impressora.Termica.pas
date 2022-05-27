@@ -1,4 +1,4 @@
-unit Impressao.TParametrosImpressora;
+unit Impressao.Parametros.Impressora.Termica;
 
 interface
 
@@ -19,7 +19,7 @@ uses
 type
 
   [Tabela('PARAMETROS')]
-  TParametrosImpressora = class(TEntity)
+  TParametrosImpressoraTermica = class(TEntity)
   private
     FMODELOIMPRESSORA: string; // porta de comunicação
     FLinhasFinalCupom: Integer; // numero de linhas no final do cupom
@@ -67,7 +67,7 @@ type
 implementation
 
 
-constructor TParametrosImpressora.Create;
+constructor TParametrosImpressoraTermica.Create;
 begin
   inherited;
   InicializarPropriedades();
@@ -76,17 +76,17 @@ begin
   LinhasFinalCupom := 48;
 end;
 
-function TParametrosImpressora.getPORTAIMPRESSORA: string;
+function TParametrosImpressoraTermica.getPORTAIMPRESSORA: string;
 begin
   result := FPORTAIMPRESSORA;
 end;
 
-function TParametrosImpressora.getVELOCIDADE: string;
+function TParametrosImpressoraTermica.getVELOCIDADE: string;
 begin
   result := FVELOCIDADE;
 end;
 
-function TParametrosImpressora.ModeloAsModeloAsACBrPosPrinterModelo: TACBrPosPrinterModelo;
+function TParametrosImpressoraTermica.ModeloAsModeloAsACBrPosPrinterModelo: TACBrPosPrinterModelo;
 begin
   // iEpson, iBematech, iDaruma, iDiebold
   if (LowerCase(FMODELOIMPRESSORA) = 'iepson') or (LowerCase(FMODELOIMPRESSORA) = 'ppescposepson') then
@@ -101,32 +101,32 @@ begin
     result := ppEscPosEpson;
 end;
 
-function TParametrosImpressora.getColunasCupom: Integer;
+function TParametrosImpressoraTermica.getColunasCupom: Integer;
 begin
   result := FColunasCupom;
 end;
 
-function TParametrosImpressora.getIMPRIMIR2VIAS: Boolean;
+function TParametrosImpressoraTermica.getIMPRIMIR2VIAS: Boolean;
 begin
   result := FIMPRIMIR2VIAS;
 end;
 
-function TParametrosImpressora.getIMPRIMIRITENS2VIA: Boolean;
+function TParametrosImpressoraTermica.getIMPRIMIRITENS2VIA: Boolean;
 begin
   result := FIMPRIMIRITENS2VIA;
 end;
 
-function TParametrosImpressora.getLinhasFinalCupom: Integer;
+function TParametrosImpressoraTermica.getLinhasFinalCupom: Integer;
 begin
   result := FLinhasFinalCupom;
 end;
 
-function TParametrosImpressora.getMODELOIMPRESSORA: string;
+function TParametrosImpressoraTermica.getMODELOIMPRESSORA: string;
 begin
   result := FMODELOIMPRESSORA;
 end;
 
-procedure TParametrosImpressora.setPORTAIMPRESSORA(const Value: string);
+procedure TParametrosImpressoraTermica.setPORTAIMPRESSORA(const Value: string);
 begin
   if Value <> FPORTAIMPRESSORA then
   begin
@@ -135,7 +135,7 @@ begin
   end;
 end;
 
-procedure TParametrosImpressora.setVELOCIDADE(const Value: string);
+procedure TParametrosImpressoraTermica.setVELOCIDADE(const Value: string);
 begin
   if Value <> FVELOCIDADE then
   begin
@@ -144,7 +144,7 @@ begin
   end;
 end;
 
-procedure TParametrosImpressora.setColunasCupom(const Value: Integer);
+procedure TParametrosImpressoraTermica.setColunasCupom(const Value: Integer);
 begin
   if Value <> FColunasCupom then
   begin
@@ -153,7 +153,7 @@ begin
   end;
 end;
 
-procedure TParametrosImpressora.setIMPRIMIR2VIAS(const Value: Boolean);
+procedure TParametrosImpressoraTermica.setIMPRIMIR2VIAS(const Value: Boolean);
 begin
 
   if Value <> FIMPRIMIR2VIAS then
@@ -163,7 +163,7 @@ begin
   end;
 end;
 
-procedure TParametrosImpressora.setIMPRIMIRITENS2VIA(const Value: Boolean);
+procedure TParametrosImpressoraTermica.setIMPRIMIRITENS2VIA(const Value: Boolean);
 begin
   if Value <> FIMPRIMIRITENS2VIA then
   begin
@@ -172,7 +172,7 @@ begin
   end;
 end;
 
-procedure TParametrosImpressora.setLinhasFinalCupom(const Value: Integer);
+procedure TParametrosImpressoraTermica.setLinhasFinalCupom(const Value: Integer);
 begin
   if Value <> FLinhasFinalCupom then
   begin
@@ -181,7 +181,7 @@ begin
   end;
 end;
 
-procedure TParametrosImpressora.setMODELOIMPRESSORA(const Value: string);
+procedure TParametrosImpressoraTermica.setMODELOIMPRESSORA(const Value: string);
 begin
   if Value <> FMODELOIMPRESSORA then
   begin

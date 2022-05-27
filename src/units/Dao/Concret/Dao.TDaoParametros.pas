@@ -34,10 +34,20 @@ begin
   qry := TFactory.Query();
   try
     try
-      qry.SQL.Text := '' + 'UPDATE parametros ' + 'SET    vendeclientebloqueado = :VENDECLIENTEBLOQUEADO, ' + '       atualizaclientenavenda = :ATUALIZACLIENTENAVENDA, ' +
-        '       BLOQUEARCLIENTECOMATRASO = :BLOQUEARCLIENTECOMATRASO, ' + '       BACKUPDIARIO = :BACKUPDIARIO, ' + '       modeloimpressora = :MODELOIMPRESSORA, ' +
-        '       portaimpressora = :PORTAIMPRESSORA, ' + '       velocidade = :VELOCIDADE,' + '       VERSAOBD = :VERSAOBD,' + '       IMPRIMIR2VIAS = :IMPRIMIR2VIAS, ' +
-        '       IMPRIMIRITENS2VIA = :IMPRIMIRITENS2VIA,' + '       VALIDADEORCAMENTO = :VALIDADEORCAMENTO, ' + '       LOGOMARCAETIQUETA = :LOGOMARCAETIQUETA, ' +
+      qry.SQL.Text := '' +
+        'UPDATE parametros ' +
+        'SET    vendeclientebloqueado = :VENDECLIENTEBLOQUEADO, ' +
+        '       atualizaclientenavenda = :ATUALIZACLIENTENAVENDA, ' +
+        '       BLOQUEARCLIENTECOMATRASO = :BLOQUEARCLIENTECOMATRASO, ' +
+        '       BACKUPDIARIO = :BACKUPDIARIO, ' +
+        '       modeloimpressora = :MODELOIMPRESSORA, ' +
+        '       portaimpressora = :PORTAIMPRESSORA, ' +
+        '       velocidade = :VELOCIDADE,' +
+        '       VERSAOBD = :VERSAOBD,' +
+        '       IMPRIMIR2VIAS = :IMPRIMIR2VIAS, ' +
+        '       IMPRIMIRITENS2VIA = :IMPRIMIRITENS2VIA,' +
+        '       VALIDADEORCAMENTO = :VALIDADEORCAMENTO, ' +
+        '       LOGOMARCAETIQUETA = :LOGOMARCAETIQUETA, ' +
         '       PESQUISAPRODUTOPOR = :PESQUISAPRODUTOPOR ';
 
       ObjectToParams(qry, Parametros);
@@ -93,12 +103,34 @@ begin
   qry := TFactory.Query();
   try
     try
-      qry.SQL.Text := '' + 'INSERT INTO parametros ' + '            (vendeclientebloqueado, ' + '             atualizaclientenavenda, ' + '             BLOQUEARCLIENTECOMATRASO, ' +
-        '             modeloimpressora, ' + '             portaimpressora, ' + '             BACKUPDIARIO, ' + '             VERSAOBD, ' + '             IMPRIMIR2VIAS, ' +
-        '             IMPRIMIRITENS2VIA, ' + '             VALIDADEORCAMENTO, ' + '             PESQUISAPRODUTOPOR, ' + '             LOGOMARCAETIQUETA, ' + '             velocidade) ' +
-        'VALUES     ( :VENDECLIENTEBLOQUEADO, ' + '             :ATUALIZACLIENTENAVENDA, ' + '             :BLOQUEARCLIENTECOMATRASO, ' + '             :MODELOIMPRESSORA, ' +
-        '             :PORTAIMPRESSORA, ' + '             :BACKUPDIARIO, ' + '             :VERSAOBD, ' + '             :IMPRIMIR2VIAS, ' + '             :IMPRIMIRITENS2VIA, ' +
-        '             :VALIDADEORCAMENTO, ' + '             :PESQUISAPRODUTOPOR, ' + '             :LOGOMARCAETIQUETA, ' + '             :VELOCIDADE )';
+      qry.SQL.Text := '' +
+        'INSERT INTO parametros ' +
+        '            (vendeclientebloqueado, ' +
+        '             atualizaclientenavenda, ' +
+        '             BLOQUEARCLIENTECOMATRASO, ' +
+        '             modeloimpressora, ' +
+        '             portaimpressora, ' +
+        '             BACKUPDIARIO, ' +
+        '             VERSAOBD, ' +
+        '             IMPRIMIR2VIAS, ' +
+        '             IMPRIMIRITENS2VIA, ' +
+        '             VALIDADEORCAMENTO, ' +
+        '             PESQUISAPRODUTOPOR, ' +
+        '             LOGOMARCAETIQUETA, ' +
+        '             velocidade) ' +
+        'VALUES     ( :VENDECLIENTEBLOQUEADO, ' +
+        '             :ATUALIZACLIENTENAVENDA, ' +
+        '             :BLOQUEARCLIENTECOMATRASO, ' +
+        '             :MODELOIMPRESSORA, ' +
+        '             :PORTAIMPRESSORA, ' +
+        '             :BACKUPDIARIO, ' +
+        '             :VERSAOBD, ' +
+        '             :IMPRIMIR2VIAS, ' +
+        '             :IMPRIMIRITENS2VIA, ' +
+        '             :VALIDADEORCAMENTO, ' +
+        '             :PESQUISAPRODUTOPOR, ' +
+        '             :LOGOMARCAETIQUETA, ' +
+        '             :VELOCIDADE )';
 
       ObjectToParams(qry, Parametros);
 
@@ -136,20 +168,20 @@ begin
       ds.Params.ParamByName('PESQUISAPRODUTOPOR').AsInteger := Parametros.PESQUISAPRODUTOPOR;
 
     if ds.Params.FindParam('IMPRIMIR2VIAS') <> nil then
-      ds.Params.ParamByName('IMPRIMIR2VIAS').AsBoolean := Parametros.Impressora.IMPRIMIR2VIAS;
+      ds.Params.ParamByName('IMPRIMIR2VIAS').AsBoolean := Parametros.ImpressoraTermica.IMPRIMIR2VIAS;
 
     if ds.Params.FindParam('BACKUPDIARIO') <> nil then
       ds.Params.ParamByName('BACKUPDIARIO').AsBoolean := Parametros.BACKUPDIARIO;
 
     if ds.Params.FindParam('IMPRIMIRITENS2VIA') <> nil then
-      ds.Params.ParamByName('IMPRIMIRITENS2VIA').AsBoolean := Parametros.Impressora.IMPRIMIRITENS2VIA;
+      ds.Params.ParamByName('IMPRIMIRITENS2VIA').AsBoolean := Parametros.ImpressoraTermica.IMPRIMIRITENS2VIA;
 
     if ds.Params.FindParam('MODELOIMPRESSORA') <> nil then
-      ds.Params.ParamByName('MODELOIMPRESSORA').AsString := Parametros.Impressora.MODELOIMPRESSORA;
+      ds.Params.ParamByName('MODELOIMPRESSORA').AsString := Parametros.ImpressoraTermica.MODELOIMPRESSORA;
     if ds.Params.FindParam('PORTAIMPRESSORA') <> nil then
-      ds.Params.ParamByName('PORTAIMPRESSORA').AsString := Parametros.Impressora.PORTAIMPRESSORA;
+      ds.Params.ParamByName('PORTAIMPRESSORA').AsString := Parametros.ImpressoraTermica.PORTAIMPRESSORA;
     if ds.Params.FindParam('VELOCIDADE') <> nil then
-      ds.Params.ParamByName('VELOCIDADE').AsString := Parametros.Impressora.VELOCIDADE;
+      ds.Params.ParamByName('VELOCIDADE').AsString := Parametros.ImpressoraTermica.VELOCIDADE;
 
     if ds.Params.FindParam('VERSAOBD') <> nil then
       ds.Params.ParamByName('VERSAOBD').AsString := Parametros.VERSAOBD;
@@ -177,11 +209,11 @@ begin
     Result.VALIDADEORCAMENTO := ds.FieldByName('VALIDADEORCAMENTO').AsInteger;
     Result.PESQUISAPRODUTOPOR := ds.FieldByName('PESQUISAPRODUTOPOR').AsInteger;
     Result.BACKUPDIARIO := ds.FieldByName('BACKUPDIARIO').AsInteger = 1;
-    Result.Impressora.MODELOIMPRESSORA := ds.FieldByName('MODELOIMPRESSORA').AsString;
-    Result.Impressora.PORTAIMPRESSORA := ds.FieldByName('PORTAIMPRESSORA').AsString;
-    Result.Impressora.VELOCIDADE := ds.FieldByName('VELOCIDADE').AsString;
-    Result.Impressora.IMPRIMIR2VIAS := ds.FieldByName('IMPRIMIR2VIAS').AsInteger = 1;
-    Result.Impressora.IMPRIMIRITENS2VIA := ds.FieldByName('IMPRIMIRITENS2VIA').AsInteger = 1;
+    Result.ImpressoraTermica.MODELOIMPRESSORA := ds.FieldByName('MODELOIMPRESSORA').AsString;
+    Result.ImpressoraTermica.PORTAIMPRESSORA := ds.FieldByName('PORTAIMPRESSORA').AsString;
+    Result.ImpressoraTermica.VELOCIDADE := ds.FieldByName('VELOCIDADE').AsString;
+    Result.ImpressoraTermica.IMPRIMIR2VIAS := ds.FieldByName('IMPRIMIR2VIAS').AsInteger = 1;
+    Result.ImpressoraTermica.IMPRIMIRITENS2VIA := ds.FieldByName('IMPRIMIRITENS2VIA').AsInteger = 1;
     Result.VERSAOBD := ds.FieldByName('VERSAOBD').AsString;
 
     if not ds.FieldByName('LOGOMARCAETIQUETA').IsNull then

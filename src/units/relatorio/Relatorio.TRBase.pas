@@ -6,7 +6,7 @@ uses
   system.SysUtils, ACBrValidador, ACBrUtil,
   system.Classes, Winapi.Windows, Winapi.WinSpool,
   Dominio.Entidades.TEmitente,
-  Impressao.TParametrosImpressora;
+  Impressao.Parametros.Impressora.Termica;
 
 type
 
@@ -19,7 +19,7 @@ type
     function GetColunasFonteExpandida: Integer;
     function GetColunasFonteCondensada: Integer;
   protected
-    FParametrosImpressora: TParametrosImpressora;
+    FParametrosImpressora: TParametrosImpressoraTermica;
 
     procedure Cabecalho(Emitente: TEmitente);
     procedure Rodape;
@@ -34,7 +34,7 @@ type
 
     property Buffer: TStringList read FBuffer;
   public
-    constructor create(ParametrosImpressora: TParametrosImpressora);
+    constructor create(ParametrosImpressora: TParametrosImpressoraTermica);
     destructor Destroy; override;
     procedure imprimir;
   end;
@@ -153,7 +153,7 @@ begin
 
 end;
 
-constructor TRBase.create(ParametrosImpressora: TParametrosImpressora);
+constructor TRBase.create(ParametrosImpressora: TParametrosImpressoraTermica);
 begin
   FParametrosImpressora := ParametrosImpressora;
   FBuffer := TStringList.create;

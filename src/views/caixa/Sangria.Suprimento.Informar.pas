@@ -66,7 +66,7 @@ begin
       .Inclui(FSangriaSuprimento);
 
     try
-      impressao := TRSangriaSuprimento.Create(TFactory.Parametros.Impressora);
+      impressao := TRSangriaSuprimento.Create(TFactory.Parametros.ImpressoraTermica);
 
       impressao.Imprime(
         FSangriaSuprimento,

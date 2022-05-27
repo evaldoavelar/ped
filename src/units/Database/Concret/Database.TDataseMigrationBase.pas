@@ -18,7 +18,7 @@ uses
   Dominio.Mapeamento.Atributos, Util.VclFuncoes,
   Dominio.Entidades.TItemOrcamento, Dominio.Entidades.TOrcamento, Dominio.Entidades.TVendedor, Dominio.Entidades.TCliente, Dominio.Entidades.TAUTOINC,
   Dominio.Entidades.TParceiro.FormaPagto,
-  Dominio.Entidades.TParceiro, Dominio.Entidades.TParceiroVenda.Pagamentos, Dominio.Entidades.TParceiroVenda;
+  Dominio.Entidades.TParceiro, Dominio.Entidades.TParceiroVenda.Pagamentos, Dominio.Entidades.TParceiroVenda, Impressao.Parametros.Impressora.Tinta;
 
 type
 
@@ -49,7 +49,7 @@ uses
   Dominio.Entidades.TPedido,
   Dominio.Entidades.TItemPedido,
   Dominio.Entidades.TParcelas,
-  Impressao.TParametrosImpressora,
+  Impressao.Parametros.Impressora.Termica,
   Util.Funcoes, Dominio.Entidades.TEmitente, Dominio.Entidades.TFornecedor, Dominio.Entidades.TFormaPagto, Dominio.Entidades.TProduto, Dominio.Entidades.CondicaoPagto,
   Dominio.Entidades.Pedido.Pagamentos.Pagamento, Sangria.Suprimento.Informar, Dominio.Entidades.TSangriaSuprimento, Dominio.Entidades.TEstoqueProduto;
 
@@ -84,7 +84,7 @@ end;
 
 procedure TDataseMigrationBase.Migrate;
 const
-  Objetos: array [0 .. 21] of TClass = (
+  Objetos: array [0 .. 22] of TClass = (
     TAUTOINC,
     TEmitente,
     TCliente,
@@ -99,7 +99,8 @@ const
     TPEDIDOPAGAMENTO,
     TParcelas,
     TParametros,
-    TParametrosImpressora,
+    TParametrosImpressoraTermica,
+    TParametrosImpressoraTinta,
     TOrcamento,
     TItemOrcamento,
     TParceiroFormaPagto,

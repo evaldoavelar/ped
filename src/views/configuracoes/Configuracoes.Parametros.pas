@@ -56,7 +56,7 @@ type
     chkAtualizaClienteNaVenda: TCheckBox;
     grp1: TGroupBox;
     Label16: TLabel;
-    cbxModelo: TComboBox;
+    cbxImpressoraTermicaModelo: TComboBox;
     BindingsList1: TBindingsList;
     chkImprimir2Vias: TCheckBox;
     chkImprimirItens2Via: TCheckBox;
@@ -73,12 +73,15 @@ type
     imgComprovante: TImage;
     dlgSavePic: TSavePictureDialog;
     dlgOpenPic: TOpenPictureDialog;
+    GroupBox1: TGroupBox;
+    Label18: TLabel;
+    cbbImpressoraTinta: TComboBox;
     procedure edtRazaoSocialChange(Sender: TObject);
     procedure actOkExecute(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
-    procedure cbxModeloChange(Sender: TObject);
+    procedure cbxImpressoraTermicaModeloChange(Sender: TObject);
     procedure chkVenderClienteBloqueadoClick(Sender: TObject);
     procedure rgPesquisaPorClick(Sender: TObject);
     procedure btnAnexarComprovanteClick(Sender: TObject);
@@ -118,12 +121,12 @@ var
   ModeloImpressora: TACBrPosPrinterModelo;
   I: Integer;
 begin
-  cbxModelo.Items.Clear;
+  cbxImpressoraTermicaModelo.Items.Clear;
 
   for ModeloImpressora := Low(TACBrPosPrinterModelo) to High(TACBrPosPrinterModelo) do
   begin
     for I := 0 to Printer.Printers.Count - 1 do
-      cbxModelo.Items.Add(Printer.Printers[I]);
+      cbxImpressoraTermicaModelo.Items.Add(Printer.Printers[I]);
   end;
 
   FEmitente.ClearBindings;
@@ -148,14 +151,14 @@ begin
   FParametros.Bind('ATUALIZACLIENTENAVENDA', chkAtualizaClienteNaVenda, 'Checked');
   FParametros.Bind('BLOQUEARCLIENTECOMATRASO', chkBloquearClienteComAtraso, 'Checked');
   FParametros.Bind('BACKUPDIARIO', chkBakcup, 'Checked');
-  FParametros.Bind('Impressora.MODELOIMPRESSORA', cbxModelo, 'Text');
-  FParametros.Bind('Impressora.IMPRIMIR2VIAS', chkImprimir2Vias, 'Checked');
-  FParametros.Bind('Impressora.IMPRIMIRITENS2VIA', chkImprimirItens2Via, 'Checked');
+  FParametros.Bind('ImpressoraTermica.MODELOIMPRESSORA', cbxImpressoraTermicaModelo, 'Text');
+  FParametros.Bind('ImpressoraTermica.IMPRIMIR2VIAS', chkImprimir2Vias, 'Checked');
+  FParametros.Bind('ImpressoraTermica.IMPRIMIRITENS2VIA', chkImprimirItens2Via, 'Checked');
   FParametros.Bind('VALIDADEORCAMENTO', edtValidadeOrcamento, 'Text');
   FParametros.Bind('PESQUISAPRODUTOPOR', rgPesquisaPor, 'ItemIndex');
   FParametros.Bind('INFORMARPARCEIRONAVENDA', chkInformarParceiroNaVenda, 'Checked');
 
-   try
+  try
     if FParametros.LOGOMARCAETIQUETA <> nil then
     begin
       imgComprovante.Picture := FParametros.LOGOMARCAETIQUETA.Picture;
@@ -164,12 +167,24 @@ begin
     on E: Exception do
       MessageDlg('Falha ao mapear comprovante: ' + E.Message, mtError, [mbOK], 0);
   end;
+
+  try
+    cbbImpressoraTinta.Items.Clear;
+
+    for I := 0 to Printer.Printers.Count - 1 do
+      cbbImpressoraTinta.Items.Add(Printer.Printers[I]);
+
+    cbbImpressoraTinta.Text := FParametros.ImpressoraTinta.MODELOIMPRESSORATINTA;
+  except
+    on E: Exception do
+      raise Exception.Create('PopulaCombos ModeloImpressora:' + E.Message);
+  end;
 end;
 
 procedure TFrmConfiguracoes.btnAnexarComprovanteClick(Sender: TObject);
 begin
   inherited;
-   Carregarlogo;
+  Carregarlogo;
 end;
 
 procedure TFrmConfiguracoes.Carregarlogo;
@@ -178,8 +193,8 @@ begin
     if dlgOpenPic.Execute then
     begin
       FParametros.LOGOMARCAETIQUETA := TImage.Create(self);
-      FParametros.LOGOMARCAETIQUETA .Picture.LoadFromFile(dlgOpenPic.FileName);
-      imgComprovante.Picture :=FParametros.LOGOMARCAETIQUETA .Picture;
+      FParametros.LOGOMARCAETIQUETA.Picture.LoadFromFile(dlgOpenPic.FileName);
+      imgComprovante.Picture := FParametros.LOGOMARCAETIQUETA.Picture;
     end;
   except
     on E: Exception do
@@ -187,7 +202,7 @@ begin
   end;
 end;
 
-procedure TFrmConfiguracoes.cbxModeloChange(Sender: TObject);
+procedure TFrmConfiguracoes.cbxImpressoraTermicaModeloChange(Sender: TObject);
 begin
   inherited;
   TBindings.Notify(Sender, 'Text');
@@ -255,16 +270,17 @@ begin
 
     Bind;
   except
-    on e: exception do
-      MessageDlg('Falha no get: ' + e.Message, mtError, [mbYes], 0);
+    on E: Exception do
+      MessageDlg('Falha no get: ' + E.Message, mtError, [mbYes], 0);
   end;
 end;
-
-
 
 procedure TFrmConfiguracoes.salvar;
 begin
   try
+
+    FParametros.ImpressoraTinta.MODELOIMPRESSORATINTA := cbbImpressoraTinta.Text;
+
     if not Assigned(DaoEmitente.GetEmitente()) then
     begin
       DaoEmitente.IncluiEmitente(FEmitente);
@@ -285,8 +301,8 @@ begin
 
     close;
   except
-    on e: exception do
-      MessageDlg('Falha no salvar: ' + e.Message, mtError, [mbYes], 0);
+    on E: Exception do
+      MessageDlg('Falha no salvar: ' + E.Message, mtError, [mbYes], 0);
   end;
 end;
 

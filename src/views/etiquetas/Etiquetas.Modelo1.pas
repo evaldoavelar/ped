@@ -7,10 +7,11 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, untFrmBase, Vcl.Mask, Vcl.StdCtrls,
   Vcl.ActnList, Vcl.ComCtrls, Vcl.Buttons, Vcl.ExtCtrls, Utils.Rtti, Util.Funcoes,
-  ACBrPosPrinter, System.TypInfo, Dao.IDaoProdutos,
+  ACBrPosPrinter, System.TypInfo, Dao.IDaoProdutos, Impressao.Etiquetas,
   Dao.IDaoEmitente, Dominio.Entidades.TEmitente, Sistema.TParametros, Dao.IDaoParametros,
   Data.Bind.Components, Data.Bind.EngExt, Vcl.Bind.DBEngExt, System.Actions,
-  Vcl.ExtDlgs, Vcl.Imaging.pngimage, JvExMask, JvToolEdit, Vcl.AutoComplete;
+  Vcl.ExtDlgs, Vcl.Imaging.pngimage, JvExMask, JvToolEdit, Vcl.AutoComplete,
+  frxClass;
 
 type
 
@@ -28,11 +29,9 @@ type
     Panel5: TPanel;
     GridPanel1: TGridPanel;
     lblValdiade: TLabel;
-    edtData1: TJvDateEdit;
     Label1: TLabel;
     edtHora1: TDateTimePicker;
     Label2: TLabel;
-    edtValidade1: TJvDateEdit;
     Label3: TLabel;
     edtPeso1: TEdit;
     Panel6: TPanel;
@@ -51,11 +50,9 @@ type
     Panel15: TPanel;
     GridPanel3: TGridPanel;
     Label7: TLabel;
-    edtData2: TJvDateEdit;
     Label8: TLabel;
     edtHora2: TDateTimePicker;
     Label9: TLabel;
-    edtValidade2: TJvDateEdit;
     Label10: TLabel;
     edtPeso2: TEdit;
     Panel16: TPanel;
@@ -74,11 +71,9 @@ type
     Panel24: TPanel;
     GridPanel4: TGridPanel;
     Label15: TLabel;
-    edtData3: TJvDateEdit;
     Label16: TLabel;
     edtHora3: TDateTimePicker;
     Label17: TLabel;
-    edtValidade3: TJvDateEdit;
     Label18: TLabel;
     edtPeso3: TEdit;
     Panel25: TPanel;
@@ -97,11 +92,9 @@ type
     Panel33: TPanel;
     GridPanel5: TGridPanel;
     Label23: TLabel;
-    edtData4: TJvDateEdit;
     Label24: TLabel;
     edtHora4: TDateTimePicker;
     Label25: TLabel;
-    edtValidade4: TJvDateEdit;
     Label26: TLabel;
     edtPeso4: TEdit;
     Panel34: TPanel;
@@ -120,11 +113,9 @@ type
     Panel42: TPanel;
     GridPanel6: TGridPanel;
     Label31: TLabel;
-    edtData5: TJvDateEdit;
     Label32: TLabel;
     edtHora5: TDateTimePicker;
     Label33: TLabel;
-    edtValidade5: TJvDateEdit;
     Label34: TLabel;
     edtPeso5: TEdit;
     Panel43: TPanel;
@@ -143,11 +134,9 @@ type
     Panel51: TPanel;
     GridPanel7: TGridPanel;
     Label39: TLabel;
-    edtData6: TJvDateEdit;
     Label40: TLabel;
     edtHora6: TDateTimePicker;
     Label41: TLabel;
-    edtValidade6: TJvDateEdit;
     Label42: TLabel;
     edtPeso6: TEdit;
     Panel52: TPanel;
@@ -176,17 +165,44 @@ type
     Image6: TImage;
     lblCodigo6: TLabel;
     btnConsultaProduto1: TSpeedButton;
-    SpeedButton1: TSpeedButton;
-    AutoComplete1: TAutoComplete;
-    AutoComplete2: TAutoComplete;
-    SpeedButton2: TSpeedButton;
-    AutoComplete3: TAutoComplete;
-    SpeedButton3: TSpeedButton;
-    AutoComplete4: TAutoComplete;
-    SpeedButton4: TSpeedButton;
-    SpeedButton5: TSpeedButton;
-    cbbProduto6: TComboBox;
     cbbProduto1: TComboBox;
+    btnCopiar: TSpeedButton;
+    edtValidade1: TDateTimePicker;
+    edtData1: TDateTimePicker;
+    lblDescricao1: TLabel;
+    edtData3: TDateTimePicker;
+    edtValidade3: TDateTimePicker;
+    edtData2: TDateTimePicker;
+    edtValidade2: TDateTimePicker;
+    edtData4: TDateTimePicker;
+    edtValidade4: TDateTimePicker;
+    edtData5: TDateTimePicker;
+    edtValidade5: TDateTimePicker;
+    edtData6: TDateTimePicker;
+    edtValidade6: TDateTimePicker;
+    lblDescricao2: TLabel;
+    lblDescricao3: TLabel;
+    lblDescricao4: TLabel;
+    lblDescricao5: TLabel;
+    lblDescricao6: TLabel;
+    cbbProduto2: TComboBox;
+    SpeedButton1: TSpeedButton;
+    SpeedButton6: TSpeedButton;
+    cbbProduto3: TComboBox;
+    SpeedButton2: TSpeedButton;
+    SpeedButton7: TSpeedButton;
+    cbbProduto4: TComboBox;
+    SpeedButton3: TSpeedButton;
+    SpeedButton8: TSpeedButton;
+    SpeedButton4: TSpeedButton;
+    SpeedButton9: TSpeedButton;
+    cbbProduto6: TComboBox;
+    SpeedButton5: TSpeedButton;
+    cbbProduto5: TComboBox;
+    Panel62: TPanel;
+    Label4: TLabel;
+    edtNumCopias: TEdit;
+    frxReport1: TfrxReport;
     procedure FormCreate(Sender: TObject);
     procedure cbbProduto1KeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure FormDestroy(Sender: TObject);
@@ -196,16 +212,20 @@ type
     procedure cbbProduto1KeyPress(Sender: TObject; var Key: Char);
     procedure cbbProduto1Select(Sender: TObject);
     procedure cbbProduto1Enter(Sender: TObject);
+    procedure btnCopiarClick(Sender: TObject);
+    procedure BitBtn1Click(Sender: TObject);
   private
     { Private declarations }
     FDaoProdutos: IDaoProdutos;
     FEmitente: TEmitente;
     FParametros: TParametros;
     CachePesquisa: TStringList;
-    procedure Bind;
-    procedure PesquisaProduto(cbbProduto: TComponent; aCallback: TProc<TProduto, Integer>);
+    procedure Bind; overload;
+    procedure Bind(aTagOrigem: integer); overload;
+    procedure PesquisaProduto(cbbProduto: TComponent; aCallback: TProc<TProduto, integer>);
     function MontaDescricaoPesquisaProduto(const Item: TProduto): string;
-    procedure BindProduto(aProduto: TProduto; aTag: Integer);
+    procedure BindProduto(aProduto: TProduto; aTag: integer);
+    function GetEtiqueta(aTag: integer): TImpressaoEtiquetas;
   public
     { Public declarations }
   end;
@@ -219,16 +239,17 @@ var
 implementation
 
 uses Dominio.Entidades.TFactory, Vcl.Printers, System.StrUtils,
-  Consulta.Produto;
+  Consulta.Produto, Relatorio.FREtiquetas.Modelo1, Utils.ArrayUtil;
 
 {$R *.dfm}
 
+
 procedure TFrmEtiquetasModelo1.Bind;
 var
-  I: Integer;
+  I: integer;
   lbl: TLabel;
   imgLogo: TImage;
-  edtData: TJvDateEdit;
+  edtData: TDateTimePicker;
   edtHora: TDateTimePicker;
 begin
   FEmitente.ClearBindings;
@@ -244,23 +265,29 @@ begin
     lbl := self.FindComponent('lblCodigo' + I.ToString) as TLabel;
     lbl.Caption := '';
 
-    imgLogo := self.FindComponent('imgLogo' + I.ToString) as TImage;
-    imgLogo.Picture := FParametros.LOGOMARCAETIQUETA.Picture;
+    if Assigned(FParametros.LOGOMARCAETIQUETA) then
+    begin
+      imgLogo := self.FindComponent('imgLogo' + I.ToString) as TImage;
+      imgLogo.Picture := FParametros.LOGOMARCAETIQUETA.Picture;
+    end;
 
-    edtData := self.FindComponent('edtData' + I.ToString) as TJvDateEdit;
-    edtData.Date := Now;
+    edtData := self.FindComponent('edtData' + I.ToString) as TDateTimePicker;
+    edtData.Date := Date;
+
+    edtData := self.FindComponent('edtValidade' + I.ToString) as TDateTimePicker;
+    edtData.Date := Date;
 
     edtHora := self.FindComponent('edtHora' + I.ToString) as TDateTimePicker;
-    edtHora.DateTime := Now;
+    edtHora.Time := now;
 
   end;
 
 end;
 
-procedure TFrmEtiquetasModelo1.PesquisaProduto(cbbProduto: TComponent; aCallback: TProc<TProduto, Integer>);
+procedure TFrmEtiquetasModelo1.PesquisaProduto(cbbProduto: TComponent; aCallback: TProc<TProduto, integer>);
 var
   Produto: TProduto;
-  idx: Integer;
+  idx: integer;
 begin
   FrmConsultaProdutos := TFrmConsultaProdutos.Create(self);
   try
@@ -287,16 +314,127 @@ end;
 procedure TFrmEtiquetasModelo1.btnConsultaProduto1Click(Sender: TObject);
 begin
   inherited;
-  PesquisaProduto(cbbProduto1, BindProduto);
+  PesquisaProduto(TComboBox(Sender), BindProduto);
 end;
 
-procedure TFrmEtiquetasModelo1.BindProduto(aProduto: TProduto; aTag: Integer);
+procedure TFrmEtiquetasModelo1.btnCopiarClick(Sender: TObject);
+begin
+  inherited;
+  Bind(TComponent(Sender).Tag);
+end;
+
+procedure TFrmEtiquetasModelo1.Bind(aTagOrigem: integer);
+var
+  I: integer;
+  lblOrigem: TLabel;
+  lblDestino: TLabel;
+  cbbProdutoOrigem: TComboBox;
+  cbbProdutoDestino: TComboBox;
+  edtPrecoOrigem: TEdit;
+  edtPrecoDestino: TEdit;
+  edtDataDestino: TDateTimePicker;
+  edtDataOrigem: TDateTimePicker;
+  edtHoraOrigem: TDateTimePicker;
+  edtHoraDestino: TDateTimePicker;
+  edtPesoOrigem: TEdit;
+  edtPesoDestino: TEdit;
+begin
+  for I := aTagOrigem + 1 to 6 do
+  begin
+    lblOrigem := self.FindComponent('lblCodigo' + aTagOrigem.ToString) as TLabel;
+    lblDestino := self.FindComponent('lblCodigo' + I.ToString) as TLabel;
+    lblDestino.Caption := lblOrigem.Caption;
+
+    lblOrigem := self.FindComponent('lblDescricao' + aTagOrigem.ToString) as TLabel;
+    lblDestino := self.FindComponent('lblDescricao' + I.ToString) as TLabel;
+    lblDestino.Caption := lblOrigem.Caption;
+
+    cbbProdutoOrigem := self.FindComponent('cbbProduto' + aTagOrigem.ToString) as TComboBox;
+    cbbProdutoDestino := self.FindComponent('cbbProduto' + I.ToString) as TComboBox;
+    cbbProdutoDestino.Text := cbbProdutoOrigem.Text;
+
+    edtPrecoOrigem := self.FindComponent('edtPreco' + aTagOrigem.ToString) as TEdit;
+    edtPrecoDestino := self.FindComponent('edtPreco' + I.ToString) as TEdit;
+    edtPrecoDestino.Text := edtPrecoOrigem.Text;
+
+    edtPesoOrigem := self.FindComponent('edtPeso' + aTagOrigem.ToString) as TEdit;
+    edtPesoDestino := self.FindComponent('edtPeso' + I.ToString) as TEdit;
+    edtPesoDestino.Text := edtPesoOrigem.Text;
+
+    edtDataOrigem := self.FindComponent('edtValidade' + aTagOrigem.ToString) as TDateTimePicker;
+    edtDataDestino := self.FindComponent('edtValidade' + I.ToString) as TDateTimePicker;
+    edtDataDestino.Date := edtDataOrigem.Date;
+
+    edtDataOrigem := self.FindComponent('edtData' + aTagOrigem.ToString) as TDateTimePicker;
+    edtDataDestino := self.FindComponent('edtData' + I.ToString) as TDateTimePicker;
+    edtDataDestino.Date := edtDataOrigem.Date;
+
+    edtDataOrigem := self.FindComponent('edtData' + aTagOrigem.ToString) as TDateTimePicker;
+    edtDataDestino := self.FindComponent('edtData' + I.ToString) as TDateTimePicker;
+    edtDataDestino.Date := edtDataOrigem.Date;
+
+    edtHoraOrigem := self.FindComponent('edtHora' + aTagOrigem.ToString) as TDateTimePicker;
+    edtHoraDestino := self.FindComponent('edtHora' + I.ToString) as TDateTimePicker;
+    edtHoraDestino.DateTime := edtHoraOrigem.DateTime;
+  end;
+end;
+
+procedure TFrmEtiquetasModelo1.BindProduto(aProduto: TProduto; aTag: integer);
 var
   lbl: TLabel;
+  cbbProduto: TComboBox;
+  edtPreco: TEdit;
 begin
   lbl := self.FindComponent('lblCodigo' + aTag.ToString) as TLabel;
   lbl.Caption := TUtil.IFF<string>(aProduto.BARRAS = '', aProduto.BARRAS, aProduto.CODIGO);
 
+  lbl := self.FindComponent('lblDescricao' + aTag.ToString) as TLabel;
+  lbl.Caption := aProduto.DESCRICAO;
+
+  cbbProduto := self.FindComponent('cbbProduto' + aTag.ToString) as TComboBox;
+  cbbProduto.Text := aProduto.DESCRICAO;
+
+  edtPreco := self.FindComponent('edtPreco' + aTag.ToString) as TEdit;
+  edtPreco.Text := FormatCurr('R$ 0.,00', aProduto.PRECO_VENDA);
+end;
+
+function TFrmEtiquetasModelo1.GetEtiqueta(aTag: integer): TImpressaoEtiquetas;
+var
+  LEtiqueta: TImpressaoEtiquetas;
+begin
+  LEtiqueta := TImpressaoEtiquetas.Create;
+
+  LEtiqueta.Codigo := (self.FindComponent('lblCodigo' + aTag.ToString) as TLabel).Caption;
+  LEtiqueta.DESCRICAO := (self.FindComponent('lblDescricao' + aTag.ToString) as TLabel).Caption;
+  LEtiqueta.Preco := (self.FindComponent('edtPreco' + aTag.ToString) as TEdit).Text;
+  LEtiqueta.Peso := (self.FindComponent('edtPeso' + aTag.ToString) as TEdit).Text;
+  LEtiqueta.Validade := (self.FindComponent('edtValidade' + aTag.ToString) as TDateTimePicker).DateTime;
+  LEtiqueta.Data := (self.FindComponent('edtData' + aTag.ToString) as TDateTimePicker).Date;
+  LEtiqueta.Hora := (self.FindComponent('edtHora' + aTag.ToString) as TDateTimePicker).DateTime;
+
+  result :=  LEtiqueta;
+end;
+
+procedure TFrmEtiquetasModelo1.BitBtn1Click(Sender: TObject);
+var
+  Relatorio: TFREtiquetasModelo1;
+  LEtiquetas: Tarray<TImpressaoEtiquetas>;
+  I: integer;
+
+begin
+  try
+    inherited;
+
+    for I := 1 to 6 do
+      TArrayUtil<TImpressaoEtiquetas>.Append(LEtiquetas, GetEtiqueta(I));
+
+    Relatorio := TFREtiquetasModelo1.Create(self);
+    Relatorio.Imprimir(LEtiquetas, StrToIntDef(edtNumCopias.Text, 1));
+    Relatorio.Free;
+  except
+    on e: exception do
+      MessageDlg(e.Message, mtError, [mbYes], 0);
+  end;
 end;
 
 procedure TFrmEtiquetasModelo1.cbbProduto1Click(Sender: TObject);
@@ -353,12 +491,12 @@ begin
       end
   else
     begin
-      cbbProduto.DroppedDown := True;
+      cbbProduto.DroppedDown := true;
       if Length(cbbProduto.Text) > 1 then
       begin
         // if not cbbProduto.AutoDropDown then
         // cbbProduto.AutoDropDown := True;
-        cbbProduto.DroppedDown := True;
+        cbbProduto.DroppedDown := true;
         // cbbProduto.AutoComplete := Length(cbbProduto.Text) >= 2;
 
         if { (CachePesquisa.IndexOf(cbbProduto.Text) = -1) and } (cbbProduto.Items.IndexOf(cbbProduto.Text) = -1) and (Key <> VK_RETURN) then
@@ -377,6 +515,8 @@ begin
 
           // CachePesquisa.Add(cbbProduto.Text);
         end;
+
+        cbbProduto.DropDownCount := 8;
       end;
     end;
   end;

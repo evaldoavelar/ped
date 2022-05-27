@@ -178,7 +178,7 @@ begin
 
   try
 
-    impressao := TRParcela.create(TFactory.Parametros.Impressora);
+    impressao := TRParcela.create(TFactory.Parametros.ImpressoraTermica);
 
     if dbGridResultado.DataSource.DataSet.IsEmpty then
       raise Exception.create('Nada para imprimir');
