@@ -3353,10 +3353,6 @@ object FrmPedidoVenda: TFrmPedidoVenda
         Margins.Bottom = 0
         Caption = 'tsPagamento'
         ImageIndex = 1
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object Label2: TLabel
           Left = 15
           Top = 168
@@ -10267,7 +10263,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
           AlignWithMargins = True
           Left = 30
           Top = 3
-          Width = 105
+          Width = 582
           Height = 13
           Margins.Left = 30
           Align = alTop
@@ -10279,6 +10275,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
           Font.Style = [fsBold]
           ParentFont = False
           WordWrap = True
+          ExplicitWidth = 105
         end
       end
       object Panel26: TPanel
@@ -10330,7 +10327,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
             AlignWithMargins = True
             Left = 30
             Top = 21
-            Width = 78
+            Width = 542
             Height = 13
             Margins.Left = 30
             Margins.Top = 0
@@ -10343,6 +10340,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
             Font.Style = [fsBold]
             ParentFont = False
             WordWrap = True
+            ExplicitWidth = 78
           end
         end
         object Panel27: TPanel
@@ -10413,7 +10411,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
             AlignWithMargins = True
             Left = 30
             Top = 21
-            Width = 78
+            Width = 542
             Height = 13
             Margins.Left = 30
             Margins.Top = 0
@@ -10426,6 +10424,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
             Font.Style = [fsBold]
             ParentFont = False
             WordWrap = True
+            ExplicitWidth = 78
           end
         end
         object Panel12: TPanel
@@ -10496,7 +10495,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
             AlignWithMargins = True
             Left = 30
             Top = 21
-            Width = 78
+            Width = 542
             Height = 13
             Margins.Left = 30
             Margins.Top = 0
@@ -10509,6 +10508,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
             Font.Style = [fsBold]
             ParentFont = False
             WordWrap = True
+            ExplicitWidth = 78
           end
         end
         object Panel29: TPanel
@@ -10585,7 +10585,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
             AlignWithMargins = True
             Left = 30
             Top = 20
-            Width = 78
+            Width = 542
             Height = 13
             Margins.Left = 30
             Margins.Top = 0
@@ -10598,6 +10598,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
             Font.Style = [fsBold, fsStrikeOut]
             ParentFont = False
             WordWrap = True
+            ExplicitWidth = 78
           end
         end
         object Panel32: TPanel
@@ -10670,7 +10671,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
             AlignWithMargins = True
             Left = 30
             Top = 19
-            Width = 78
+            Width = 542
             Height = 13
             Margins.Left = 30
             Margins.Top = 0
@@ -10683,6 +10684,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
             Font.Style = [fsBold]
             ParentFont = False
             WordWrap = True
+            ExplicitWidth = 78
           end
         end
         object Panel35: TPanel
@@ -10753,7 +10755,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
             AlignWithMargins = True
             Left = 30
             Top = 21
-            Width = 78
+            Width = 542
             Height = 13
             Margins.Left = 30
             Margins.Top = 0
@@ -10766,6 +10768,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
             Font.Style = [fsBold]
             ParentFont = False
             WordWrap = True
+            ExplicitWidth = 78
           end
         end
         object Panel38: TPanel
@@ -10836,7 +10839,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
             AlignWithMargins = True
             Left = 30
             Top = 21
-            Width = 78
+            Width = 542
             Height = 13
             Margins.Left = 30
             Margins.Top = 0
@@ -10849,6 +10852,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
             Font.Style = [fsBold]
             ParentFont = False
             WordWrap = True
+            ExplicitWidth = 78
           end
         end
         object Panel41: TPanel
@@ -10919,7 +10923,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
             AlignWithMargins = True
             Left = 30
             Top = 21
-            Width = 78
+            Width = 542
             Height = 13
             Margins.Left = 30
             Margins.Top = 0
@@ -10932,6 +10936,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
             Font.Style = [fsBold]
             ParentFont = False
             WordWrap = True
+            ExplicitWidth = 78
           end
         end
         object Panel44: TPanel
@@ -11655,7 +11660,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
         AlignWithMargins = True
         Left = 3
         Top = 68
-        Width = 109
+        Width = 38
         Height = 17
         Align = alTop
         Caption = 'ESC - Voltar / Sair'
@@ -11666,12 +11671,13 @@ object FrmPedidoVenda: TFrmPedidoVenda
         Font.Style = [fsBold]
         ParentFont = False
         Transparent = True
+        ExplicitWidth = 109
       end
       object lablIns: TLabel
         AlignWithMargins = True
         Left = 3
         Top = 91
-        Width = 148
+        Width = 38
         Height = 17
         Align = alTop
         Caption = 'INS - Consulta Produtos'
@@ -11682,12 +11688,13 @@ object FrmPedidoVenda: TFrmPedidoVenda
         Font.Style = [fsBold]
         ParentFont = False
         Transparent = True
+        ExplicitWidth = 148
       end
       object lablDel: TLabel
         AlignWithMargins = True
         Left = 3
         Top = 137
-        Width = 113
+        Width = 38
         Height = 17
         Align = alTop
         Caption = 'F11 - Cancela Item'
@@ -11698,12 +11705,13 @@ object FrmPedidoVenda: TFrmPedidoVenda
         Font.Style = [fsBold]
         ParentFont = False
         Transparent = True
+        ExplicitWidth = 113
       end
       object Label6: TLabel
         AlignWithMargins = True
         Left = 3
         Top = 160
-        Width = 95
+        Width = 38
         Height = 17
         Align = alTop
         Caption = 'F8 - Or'#231'amento'
@@ -11714,12 +11722,13 @@ object FrmPedidoVenda: TFrmPedidoVenda
         Font.Style = [fsBold]
         ParentFont = False
         Transparent = True
+        ExplicitWidth = 95
       end
       object Label7: TLabel
         AlignWithMargins = True
         Left = 3
         Top = 183
-        Width = 176
+        Width = 38
         Height = 17
         Align = alTop
         Caption = 'F5 - Altera Pesquisa Produto'
@@ -11730,12 +11739,13 @@ object FrmPedidoVenda: TFrmPedidoVenda
         Font.Style = [fsBold]
         ParentFont = False
         Transparent = True
+        ExplicitWidth = 176
       end
       object Label3: TLabel
         AlignWithMargins = True
         Left = 3
         Top = 206
-        Width = 167
+        Width = 38
         Height = 17
         Align = alTop
         Caption = 'Ctrl + P - Consulta Pedidos'
@@ -11746,12 +11756,13 @@ object FrmPedidoVenda: TFrmPedidoVenda
         Font.Style = [fsBold]
         ParentFont = False
         Transparent = True
+        ExplicitWidth = 167
       end
       object Label21: TLabel
         AlignWithMargins = True
         Left = 3
         Top = 114
-        Width = 142
+        Width = 38
         Height = 17
         Align = alTop
         Caption = 'HOME- Cancela Pedido'
@@ -11762,12 +11773,13 @@ object FrmPedidoVenda: TFrmPedidoVenda
         Font.Style = [fsBold]
         ParentFont = False
         Transparent = True
+        ExplicitWidth = 142
       end
       object lablEnd: TLabel
         AlignWithMargins = True
         Left = 3
         Top = 45
-        Width = 134
+        Width = 38
         Height = 17
         Align = alTop
         Caption = 'END - Finaliza Pedido'
@@ -11778,12 +11790,13 @@ object FrmPedidoVenda: TFrmPedidoVenda
         Font.Style = [fsBold]
         ParentFont = False
         Transparent = True
+        ExplicitWidth = 134
       end
       object Label8: TLabel
         AlignWithMargins = True
         Left = 3
         Top = 252
-        Width = 96
+        Width = 38
         Height = 17
         Align = alTop
         Caption = 'F12 - Minimizar'
@@ -11794,12 +11807,13 @@ object FrmPedidoVenda: TFrmPedidoVenda
         Font.Style = [fsBold]
         ParentFont = False
         Transparent = True
+        ExplicitWidth = 96
       end
       object Label42: TLabel
         AlignWithMargins = True
         Left = 3
         Top = 229
-        Width = 191
+        Width = 38
         Height = 17
         Align = alTop
         Caption = 'F2 - Informa Venda de Parceiro'
@@ -11810,6 +11824,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
         Font.Style = [fsBold]
         ParentFont = False
         Transparent = True
+        ExplicitWidth = 191
       end
       object Panel45: TPanel
         Left = 0

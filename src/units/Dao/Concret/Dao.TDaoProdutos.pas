@@ -285,6 +285,7 @@ begin
         + 'from  Produto '
         + 'WHERE '
         + ' UPPER( descricao) CONTAINING  UPPER( :descricao ) '
+        + '  AND ( INATIVO = 0 or INATIVO IS NULL) '
         + ' order by descricao';
 
       if Length(descricao) > 39 then
@@ -325,7 +326,8 @@ begin
         + 'select *  '
         + 'from  Produto '
         + 'WHERE '
-        + ' UPPER( descricao) like  UPPER( :descricao ) '
+        + '  UPPER( descricao) like  UPPER( :descricao ) '
+        + '  AND ( INATIVO = 0 or INATIVO IS NULL) '
         + ' order by descricao';
 
       if Length(descricao) > 38 then
@@ -367,6 +369,7 @@ begin
         + 'from  Produto '
         + 'WHERE '
         + '     descricao = :descricao '
+        + '  AND ( INATIVO = 0 or INATIVO IS NULL)'
         + ' order by descricao ';
 
       qry.ParamByName('descricao').AsString := descricao;
@@ -490,7 +493,11 @@ begin
 
   try
     qry.SQL.Text := ''
-      + 'select *  '
+      + 'select Produto.*, '
+      + 'case INATIVO '
+      + '         when 1 then ''Inativo'' '
+      + '         else ''Ativo'' '
+      + '       end status '
       + 'from  Produto '
       + 'WHERE '
     // + ' UPPER( ' + campo + ') like UPPER( ' + QuotedStr(valor) + ') '

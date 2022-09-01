@@ -56,6 +56,7 @@ type
     chkAvisarEstoque: TCheckBox;
     chkBloqueado: TCheckBox;
     chkFracionado: TCheckBox;
+    chkInativo: TCheckBox;
     procedure FormDestroy(Sender: TObject);
     procedure edtCodigoChange(Sender: TObject);
     procedure chkBloqueadoClick(Sender: TObject);
@@ -139,6 +140,7 @@ begin
   FProduto.Bind('ALTERACAO_PRECO', edtUltimaAlteracao, 'Date');
   FProduto.Bind('DATA_CADASTRO', edtDataCadastro, 'Date');
   FProduto.Bind('BLOQUEADO', chkBloqueado, 'Checked');
+  FProduto.Bind('INATIVO', chkInativo, 'Checked');
   FProduto.Bind('QUANTIDADEFRACIONADA', chkFracionado, 'Checked');
 
   FProduto.Bind('Fornecedor.CODIGO', edtCodFornecedor, 'Text');

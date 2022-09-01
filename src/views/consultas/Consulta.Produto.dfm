@@ -1,9 +1,12 @@
 inherited FrmConsultaProdutos: TFrmConsultaProdutos
   Caption = 'Consulta Produtos'
+  ClientWidth = 874
   OnCreate = FormCreate
+  ExplicitWidth = 890
   PixelsPerInch = 96
   TextHeight = 13
   inherited dbGridResultado: TJvDBUltimGrid
+    Width = 874
     Columns = <
       item
         Expanded = False
@@ -41,6 +44,12 @@ inherited FrmConsultaProdutos: TFrmConsultaProdutos
       end
       item
         Expanded = False
+        FieldName = 'status'
+        Title.Caption = 'Estatus'
+        Visible = True
+      end
+      item
+        Expanded = False
         FieldName = 'OBSERVACOES'
         Title.Caption = 'Observa'#231#245'es'
         Width = 200
@@ -48,6 +57,10 @@ inherited FrmConsultaProdutos: TFrmConsultaProdutos
       end>
   end
   inherited jvPnl1: TPanel
+    Width = 874
+    inherited Image1: TImage
+      Width = 879
+    end
     inherited cbbPesquisa: TComboBox
       Items.Strings = (
         'C'#243'digo'

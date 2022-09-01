@@ -183,11 +183,13 @@ uses
   Dao.TDaoEstoqueFiltro in 'units\Dao\Concret\Dao.TDaoEstoqueFiltro.pas',
   Dao.IDaoFiltroEstoque in 'units\Dao\Abstract\Dao.IDaoFiltroEstoque.pas',
   Utils.ArrayUtil in 'units\Util\Utils.ArrayUtil.pas',
-  Etiquetas.Modelo1 in 'views\etiquetas\Etiquetas.Modelo1.pas' {FrmEtiquetasModelo1},
+  Etiquetas.Modelo3x2 in 'views\etiquetas\Etiquetas.Modelo3x2.pas' {FrmEtiquetasModelo3x2},
   Relatorio.FRBase in 'units\relatorio\Relatorio.FRBase.pas',
-  Relatorio.FREtiquetas.Modelo1 in 'units\relatorio\Relatorio.FREtiquetas.Modelo1.pas',
+  Relatorio.FREtiquetas.Modelo3x2 in 'units\relatorio\Relatorio.FREtiquetas.Modelo3x2.pas',
   Impressao.Parametros.Impressora.Tinta in 'units\Impressao\Impressao.Parametros.Impressora.Tinta.pas',
-  Impressao.Etiquetas in 'units\Impressao\Impressao.Etiquetas.pas';
+  Impressao.Etiquetas in 'units\Impressao\Impressao.Etiquetas.pas',
+  Etiquetas.Modelo4x2 in 'views\etiquetas\Etiquetas.Modelo4x2.pas' {FrmEtiquetasModelo4x2},
+  Relatorio.FREtiquetas.Modelo4x2 in 'units\relatorio\Relatorio.FREtiquetas.Modelo4x2.pas';
 
 {$R *.res}
 

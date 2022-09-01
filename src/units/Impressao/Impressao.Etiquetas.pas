@@ -14,6 +14,10 @@ type
     FPreco: string;
     FValidade: Tdate;
     FData: Tdate;
+    FContem: string;
+    FObservacao: string;
+    FContemDescricao: string;
+    FImprimirValidade: boolean;
     procedure SetCodigo(const Value: string);
     procedure SetData(const Value: Tdate);
     procedure SetDescricao(const Value: string);
@@ -21,6 +25,10 @@ type
     procedure SetPeso(const Value: string);
     procedure SetPreco(const Value: string);
     procedure SetValidade(const Value: Tdate);
+    procedure SetContem(const Value: string);
+    procedure SetContemDescricao(const Value: string);
+    procedure SetObservacao(const Value: string);
+    procedure SetImprimirValidade(const Value: boolean);
 
   public
     property Hora: TDateTime read FHora write SetHora;
@@ -30,6 +38,10 @@ type
     property Codigo: string read FCodigo write SetCodigo;
     property Preco: string read FPreco write SetPreco;
     property Descricao: string read FDescricao write SetDescricao;
+    property Contem: string read FContem write SetContem;
+    property ContemDescricao: string read FContemDescricao write SetContemDescricao;
+    property Observacao: string read FObservacao write SetObservacao;
+    property ImprimirValidade: boolean read FImprimirValidade write SetImprimirValidade;
   end;
 
 implementation
@@ -39,6 +51,16 @@ implementation
 procedure TImpressaoEtiquetas.SetCodigo(const Value: string);
 begin
   FCodigo := Value;
+end;
+
+procedure TImpressaoEtiquetas.SetContem(const Value: string);
+begin
+  FContem := Value;
+end;
+
+procedure TImpressaoEtiquetas.SetContemDescricao(const Value: string);
+begin
+  FContemDescricao := Value;
 end;
 
 procedure TImpressaoEtiquetas.SetData(const Value: Tdate);
@@ -54,6 +76,16 @@ end;
 procedure TImpressaoEtiquetas.SetHora(const Value: TDateTime);
 begin
   FHora := Value;
+end;
+
+procedure TImpressaoEtiquetas.SetImprimirValidade(const Value: boolean);
+begin
+  FImprimirValidade := Value;
+end;
+
+procedure TImpressaoEtiquetas.SetObservacao(const Value: string);
+begin
+  FObservacao := Value;
 end;
 
 procedure TImpressaoEtiquetas.SetPeso(const Value: string);

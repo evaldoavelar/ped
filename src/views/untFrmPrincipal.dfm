@@ -14464,13 +14464,8 @@ object FrmPrincipal: TFrmPrincipal
         Align = alClient
         Style = tsButtons
         TabOrder = 0
-        ExplicitWidth = 0
         object tsCadastro: TTabSheet
           Caption = 'tsCadastro'
-          ExplicitLeft = 0
-          ExplicitTop = 0
-          ExplicitWidth = 0
-          ExplicitHeight = 0
           DesignSize = (
             342
             506)
@@ -14529,10 +14524,6 @@ object FrmPrincipal: TFrmPrincipal
         object tsRelatorios: TTabSheet
           Caption = 'tsRelatorios'
           ImageIndex = 1
-          ExplicitLeft = 0
-          ExplicitTop = 0
-          ExplicitWidth = 0
-          ExplicitHeight = 0
           DesignSize = (
             342
             506)
@@ -14593,10 +14584,6 @@ object FrmPrincipal: TFrmPrincipal
         object tsConsulta: TTabSheet
           Caption = 'tsVenda'
           ImageIndex = 2
-          ExplicitLeft = 0
-          ExplicitTop = 0
-          ExplicitWidth = 0
-          ExplicitHeight = 0
           DesignSize = (
             342
             506)
@@ -14656,10 +14643,6 @@ object FrmPrincipal: TFrmPrincipal
         object tsConfiguracoes: TTabSheet
           Caption = 'tsConfiguracoes'
           ImageIndex = 3
-          ExplicitLeft = 0
-          ExplicitTop = 0
-          ExplicitWidth = 0
-          ExplicitHeight = 0
           DesignSize = (
             342
             506)
@@ -14703,10 +14686,6 @@ object FrmPrincipal: TFrmPrincipal
         object tsCaixa: TTabSheet
           Caption = 'tsCaixa'
           ImageIndex = 4
-          ExplicitLeft = 0
-          ExplicitTop = 0
-          ExplicitWidth = 0
-          ExplicitHeight = 0
           DesignSize = (
             342
             506)
@@ -14751,10 +14730,6 @@ object FrmPrincipal: TFrmPrincipal
         object tsEstoque: TTabSheet
           Caption = 'tsEstoque'
           ImageIndex = 5
-          ExplicitLeft = 0
-          ExplicitTop = 0
-          ExplicitWidth = 0
-          ExplicitHeight = 0
           DesignSize = (
             342
             506)
@@ -14799,10 +14774,6 @@ object FrmPrincipal: TFrmPrincipal
         object tsEtiquetas: TTabSheet
           Caption = 'tsEtiquetas'
           ImageIndex = 6
-          ExplicitLeft = 0
-          ExplicitTop = 0
-          ExplicitWidth = 0
-          ExplicitHeight = 0
           DesignSize = (
             342
             506)
@@ -14824,7 +14795,10 @@ object FrmPrincipal: TFrmPrincipal
                 Collapsed = False
                 Items = <
                   item
-                    Action = actEtiquetasModelo1
+                    Action = actEtiquetasModelo3x2
+                  end
+                  item
+                    Action = actEtiquetasModelo4x2
                   end>
               end>
             Font.Charset = DEFAULT_CHARSET
@@ -15269,10 +15243,15 @@ object FrmPrincipal: TFrmPrincipal
       ImageIndex = 60
       OnExecute = actEtiquetasExecute
     end
-    object actEtiquetasModelo1: TAction
-      Caption = ' Modelo 1 - Etiquetas  6 x 6'
+    object actEtiquetasModelo3x2: TAction
+      Caption = ' Etiquetas  3 x 2'
       ImageIndex = 62
-      OnExecute = actEtiquetasModelo1Execute
+      OnExecute = actEtiquetasModelo3x2Execute
+    end
+    object actEtiquetasModelo4x2: TAction
+      Caption = ' Etiquetas  4 x 2'
+      ImageIndex = 61
+      OnExecute = actEtiquetasModelo4x2Execute
     end
   end
   object FDIBBackup: TFDIBBackup

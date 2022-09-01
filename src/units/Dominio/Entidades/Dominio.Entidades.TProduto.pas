@@ -31,6 +31,7 @@ type
     FESTOQUEMINIMO: Double;
     FESTOQUE: Double;
     FAVISARESTOQUEBAIXO: Boolean;
+    FINATIVO: Boolean;
     function getBLOQUEADO: Boolean;
     procedure setBLOQUEADO(const Value: Boolean);
     function getALTERACAO_PRECO: TDateTime;
@@ -72,6 +73,7 @@ type
     procedure SetAVISARESTOQUEBAIXO(const Value: Boolean);
     procedure SetESTOQUE(const Value: Double);
     procedure SetESTOQUEMINIMO(const Value: Double);
+    procedure SetINATIVO(const Value: Boolean);
   published
     [campo('CODIGO  ', tpVARCHAR, 6, 0, True)]
     [PrimaryKey('PRODUTO_PRIMARY', 'CODIGO')]
@@ -119,6 +121,9 @@ type
 
     [campo('BLOQUEADO', tpSMALLINT, 0, 0)]
     property BLOQUEADO: Boolean read getetBLOQUEADO write setetBLOQUEADO;
+
+    [campo('INATIVO', tpSMALLINT, 0, 0)]
+    property INATIVO: Boolean read FINATIVO write SetINATIVO;
 
     [campo('OBSERVACOES', tpVARCHAR, 35)]
     property OBSERVACOES: string read getOBSERVACOES write setOBSERVACOES;
@@ -414,6 +419,15 @@ begin
   Self.FFornecedor := Value;
   if Assigned(Self.FFornecedor) then
     Self.CODFORNECEDOR := Self.FFornecedor.CODIGO;
+end;
+
+procedure TProduto.SetINATIVO(const Value: Boolean);
+begin
+  if Value <> FINATIVO then
+  begin
+    FINATIVO := Value;
+    Notify('INATIVO');
+  end;
 end;
 
 procedure TProduto.setMARGEM_LUCRO(const Value: currency);

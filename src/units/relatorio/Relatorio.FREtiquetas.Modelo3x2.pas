@@ -1,4 +1,4 @@
-unit Relatorio.FREtiquetas.Modelo1;
+unit Relatorio.FREtiquetas.Modelo3x2;
 
 interface
 
@@ -21,7 +21,7 @@ uses
 
 type
 
-  TFREtiquetasModelo1 = class(TRelatorioFastReportBase)
+  TFREtiquetasModelo3x2 = class(TRelatorioFastReportBase)
   private
     FfrxEmitente: TfrxDBDataset;
     FfrxEtiqueta1: TfrxDBDataset;
@@ -45,6 +45,7 @@ type
     procedure CriarDataSets;
   public
     procedure Imprimir(LEtiquetas: Tarray<TImpressaoEtiquetas>; aCopias: integer);
+    procedure PDF(LEtiquetas: Tarray<TImpressaoEtiquetas>);
   public
     destructor Destroy; override;
     constructor Create(AOwner: TComponent); override;
@@ -56,9 +57,9 @@ implementation
 uses
   Dominio.Entidades.TFactory, Utils.Rtti, Utils.ArrayUtil;
 
-{ TFREtiquetasModelo1 }
+{ TFREtiquetasModelo3x2 }
 
-procedure TFREtiquetasModelo1.CarregaDados;
+procedure TFREtiquetasModelo3x2.CarregaDados;
 VAR
   I: integer;
   LEtiqueta: TImpressaoEtiquetas;
@@ -77,7 +78,7 @@ begin
 
 end;
 
-procedure TFREtiquetasModelo1.ObjectToDataSet(aObj: Tobject; aDs: TClientDataSet);
+procedure TFREtiquetasModelo3x2.ObjectToDataSet(aObj: Tobject; aDs: TClientDataSet);
 begin
   aDs.Append;
   TRttiUtil.ForEachProperties(aObj,
@@ -89,7 +90,13 @@ begin
   aDs.post;
 end;
 
-procedure TFREtiquetasModelo1.CriarDataSets;
+procedure TFREtiquetasModelo3x2.PDF(LEtiquetas: Tarray<TImpressaoEtiquetas>);
+begin
+  FEtiquetas := LEtiquetas;
+  SELF.ExportPDF('Etiquetas 3x2');
+end;
+
+procedure TFREtiquetasModelo3x2.CriarDataSets;
 VAR
   I: integer;
   LDs: TClientDataSet;
@@ -109,15 +116,15 @@ begin
   end;
 end;
 
-constructor TFREtiquetasModelo1.Create(AOwner: TComponent);
+constructor TFREtiquetasModelo3x2.Create(AOwner: TComponent);
 begin
   inherited;
-  Self.NomeDocumento := 'ETIQUETAS 6X6';
-  Self.NumCopias := 1;
-  Self.Impressora := TFactory.Parametros.ImpressoraTinta.MODELOIMPRESSORATINTA;
-  Self.FastFile := TFactory.Parametros.DIRETORIORELATORIOS + '\ETIQUETAS.fr3';
-  Self.FastFileDir := TFactory.Parametros.DIRETORIORELATORIOS;
-  Self.MostraPreview := true;
+  SELF.NomeDocumento := 'ETIQUETAS 3x2';
+  SELF.NumCopias := 1;
+  SELF.Impressora := TFactory.Parametros.ImpressoraTinta.MODELOIMPRESSORATINTA;
+  SELF.FastFile := TFactory.Parametros.DIRETORIORELATORIOS + '\ETIQUETAS.fr3';
+  SELF.FastFileDir := TFactory.Parametros.DIRETORIORELATORIOS;
+  SELF.MostraPreview := true;
   frxReport.PreviewOptions.ZoomMode := zmDefault;
   // cdsEmitente
   if not Assigned(cdsEmitente) then
@@ -243,7 +250,7 @@ begin
 
 end;
 
-destructor TFREtiquetasModelo1.Destroy;
+destructor TFREtiquetasModelo3x2.Destroy;
 var
   I: integer;
 begin
@@ -262,21 +269,21 @@ begin
   inherited;
 end;
 
-procedure TFREtiquetasModelo1.Imprimir(LEtiquetas: Tarray<TImpressaoEtiquetas>; aCopias: integer);
+procedure TFREtiquetasModelo3x2.Imprimir(LEtiquetas: Tarray<TImpressaoEtiquetas>; aCopias: integer);
 begin
   FEtiquetas := LEtiquetas;
-  Self.NumCopias := aCopias;
+  SELF.NumCopias := aCopias;
 
   if PrepareReport() then
   begin
-    if Self.MostraPreview then
+    if SELF.MostraPreview then
       frxReport.ShowPreparedReport()
     else
       frxReport.Print;
   end;
 end;
 
-procedure TFREtiquetasModelo1.SetDataSetsToFrxReport;
+procedure TFREtiquetasModelo3x2.SetDataSetsToFrxReport;
 begin
   inherited;
   // Incluir no arquivo Fr3

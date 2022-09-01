@@ -6,12 +6,13 @@ inherited frmCadastroProduto: TfrmCadastroProduto
   TextHeight = 13
   inherited pnlContainer: TPanel
     Height = 456
+    ExplicitHeight = 456
     inherited pgcPrincipal: TPageControl
       Height = 450
       ActivePage = ts1
+      ExplicitHeight = 450
       object ts1: TTabSheet
         Caption = 'Produto'
-        ExplicitHeight = 381
         object lbl3: TLabel
           Left = 55
           Top = 40
@@ -372,8 +373,6 @@ inherited frmCadastroProduto: TfrmCadastroProduto
               TabOrder = 0
               Text = '0'
               OnChange = edtCodigoChange
-              ExplicitTop = 23
-              ExplicitHeight = 30
             end
           end
           object Panel3: TPanel
@@ -422,8 +421,6 @@ inherited frmCadastroProduto: TfrmCadastroProduto
               TabOrder = 0
               Text = '0'
               OnChange = edtCodigoChange
-              ExplicitTop = 23
-              ExplicitHeight = 30
             end
           end
           object chkAvisarEstoque: TCheckBox
@@ -438,7 +435,6 @@ inherited frmCadastroProduto: TfrmCadastroProduto
             Caption = 'Avisa Estoque Baixo?'
             TabOrder = 4
             OnClick = chkBloqueadoClick
-            ExplicitLeft = 11
           end
           object chkBloqueado: TCheckBox
             Left = 316
@@ -452,12 +448,23 @@ inherited frmCadastroProduto: TfrmCadastroProduto
             OnClick = chkBloqueadoClick
           end
           object chkFracionado: TCheckBox
-            Left = 317
+            Left = 316
             Top = 37
             Width = 192
             Height = 17
             Caption = 'Vender em Quantidade Fracionada'
             TabOrder = 3
+            OnClick = chkBloqueadoClick
+          end
+          object chkInativo: TCheckBox
+            Left = 316
+            Top = 60
+            Width = 97
+            Height = 17
+            Caption = 'Inativo'
+            Color = 10639360
+            ParentColor = False
+            TabOrder = 5
             OnClick = chkBloqueadoClick
           end
         end
@@ -636,6 +643,7 @@ inherited frmCadastroProduto: TfrmCadastroProduto
   end
   inherited pnlBotoes: TPanel
     Top = 521
+    ExplicitTop = 521
     inherited lblAtalhos: TLabel
       Font.Color = 10639360
     end

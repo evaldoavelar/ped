@@ -86,8 +86,8 @@
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
         <BT_BuildType>Debug</BT_BuildType>
-        <VerInfo_Build>14</VerInfo_Build>
-        <VerInfo_Keys>CompanyName=Desenvolvido por Evaldo Avelar Marques;FileDescription=Sistema de Parcelas;FileVersion=1.0.0.14;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductVersion=1.0.0.0;Comments=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName)</VerInfo_Keys>
+        <VerInfo_Build>15</VerInfo_Build>
+        <VerInfo_Keys>CompanyName=Desenvolvido por Evaldo Avelar Marques;FileDescription=Sistema de Parcelas;FileVersion=1.0.0.15;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductVersion=1.0.0.0;Comments=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName)</VerInfo_Keys>
         <Icon_MainIcon>PED_Icon.ico</Icon_MainIcon>
         <VerInfo_Debug>true</VerInfo_Debug>
         <VerInfo_PreRelease>true</VerInfo_PreRelease>
@@ -107,7 +107,7 @@
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
         <VerInfo_Build>12</VerInfo_Build>
-        <Icon_MainIcon>LasPDV_Icon.ico</Icon_MainIcon>
+        <Icon_MainIcon>PED_Icon.ico</Icon_MainIcon>
         <BT_BuildType>Debug</BT_BuildType>
         <VerInfo_Keys>CompanyName=;FileVersion=1.0.0.12;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductVersion=1.0.0.0;Comments=;ProgramID=com.embarcadero.$(MSBuildProjectName);FileDescription=$(MSBuildProjectName);ProductName=$(MSBuildProjectName)</VerInfo_Keys>
         <DCC_DcuOutput>.\$(Platform)\dcu</DCC_DcuOutput>
@@ -418,14 +418,19 @@
         <DCCReference Include="units\Dao\Concret\Dao.TDaoEstoqueFiltro.pas"/>
         <DCCReference Include="units\Dao\Abstract\Dao.IDaoFiltroEstoque.pas"/>
         <DCCReference Include="units\Util\Utils.ArrayUtil.pas"/>
-        <DCCReference Include="views\etiquetas\Etiquetas.Modelo1.pas">
-            <Form>FrmEtiquetasModelo1</Form>
+        <DCCReference Include="views\etiquetas\Etiquetas.Modelo3x2.pas">
+            <Form>FrmEtiquetasModelo3x2</Form>
             <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="units\relatorio\Relatorio.FRBase.pas"/>
-        <DCCReference Include="units\relatorio\Relatorio.FREtiquetas.Modelo1.pas"/>
+        <DCCReference Include="units\relatorio\Relatorio.FREtiquetas.Modelo3x2.pas"/>
         <DCCReference Include="units\Impressao\Impressao.Parametros.Impressora.Tinta.pas"/>
         <DCCReference Include="units\Impressao\Impressao.Etiquetas.pas"/>
+        <DCCReference Include="views\etiquetas\Etiquetas.Modelo4x2.pas">
+            <Form>FrmEtiquetasModelo4x2</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="units\relatorio\Relatorio.FREtiquetas.Modelo4x2.pas"/>
         <None Include="ModelSupport_PED\default.txaPackage"/>
         <None Include="ModelSupport_PED\default.txvpck"/>
         <None Include="ModelSupport_PED\Pedido\default.txvpck"/>
@@ -477,14 +482,14 @@
                     <Source Name="MainSource">PED.dpr</Source>
                 </Source>
                 <Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k260.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp260.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
                     <Excluded_Packages Name="C:\Program Files (x86)\Embarcadero\Componentes\Rio\Acbr\Lib\Delphi\LibD26\Win32\DCLACBr_SPED.bpl">ACBr - (design-time) EFD ICMS/IPI, EFD Contribuições, EFD Contábil - (http://www.projetoacbr.com.br/)</Excluded_Packages>
                     <Excluded_Packages Name="C:\Program Files (x86)\Embarcadero\Componentes\Rio\Acbr\Lib\Delphi\LibD26\Win32\DCLACBr_NFSeDanfseFR.bpl">ACBr - (design-time) DANFSe em Fast Report - (http://www.projetoacbr.com.br/)</Excluded_Packages>
                     <Excluded_Packages Name="C:\Program Files (x86)\Embarcadero\Componentes\Rio\Acbr\Lib\Delphi\LibD26\Win32\DCLACBr_GNREGuiaFR.bpl">ACBr - (design-time) GNRE Impressão da Guia em Fast Report - (http://www.projetoacbr.com.br/)</Excluded_Packages>
-                    <Excluded_Packages Name="C:\Program Files (x86)\Embarcadero\Componentes\Rio\Acbr\Lib\Delphi\LibD26\Win32\DCLACBr_NFeDanfeRL.bpl">ACBr - (design-time) DANFe em Fortes Report - (http://www.projetoacbr.com.br/)</Excluded_Packages>
-                    <Excluded_Packages Name="C:\Program Files (x86)\Embarcadero\Componentes\Rio\Acbr\Lib\Delphi\LibD26\Win32\DCLACBr_NFSeDanfseRL.bpl">ACBr - (design-time) DANFSe em Fortes Report - (http://www.projetoacbr.com.br/)</Excluded_Packages>
-                    <Excluded_Packages Name="C:\Program Files (x86)\Embarcadero\Componentes\Rio\Acbr\Lib\Delphi\LibD26\Win32\DCLACBr_NFSeXDanfseRL.bpl">ACBr - (design-time) DANFSe X em Fortes Report - (http://www.projetoacbr.com.br/)</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k260.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp260.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="C:\Program Files (x86)\Embarcadero\Componentes\Berlin\Fortes\fortesreport-ce\Binary\LibD26\frce.bpl">File C:\Program Files (x86)\Embarcadero\Componentes\Berlin\Fortes\fortesreport-ce\Binary\LibD26\frce.bpl not found</Excluded_Packages>
+                    <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\20.0\Bpl\CSTDanfeEscPosSAT.bpl">ACBr - Extrato Cupom Fiscal Eletrônico SAT para Serial - Consult)</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\QRWDesignDXE10_3.bpl">File c:\program files (x86)\embarcadero\studio\20.0\bin\QRWDesignDXE10_3.bpl not found</Excluded_Packages>
                 </Excluded_Packages>
             </Delphi.Personality>
             <Deployment Version="3">

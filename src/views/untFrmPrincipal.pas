@@ -168,7 +168,7 @@ type
     actEtiquetas: TAction;
     tsEtiquetas: TTabSheet;
     CategoryButtons8: TCategoryButtons;
-    actEtiquetasModelo1: TAction;
+    actEtiquetasModelo4x2: TAction;
     procedure actPedidoVendaExecute(Sender: TObject);
     procedure imgNFCEDblClick(Sender: TObject);
     procedure actSairExecute(Sender: TObject);
@@ -225,8 +225,9 @@ type
     procedure actEstoqueAtualizarExecute(Sender: TObject);
     procedure actEstoqueExecute(Sender: TObject);
     procedure actConsultarEstoqueExecute(Sender: TObject);
-    procedure actEtiquetasModelo1Execute(Sender: TObject);
+    procedure actEtiquetasModelo3x2Execute(Sender: TObject);
     procedure actEtiquetasExecute(Sender: TObject);
+    procedure actEtiquetasModelo4x2Execute(Sender: TObject);
   private
     { Private declarations }
     DaoParcelas: IDaoParcelas;
@@ -271,9 +272,10 @@ uses
   Grafico.Pedidos,
   Sangria.Suprimento.Informar, Dominio.Entidades.TSangriaSuprimento.Tipo,
   Estoque.Atualizar,
-  Estoque.Consultar, Etiquetas.Modelo1;
+  Estoque.Consultar, Etiquetas.Modelo3x2, Etiquetas.Modelo4x2;
 
 {$R *.dfm}
+
 
 procedure TFrmPrincipal.actAbreMenuExecute(Sender: TObject);
 begin
@@ -532,14 +534,30 @@ begin
   AbreSubMenu;
 end;
 
-procedure TFrmPrincipal.actEtiquetasModelo1Execute(Sender: TObject);
+procedure TFrmPrincipal.actEtiquetasModelo3x2Execute(Sender: TObject);
 begin
   try
-    FrmEtiquetasModelo1 := TFrmEtiquetasModelo1.Create(Self);
+    FrmEtiquetasModelo3x2 := TFrmEtiquetasModelo3x2.Create(Self);
     try
-      FrmEtiquetasModelo1.ShowModal;
+      FrmEtiquetasModelo3x2.ShowModal;
     finally
-      FreeAndNil(FrmEtiquetasModelo1);
+      FreeAndNil(FrmEtiquetasModelo3x2);
+    end;
+  except
+    on E: Exception do
+      MessageDlg(E.Message, mtError, [mbOK], 0);
+  end;
+end;
+
+procedure TFrmPrincipal.actEtiquetasModelo4x2Execute(Sender: TObject);
+begin
+
+  try
+    FrmEtiquetasModelo4x2 := TFrmEtiquetasModelo4x2.Create(Self);
+    try
+      FrmEtiquetasModelo4x2.ShowModal;
+    finally
+      FreeAndNil(FrmEtiquetasModelo4x2);
     end;
   except
     on E: Exception do
@@ -899,8 +917,11 @@ begin
 
     impressao := TRVendasDoDia.Create(TFactory.Parametros.ImpressoraTermica);
 
-    impressao.Imprime(DataIncio, DataFim, TFactory.VendedorLogado,
-      TFactory.DadosEmitente, TFactory.DaoPedido.Totais(DataIncio, DataFim));
+    impressao.Imprime(DataIncio,
+      DataFim,
+      TFactory.VendedorLogado,
+      TFactory.DadosEmitente,
+      TFactory.DaoPedido.Totais(DataIncio, DataFim));
 
     FreeAndNil(impressao);
 
