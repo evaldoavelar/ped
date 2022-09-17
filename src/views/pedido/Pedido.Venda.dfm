@@ -49,7 +49,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
       Margins.Right = 0
       Margins.Bottom = 0
       ParentCustomHint = False
-      ActivePage = tsPagamento
+      ActivePage = tsProduto
       Align = alClient
       BiDiMode = bdRightToLeftReadingOnly
       DoubleBuffered = False
@@ -3612,10 +3612,6 @@ object FrmPedidoVenda: TFrmPedidoVenda
       object tsProduto: TTabSheet
         Caption = 'tsProduto'
         ImageIndex = 2
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object Panel15: TPanel
           Left = 0
           Top = 0

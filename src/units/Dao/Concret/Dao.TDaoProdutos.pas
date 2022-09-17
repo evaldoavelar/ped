@@ -178,6 +178,7 @@ begin
         + '       ESTOQUE = :ESTOQUE, '
         + '       ESTOQUEMINIMO = :ESTOQUEMINIMO, '
         + '       AVISARESTOQUEBAIXO = :AVISARESTOQUEBAIXO, '
+        + '       INATIVO = :INATIVO, '
         + '       observacoes = :OBSERVACOES '
         + 'where ' +
         '        CODIGO = :CODIGO ';
@@ -447,6 +448,7 @@ begin
         + '             ESTOQUE, '
         + '             ESTOQUEMINIMO, '
         + '             AVISARESTOQUEBAIXO, '
+        + '             INATIVO, '
         + '             QUANTIDADEFRACIONADA, '
         + '             observacoes) '
         + 'VALUES     ( :CODIGO, '
@@ -467,6 +469,7 @@ begin
         + '             :ESTOQUE, '
         + '             :ESTOQUEMINIMO, '
         + '             :AVISARESTOQUEBAIXO, '
+        + '             :INATIVO, '
         + '             :QUANTIDADEFRACIONADA, '
         + '             :OBSERVACOES)';
 
@@ -588,6 +591,9 @@ begin
 
     if ds.Params.FindParam('AVISARESTOQUEBAIXO') <> nil then
       ds.Params.ParamByName('AVISARESTOQUEBAIXO').AsBoolean := Produto.AVISARESTOQUEBAIXO;
+
+         if ds.Params.FindParam('INATIVO') <> nil then
+      ds.Params.ParamByName('INATIVO').AsBoolean := Produto.INATIVO;
 
   except
     on E: Exception do
