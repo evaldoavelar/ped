@@ -68,10 +68,6 @@ object FrmPedidoVenda: TFrmPedidoVenda
       TabOrder = 1
       object tsGeral: TTabSheet
         Caption = 'tsGeral'
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object Image3: TImage
           Left = 0
           Top = 0
@@ -10218,7 +10214,6 @@ object FrmPedidoVenda: TFrmPedidoVenda
           ParentBiDiMode = False
           ParentFont = False
           TabOrder = 1
-          Text = 'PESQUISA...'
           OnKeyDown = cbbProduto1KeyDown
           OnKeyPress = cbbProduto1KeyPress
           OnKeyUp = cbbProduto1KeyUp
@@ -11862,8 +11857,8 @@ object FrmPedidoVenda: TFrmPedidoVenda
     end
   end
   object actVenda: TActionList
-    Left = 360
-    Top = 464
+    Left = 677
+    Top = 521
     object actVoltar: TAction
       Caption = 'actVoltar'
       ShortCut = 27

@@ -6,9 +6,10 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Cadastros.Base, JvComponentBase, JvEnterTab,
   System.Actions, Vcl.ActnList, Vcl.StdCtrls, Vcl.WinXCtrls, Vcl.Buttons,
-  Vcl.ComCtrls, Vcl.ExtCtrls, Dominio.Entidades.TParceiro.FormaPagto,
+  Vcl.ComCtrls, Vcl.ExtCtrls, Dominio.Entidades.TParceiro.FormaPagto, System.Generics.Collections,
   Dao.IDaoParceiro.FormaPagto, Dominio.Entidades.TFactory, Vcl.Mask, JvExMask, JvToolEdit, JvBaseEdits,
-  System.Bindings.Helper, Consulta.Parceiro.FormaPagto, Vcl.Imaging.jpeg;
+  System.Bindings.Helper, Consulta.Parceiro.FormaPagto, Vcl.Imaging.jpeg,
+  Vcl.AutoComplete, Dominio.Entidades.TEntity;
 
 type
   TFrmCadastroFormaPagtoParceiro = class(TfrmCadastroBase)
@@ -34,9 +35,11 @@ type
     procedure Cancelar; override;
     procedure Bind(); override;
     procedure Novo(); override;
-    procedure getEntity; override;
     procedure AtualizarEntity(); override;
     procedure IncluirEntity(); override;
+    procedure getEntity(aEntity: TObject); override;
+    function MontaDescricaoPesquisa(aItem: TEntity): string; override;
+    function PesquisaPorDescricaoParcial(aValor: string): TObjectList<TEntity>; override;
   end;
 
 var
@@ -70,7 +73,7 @@ procedure TFrmCadastroFormaPagtoParceiro.AtualizarEntity;
 begin
   inherited;
   DaoParceiroFormaPagto.AtualizaParceiroFormaPagtos(FParceiroFormaPagto);
-  edtPesquisa.Text := FParceiroFormaPagto.ID.ToString;
+  edtPesquisa.Text := FParceiroFormaPagto.DESCRICAO;
 end;
 
 procedure TFrmCadastroFormaPagtoParceiro.Bind;
@@ -80,7 +83,7 @@ begin
   FParceiroFormaPagto.Bind('ID', edtCodigo, 'Text');
   FParceiroFormaPagto.Bind('DESCRICAO', edtDescricao, 'Text');
   FParceiroFormaPagto.Bind('COMISSAOPERCENTUAL', edtComissaoValor, 'Text');
-  FParceiroFormaPagto.BindReadOnly('DESCRICAO', lblCliente, 'Caption');
+//  FParceiroFormaPagto.BindReadOnly('DESCRICAO', lblCliente, 'Caption');
 
 end;
 
@@ -133,10 +136,27 @@ begin
   DaoParceiroFormaPagto := TFactory.DaoParceiroFormaPagto;
 end;
 
-procedure TFrmCadastroFormaPagtoParceiro.getEntity;
+procedure TFrmCadastroFormaPagtoParceiro.getEntity(aEntity: TObject);
+var
+  LItem: TParceiroFormaPagto;
 begin
   try
-    FParceiroFormaPagto := DaoParceiroFormaPagto.GeTParceiroFormaPagto(StrToIntDef(edtPesquisa.Text, 0));
+
+    // edição
+    if (aEntity = nil) and (FParceiroFormaPagto <> nil) then
+    begin
+      FParceiroFormaPagto := DaoParceiroFormaPagto.GeTParceiroFormaPagto(FParceiroFormaPagto.ID);
+    end
+    else
+    begin // pesquisa
+      LItem := aEntity as TParceiroFormaPagto;
+
+      if Assigned(FParceiroFormaPagto) then
+        FreeAndNil(FParceiroFormaPagto);
+
+      FParceiroFormaPagto := DaoParceiroFormaPagto.GeTParceiroFormaPagto(LItem.ID);
+    end;
+
     if not Assigned(FParceiroFormaPagto) then
       raise Exception.Create('Forma de Pagamento não encontrado');
     Bind();
@@ -156,7 +176,16 @@ begin
   inherited;
   FParceiroFormaPagto.ID := DaoParceiroFormaPagto.GeraID;
   DaoParceiroFormaPagto.IncluiPagto(FParceiroFormaPagto);
-  edtPesquisa.Text := FParceiroFormaPagto.ID.ToString;
+  edtPesquisa.Text := FParceiroFormaPagto.DESCRICAO;
+end;
+
+function TFrmCadastroFormaPagtoParceiro.MontaDescricaoPesquisa(
+  aItem: TEntity): string;
+var
+  LItem: TParceiroFormaPagto;
+begin
+  LItem := aItem as TParceiroFormaPagto;
+  result := LItem.DESCRICAO;
 end;
 
 procedure TFrmCadastroFormaPagtoParceiro.Novo;
@@ -185,6 +214,23 @@ begin
 
 end;
 
+function TFrmCadastroFormaPagtoParceiro.PesquisaPorDescricaoParcial(
+  aValor: string): TObjectList<TEntity>;
+var
+  LLista: TObjectList<TParceiroFormaPagto>;
+  item: TParceiroFormaPagto;
+begin
+  LLista := DaoParceiroFormaPagto.Listar(aValor);
+  result := TObjectList<TEntity>.Create();
+
+  for item in LLista do
+    result.Add(item);
+
+  LLista.OwnsObjects := False;
+  LLista.Free;
+
+end;
+
 procedure TFrmCadastroFormaPagtoParceiro.Pesquisar;
 begin
   inherited;
@@ -196,7 +242,7 @@ begin
       if Assigned(FrmConsultaFormaPagtoParceiro.ParceiroFormaPagto) then
       begin
         Self.FParceiroFormaPagto := FrmConsultaFormaPagtoParceiro.ParceiroFormaPagto;
-        edtPesquisa.Text := IntToStr(Self.FParceiroFormaPagto.ID);
+        edtPesquisa.Text := Self.FParceiroFormaPagto.DESCRICAO;
         Bind();
         inherited;
       end

@@ -8,7 +8,7 @@ uses
   System.Generics.Collections, System.SysUtils, System.Classes,
   Vcl.Graphics, Vcl.ExtCtrls, Vcl.Imaging.jpeg,
   Data.DB,
-  Dao.TDaoBase,
+  Dao.TDaoBase, Sistema.TLog,
   Dominio.Entidades.TItemOrcamento, Dominio.Entidades.TOrcamento, Dominio.Entidades.TParcelas;
 
 type

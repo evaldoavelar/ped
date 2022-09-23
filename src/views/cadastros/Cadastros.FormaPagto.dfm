@@ -9,15 +9,16 @@ inherited frmCadastroFormaPagto: TfrmCadastroFormaPagto
   TextHeight = 13
   inherited pnlContainer: TPanel
     Width = 693
-    Height = 470
+    Height = 488
+    ExplicitTop = 47
     ExplicitWidth = 693
-    ExplicitHeight = 470
+    ExplicitHeight = 488
     inherited pgcPrincipal: TPageControl
       Width = 687
-      Height = 464
+      Height = 482
       ActivePage = ts1
       ExplicitWidth = 687
-      ExplicitHeight = 464
+      ExplicitHeight = 482
       object ts1: TTabSheet
         Caption = 'Pagamento'
         object lbl3: TLabel
@@ -380,7 +381,6 @@ inherited frmCadastroFormaPagto: TfrmCadastroFormaPagto
                       Color = clWhite
                       MaxLength = 30
                       TabOrder = 0
-                      ExplicitLeft = 2
                     end
                   end
                   object Panel11: TPanel
@@ -415,7 +415,6 @@ inherited frmCadastroFormaPagto: TfrmCadastroFormaPagto
                       MaxLength = 10
                       NumbersOnly = True
                       TabOrder = 0
-                      ExplicitLeft = 2
                     end
                   end
                   object Panel12: TPanel
@@ -567,10 +566,8 @@ inherited frmCadastroFormaPagto: TfrmCadastroFormaPagto
   end
   inherited pnlTop: TPanel
     Width = 693
-    ExplicitWidth = 693
-    inherited Image1: TImage
-      Width = 693
-      ExplicitWidth = 693
+    inherited btnPesquisar: TBitBtn
+      Left = 574
     end
   end
 end

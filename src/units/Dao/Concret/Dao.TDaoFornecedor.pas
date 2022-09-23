@@ -7,12 +7,12 @@ uses
   System.SysUtils, System.Classes,
   FireDAC.Stan.Error,
   Data.DB, FireDAC.Comp.Client,
-  Dao.TDaoBase,Dao.IDaoFornecedor,
+  Dao.TDaoBase, Sistema.TLog, Dao.IDaoFornecedor,
   Dominio.Entidades.TFornecedor;
 
 type
 
-  TDaoFornecedor = class(TDaoBase,IDaoFornecedor)
+  TDaoFornecedor = class(TDaoBase, IDaoFornecedor)
   private
     procedure ObjectToParams(ds: TFDQuery; Fornecedor: TFornecedor);
     function ParamsToObject(ds: TFDQuery): TFornecedor;
@@ -25,7 +25,8 @@ type
     function GeFornecedor(codigo: string): TFornecedor;
     function GetFornecedorByName(nome: string): TFornecedor;
     function Lista(): TDataSet;
-    function Listar(campo, valor: string): TDataSet;
+    function Listar(campo, valor: string): TDataSet; overload;
+    function Listar(aNome: string): TObjectList<TFornecedor>; overload;
     function ListaObject(): TObjectList<TFornecedor>;
     function GeraID: string;
 
@@ -52,6 +53,7 @@ begin
         + '     CODIGO = :CODIGO';
 
       qry.ParamByName('CODIGO').AsString := codigo;
+      TLog.d(qry);
       qry.ExecSQL;
     except
       on E: EFDDBEngineException do
@@ -63,7 +65,8 @@ begin
       end;
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha ExcluirFornecedor: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha ExcluirFornecedor: ' + E.message);
       end;
     end;
   finally
@@ -108,12 +111,14 @@ begin
       ValidaForma(Fornecedor);
       ObjectToParams(qry, Fornecedor);
 
+      TLog.d(qry);
       qry.ExecSQL;
 
     except
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha AtualizaFornecedor: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha AtualizaFornecedor: ' + E.message);
       end;
     end;
   finally
@@ -142,7 +147,8 @@ begin
         + '    codigo = :codigo ';
 
       qry.ParamByName('codigo').AsString := codigo;
-      qry.open;
+      TLog.d(qry);
+      qry.Open;
 
       if qry.IsEmpty then
         Result := nil
@@ -152,7 +158,8 @@ begin
     except
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha GeTFornecedor: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha GeTFornecedor: ' + E.message);
       end;
     end;
   finally
@@ -176,7 +183,8 @@ begin
         + '    nome = :nome ';
 
       qry.ParamByName('nome').AsString := nome;
-      qry.open;
+      TLog.d(qry);
+      qry.Open;
 
       if qry.IsEmpty then
         Result := nil
@@ -186,7 +194,8 @@ begin
     except
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha GeTFornecedor: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha GeTFornecedor: ' + E.message);
       end;
     end;
   finally
@@ -256,16 +265,18 @@ begin
       ValidaForma(Fornecedor);
       ObjectToParams(qry, Fornecedor);
 
+      TLog.d(qry);
       qry.ExecSQL;
 
     except
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha Pagamento Cliente: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha Pagamento Cliente: ' + E.message);
       end;
     end;
   finally
-      FreeAndNil(qry);
+    FreeAndNil(qry);
   end;
 
 end;
@@ -285,14 +296,16 @@ begin
       + ' UPPER( ' + campo + ') like UPPER( ' + QuotedStr(valor) + ') '
       + 'order by NOME';
 
-    qry.open;
+    TLog.d(qry);
+    qry.Open;
 
     Result := qry;
 
   except
     on E: Exception do
     begin
-      raise TDaoException.Create('Falha Listar Pagto: ' + E.Message);
+      TLog.d(E.message);
+      raise TDaoException.Create('Falha Listar Pagto: ' + E.message);
     end;
   end;
 
@@ -311,14 +324,16 @@ begin
       + 'from  Fornecedor '
       + 'order by NOME';
 
-    qry.open;
+    TLog.d(qry);
+    qry.Open;
 
     Result := qry;
 
   except
     on E: Exception do
     begin
-      raise TDaoException.Create('Falha Listar Pagto: ' + E.Message);
+      TLog.d(E.message);
+      raise TDaoException.Create('Falha Listar Pagto: ' + E.message);
     end;
   end;
 end;
@@ -337,7 +352,8 @@ begin
         + 'from  Fornecedor '
         + 'order by NOME';
 
-      qry.open;
+      TLog.d(qry);
+      qry.Open;
 
       while not qry.Eof do
       begin
@@ -352,7 +368,51 @@ begin
   except
     on E: Exception do
     begin
-      raise TDaoException.Create('Falha Listar Fornecedor: ' + E.Message);
+      TLog.d(E.message);
+      raise TDaoException.Create('Falha Listar Fornecedor: ' + E.message);
+    end;
+  end;
+
+end;
+
+function TDaoFornecedor.Listar(aNome: string): TObjectList<TFornecedor>;
+var
+  qry: TFDQuery;
+begin
+
+  qry := TFactory.Query();
+  Result := TObjectList<TFornecedor>.Create();
+  try
+    try
+      qry.SQL.Text := ''
+        + 'select *  '
+        + 'from  Fornecedor '
+        + 'WHERE '
+        + ' UPPER( NOME) like  UPPER( :NOME ) '
+        + ' order by nome ';
+
+      if Length(aNome) > 60 then
+        aNome := copy(aNome, 0, 60);
+
+      qry.ParamByName('NOME').AsString := aNome + '%';
+      TLog.d(qry);
+      qry.Open;
+
+      while not qry.Eof do
+      begin
+        Result.Add(ParamsToObject(qry));
+        qry.next;
+      end;
+
+    finally
+      FreeAndNil(qry);
+    end;
+
+  except
+    on E: Exception do
+    begin
+      TLog.d(E.message);
+      raise TDaoException.Create('Falha Listar Fornecedor: ' + E.message);
     end;
   end;
 
@@ -409,7 +469,10 @@ begin
 
   except
     on E: Exception do
-      raise TDaoException.Create('Falha ao associar parâmetros TFornecedor: ' + E.Message);
+    begin
+      TLog.d(E.message);
+      raise TDaoException.Create('Falha ao associar parâmetros TFornecedor: ' + E.message);
+    end;
   end;
 end;
 
@@ -442,7 +505,10 @@ begin
     // Result.OBSERVACOES := ds.FieldByName('OBSERVACOES').AsString;
   except
     on E: Exception do
-      raise TDaoException.Create('Falha no ParamsToObject TFornecedor: ' + E.Message);
+    begin
+      TLog.d(E.message);
+      raise TDaoException.Create('Falha no ParamsToObject TFornecedor: ' + E.message);
+    end;
   end;
 end;
 

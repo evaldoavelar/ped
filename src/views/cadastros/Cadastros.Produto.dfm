@@ -5,12 +5,12 @@ inherited frmCadastroProduto: TfrmCadastroProduto
   PixelsPerInch = 96
   TextHeight = 13
   inherited pnlContainer: TPanel
-    Height = 456
-    ExplicitHeight = 456
+    Height = 474
+    ExplicitHeight = 474
     inherited pgcPrincipal: TPageControl
-      Height = 450
+      Height = 468
       ActivePage = ts1
-      ExplicitHeight = 450
+      ExplicitHeight = 468
       object ts1: TTabSheet
         Caption = 'Produto'
         object lbl3: TLabel
@@ -666,14 +666,6 @@ inherited frmCadastroProduto: TfrmCadastroProduto
     end
     inherited BitBtn1: TBitBtn
       TabOrder = 2
-    end
-  end
-  inherited pnlTop: TPanel
-    inherited edtPesquisa: TSearchBox
-      ParentCustomHint = False
-      ParentBiDiMode = False
-      ParentCtl3D = False
-      ParentDoubleBuffered = False
     end
   end
   inherited act1: TActionList

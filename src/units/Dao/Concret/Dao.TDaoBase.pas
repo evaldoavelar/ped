@@ -3,7 +3,7 @@ unit Dao.TDaoBase;
 interface
 
 uses
-  System.Rtti,
+  System.Rtti, Sistema.TLog,
   System.SysUtils, System.Classes,
   Data.DB, FireDAC.Comp.Client,
   FireDAC.Stan.Param,
@@ -46,12 +46,15 @@ begin
       qry.SQL.Add('SELECT VALOR FROM AUTOINC WHERE CAMPO = ' +
         QuotedStr(campo));
       qry.SQL.Add('      AND  TABELA = ' + QuotedStr(tabela));
+      TLog.d(qry);
       qry.Open;
+
       if qry.IsEmpty then
       begin
         qry.Close;
         qry.SQL.Clear;
         qry.SQL.Add('SELECT MAX(' + campo + ') PROX FROM ' + tabela);
+        TLog.d(qry);
         qry.Open;
 
         if qry.IsEmpty or qry.FieldByName('PROX').IsNull then
@@ -64,6 +67,7 @@ begin
         qry.SQL.Add('INSERT INTO AUTOINC (CAMPO, VALOR,TABELA ) VALUES (' +
           QuotedStr(campo) + ',' + IntToStr(inResult) + ',' +
           QuotedStr(tabela) + ')');
+        TLog.d(qry);
         qry.ExecSQL;
       end
       else
@@ -74,6 +78,7 @@ begin
           qry.Close;
           qry.SQL.Clear;
           qry.SQL.Add('SELECT MAX(' + campo + ') PROX FROM ' + tabela);
+          TLog.d(qry);
           qry.Open;
           inResult := qry.FieldByName('PROX').AsInteger + 1;
         end
@@ -85,6 +90,7 @@ begin
         qry.SQL.Add('UPDATE AUTOINC SET VALOR = ' + IntToStr(inResult));
         qry.SQL.Add('WHERE CAMPO = ' + QuotedStr(campo));
         qry.SQL.Add('      AND  TABELA = ' + QuotedStr(tabela));
+        TLog.d(qry);
         qry.ExecSQL;
       end;
 
@@ -95,7 +101,10 @@ begin
     end;
   except
     on E: Exception do
-      raise TDaoException.Create('Falha ao gerar ID: ' + E.Message);
+    begin
+      TLog.d(E.message);
+      raise TDaoException.Create('Falha ao gerar ID: ' + E.message);
+    end;
   end;
 end;
 

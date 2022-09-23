@@ -5,7 +5,7 @@ interface
 uses
   System.Generics.Collections,
   System.SysUtils, System.Classes, Data.DB,
-  Dao.TDaoBase,
+  Dao.TDaoBase, Sistema.TLog,
   Dominio.Entidades.TParceiro.FormaPagto;
 
 type
@@ -19,7 +19,8 @@ type
     function GeTParceiroFormaPagto(id: Integer): TParceiroFormaPagto;
     function GeTFormaByDescricao(DESCRICAO: string): TParceiroFormaPagto;
     function Lista(): TDataSet;
-    function Listar(campo, valor: string): TDataSet;
+    function Listar(campo, valor: string): TDataSet; overload;
+    function Listar(aNome: string): TObjectList<TParceiroFormaPagto>; overload;
     function ListaObject(): TObjectList<TParceiroFormaPagto>;
     function GeraID: Integer;
   end;

@@ -6,10 +6,10 @@ uses
   System.Bindings.Helper,
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Cadastros.Base, Vcl.StdCtrls, Vcl.ComCtrls,
-  Vcl.Mask, JvExMask, JvToolEdit,
+  Vcl.Mask, JvExMask, JvToolEdit, Dominio.Entidades.TEntity, System.Generics.Collections,
   Dao.IDaoCliente, Dominio.Entidades.TCliente, JvComponentBase, JvEnterTab,
   System.Actions, Vcl.ActnList, Vcl.WinXCtrls, Vcl.Buttons, Vcl.ExtCtrls,
-  JvBaseEdits, Vcl.DBCtrls, Data.DB, Vcl.Imaging.jpeg;
+  JvBaseEdits, Vcl.DBCtrls, Data.DB, Vcl.Imaging.jpeg, Vcl.AutoComplete;
 
 type
 
@@ -81,7 +81,7 @@ type
   private
     { Private declarations }
     FCliente: TCliente;
-    DaoCliente: IDaoCliente;
+    FDaoCliente: IDaoCliente;
 
   protected
     procedure Excluir; override;
@@ -89,7 +89,9 @@ type
     procedure Cancelar; override;
     procedure Bind(); override;
     procedure Novo(); override;
-    procedure getEntity; override;
+    procedure getEntity(aEntity: TObject); override;
+    function MontaDescricaoPesquisa(aItem: TEntity): string; override;
+    function PesquisaPorDescricaoParcial(aValor: string): TObjectList<TEntity>; override;
     procedure AtualizarEntity(); override;
     procedure IncluirEntity(); override;
   public
@@ -117,8 +119,8 @@ procedure TfrmCadastroCliente.AtualizarEntity;
 begin
   inherited;
   Self.FCliente.CADASTRO := now;
-  DaoCliente.AtualizaCliente(FCliente);
-  edtPesquisa.Text := FCliente.CODIGO;
+  FDaoCliente.AtualizaCliente(FCliente);
+  edtPesquisa.Text := FCliente.Nome;
 end;
 
 procedure TfrmCadastroCliente.Bind;
@@ -126,7 +128,7 @@ begin
   inherited;
   FCliente.ClearBindings;
   FCliente.Bind('CODIGO', edtCodigo, 'Text');
-  FCliente.BindReadOnly('NOME', lblCliente, 'Caption');
+//  FCliente.BindReadOnly('NOME', lblCliente, 'Caption');
   FCliente.Bind('NOME', edtNome, 'Text');
   FCliente.Bind('FANTASIA', edtFantasia, 'Text');
   FCliente.Bind('CNPJ_CNPF', edtCpf, 'Text');
@@ -164,7 +166,7 @@ begin
     begin
       CODIGO := FCliente.CODIGO;
       FreeAndNil(FCliente);
-      FCliente := DaoCliente.GeTCliente(CODIGO);
+      FCliente := FDaoCliente.GeTCliente(CODIGO);
       Bind;
     end
     else
@@ -218,7 +220,7 @@ procedure TfrmCadastroCliente.Excluir;
 begin
   inherited;
   try
-    DaoCliente.ExcluirCliente(FCliente.CODIGO);
+    FDaoCliente.ExcluirCliente(FCliente.CODIGO);
     FreeAndNil(FCliente);
     Cancelar;
   except
@@ -230,10 +232,27 @@ begin
   end;
 end;
 
-procedure TfrmCadastroCliente.getEntity;
+procedure TfrmCadastroCliente.getEntity(aEntity: TObject);
+var
+  LItem: TCliente;
 begin
   try
-    FCliente := DaoCliente.GeTCliente(edtPesquisa.Text);
+
+    // edição
+    if (aEntity = nil) and (FCliente <> nil) then
+    begin
+      FCliente := FDaoCliente.GeTCliente(FCliente.CODIGO);
+    end
+    else
+    begin // pesquisa
+      LItem := aEntity as TCliente;
+
+      if Assigned(FCliente) then
+        FreeAndNil(FCliente);
+
+      FCliente := FDaoCliente.GeTCliente(LItem.CODIGO);
+    end;
+
     if not Assigned(FCliente) then
       raise Exception.Create('Cliente não encontrado');
     Bind();
@@ -251,9 +270,17 @@ procedure TfrmCadastroCliente.IncluirEntity;
 begin
   inherited;
   Self.FCliente.CADASTRO := now;
-  FCliente.CODIGO := DaoCliente.GeraID;
-  DaoCliente.IncluiCliente(FCliente);
-  edtPesquisa.Text := FCliente.CODIGO;
+  FCliente.CODIGO := FDaoCliente.GeraID;
+  FDaoCliente.IncluiCliente(FCliente);
+  edtPesquisa.Text := FCliente.Nome;
+end;
+
+function TfrmCadastroCliente.MontaDescricaoPesquisa(aItem: TEntity): string;
+var
+  LItem: TCliente;
+begin
+  LItem := aItem as TCliente;
+  result := LItem.NOME;
 end;
 
 procedure TfrmCadastroCliente.FormDestroy(Sender: TObject);
@@ -274,7 +301,7 @@ end;
 procedure TfrmCadastroCliente.FormShow(Sender: TObject);
 begin
   inherited;
-  DaoCliente := TFactory.DaoCliente;
+  FDaoCliente := TFactory.DaoCliente;
 end;
 
 procedure TfrmCadastroCliente.Novo;
@@ -305,6 +332,23 @@ begin
   end;
 end;
 
+function TfrmCadastroCliente.PesquisaPorDescricaoParcial(
+  aValor: string): TObjectList<TEntity>;
+var
+  LLista: TObjectList<TCliente>;
+  item: TCliente;
+begin
+  LLista := FDaoCliente.GeTClientesByName(aValor);
+  result := TObjectList<TEntity>.Create();
+
+  for item in LLista do
+    result.Add(item);
+
+  LLista.OwnsObjects := false;
+  LLista.Free;
+
+end;
+
 procedure TfrmCadastroCliente.Pesquisar;
 begin
 
@@ -316,8 +360,8 @@ begin
       if Assigned(frmConsultaCliente.Cliente) then
       begin
         FreeAndNil(FCliente);
-        Self.FCliente := DaoCliente.GeTCliente(frmConsultaCliente.Cliente.CODIGO);
-        edtPesquisa.Text := Self.FCliente.CODIGO;
+        Self.FCliente := FDaoCliente.GeTCliente(frmConsultaCliente.Cliente.CODIGO);
+        edtPesquisa.Text := Self.FCliente.Nome;
         Bind();
         inherited;
       end

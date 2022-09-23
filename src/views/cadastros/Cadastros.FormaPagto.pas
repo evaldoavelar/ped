@@ -6,10 +6,11 @@ uses
   System.Bindings.Helper,
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Dominio.Entidades.CondicaoPagto,
-  Vcl.StdCtrls, Vcl.ComCtrls, Dominio.Entidades.TFormaPagto.Tipo,
+  Vcl.StdCtrls, Vcl.ComCtrls, Dominio.Entidades.TFormaPagto.Tipo, Dominio.Entidades.TEntity, System.Generics.Collections,
   Dao.IDaoFormaPagto, Dominio.Entidades.TFormaPagto, JvExMask, JvToolEdit, JvBaseEdits, JvComponentBase, JvEnterTab,
   Vcl.Mask, System.Actions, Vcl.ActnList, Vcl.WinXCtrls, Vcl.Buttons, Helper.Currency,
-  Vcl.ExtCtrls, Cadastros.Base, Vcl.Imaging.jpeg, Vcl.Imaging.pngimage;
+  Vcl.ExtCtrls, Cadastros.Base, Vcl.Imaging.jpeg, Vcl.Imaging.pngimage,
+  Vcl.AutoComplete;
 
 type
   TfrmCadastroFormaPagto = class(TfrmCadastroBase)
@@ -71,7 +72,9 @@ type
     procedure Cancelar; override;
     procedure Bind(); override;
     procedure Novo(); override;
-    procedure getEntity; override;
+    procedure getEntity(aEntity: TObject); override;
+    function MontaDescricaoPesquisa(aItem: TEntity): string; override;
+    function PesquisaPorDescricaoParcial(aValor: string): TObjectList<TEntity>; override;
     procedure AtualizarEntity(); override;
     procedure IncluirEntity(); override;
   end;
@@ -116,7 +119,7 @@ procedure TfrmCadastroFormaPagto.AtualizarEntity;
 begin
   inherited;
   DaoFormaPagto.AtualizaFormaPagtos(FFormaPagto);
-  edtPesquisa.Text := FFormaPagto.ID.ToString;
+  edtPesquisa.Text := FFormaPagto.DESCRICAO;
 end;
 
 procedure TfrmCadastroFormaPagto.Bind;
@@ -128,7 +131,7 @@ begin
   FFormaPagto.Bind('ID', edtCodigo, 'Text');
   FFormaPagto.Bind('DESCRICAO', edtDescricao, 'Text');
   FFormaPagto.Bind('ATIVO', chkATIVO, 'Checked');
-  FFormaPagto.BindReadOnly('DESCRICAO', lblCliente, 'Caption');
+//  FFormaPagto.BindReadOnly('DESCRICAO', lblCliente, 'Caption');
   cbbTipo.ItemIndex := cbbTipo.Items.IndexOf(FFormaPagto.TipoPagamento.ToString);
 
   LimpaScrollBox(scrlbxMeiosPagamentos);
@@ -177,6 +180,14 @@ begin
   Begin
     aScroll.Controls[i].Free;
   End;
+end;
+
+function TfrmCadastroFormaPagto.MontaDescricaoPesquisa(aItem: TEntity): string;
+var
+  LItem: TFormaPagto;
+begin
+  LItem := aItem as TFormaPagto;
+  result := LItem.DESCRICAO;
 end;
 
 procedure TfrmCadastroFormaPagto.BindCondicaoPagamento(aCondicao: TCONDICAODEPAGTO);
@@ -297,9 +308,25 @@ begin
 end;
 
 procedure TfrmCadastroFormaPagto.getEntity;
+var
+  LItem: TFormaPagto;
 begin
   try
-    FFormaPagto := DaoFormaPagto.GeTFormaPagto(StrToIntDef(edtPesquisa.Text, 0));
+    // edição
+    if (aEntity = nil) and (FFormaPagto <> nil) then
+    begin
+      FFormaPagto := DaoFormaPagto.GeTFormaPagto(FFormaPagto.ID);
+    end
+    else
+    begin // pesquisa
+      LItem := aEntity as TFormaPagto;
+
+      if Assigned(FFormaPagto) then
+        FreeAndNil(FFormaPagto);
+
+      FFormaPagto := DaoFormaPagto.GeTFormaPagto(LItem.ID);
+    end;
+
     if not Assigned(FFormaPagto) then
       raise Exception.Create('Forma de Pagamento não encontrado');
     Bind();
@@ -319,7 +346,7 @@ begin
   inherited;
   FFormaPagto.ID := DaoFormaPagto.GeraID;
   DaoFormaPagto.IncluiPagto(FFormaPagto);
-  edtPesquisa.Text := FFormaPagto.ID.ToString;
+  edtPesquisa.Text := FFormaPagto.DESCRICAO;
 end;
 
 procedure TfrmCadastroFormaPagto.Novo;
@@ -348,6 +375,23 @@ begin
 
 end;
 
+function TfrmCadastroFormaPagto.PesquisaPorDescricaoParcial(
+  aValor: string): TObjectList<TEntity>;
+var
+  LLista: TObjectList<TFormaPagto>;
+  item: TFormaPagto;
+begin
+  LLista := DaoFormaPagto.Listar(aValor);
+  result := TObjectList<TEntity>.Create();
+
+  for item in LLista do
+    result.Add(item);
+
+  LLista.OwnsObjects := False;
+  LLista.Free;
+
+end;
+
 procedure TfrmCadastroFormaPagto.Pesquisar;
 begin
   inherited;
@@ -359,7 +403,7 @@ begin
       if Assigned(frmConsultaFormaPagto.FormaPagto) then
       begin
         Self.FFormaPagto := frmConsultaFormaPagto.FormaPagto;
-        edtPesquisa.Text := IntToStr(Self.FFormaPagto.ID);
+        edtPesquisa.Text := Self.FFormaPagto.DESCRICAO;
         Bind();
         inherited;
       end

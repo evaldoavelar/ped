@@ -6,7 +6,7 @@ uses
   System.Generics.Collections, System.SysUtils, System.Classes,
   Vcl.Graphics, Vcl.ExtCtrls, Vcl.Imaging.jpeg,
   Data.DB, FireDAC.Comp.Client, Dao.IDaoPedido,
-  Dao.TDaoBase,
+  Dao.TDaoBase, Sistema.TLog,
   Dominio.Entidades.TItemPedido, Dominio.Entidades.TPedido, Dominio.Entidades.TParcelas,
   Helper.TProdutoVenda, Dao.IDaoParceiro, Dao.TDaoParceiro, Dao.TDaoParceiroVenda,
   Dominio.Entidades.Pedido.Pagamentos.Pagamento,
@@ -79,6 +79,7 @@ begin
     qry.ParamByName('dataFim').AsDate := dataFim;
 
     try
+      TLog.d(qry);
       qry.Open;
 
       while not qry.Eof do
@@ -97,7 +98,8 @@ begin
     except
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha ao Gravar Pedido: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha ao Gravar Pedido: ' + E.message);
       end;
     end;
   finally
@@ -121,11 +123,13 @@ begin
     ObjectToParams(qry, Pedido);
 
     try
+      TLog.d(qry);
       qry.ExecSQL;
     except
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha ao Gravar Pedido: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha ao Gravar Pedido: ' + E.message);
       end;
     end;
   finally
@@ -163,11 +167,13 @@ begin
     ObjectToParams(qry, Pedido);
 
     try
+      TLog.d(qry);
       qry.ExecSQL;
     except
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha ao Gravar Pedido: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha ao Gravar Pedido: ' + E.message);
       end;
     end;
 
@@ -220,11 +226,13 @@ begin
     ObjectToParams(qry, Pedido);
 
     try
+      TLog.d(qry);
       qry.ExecSQL;
     except
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha ao Gravar Pedido: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha ao Gravar Pedido: ' + E.message);
       end;
     end;
 
@@ -328,6 +336,7 @@ begin
         + '     ID = :ID';
 
       qry.ParamByName('ID').AsInteger := id;
+      TLog.d(qry);
       qry.Open;
 
       if qry.IsEmpty then
@@ -338,7 +347,8 @@ begin
     except
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha GeTParcelas: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha GeTParcelas: ' + E.message);
       end;
     end;
   finally
@@ -386,6 +396,7 @@ begin
       qry.SQL.Add(' and upper( ' + campo + ') LIKE ' + QuotedStr(UpperCase(valor + '%')));
 
     qry.SQL.Add(' order by pe.id');
+    TLog.d(qry);
     qry.Open;
 
     result := qry;
@@ -393,7 +404,8 @@ begin
   except
     on E: Exception do
     begin
-      raise TDaoException.Create('Falha Listar Pedido: ' + E.Message);
+      TLog.d(E.message);
+      raise TDaoException.Create('Falha Listar Pedido: ' + E.message);
     end;
   end;
 
@@ -420,6 +432,7 @@ begin
     qry.ParamByName('dataInicio').AsDate := dataInicio;
     qry.ParamByName('dataFim').AsDate := dataFim;
 
+    TLog.d(qry);
     qry.Open;
 
     result := qry;
@@ -427,7 +440,8 @@ begin
   except
     on E: Exception do
     begin
-      raise TDaoException.Create('Falha Listar Pedido: ' + E.Message);
+      TLog.d(E.message);
+      raise TDaoException.Create('Falha Listar Pedido: ' + E.message);
     end;
   end;
 
@@ -460,6 +474,7 @@ begin
     qry.ParamByName('dataInicio').AsDate := dataInicio;
     qry.ParamByName('dataFim').AsDate := dataFim;
 
+    TLog.d(qry);
     qry.Open;
 
     result := qry;
@@ -467,7 +482,8 @@ begin
   except
     on E: Exception do
     begin
-      raise TDaoException.Create('Falha Listar Pedido: ' + E.Message);
+      TLog.d(E.message);
+      raise TDaoException.Create('Falha Listar Pedido: ' + E.message);
     end;
   end;
 
@@ -518,11 +534,13 @@ begin
     ObjectToParams(qry, Pedido);
 
     try
+      TLog.d(qry);
       qry.ExecSQL;
     except
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha ao Gravar Pedido: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha ao Gravar Pedido: ' + E.message);
       end;
     end;
   finally
@@ -588,7 +606,10 @@ begin
 
   except
     on E: Exception do
-      raise TDaoException.Create('Falha ao associar parâmetros Pedido: ' + E.Message);
+    begin
+      TLog.d(E.message);
+      raise TDaoException.Create('Falha ao associar parâmetros Pedido: ' + E.message);
+    end;
   end;
 end;
 
@@ -680,7 +701,10 @@ begin
     FreeAndNil(DaoPagamentos);
   except
     on E: Exception do
-      raise TDaoException.Create('Falha ao popular objeto Pedido: ' + E.Message);
+    begin
+      TLog.d(E.message);
+      raise TDaoException.Create('Falha ao popular objeto Pedido: ' + E.message);
+    end;
   end;
 end;
 
@@ -789,6 +813,7 @@ begin
       qry.ParamByName('dataFim').AsDate := dataFim;
       qry.ParamByName('codven').AsString := CodVen;
 
+      TLog.d(qry);
       qry.Open;
 
       while not qry.Eof do
@@ -823,6 +848,7 @@ begin
       qry.ParamByName('dataFim').AsDate := dataFim;
       qry.ParamByName('codven').AsString := CodVen;
 
+      TLog.d(qry);
       qry.Open;
 
       while not qry.Eof do
@@ -836,7 +862,8 @@ begin
   except
     on E: Exception do
     begin
-      raise TDaoException.Create('Falha ao calcular Totais: ' + E.Message);
+      TLog.d(E.message);
+      raise TDaoException.Create('Falha ao calcular Totais: ' + E.message);
     end;
   end;
 
@@ -931,6 +958,7 @@ begin
       qry.ParamByName('dataInicio').AsDate := dataInicio;
       qry.ParamByName('dataFim').AsDate := dataFim;
 
+      TLog.d(qry);
       qry.Open;
 
       TArrayUtil<string>.Append(saidas, 'Troco');
@@ -992,6 +1020,7 @@ begin
       qry.ParamByName('dataInicio').AsDate := dataInicio;
       qry.ParamByName('dataFim').AsDate := dataFim;
 
+      TLog.d(qry);
       qry.Open;
 
       while not qry.Eof do
@@ -1005,7 +1034,8 @@ begin
   except
     on E: Exception do
     begin
-      raise TDaoException.Create('Falha ao calcular Totais: ' + E.Message);
+      TLog.d(E.message);
+      raise TDaoException.Create('Falha ao calcular Totais: ' + E.message);
     end;
   end;
 
@@ -1054,6 +1084,7 @@ begin
       qry.ParamByName('dataFim').AsDate := dataFim;
       qry.ParamByName('CODPARCEIRO').AsString := CodParceiro;
 
+      TLog.d(qry);
       qry.Open;
 
       while not qry.Eof do
@@ -1068,7 +1099,8 @@ begin
   except
     on E: Exception do
     begin
-      raise TDaoException.Create('Falha ao calcular Totais: ' + E.Message);
+      TLog.d(E.message);
+      raise TDaoException.Create('Falha ao calcular Totais: ' + E.message);
     end;
   end;
 

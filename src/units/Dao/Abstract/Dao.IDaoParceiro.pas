@@ -5,7 +5,7 @@ interface
 uses
   System.SysUtils, System.Classes, System.Generics.Collections,
   Data.DB,
-  Dao.TDaoBase,
+  Dao.TDaoBase, Sistema.TLog,
   Dominio.Entidades.TParceiro;
 
 type
@@ -16,6 +16,7 @@ type
     procedure IncluiParceiro(Parceiro: TParceiro);
     procedure ValidaParceiro(Parceiro: TParceiro);
     function Listar(campo, valor: string): TDataSet; overload;
+    function Listar(aNome:string): TObjectList<TParceiro>; overload;
     function ListarAtivos(): TObjectList<TParceiro>; overload;
     procedure AtualizaParceiro(Parceiro: TParceiro);
     function GetParceiro(idpedido: Integer): TParceiro; overload;

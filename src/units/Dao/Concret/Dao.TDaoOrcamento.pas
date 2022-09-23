@@ -6,7 +6,7 @@ uses
   System.Generics.Collections, System.SysUtils, System.Classes,
   Vcl.Graphics, Vcl.ExtCtrls, Vcl.Imaging.jpeg,
   Data.DB, FireDAC.Comp.Client, Dao.IDaoOrcamento,
-  Dao.TDaoBase,
+  Dao.TDaoBase, Sistema.TLog,
   Dominio.Entidades.TItemOrcamento, Dominio.Entidades.TOrcamento, Util.Exceptions,
   Util.Funcoes, Dao.TDaoItemOrcamento, Dao.TDaoVendedor;
 
@@ -52,11 +52,13 @@ begin
     ObjectToParams(qry, Orcamento);
 
     try
+      TLog.d(qry);
       qry.ExecSQL;
     except
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha ao Atualizar Status Orcamento: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha ao Atualizar Status Orcamento: ' + E.message);
       end;
     end;
   finally
@@ -92,11 +94,13 @@ begin
     ObjectToParams(qry, Orcamento);
 
     try
+      TLog.d(qry);
       qry.ExecSQL;
     except
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha ao Atualizar Orcamento: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha ao Atualizar Orcamento: ' + E.message);
       end;
     end;
   finally
@@ -137,11 +141,13 @@ begin
     ObjectToParams(qry, Orcamento);
 
     try
+      TLog.d(qry);
       qry.ExecSQL;
     except
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha ao Finalizar Orcamento: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha ao Finalizar Orcamento: ' + E.message);
       end;
     end;
   finally
@@ -170,7 +176,8 @@ begin
         + '     ID = :ID';
 
       qry.ParamByName('ID').AsInteger := id;
-      qry.open;
+      TLog.d(qry);
+      qry.Open;
 
       if qry.IsEmpty then
         Result := nil
@@ -180,7 +187,8 @@ begin
     except
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha GeTParcelas: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha GeTParcelas: ' + E.message);
       end;
     end;
   finally
@@ -207,14 +215,16 @@ begin
       qry.SQL.Add('  upper( ' + campo + ') LIKE ' + QuotedStr(UpperCase(valor + '%')));
 
     qry.SQL.Add(' order by id');
-    qry.open;
+    TLog.d(qry);
+    qry.Open;
 
     Result := qry;
 
   except
     on E: Exception do
     begin
-      raise TDaoException.Create('Falha Listar Orcamento: ' + E.Message);
+      TLog.d(E.message);
+      raise TDaoException.Create('Falha Listar Orcamento: ' + E.message);
     end;
   end;
 
@@ -240,14 +250,16 @@ begin
     qry.ParamByName('dataInicio').AsDate := dataInicio;
     qry.ParamByName('dataFim').AsDate := dataFim;
 
-    qry.open;
+    TLog.d(qry);
+    qry.Open;
 
     Result := qry;
 
   except
     on E: Exception do
     begin
-      raise TDaoException.Create('Falha Listar Orcamento: ' + E.Message);
+      TLog.d(E.message);
+      raise TDaoException.Create('Falha Listar Orcamento: ' + E.message);
     end;
   end;
 
@@ -278,14 +290,16 @@ begin
     qry.ParamByName('dataInicio').AsDate := dataInicio;
     qry.ParamByName('dataFim').AsDate := dataFim;
 
-    qry.open;
+    TLog.d(qry);
+    qry.Open;
 
     Result := qry;
 
   except
     on E: Exception do
     begin
-      raise TDaoException.Create('Falha Listar Orcamento: ' + E.Message);
+      TLog.d(E.message);
+      raise TDaoException.Create('Falha Listar Orcamento: ' + E.message);
     end;
   end;
 
@@ -330,11 +344,13 @@ begin
     ObjectToParams(qry, Orcamento);
 
     try
+      TLog.d(qry);
       qry.ExecSQL;
     except
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha ao Gravar Orcamento: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha ao Gravar Orcamento: ' + E.message);
       end;
     end;
   finally
@@ -376,7 +392,10 @@ begin
 
   except
     on E: Exception do
-      raise TDaoException.Create('Falha ao associar parâmetros Orcamento: ' + E.Message);
+    begin
+      TLog.d(E.message);
+      raise TDaoException.Create('Falha ao associar parâmetros Orcamento: ' + E.message);
+    end;
   end;
 end;
 
@@ -403,7 +422,7 @@ begin
     Result.STATUS := ds.FieldByName('STATUS').AsString;
     Result.Vendedor := DaoVendedor.GetVendedor(ds.FieldByName('CODVEN').AsString);
     Result.Cliente := (ds.FieldByName('CLIENTE').AsString);
-    Result.TELEFONE :=(ds.FieldByName('TELEFONE').AsString);
+    Result.TELEFONE := (ds.FieldByName('TELEFONE').AsString);
     Result.HORAOrcamento := ds.FieldByName('HORAOrcamento').AsDateTime;
     Result.AssignedItens(DaoItensOrcamento.GeTItemsOrcamento(Result.id));
     // Result.Volume := ds.FieldByName('STATUS').AsFloat;
@@ -414,7 +433,10 @@ begin
 
   except
     on E: Exception do
-      raise TDaoException.Create('Falha ao popular objeto Orcamento: ' + E.Message);
+    begin
+      TLog.d(E.message);
+      raise TDaoException.Create('Falha ao popular objeto Orcamento: ' + E.message);
+    end;
   end;
 end;
 

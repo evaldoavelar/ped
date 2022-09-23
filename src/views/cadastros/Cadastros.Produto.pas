@@ -8,7 +8,8 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Cadastros.Base, Vcl.ComCtrls,
   Vcl.StdCtrls, Vcl.Buttons,
   Dao.IDaoProdutos, Dominio.Entidades.TProduto, JvToolEdit, JvExMask, JvBaseEdits, JvComponentBase, JvEnterTab,
-  Vcl.Mask, System.Actions, Vcl.ActnList, Vcl.WinXCtrls, Vcl.ExtCtrls, Vcl.Imaging.jpeg;
+  Vcl.Mask, System.Actions, Vcl.ActnList, Vcl.WinXCtrls, Vcl.ExtCtrls, Vcl.Imaging.jpeg,
+  Vcl.AutoComplete, Dominio.Entidades.TEntity, System.Generics.Collections;
 
 type
   TfrmCadastroProduto = class(TfrmCadastroBase)
@@ -68,7 +69,7 @@ type
   private
     { Private declarations }
     FProduto: TProduto;
-    DaoProduto: IDaoProdutos;
+    FDaoProduto: IDaoProdutos;
 
   protected
     procedure Excluir; override;
@@ -76,9 +77,11 @@ type
     procedure Cancelar; override;
     procedure Bind(); override;
     procedure Novo(); override;
-    procedure getEntity; override;
     procedure AtualizarEntity(); override;
     procedure IncluirEntity(); override;
+    procedure getEntity(aEntity: TObject); override;
+    function MontaDescricaoPesquisa(aItem: TEntity): string; override;
+    function PesquisaPorDescricaoParcial(aValor: string): TObjectList<TEntity>; override;
   end;
 
 var
@@ -89,35 +92,41 @@ implementation
 {$R *.dfm}
 
 
-uses Dominio.Entidades.TEntity, Dominio.Entidades.TFactory, Consulta.Produto, Consulta.Fornecedor;
+uses Dominio.Entidades.TFactory, Consulta.Produto, Consulta.Fornecedor, Sistema.TLog;
 
 procedure TfrmCadastroProduto.Excluir;
 begin
+  TLog.d('>>> Entrando em  TfrmCadastroProduto.Excluir ');
   inherited;
   try
-    DaoProduto.ExcluirProduto(FProduto.CODIGO);
+    FDaoProduto.ExcluirProduto(FProduto.CODIGO);
     FProduto.Free;
     FProduto := nil;
     Cancelar;
   except
     on e: Exception do
     begin
-      MessageDlg(e.Message, mtError, [mbOK], 0);
+      TLog.d(e.message);
+      MessageDlg(e.message, mtError, [mbOK], 0);
       edtPesquisa.SetFocus;
     end;
   end;
+  TLog.d('<<< Saindo de TfrmCadastroProduto.Excluir ');
 end;
 
 procedure TfrmCadastroProduto.AtualizarEntity;
 begin
+  TLog.d('>>> Entrando em  TfrmCadastroProduto.AtualizarEntity ');
   inherited;
   FProduto.ALTERACAO_PRECO := Now;
-  DaoProduto.AtualizaProduto(FProduto);
-  edtPesquisa.Text := FProduto.CODIGO;
+  FDaoProduto.AtualizaProduto(FProduto);
+  edtPesquisa.Text := FProduto.DESCRICAO;
+  TLog.d('<<< Saindo de TfrmCadastroProduto.AtualizarEntity ');
 end;
 
 procedure TfrmCadastroProduto.Bind;
 begin
+  TLog.d('>>> Entrando em  TfrmCadastroProduto.Bind ');
   if not Assigned(FProduto) then
     Exit;
 
@@ -126,7 +135,7 @@ begin
   FProduto.Bind('CODIGO', edtCodigo, 'Text');
   FProduto.Bind('BARRAS', edtBarras, 'Text');
   FProduto.Bind('DESCRICAO', edtDescricao, 'Text');
-  FProduto.BindReadOnly('DESCRICAO', lblCliente, 'Caption');
+  // FProduto.BindReadOnly('DESCRICAO', lblCliente, 'Caption');
   FProduto.Bind('UND', cbbUND, 'Text');
   FProduto.Bind('CUSTO_MEDIO', edtCustoMedio, 'Text');
   FProduto.Bind('PRECO_CUSTO', edtPrecoCusto, 'Value');
@@ -149,11 +158,12 @@ begin
   FProduto.Bind('ESTOQUE', edtEstoque, 'Text');
   FProduto.Bind('ESTOQUEMINIMO', edtEstoqueMinimo, 'Text');
   FProduto.Bind('AVISARESTOQUEBAIXO', chkAvisarEstoque, 'Checked');
-
+  TLog.d('<<< Saindo de TfrmCadastroProduto.Bind ');
 end;
 
 procedure TfrmCadastroProduto.btnPesquisaClienteClick(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TfrmCadastroProduto.btnPesquisaClienteClick ');
   inherited;
   try
     frmConsultaFornecedor := TfrmConsultaFornecedor.Create(Self);
@@ -172,21 +182,26 @@ begin
     end;
   except
     on e: Exception do
-      MessageDlg(e.Message, mtError, [mbOK], 0);
+    begin
+      TLog.d(e.message);
+      MessageDlg(e.message, mtError, [mbOK], 0);
+    end;
   end;
+  TLog.d('<<< Saindo de TfrmCadastroProduto.btnPesquisaClienteClick ');
 end;
 
 procedure TfrmCadastroProduto.Cancelar;
 var
   CODIGO: string;
 begin
+  TLog.d('>>> Entrando em  TfrmCadastroProduto.Cancelar ');
   try
     if Assigned(FProduto) and (FProduto.CODIGO <> '') then
     begin
       CODIGO := FProduto.CODIGO;
 
       FreeAndNil(FProduto);
-      FProduto := DaoProduto.GetProdutoPorCodigo(CODIGO);
+      FProduto := FDaoProduto.GetProdutoPorCodigo(CODIGO);
       Bind;
     end
     else
@@ -197,14 +212,18 @@ begin
     inherited;
   except
     on e: EAbort do
+    begin
+      TLog.d(e.message);
       Exit;
+    end;
     on e: Exception do
     begin
-      MessageDlg(e.Message, mtError, [mbOK], 0);
+      TLog.d(e.message);
+      MessageDlg(e.message, mtError, [mbOK], 0);
       edtPesquisa.SetFocus;
     end;
   end;
-
+  TLog.d('<<< Saindo de TfrmCadastroProduto.Cancelar ');
 end;
 
 procedure TfrmCadastroProduto.chkBloqueadoClick(Sender: TObject);
@@ -242,29 +261,44 @@ end;
 
 procedure TfrmCadastroProduto.FormDestroy(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TfrmCadastroProduto.FormDestroy ');
   if Assigned(FProduto) then
   begin
     FreeAndNil(FProduto);
   end;
   inherited;
+  TLog.d('<<< Saindo de TfrmCadastroProduto.FormDestroy ');
 end;
 
 procedure TfrmCadastroProduto.FormShow(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TfrmCadastroProduto.FormShow ');
   inherited;
-  DaoProduto := TFactory.DaoProduto;
+  FDaoProduto := TFactory.DaoProduto;
+  TLog.d('<<< Saindo de TfrmCadastroProduto.FormShow ');
 end;
 
-procedure TfrmCadastroProduto.getEntity;
+procedure TfrmCadastroProduto.getEntity(aEntity: TObject);
+var
+  LItem: TProduto;
 begin
+  TLog.d('>>> Entrando em  TfrmCadastroProduto.getEntity ');
   try
-    if Assigned(FProduto) then
-      FreeAndNil(FProduto);
 
-    if Length(edtPesquisa.Text) <= 6 then
-      FProduto := DaoProduto.GetProdutoPorCodigo(edtPesquisa.Text);
-    if not Assigned(FProduto) then
-      FProduto := DaoProduto.GetProdutoPorCodigoBarras(edtPesquisa.Text);
+    // edição
+    if (aEntity = nil) and (FProduto <> nil) then
+    begin
+      FProduto := FDaoProduto.GetProdutoPorCodigo(FProduto.CODIGO);
+    end
+    else
+    begin // pesquisa
+      LItem := aEntity as TProduto;
+
+      if Assigned(FProduto) then
+        FreeAndNil(FProduto);
+
+      FProduto := FDaoProduto.GetProdutoPorCodigo(LItem.CODIGO);
+    end;
 
     if not Assigned(FProduto) then
       raise Exception.Create('Produto não encontrado');
@@ -274,24 +308,36 @@ begin
   except
     on e: Exception do
     begin
-      MessageDlg(e.Message, mtError, [mbOK], 0);
+      TLog.d(e.message);
+      MessageDlg(e.message, mtError, [mbOK], 0);
       edtPesquisa.SetFocus;
     end;
   end;
-
+  TLog.d('<<< Saindo de TfrmCadastroProduto.getEntity ');
 end;
 
 procedure TfrmCadastroProduto.IncluirEntity;
 begin
+  TLog.d('>>> Entrando em  TfrmCadastroProduto.IncluirEntity ');
   inherited;
   FProduto.ALTERACAO_PRECO := Now;
   FProduto.DATA_CADASTRO := Now;
-  DaoProduto.IncluiProduto(FProduto);
-  edtPesquisa.Text := FProduto.CODIGO;
+  FDaoProduto.IncluiProduto(FProduto);
+  edtPesquisa.Text := FProduto.DESCRICAO;
+  TLog.d('<<< Saindo de TfrmCadastroProduto.IncluirEntity ');
+end;
+
+function TfrmCadastroProduto.MontaDescricaoPesquisa(aItem: TEntity): string;
+var
+  LItem: TProduto;
+begin
+  LItem := aItem as TProduto;
+  result := LItem.DESCRICAO + ' - ' + LItem.CODIGO + ' - ' + FormatCurr(' R$ 0.,00', LItem.PRECO_VENDA);
 end;
 
 procedure TfrmCadastroProduto.Novo;
 begin
+  TLog.d('>>> Entrando em  TfrmCadastroProduto.Novo ');
   try
     inherited;
 
@@ -310,13 +356,35 @@ begin
 
   except
     on e: Exception do
-      MessageDlg(e.Message, mtError, [mbOK], 0);
+    begin
+      TLog.d(e.message);
+      MessageDlg(e.message, mtError, [mbOK], 0);
+    end;
   end;
+  TLog.d('<<< Saindo de TfrmCadastroProduto.Novo ');
+end;
 
+function TfrmCadastroProduto.PesquisaPorDescricaoParcial(
+  aValor: string): TObjectList<TEntity>;
+var
+  LLista: TObjectList<TProduto>;
+  item: TProduto;
+begin
+  TLog.d('>>> Entrando em  TfrmCadastroProduto.PesquisaPorDescricaoParcial ');
+  LLista := FDaoProduto.GetProdutosPorDescricaoParcial(aValor);
+  result := TObjectList<TEntity>.Create();
+
+  for item in LLista do
+    result.Add(item);
+
+  LLista.OwnsObjects := false;
+  LLista.Free;
+  TLog.d('<<< Saindo de TfrmCadastroProduto.PesquisaPorDescricaoParcial ');
 end;
 
 procedure TfrmCadastroProduto.Pesquisar;
 begin
+  TLog.d('>>> Entrando em  TfrmCadastroProduto.Pesquisar ');
   inherited;
   try
     FrmConsultaProdutos := TFrmConsultaProdutos.Create(Self);
@@ -329,7 +397,7 @@ begin
           FreeAndNil(FProduto);
 
         Self.FProduto := FrmConsultaProdutos.Produto;
-        edtPesquisa.Text := (Self.FProduto.CODIGO);
+        edtPesquisa.Text := (Self.FProduto.DESCRICAO);
         Bind();
         inherited;
       end
@@ -343,8 +411,12 @@ begin
     end;
   except
     on e: Exception do
-      MessageDlg(e.Message, mtError, [mbOK], 0);
+    begin
+      TLog.d(e.message);
+      MessageDlg(e.message, mtError, [mbOK], 0);
+    end;
   end;
+  TLog.d('<<< Saindo de TfrmCadastroProduto.Pesquisar ');
 end;
 
 end.

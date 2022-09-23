@@ -6,7 +6,7 @@ uses System.Generics.Collections,
   System.SysUtils, System.Classes, Dominio.Entidades.TFactory,
   FireDAC.Stan.Error,
   Data.DB, FireDAC.Comp.Client, Dao.IDAOTSangriaSuprimento,
-  Dao.TDaoBase, Dominio.Entidades.TSangriaSuprimento;
+  Dao.TDaoBase, Sistema.TLog, Dominio.Entidades.TSangriaSuprimento;
 
 type
   TDaoSangriaSuprimento = class(TDaoBase, IDAOTSangriaSuprimento)
@@ -66,12 +66,14 @@ begin
         + '             :DATA )';
 
       EntityToParams(qry, aObj);
+      TLog.d(qry);
       qry.ExecSQL;
 
     except
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha SANGRIA SUPRIMENTO: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha SANGRIA SUPRIMENTO: ' + E.message);
       end;
     end;
   finally
@@ -98,7 +100,8 @@ begin
         + 'order by HORA';
 
       qry.ParamByName('DATA').AsDate := aData;
-      qry.open;
+      TLog.d(qry);
+      qry.Open;
 
       while not qry.Eof do
       begin
@@ -115,7 +118,8 @@ begin
   except
     on E: Exception do
     begin
-      raise TDaoException.Create('Falha Listar SANGRIASUPRIMENTO: ' + E.Message);
+      TLog.d(E.message);
+      raise TDaoException.Create('Falha Listar SANGRIASUPRIMENTO: ' + E.message);
     end;
   end;
 

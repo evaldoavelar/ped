@@ -251,6 +251,7 @@ type
     procedure ExibeAtalhos;
     procedure WMGetMinmaxInfo(var Msg: TWMGetMinmaxInfo);
       message WM_GETMINMAXINFO;
+    procedure InciaLog(habilitar: Boolean);
   public
     { Public declarations }
   end;
@@ -272,21 +273,38 @@ uses
   Grafico.Pedidos,
   Sangria.Suprimento.Informar, Dominio.Entidades.TSangriaSuprimento.Tipo,
   Estoque.Atualizar,
-  Estoque.Consultar, Etiquetas.Modelo3x2, Etiquetas.Modelo4x2;
+  Estoque.Consultar, Etiquetas.Modelo3x2, Etiquetas.Modelo4x2, Sistema.TLog;
 
 {$R *.dfm}
 
 
+procedure TFrmPrincipal.InciaLog(habilitar: Boolean);
+var
+  diretoriolog: string;
+begin
+  diretoriolog := TUtil.DiretorioApp + '\Log\';
+
+  if not DirectoryExists(diretoriolog) then
+    ForceDirectories(diretoriolog);
+
+  TLog.Ativar := habilitar;
+  TLog.ArquivoLog := diretoriolog + 'TEF-LOG-' + FormatDateTime('dd-mm-yyyy', Now) + '.txt';
+  TLog.Clean(15);
+end;
+
 procedure TFrmPrincipal.actAbreMenuExecute(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TFrmPrincipal.actAbreMenuExecute ');
   if svMenuLateralEsquerdo.Opened then
     FecharMenuLateralEsquerdo
   else
     AbrirMenuLateralEsquerdo;
+  TLog.d('<<< Saindo de TFrmPrincipal.actAbreMenuExecute ');
 end;
 
 procedure TFrmPrincipal.actAjudaExecute(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TFrmPrincipal.actAjudaExecute ');
   if svMenuLateralDireito.Opened = false then
   begin
 
@@ -300,12 +318,14 @@ begin
   begin
     FecharMenuLateralDireito();
   end;
+  TLog.d('<<< Saindo de TFrmPrincipal.actAjudaExecute ');
 end;
 
 procedure TFrmPrincipal.actBackupExecute(Sender: TObject);
 var
   arquivo: string;
 begin
+  TLog.d('>>> Entrando em  TFrmPrincipal.actBackupExecute ');
   try
     arquivo := RetornaNomeArquivoBackup();
     Backup(arquivo);
@@ -313,12 +333,17 @@ begin
       [mbOK], 0);
   except
     on E: Exception do
+    begin
+      TLog.d(E.Message);
       MessageDlg(E.Message, mtError, [mbOK], 0);
+    end;
   end;
+  TLog.d('<<< Saindo de TFrmPrincipal.actBackupExecute ');
 end;
 
 procedure TFrmPrincipal.actCadastroFormaPagtoParceiroExecute(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TFrmPrincipal.actCadastroFormaPagtoParceiroExecute ');
   try
     FrmCadastroFormaPagtoParceiro :=
       TFrmCadastroFormaPagtoParceiro.Create(Self);
@@ -330,12 +355,17 @@ begin
     end;
   except
     on E: Exception do
+    begin
+      TLog.d(E.Message);
       MessageDlg(E.Message, mtError, [mbOK], 0);
+    end;
   end;
+  TLog.d('<<< Saindo de TFrmPrincipal.actCadastroFormaPagtoParceiroExecute ');
 end;
 
 procedure TFrmPrincipal.actCadastroParceiroExecute(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TFrmPrincipal.actCadastroParceiroExecute ');
   try
     frmCadastroParceiro := TfrmCadastroParceiro.Create(Self);
     try
@@ -346,20 +376,26 @@ begin
     end;
   except
     on E: Exception do
+    begin
+      TLog.d(E.Message);
       MessageDlg(E.Message, mtError, [mbOK], 0);
+    end;
   end;
+  TLog.d('<<< Saindo de TFrmPrincipal.actCadastroParceiroExecute ');
 end;
 
 procedure TFrmPrincipal.actCadastrosExecute(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TFrmPrincipal.actCadastrosExecute ');
   catbtnCadastros.Color := $00955200;
   pgcMenu.ActivePage := tsCadastro;
   AbreSubMenu;
-
+  TLog.d('<<< Saindo de TFrmPrincipal.actCadastrosExecute ');
 end;
 
 procedure TFrmPrincipal.actCadClientesExecute(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TFrmPrincipal.actCadClientesExecute ');
   try
     frmCadastroCliente := TfrmCadastroCliente.Create(Self);
     try
@@ -370,13 +406,17 @@ begin
     end;
   except
     on E: Exception do
+    begin
+      TLog.d(E.Message);
       MessageDlg(E.Message, mtError, [mbOK], 0);
+    end;
   end;
+  TLog.d('<<< Saindo de TFrmPrincipal.actCadClientesExecute ');
 end;
 
 procedure TFrmPrincipal.actCadFormaPagtoExecute(Sender: TObject);
 begin
-
+  TLog.d('>>> Entrando em  TFrmPrincipal.actCadFormaPagtoExecute ');
   try
     frmCadastroFormaPagto := TfrmCadastroFormaPagto.Create(Self);
     try
@@ -386,12 +426,17 @@ begin
     end;
   except
     on E: Exception do
+    begin
+      TLog.d(E.Message);
       MessageDlg(E.Message, mtError, [mbOK], 0);
+    end;
   end;
+  TLog.d('<<< Saindo de TFrmPrincipal.actCadFormaPagtoExecute ');
 end;
 
 procedure TFrmPrincipal.actCadFornecedorExecute(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TFrmPrincipal.actCadFornecedorExecute ');
   try
     frmCadastroFornecedor := TfrmCadastroFornecedor.Create(Self);
     try
@@ -401,12 +446,17 @@ begin
     end;
   except
     on E: Exception do
+    begin
+      TLog.d(E.Message);
       MessageDlg(E.Message, mtError, [mbOK], 0);
+    end;
   end;
+  TLog.d('<<< Saindo de TFrmPrincipal.actCadFornecedorExecute ');
 end;
 
 procedure TFrmPrincipal.actCadProdutosExecute(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TFrmPrincipal.actCadProdutosExecute ');
   try
     frmCadastroProduto := TfrmCadastroProduto.Create(Self);
     try
@@ -416,12 +466,17 @@ begin
     end;
   except
     on E: Exception do
+    begin
+      TLog.d(E.Message);
       MessageDlg(E.Message, mtError, [mbOK], 0);
+    end;
   end;
+  TLog.d('<<< Saindo de TFrmPrincipal.actCadProdutosExecute ');
 end;
 
 procedure TFrmPrincipal.actCadVendedorExecute(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TFrmPrincipal.actCadVendedorExecute ');
   try
     if not TFactory.VendedorLogado.PODEACESSARCADASTROVENDEDOR then
       raise Exception.Create
@@ -435,19 +490,26 @@ begin
     end;
   except
     on E: Exception do
+    begin
+      TLog.d(E.Message);
       MessageDlg(E.Message, mtError, [mbOK], 0);
+    end;
   end;
+  TLog.d('<<< Saindo de TFrmPrincipal.actCadVendedorExecute ');
 end;
 
 procedure TFrmPrincipal.actCaixaExecute(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TFrmPrincipal.actCaixaExecute ');
   catbtnCadastros.Color := $00955200;
   pgcMenu.ActivePage := tsCaixa;
   AbreSubMenu;
+  TLog.d('<<< Saindo de TFrmPrincipal.actCaixaExecute ');
 end;
 
 procedure TFrmPrincipal.actParametrosExecute(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TFrmPrincipal.actParametrosExecute ');
   try
     FrmConfiguracoes := TFrmConfiguracoes.Create(Self);
     try
@@ -457,18 +519,25 @@ begin
     end;
   except
     on E: Exception do
+    begin
+      TLog.d(E.Message);
       MessageDlg(E.Message, mtError, [mbOK], 0);
+    end;
   end;
+  TLog.d('<<< Saindo de TFrmPrincipal.actParametrosExecute ');
 end;
 
 procedure TFrmPrincipal.actConfiguracoesExecute(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TFrmPrincipal.actConfiguracoesExecute ');
   pgcMenu.ActivePage := tsConfiguracoes;
   AbreSubMenu;
+  TLog.d('<<< Saindo de TFrmPrincipal.actConfiguracoesExecute ');
 end;
 
 procedure TFrmPrincipal.actConsultaOrcamentoExecute(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TFrmPrincipal.actConsultaOrcamentoExecute ');
   try
     frmFiltroOrcamentos := TfrmFiltroOrcamentos.Create(Self);
     try
@@ -478,12 +547,17 @@ begin
     end;
   except
     on E: Exception do
+    begin
+      TLog.d(E.Message);
       MessageDlg(E.Message, mtError, [mbOK], 0);
+    end;
   end;
+  TLog.d('<<< Saindo de TFrmPrincipal.actConsultaOrcamentoExecute ');
 end;
 
 procedure TFrmPrincipal.actConsultaPedidoExecute(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TFrmPrincipal.actConsultaPedidoExecute ');
   try
     frmFiltroPedidos := TfrmFiltroPedidos.Create(Self);
     try
@@ -493,28 +567,37 @@ begin
     end;
   except
     on E: Exception do
+    begin
+      TLog.d(E.Message);
       MessageDlg(E.Message, mtError, [mbOK], 0);
+    end;
   end;
+  TLog.d('<<< Saindo de TFrmPrincipal.actConsultaPedidoExecute ');
 end;
 
 procedure TFrmPrincipal.actConsultarEstoqueExecute(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TFrmPrincipal.actConsultarEstoqueExecute ');
   ViewEstoqueMovimentacoes := TViewEstoqueMovimentacoes.Create(Self);
   try
     ViewEstoqueMovimentacoes.ShowModal;
   finally
     ViewEstoqueMovimentacoes.Free;
   end;
+  TLog.d('<<< Saindo de TFrmPrincipal.actConsultarEstoqueExecute ');
 end;
 
 procedure TFrmPrincipal.actConsultasExecute(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TFrmPrincipal.actConsultasExecute ');
   pgcMenu.ActivePage := tsConsulta;
   AbreSubMenu;
+  TLog.d('<<< Saindo de TFrmPrincipal.actConsultasExecute ');
 end;
 
 procedure TFrmPrincipal.actEstoqueAtualizarExecute(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TFrmPrincipal.actEstoqueAtualizarExecute ');
   try
     FrmEstoqueAtualizar := TFrmEstoqueAtualizar.Create(Self);
     try
@@ -524,18 +607,25 @@ begin
     end;
   except
     on E: Exception do
+    begin
+      TLog.d(E.Message);
       MessageDlg(E.Message, mtError, [mbOK], 0);
+    end;
   end;
+  TLog.d('<<< Saindo de TFrmPrincipal.actEstoqueAtualizarExecute ');
 end;
 
 procedure TFrmPrincipal.actEstoqueExecute(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TFrmPrincipal.actEstoqueExecute ');
   pgcMenu.ActivePage := tsEstoque;
   AbreSubMenu;
+  TLog.d('<<< Saindo de TFrmPrincipal.actEstoqueExecute ');
 end;
 
 procedure TFrmPrincipal.actEtiquetasModelo3x2Execute(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TFrmPrincipal.actEtiquetasModelo3x2Execute ');
   try
     FrmEtiquetasModelo3x2 := TFrmEtiquetasModelo3x2.Create(Self);
     try
@@ -545,12 +635,17 @@ begin
     end;
   except
     on E: Exception do
+    begin
+      TLog.d(E.Message);
       MessageDlg(E.Message, mtError, [mbOK], 0);
+    end;
   end;
+  TLog.d('<<< Saindo de TFrmPrincipal.actEtiquetasModelo3x2Execute ');
 end;
 
 procedure TFrmPrincipal.actEtiquetasModelo4x2Execute(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TFrmPrincipal.actEtiquetasModelo4x2Execute ');
 
   try
     FrmEtiquetasModelo4x2 := TFrmEtiquetasModelo4x2.Create(Self);
@@ -561,8 +656,12 @@ begin
     end;
   except
     on E: Exception do
+    begin
+      TLog.d(E.Message);
       MessageDlg(E.Message, mtError, [mbOK], 0);
+    end;
   end;
+  TLog.d('<<< Saindo de TFrmPrincipal.actEtiquetasModelo4x2Execute ');
 end;
 
 procedure TFrmPrincipal.actEtiquetasExecute(Sender: TObject);
@@ -573,6 +672,7 @@ end;
 
 procedure TFrmPrincipal.actGraficoPedidosExecute(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TFrmPrincipal.actGraficoPedidosExecute ');
   try
     frmGraficoPedidos := TfrmGraficoPedidos.Create(Self);
     try
@@ -582,22 +682,32 @@ begin
     end;
   except
     on E: Exception do
+    begin
+      TLog.d(E.Message);
       MessageDlg(E.Message, mtError, [mbOK], 0);
+    end;
   end;
+  TLog.d('<<< Saindo de TFrmPrincipal.actGraficoPedidosExecute ');
 end;
 
 procedure TFrmPrincipal.actInformaSerialExecute(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TFrmPrincipal.actInformaSerialExecute ');
   try
     InformarSerial();
   except
     on E: Exception do
+    begin
+      TLog.d(E.Message);
       MessageDlg(E.Message, mtError, [mbOK], 0);
+    end;
   end;
+  TLog.d('<<< Saindo de TFrmPrincipal.actInformaSerialExecute ');
 end;
 
 procedure TFrmPrincipal.actInformaVendaParceiroExecute(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TFrmPrincipal.actInformaVendaParceiroExecute ');
   try
     FechaSubMenu;
     FrmParceiroInfoPagto := TFrmParceiroInfoPagto.Create(nil);
@@ -608,12 +718,17 @@ begin
     end;
   except
     on E: Exception do
+    begin
+      TLog.d(E.Message);
       MessageDlg(E.Message, mtError, [mbOK], 0);
+    end;
   end;
+  TLog.d('<<< Saindo de TFrmPrincipal.actInformaVendaParceiroExecute ');
 end;
 
 procedure TFrmPrincipal.actLoginLogoffExecute(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TFrmPrincipal.actLoginLogoffExecute ');
   try
     FrmLogin := TfrmLogin.Create(Self);
     try
@@ -630,17 +745,24 @@ begin
     on E: EAbort do
       exit;
     on E: Exception do
+    begin
+      TLog.d(E.Message);
       MessageDlg(E.Message, mtError, [mbOK], 0);
+    end;
   end;
+  TLog.d('<<< Saindo de TFrmPrincipal.actLoginLogoffExecute ');
 end;
 
 procedure TFrmPrincipal.actMinimizarExecute(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TFrmPrincipal.actMinimizarExecute ');
   Application.Minimize;
+  TLog.d('<<< Saindo de TFrmPrincipal.actMinimizarExecute ');
 end;
 
 procedure TFrmPrincipal.actOrcamentoExecute(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TFrmPrincipal.actOrcamentoExecute ');
   try
     FechaSubMenu;
     FrmCadastroOrcamento := TFrmCadastroOrcamento.Create(nil);
@@ -651,8 +773,12 @@ begin
     end;
   except
     on E: Exception do
+    begin
+      TLog.d(E.Message);
       MessageDlg(E.Message, mtError, [mbOK], 0);
+    end;
   end;
+  TLog.d('<<< Saindo de TFrmPrincipal.actOrcamentoExecute ');
 end;
 
 procedure TFrmPrincipal.InformarSerial();
@@ -660,6 +786,7 @@ var
   Licenca: TLicenca;
   arquivo: tstringlist;
 begin
+  TLog.d('>>> Entrando em  TFrmPrincipal.InformarSerial ');
   FrmInformaSerial := TFrmInformaSerial.Create(Self);
   try
     if FrmInformaSerial.ShowModal = mrOk then
@@ -674,7 +801,7 @@ begin
       Licenca := TLicenca.Create;
       try
         if not(Licenca.LicencaValida(RetornaNomeArquivoLicenca(),
-          TFactory.DadosEmitente.CNPJ, now)) then
+          TFactory.DadosEmitente.CNPJ, Now)) then
           raise Exception.Create('O serial não é válido!');
         CheckLicenca;
       finally
@@ -685,17 +812,19 @@ begin
   finally
     FrmInformaSerial.Free;
   end;
+  TLog.d('<<< Saindo de TFrmPrincipal.InformarSerial ');
 end;
 
 procedure TFrmPrincipal.DefineLabelVendedor;
 begin
-
-  lblUsuario.Caption := TFactory.VendedorLogado.NOME
-
+  TLog.d('>>> Entrando em  TFrmPrincipal.DefineLabelVendedor ');
+  lblUsuario.Caption := TFactory.VendedorLogado.NOME;
+  TLog.d('<<< Saindo de TFrmPrincipal.DefineLabelVendedor ');
 end;
 
 procedure TFrmPrincipal.actParcelasExecute(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TFrmPrincipal.actParcelasExecute ');
   try
     frmFiltroParcelas := TfrmFiltroParcelas.Create(Self);
     try
@@ -706,12 +835,17 @@ begin
     end;
   except
     on E: Exception do
+    begin
+      TLog.d(E.Message);
       MessageDlg(E.Message, mtError, [mbOK], 0);
+    end;
   end;
+  TLog.d('<<< Saindo de TFrmPrincipal.actParcelasExecute ');
 end;
 
 procedure TFrmPrincipal.actPedidoVendaExecute(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TFrmPrincipal.actPedidoVendaExecute ');
   try
     FechaSubMenu;
     if CheckLicenca() then
@@ -727,7 +861,10 @@ begin
         end;
       except
         on E: Exception do
+        begin
+          TLog.d(E.Message);
           MessageDlg(E.Message, mtError, [mbOK], 0);
+        end;
       end;
     end
     else
@@ -737,12 +874,17 @@ begin
     end;
   except
     on E: Exception do
+    begin
+      TLog.d(E.Message);
       MessageDlg(E.Message, mtError, [mbOK], 0);
+    end;
   end;
+  TLog.d('<<< Saindo de TFrmPrincipal.actPedidoVendaExecute ');
 end;
 
 procedure TFrmPrincipal.actRecebimentoExecute(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TFrmPrincipal.actRecebimentoExecute ');
   try
     FechaSubMenu;
     if not TFactory.VendedorLogado.PODERECEBERPARCELA then
@@ -758,8 +900,12 @@ begin
     end;
   except
     on E: Exception do
+    begin
+      TLog.d(E.Message);
       MessageDlg(E.Message, mtError, [mbOK], 0);
+    end;
   end;
+  TLog.d('<<< Saindo de TFrmPrincipal.actRecebimentoExecute ');
 end;
 
 procedure TFrmPrincipal.actRelatorioParcelasClienteExecute(Sender: TObject);
@@ -769,6 +915,7 @@ var
   parcelasVencidas: TObjectList<TParcelas>;
   parcelasVencendo: TObjectList<TParcelas>;
 begin
+  TLog.d('>>> Entrando em  TFrmPrincipal.actRelatorioParcelasClienteExecute ');
   try
 
     frmFiltroCliente := TfrmFiltroCliente.Create(Self);
@@ -788,9 +935,9 @@ begin
       abort;
 
     parcelasVencidas := TFactory.DaoParcelas.GeTParcelasVencidasPorCliente
-      (Cliente.CODIGO, now);
+      (Cliente.CODIGO, Now);
     parcelasVencendo := TFactory.DaoParcelas.GeTParcelasVencendoPorCliente
-      (Cliente.CODIGO, now);
+      (Cliente.CODIGO, Now);
 
     impressao := TRParcelasCliente.Create(TFactory.Parametros.ImpressoraTermica);
 
@@ -806,9 +953,12 @@ begin
     on E: EAbort do
       exit;
     on E: Exception do
+    begin
+      TLog.d(E.Message);
       MessageDlg(E.Message, mtError, [mbOK], 0);
+    end;
   end; //
-
+  TLog.d('<<< Saindo de TFrmPrincipal.actRelatorioParcelasClienteExecute ');
 end;
 
 procedure TFrmPrincipal.actRelatorioProdutosVendidosExecute(Sender: TObject);
@@ -817,6 +967,7 @@ var
   DataIncio, DataFim: TDate;
   ProdutosVenda: TList<TProdutoVenda>;
 begin
+  TLog.d('>>> Entrando em  TFrmPrincipal.actRelatorioProdutosVendidosExecute ');
   try
 
     frmFiltroDatas := TfrmFiltroDatas.Create(Self);
@@ -842,21 +993,27 @@ begin
 
   except
     on E: Exception do
+    begin
+      TLog.d(E.Message);
       MessageDlg(E.Message, mtError, [mbOK], 0);
+    end;
   end; //
-
+  TLog.d('<<< Saindo de TFrmPrincipal.actRelatorioProdutosVendidosExecute ');
 end;
 
 procedure TFrmPrincipal.actRelatoriosExecute(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TFrmPrincipal.actRelatoriosExecute ');
   pgcMenu.ActivePage := tsRelatorios;
   AbreSubMenu;
+  TLog.d('<<< Saindo de TFrmPrincipal.actRelatoriosExecute ');
 end;
 
 procedure TFrmPrincipal.actRelatorioVencendoExecute(Sender: TObject);
 var
   Parcelas: TObjectList<TParcelas>;
 begin
+  TLog.d('>>> Entrando em  TFrmPrincipal.actRelatorioVencendoExecute ');
   frmFiltroVencimento := TfrmFiltroVencimento.Create(Self);
   try
     try
@@ -875,26 +1032,33 @@ begin
     end;
   except
     on E: Exception do
+    begin
+      TLog.d(E.Message);
       MessageDlg(E.Message, mtError, [mbOK], 0);
+    end;
   end;
+  TLog.d('<<< Saindo de TFrmPrincipal.actRelatorioVencendoExecute ');
 end;
 
 procedure TFrmPrincipal.actRelatorioVencidasExecute(Sender: TObject);
 var
   Parcelas: TObjectList<TParcelas>;
 begin
-
+  TLog.d('>>> Entrando em  TFrmPrincipal.actRelatorioVencidasExecute ');
   try
-    Parcelas := DaoParcelas.GetParcelaVencidasObj(now);
+    Parcelas := DaoParcelas.GetParcelaVencidasObj(Now);
     ListaParcelas('Parcelas Vencidas', Parcelas);
 
     if Assigned(Parcelas) then
       FreeAndNil(Parcelas);
   except
     on E: Exception do
+    begin
+      TLog.d(E.Message);
       MessageDlg(E.Message, mtError, [mbOK], 0);
+    end;
   end;
-
+  TLog.d('<<< Saindo de TFrmPrincipal.actRelatorioVencidasExecute ');
 end;
 
 procedure TFrmPrincipal.actRelatorioVendasDoDiaExecute(Sender: TObject);
@@ -902,6 +1066,7 @@ var
   impressao: TRVendasDoDia;
   DataIncio, DataFim: TDate;
 begin
+  TLog.d('>>> Entrando em  TFrmPrincipal.actRelatorioVendasDoDiaExecute ');
   try
 
     frmFiltroDatas := TfrmFiltroDatas.Create(Self);
@@ -927,17 +1092,24 @@ begin
 
   except
     on E: Exception do
+    begin
+      TLog.d(E.Message);
       MessageDlg(E.Message, mtError, [mbOK], 0);
+    end;
   end; //
+  TLog.d('<<< Saindo de TFrmPrincipal.actRelatorioVendasDoDiaExecute ');
 end;
 
 procedure TFrmPrincipal.actSairExecute(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TFrmPrincipal.actSairExecute ');
   Self.Close;
+  TLog.d('<<< Saindo de TFrmPrincipal.actSairExecute ');
 end;
 
 procedure TFrmPrincipal.actSangriaExecute(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TFrmPrincipal.actSangriaExecute ');
   FrmSangria := TFrmSangria.Create(Self);
   try
     FrmSangria.setTipo(TSangriaSuprimentoTipo.Sangria);
@@ -945,10 +1117,12 @@ begin
   finally
     FrmSangria.Free;
   end;
+  TLog.d('<<< Saindo de TFrmPrincipal.actSangriaExecute ');
 end;
 
 procedure TFrmPrincipal.actSuprimentoExecute(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TFrmPrincipal.actSuprimentoExecute ');
   FrmSangria := TFrmSangria.Create(Self);
   try
     FrmSangria.setTipo(TSangriaSuprimentoTipo.Suprimento);
@@ -956,6 +1130,7 @@ begin
   finally
     FrmSangria.Free;
   end;
+  TLog.d('<<< Saindo de TFrmPrincipal.actSuprimentoExecute ');
 end;
 
 procedure TFrmPrincipal.actVendasDoDiaPorVendedorExecute(Sender: TObject);
@@ -964,6 +1139,7 @@ var
   DataIncio, DataFim: TDate;
   Vendedor: TVendedor;
 begin
+  TLog.d('>>> Entrando em  TFrmPrincipal.actVendasDoDiaPorVendedorExecute ');
   try
 
     frmFiltroDataVendedor := TfrmFiltroDataVendedor.Create(Self);
@@ -991,9 +1167,12 @@ begin
 
   except
     on E: Exception do
+    begin
+      TLog.d(E.Message);
       MessageDlg(E.Message, mtError, [mbOK], 0);
+    end;
   end; //
-
+  TLog.d('<<< Saindo de TFrmPrincipal.actVendasDoDiaPorVendedorExecute ');
 end;
 
 procedure TFrmPrincipal.actVendasPorParceiroExecute(Sender: TObject);
@@ -1001,6 +1180,7 @@ var
   impressao: TRVendasPorParceiro;
   DataIncio, DataFim: TDate;
 begin
+  TLog.d('>>> Entrando em  TFrmPrincipal.actVendasPorParceiroExecute ');
   try
 
     frmFiltroDatas := TfrmFiltroDatas.Create(Self);
@@ -1023,13 +1203,17 @@ begin
 
   except
     on E: Exception do
+    begin
+      TLog.d(E.Message);
       MessageDlg(E.Message, mtError, [mbOK], 0);
+    end;
   end;
+  TLog.d('<<< Saindo de TFrmPrincipal.actVendasPorParceiroExecute ');
 end;
 
 procedure TFrmPrincipal.actFiltroVendasParceiroExecute(Sender: TObject);
 begin
-
+  TLog.d('>>> Entrando em  TFrmPrincipal.actFiltroVendasParceiroExecute ');
   try
     frmFiltroVendasParceiro := TfrmFiltroVendasParceiro.Create(nil);
     try
@@ -1039,19 +1223,23 @@ begin
     end;
   except
     on E: Exception do
+    begin
+      TLog.d(E.Message);
       MessageDlg(E.Message, mtError, [mbOK], 0);
+    end;
   end;
+  TLog.d('<<< Saindo de TFrmPrincipal.actFiltroVendasParceiroExecute ');
 end;
 
 procedure TFrmPrincipal.actVerVencimentoExecute(Sender: TObject);
 var
   Licenca: TLicenca;
 begin
-
+  TLog.d('>>> Entrando em  TFrmPrincipal.actVerVencimentoExecute ');
   Licenca := TLicenca.Create;
   try
     if (Licenca.LicencaValida(RetornaNomeArquivoLicenca(),
-      TFactory.DadosEmitente.CNPJ, now)) then
+      TFactory.DadosEmitente.CNPJ, Now)) then
       MessageDlg('Licença válida de ' + DateToStr(Licenca.DataDeIncio) + ' até '
         + DateToStr(Licenca.DataVencimento) + #13 + 'CNPJ: ' +
         TUtil.PadL(Licenca.cnpjLicenca, 14, '*'), mtInformation, [mbOK], 0)
@@ -1060,11 +1248,12 @@ begin
   finally
     Licenca.Free;
   end;
-
+  TLog.d('<<< Saindo de TFrmPrincipal.actVerVencimentoExecute ');
 end;
 
 procedure TFrmPrincipal.Backup(arquivo: string; force: Boolean = false);
 begin
+  TLog.d('>>> Entrando em  TFrmPrincipal.Backup ');
   try
     // se não for backup forçado
     if not force then
@@ -1085,11 +1274,14 @@ begin
     on E: Exception do
       raise Exception.Create(E.Message);
   end;
+  TLog.d('<<< Saindo de TFrmPrincipal.Backup ');
 end;
 
 procedure TFrmPrincipal.catbtnCadastrosClick(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TFrmPrincipal.catbtnCadastrosClick ');
   FechaSubMenu();
+  TLog.d('<<< Saindo de TFrmPrincipal.catbtnCadastrosClick ');
 end;
 
 function TFrmPrincipal.CheckLicenca: Boolean;
@@ -1097,6 +1289,7 @@ var
   Licenca: TLicenca;
   CNPJ: string;
 begin
+  TLog.d('>>> Entrando em  TFrmPrincipal.CheckLicenca ');
   exit(true);
   result := false;
   pnlLicenca.Visible := false;
@@ -1112,7 +1305,7 @@ begin
     if FileExists(RetornaNomeArquivoLicenca()) then
     begin
       try
-        if not Licenca.LicencaValida(RetornaNomeArquivoLicenca(), CNPJ, now)
+        if not Licenca.LicencaValida(RetornaNomeArquivoLicenca(), CNPJ, Now)
         then
         begin
           result := (Licenca.DiasRestantes >= 0) and Licenca.CnpjIguais;
@@ -1161,6 +1354,7 @@ begin
   finally
     FreeAndNil(Licenca);
   end;
+  TLog.d('<<< Saindo de TFrmPrincipal.CheckLicenca ');
 
 end;
 
@@ -1168,11 +1362,13 @@ function TFrmPrincipal.RetornaNomeArquivoBackup(): string;
 var
   diretorio: string;
 begin
+  TLog.d('>>> Entrando em  TFrmPrincipal.RetornaNomeArquivoBackup ');
   diretorio := TUtil.DiretorioApp + 'backup';
   if not DirectoryExists(diretorio) then
     CreateDir(diretorio);
   result := Format('%s\bkp-%s.fbk',
-    [diretorio, FormatDateTime('dd-mm-yyyy', now)]);
+    [diretorio, FormatDateTime('dd-mm-yyyy', Now)]);
+  TLog.d('<<< Saindo de TFrmPrincipal.RetornaNomeArquivoBackup ');
 end;
 
 function TFrmPrincipal.RetornaNomeArquivoLicenca: string;
@@ -1187,22 +1383,27 @@ end;
 
 procedure TFrmPrincipal.AbreSubMenu;
 begin
+  TLog.d('>>> Entrando em  TFrmPrincipal.AbreSubMenu ');
   svSubMenu.Open;
   svSubMenu.DisplayMode := svmOverlay;
   svSubMenu.Left := svMenuLateralEsquerdo.Width;
+  TLog.d('<<< Saindo de TFrmPrincipal.AbreSubMenu ');
 end;
 
 procedure TFrmPrincipal.FechaSubMenu;
 begin
+  TLog.d('>>> Entrando em  TFrmPrincipal.FechaSubMenu ');
   svSubMenu.Close;
   svSubMenu.CloseStyle := svcCollapse;
   svSubMenu.DisplayMode := svmOverlay;
+  TLog.d('<<< Saindo de TFrmPrincipal.FechaSubMenu ');
 end;
 
 procedure TFrmPrincipal.ConfiguraMenuLateral;
 var
   i: Integer;
 begin
+  TLog.d('>>> Entrando em  TFrmPrincipal.ConfiguraMenuLateral ');
 
   for i := 0 to Pred(pgcMenu.PageCount) do
   begin
@@ -1215,27 +1416,33 @@ begin
   FechaSubMenu;
   FecharMenuLateralDireito();
   Self.Menu := nil;
+  TLog.d('<<< Saindo de TFrmPrincipal.ConfiguraMenuLateral ');
 end;
 
 procedure TFrmPrincipal.FecharMenuLateralDireito;
 begin
+  TLog.d('>>> Entrando em  TFrmPrincipal.FecharMenuLateralDireito ');
   svMenuLateralDireito.Close;
   svMenuLateralDireito.CloseStyle := svcCollapse;
   svMenuLateralDireito.DisplayMode := svmOverlay;
+  TLog.d('<<< Saindo de TFrmPrincipal.FecharMenuLateralDireito ');
 end;
 
 procedure TFrmPrincipal.AbrirMenuLateralEsquerdo;
 begin
+  TLog.d('>>> Entrando em  TFrmPrincipal.AbrirMenuLateralEsquerdo ');
   // abrir o menu
   svMenuLateralEsquerdo.Open;
   svMenuLateralEsquerdo.DisplayMode := svmDocked;
   // exibir o caption dos botões
   catMenuItems.ButtonOptions := catMenuItems.ButtonOptions + [boShowCaptions];
   FechaSubMenu;
+  TLog.d('<<< Saindo de TFrmPrincipal.AbrirMenuLateralEsquerdo ');
 end;
 
 procedure TFrmPrincipal.FecharMenuLateralEsquerdo;
 begin
+  TLog.d('>>> Entrando em  TFrmPrincipal.FecharMenuLateralEsquerdo ');
   // fecha o menu no estilo compacto
   svMenuLateralEsquerdo.Close;
   svMenuLateralEsquerdo.CloseStyle := svcCompact;
@@ -1244,13 +1451,14 @@ begin
   catMenuItems.ButtonOptions := catMenuItems.ButtonOptions - [boShowCaptions];
 
   FechaSubMenu;
+  TLog.d('<<< Saindo de TFrmPrincipal.FecharMenuLateralEsquerdo ');
 end;
 
 procedure TFrmPrincipal.ExibeVencendo;
 var
   Parcelas: TObjectList<TParcelas>;
 begin
-  Parcelas := DaoParcelas.GetParcelaVencendoObj(now, IncMonth(now, 2));
+  Parcelas := DaoParcelas.GetParcelaVencendoObj(Now, IncMonth(Now, 2));
   ListaParcelas('Parcelas Vencendo', Parcelas);
   if Assigned(Parcelas) then
     FreeAndNil(Parcelas);
@@ -1260,11 +1468,14 @@ procedure TFrmPrincipal.ExibeVencidos;
 var
   Parcelas: TObjectList<TParcelas>;
 begin
-  Parcelas := DaoParcelas.GetParcelaVencidasObj(now);
+  TLog.d('>>> Entrando em  TFrmPrincipal.ExibeVencidos ');
+  Parcelas := DaoParcelas.GetParcelaVencidasObj(Now);
   ListaParcelas('Parcelas Vencidas', Parcelas);
 
   if Assigned(Parcelas) then
     FreeAndNil(Parcelas);
+
+  TLog.d('<<< Saindo de TFrmPrincipal.ExibeVencidos ');
 end;
 
 procedure TFrmPrincipal.ListaParcelas(ACaption: string;
@@ -1272,7 +1483,7 @@ procedure TFrmPrincipal.ListaParcelas(ACaption: string;
 var
   Aleft, Atop: Integer;
 begin
-
+  TLog.d('>>> Entrando em  TFrmPrincipal.ListaParcelas ');
   frmParcelasVencendo := TfrmParcelasVencendo.Create(Self);
   try
     Atop := lblVencimento.top - frmParcelasVencendo.Height;
@@ -1289,11 +1500,12 @@ begin
   finally
     FreeAndNil(frmParcelasVencendo);
   end;
-
+  TLog.d('<<< Saindo de TFrmPrincipal.ListaParcelas ');
 end;
 
 procedure TFrmPrincipal.FormActivate(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TFrmPrincipal.FormActivate ');
   try
     CheckLicenca();
   except
@@ -1332,11 +1544,14 @@ begin
   end;
   DefineLabelVendedor();
   Self.WindowState := TWindowState.wsMaximized;
+  TLog.d('<<< Saindo de TFrmPrincipal.FormActivate ');
 end;
 
 procedure TFrmPrincipal.FormCreate(Sender: TObject);
 begin
   try
+    InciaLog(true);
+    TLog.d('>>> Entrando em  TFrmPrincipal.FormCreate ');
     Self.Menu := nil;
 
     ReportMemoryLeaksOnShutdown := DebugHook <> 0;
@@ -1353,14 +1568,19 @@ begin
 
   except
     on E: Exception do
+    begin
+      TLog.d(E.Message);
       MessageDlg(E.Message, mtError, [mbOK], 0);
+    end;
   end;
+  TLog.d('<<< Saindo de TFrmPrincipal.FormCreate ');
 end;
 
 procedure TFrmPrincipal.ExibeAtalhos;
 var
   i: Integer;
 begin
+  TLog.d('>>> Entrando em  TFrmPrincipal.ExibeAtalhos ');
   for i := 0 to actPrincipal.ActionCount - 1 do
   begin
     if actPrincipal.Actions[i].ShortCut <> 0 then
@@ -1379,7 +1599,7 @@ begin
     end;
 
   end;
-
+  TLog.d('<<< Saindo de TFrmPrincipal.ExibeAtalhos ');
 end;
 
 procedure TFrmPrincipal.MigrateBD;
@@ -1389,6 +1609,7 @@ var
   ListaErros: TStringBuilder;
   key: TClass;
 begin
+  TLog.d('>>> Entrando em  TFrmPrincipal.MigrateBD ');
   migrate := TDataseMigrationBase.Create(tpFirebird);
   migrate.migrate();
   Erros := migrate.GetErros();
@@ -1410,12 +1631,14 @@ begin
 
   if Assigned(Erros) then
     FreeAndNil(Erros);
+  TLog.d('<<< Saindo de TFrmPrincipal.MigrateBD ');
 end;
 
 procedure TFrmPrincipal.FormShow(Sender: TObject);
 var
   task: ITask;
 begin
+  TLog.d('>>> Entrando em  TFrmPrincipal.FormShow ');
   // with Screen.WorkAreaRect do
   // SetBounds(Left, top, Right - Left, Bottom - top);
 
@@ -1458,37 +1681,47 @@ begin
       end);
     task.Start;
   end;
-
+  TLog.d('<<< Saindo de TFrmPrincipal.FormShow ');
 end;
 
 procedure TFrmPrincipal.Image3Click(Sender: TObject);
 var
   Z: TPoint;
 begin
+  TLog.d('>>> Entrando em  TFrmPrincipal.Image3Click ');
   Z.X := 0;
   Z.Y := TImage(Sender).ClientHeight;
   Z := TImage(Sender).ClientToScreen(Z);
   popUpUsuario.Popup(Z.X, Z.Y);
+  TLog.d('<<< Saindo de TFrmPrincipal.Image3Click ');
 end;
 
 procedure TFrmPrincipal.imgMenuClick(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TFrmPrincipal.imgMenuClick ');
   actAbreMenu.Execute;
+  TLog.d('<<< Saindo de TFrmPrincipal.imgMenuClick ');
 end;
 
 procedure TFrmPrincipal.imgNFCEDblClick(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TFrmPrincipal.imgNFCEDblClick ');
   actPedidoVenda.Execute;
+  TLog.d('<<< Saindo de TFrmPrincipal.imgNFCEDblClick ');
 end;
 
 procedure TFrmPrincipal.lblVencendoClick(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TFrmPrincipal.lblVencendoClick ');
   ExibeVencendo;
+  TLog.d('<<< Saindo de TFrmPrincipal.lblVencendoClick ');
 end;
 
 procedure TFrmPrincipal.lblVencimentoClick(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TFrmPrincipal.lblVencimentoClick ');
   ExibeVencidos;
+  TLog.d('<<< Saindo de TFrmPrincipal.lblVencimentoClick ');
 end;
 
 procedure TFrmPrincipal.lblVencimentoMouseLeave(Sender: TObject);
@@ -1509,8 +1742,9 @@ var
   vencendo: Integer;
   vencidas: Integer;
 begin
+  TLog.d('>>> Entrando em  TFrmPrincipal.VerificaParcelasVencendo ');
   try
-    vencendo := DaoParcelas.GetNumeroDeParcelasVencendo(now, IncMonth(now, 2));
+    vencendo := DaoParcelas.GetNumeroDeParcelasVencendo(Now, IncMonth(Now, 2));
 
     if vencendo > 0 then
     begin
@@ -1521,7 +1755,7 @@ begin
     else
       lblVencendo.Visible := false;
 
-    vencidas := DaoParcelas.GetNumeroDeParcelasVencidas(now);
+    vencidas := DaoParcelas.GetNumeroDeParcelasVencidas(Now);
 
     if vencidas > 0 then
     begin
@@ -1535,6 +1769,7 @@ begin
       raise Exception.Create('Falha ao verificar parcelas em vencimento: ' +
         E.Message);
   end;
+  TLog.d('<<< Saindo de TFrmPrincipal.VerificaParcelasVencendo ');
 end;
 
 procedure TFrmPrincipal.WMGetMinmaxInfo(var Msg: TWMGetMinmaxInfo);

@@ -189,7 +189,9 @@ uses
   Impressao.Parametros.Impressora.Tinta in 'units\Impressao\Impressao.Parametros.Impressora.Tinta.pas',
   Impressao.Etiquetas in 'units\Impressao\Impressao.Etiquetas.pas',
   Etiquetas.Modelo4x2 in 'views\etiquetas\Etiquetas.Modelo4x2.pas' {FrmEtiquetasModelo4x2},
-  Relatorio.FREtiquetas.Modelo4x2 in 'units\relatorio\Relatorio.FREtiquetas.Modelo4x2.pas';
+  Relatorio.FREtiquetas.Modelo4x2 in 'units\relatorio\Relatorio.FREtiquetas.Modelo4x2.pas',
+  Sistema.TLog in 'units\Sistema\Sistema.TLog.pas',
+  Utils.IO in 'units\Util\Utils.IO.pas';
 
 {$R *.res}
 

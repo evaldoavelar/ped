@@ -6,7 +6,7 @@ uses
   System.SysUtils, System.Classes, FireDAC.Stan.Error,
   Data.DB, FireDAC.Comp.Client,
   System.Generics.Collections,
-  Dao.TDaoBase,
+  Dao.TDaoBase, Sistema.TLog,
   Dominio.Entidades.TProduto, Dao.IDaoFornecedor, Dao.IDaoProdutos;
 
 type
@@ -58,6 +58,7 @@ begin
       qry.ParamByName('CODIGO').AsString := aCODIGO;
       qry.ParamByName('QUANTIDADE').AsFloat := aQuantidade;
 
+      TLog.d(qry);
       qry.ExecSQL;
 
       result := qry.RowsAffected;
@@ -70,7 +71,8 @@ begin
         // FLog.d(E.Message);
         if aAutoCommit then
           FConnection.Rollback;
-        raise TDaoException.Create(' TDaoProduto.EntradaSaidaEstoque: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create(' TDaoProduto.EntradaSaidaEstoque: ' + E.message);
       end;
 
     end;
@@ -95,6 +97,7 @@ begin
         + '     CODIGO = :CODIGO';
 
       qry.ParamByName('CODIGO').AsString := codigo;
+      TLog.d(qry);
       qry.ExecSQL;
     except
       on E: EFDDBEngineException do
@@ -106,7 +109,8 @@ begin
       end;
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha ExcluirProduto: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha ExcluirProduto: ' + E.message);
       end;
     end;
   finally
@@ -184,12 +188,14 @@ begin
         '        CODIGO = :CODIGO ';
 
       ObjectToParams(qry, Produto);
+      TLog.d(qry);
       qry.ExecSQL;
 
     except
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha AtualizaProduto: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha AtualizaProduto: ' + E.message);
       end;
     end;
   finally
@@ -220,7 +226,8 @@ begin
         + ' order by descricao ';
 
       qry.ParamByName('CODIGO').AsString := codigo;
-      qry.open;
+      TLog.d(qry);
+      qry.Open;
 
       if qry.IsEmpty then
         result := nil
@@ -230,7 +237,8 @@ begin
     except
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha GetProdutoPorCodigo: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha GetProdutoPorCodigo: ' + E.message);
       end;
     end;
   finally
@@ -254,7 +262,8 @@ begin
         + '     BARRAS = :BARRAS';
 
       qry.ParamByName('BARRAS').AsString := codBarras;
-      qry.open;
+      TLog.d(qry);
+      qry.Open;
 
       if qry.IsEmpty then
         result := nil
@@ -264,7 +273,8 @@ begin
     except
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha GetProdutoPorCodigoBarras: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha GetProdutoPorCodigoBarras: ' + E.message);
       end;
     end;
   finally
@@ -293,7 +303,8 @@ begin
         descricao := copy(descricao, 0, 39);
 
       qry.ParamByName('descricao').AsString := descricao;
-      qry.open;
+      TLog.d(qry);
+      qry.Open;
 
       result := TObjectList<TProduto>.Create();
 
@@ -306,7 +317,8 @@ begin
     except
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha GetProdutoPorDescricao: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha GetProdutoPorDescricao: ' + E.message);
       end;
     end;
   finally
@@ -335,7 +347,8 @@ begin
         descricao := copy(descricao, 0, 38);
 
       qry.ParamByName('descricao').AsString := descricao + '%';
-      qry.open;
+      TLog.d(qry);
+      qry.Open;
 
       result := TObjectList<TProduto>.Create();
 
@@ -348,7 +361,8 @@ begin
     except
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha GetProdutosPorDescricaoParcial: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha GetProdutosPorDescricaoParcial: ' + E.message);
       end;
     end;
   finally
@@ -374,7 +388,8 @@ begin
         + ' order by descricao ';
 
       qry.ParamByName('descricao').AsString := descricao;
-      qry.open;
+      TLog.d(qry);
+      qry.Open;
 
       if qry.IsEmpty then
         result := nil
@@ -384,7 +399,8 @@ begin
     except
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha GetProdutoPorDescricao: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha GetProdutoPorDescricao: ' + E.message);
       end;
     end;
   finally
@@ -474,12 +490,14 @@ begin
         + '             :OBSERVACOES)';
 
       ObjectToParams(qry, Produto);
+      TLog.d(qry);
       qry.ExecSQL;
 
     except
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha IncluiProduto: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha IncluiProduto: ' + E.message);
       end;
     end;
   finally
@@ -507,14 +525,16 @@ begin
       + ' UPPER( ' + campo + ') CONTAINING  UPPER( ' + QuotedStr(valor) + ') '
       + ' order by descricao';
 
-    qry.open;
+    TLog.d(qry);
+    qry.Open;
 
     result := qry;
 
   except
     on E: Exception do
     begin
-      raise TDaoException.Create('Falha Listar Produto: ' + E.Message);
+      TLog.d(E.message);
+      raise TDaoException.Create('Falha Listar Produto: ' + E.message);
     end;
   end;
 
@@ -592,12 +612,15 @@ begin
     if ds.Params.FindParam('AVISARESTOQUEBAIXO') <> nil then
       ds.Params.ParamByName('AVISARESTOQUEBAIXO').AsBoolean := Produto.AVISARESTOQUEBAIXO;
 
-         if ds.Params.FindParam('INATIVO') <> nil then
+    if ds.Params.FindParam('INATIVO') <> nil then
       ds.Params.ParamByName('INATIVO').AsBoolean := Produto.INATIVO;
 
   except
     on E: Exception do
-      raise TDaoException.Create('Falha ao associar parâmetros Produto: ' + E.Message);
+    begin
+      TLog.d(E.message);
+      raise TDaoException.Create('Falha ao associar parâmetros Produto: ' + E.message);
+    end;
   end;
 end;
 
@@ -634,7 +657,10 @@ begin
 
   except
     on E: Exception do
-      raise TDaoException.Create('Falha no ParamsToObject Produto: ' + E.Message);
+    begin
+      TLog.d(E.message);
+      raise TDaoException.Create('Falha no ParamsToObject Produto: ' + E.message);
+    end;
   end;
 
 end;

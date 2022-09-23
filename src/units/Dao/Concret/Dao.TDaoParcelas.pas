@@ -6,7 +6,7 @@ uses
   System.Generics.Collections,
   System.SysUtils, System.Classes,
   Data.DB, FireDAC.Comp.Client,
-  Dao.TDaoBase,
+  Dao.TDaoBase, Sistema.TLog,
   Dominio.Entidades.TParcelas, Dao.IDaoParcelas;
 
 type
@@ -24,7 +24,7 @@ type
     procedure ExtornaParcelas(Parcelas: TParcelas);
     function GeTParcela(NUMPARCELA, IDPEDIDO: Integer): TParcelas;
     function GeTParcelas(IDPEDIDO: Integer): TObjectList<TParcelas>; overload;
-    function GeTParcelas(IDPEDIDO: Integer; SEQPAGTO:INTEGER): TObjectList<TParcelas>; overload;
+    function GeTParcelas(IDPEDIDO: Integer; SEQPAGTO: Integer): TObjectList<TParcelas>; overload;
     function GeTParcelasPorCliente(CODCLiente: string; status: string): TObjectList<TParcelas>; overload;
     function GeTParcelasVencidasPorCliente(CODCLiente: string; dataAtual: TDate): TObjectList<TParcelas>; overload;
     function GeTParcelasVencendoPorCliente(CODCLiente: string; dataAtual: TDate): TObjectList<TParcelas>; overload;
@@ -77,12 +77,14 @@ begin
     ObjectToParams(qry, Parcelas);
 
     try
+      TLog.d(qry);
       qry.ExecSQL;
     except
       on E: Exception do
       begin
         FConnection.Rollback;
-        raise TDaoException.Create('Falha AtualizaParcelas - Parcela:' + IntToStr(Parcelas.NUMPARCELA) + ' - ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha AtualizaParcelas - Parcela:' + IntToStr(Parcelas.NUMPARCELA) + ' - ' + E.message);
       end;
     end;
   finally
@@ -113,12 +115,14 @@ begin
     ObjectToParams(qry, Parcelas);
 
     try
+      TLog.d(qry);
       qry.ExecSQL;
     except
       on E: Exception do
       begin
         FConnection.Rollback;
-        raise TDaoException.Create('Falha AtualizaParcelas - Parcela:' + IntToStr(Parcelas.NUMPARCELA) + ' - ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha AtualizaParcelas - Parcela:' + IntToStr(Parcelas.NUMPARCELA) + ' - ' + E.message);
       end;
     end;
   finally
@@ -148,12 +152,14 @@ begin
     ObjectToParams(qry, Parcelas);
 
     try
+      TLog.d(qry);
       qry.ExecSQL;
     except
       on E: Exception do
       begin
         FConnection.Rollback;
-        raise TDaoException.Create('Falha AtualizaParcelas - Parcela:' + IntToStr(Parcelas.NUMPARCELA) + ' - ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha AtualizaParcelas - Parcela:' + IntToStr(Parcelas.NUMPARCELA) + ' - ' + E.message);
       end;
     end;
   finally
@@ -179,7 +185,8 @@ begin
 
       qry.ParamByName('NUMPARCELA').AsInteger := NUMPARCELA;
       qry.ParamByName('IDPEDIDO').AsInteger := IDPEDIDO;
-      qry.open;
+      TLog.d(qry);
+      qry.Open;
 
       if qry.IsEmpty then
         Result := nil
@@ -189,7 +196,8 @@ begin
     except
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha GeTParcelas: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha GeTParcelas: ' + E.message);
       end;
     end;
   finally
@@ -230,14 +238,16 @@ begin
       + 'order  BY  pa.vencimento,c.nome';
 
     qry.ParamByName('dataAtual').AsDate := dataAtual;
-    qry.open;
+    TLog.d(qry);
+    qry.Open;
 
     Result := qry;
 
   except
     on E: Exception do
     begin
-      raise TDaoException.Create('Falha GetParcelasVencendo: ' + E.Message);
+      TLog.d(E.message);
+      raise TDaoException.Create('Falha GetParcelasVencendo: ' + E.message);
     end;
   end;
 
@@ -276,14 +286,16 @@ begin
       + 'order  BY  pa.vencimento,c.nome';
 
     qry.ParamByName('dataAtual').AsDate := dataAtual;
-    qry.open;
+    TLog.d(qry);
+    qry.Open;
 
     Result := qry;
 
   except
     on E: Exception do
     begin
-      raise TDaoException.Create('Falha GetParcelaVencidasDS: ' + E.Message);
+      TLog.d(E.message);
+      raise TDaoException.Create('Falha GetParcelaVencidasDS: ' + E.message);
     end;
   end;
 
@@ -309,7 +321,8 @@ begin
   except
     on E: Exception do
     begin
-      raise TDaoException.Create('Falha GetParcelaVencidasObj: ' + E.Message);
+      TLog.d(E.message);
+      raise TDaoException.Create('Falha GetParcelaVencidasObj: ' + E.message);
     end;
   end;
 
@@ -340,7 +353,8 @@ begin
       qry.SQL.Add('order by  pa.vencimento,pa.numparcela');
 
       qry.ParamByName('CODCLIENTE').AsString := CODCLiente;
-      qry.open;
+      TLog.d(qry);
+      qry.Open;
 
       while not qry.Eof do
       begin
@@ -351,7 +365,8 @@ begin
     except
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha GeTParcelas: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha GeTParcelas: ' + E.message);
       end;
     end;
   finally
@@ -391,14 +406,16 @@ begin
 
     qry.ParamByName('dataInicial').AsDate := dataInicial;
     qry.ParamByName('dataFinal').AsDate := dataFinal;
-    qry.open;
+    TLog.d(qry);
+    qry.Open;
 
     Result := qry;
 
   except
     on E: Exception do
     begin
-      raise TDaoException.Create('Falha GeTParcelas: ' + E.Message);
+      TLog.d(E.message);
+      raise TDaoException.Create('Falha GeTParcelas: ' + E.message);
     end;
   end;
 
@@ -435,14 +452,16 @@ begin
 
     qry.ParamByName('dataInicial').AsDate := dataInicial;
     qry.ParamByName('dataFinal').AsDate := dataFinal;
-    qry.open;
+    TLog.d(qry);
+    qry.Open;
 
     Result := qry;
 
   except
     on E: Exception do
     begin
-      raise TDaoException.Create('Falha GeTParcelas: ' + E.Message);
+      TLog.d(E.message);
+      raise TDaoException.Create('Falha GeTParcelas: ' + E.message);
     end;
   end;
 
@@ -471,14 +490,16 @@ begin
         qry.SQL.Add('and pa.RECEBIDO =' + QuotedStr(status));
 
       qry.ParamByName('CODCLIENTE').AsString := CODCLiente;
-      qry.open;
+      TLog.d(qry);
+      qry.Open;
 
       Result := qry.FieldByName('total').AsCurrency;
 
     except
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha GeTParcelasTotal: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha GeTParcelasTotal: ' + E.message);
       end;
     end;
   finally
@@ -511,7 +532,8 @@ begin
 
       qry.ParamByName('CODCLIENTE').AsString := CODCLiente;
       qry.ParamByName('dataAtual').AsDate := dataAtual;
-      qry.open;
+      TLog.d(qry);
+      qry.Open;
 
       while not qry.Eof do
       begin
@@ -522,7 +544,8 @@ begin
     except
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha GetParcelasVencendo: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha GetParcelasVencendo: ' + E.message);
       end;
     end;
   finally
@@ -554,7 +577,8 @@ begin
 
       qry.ParamByName('CODCLIENTE').AsString := CODCLiente;
       qry.ParamByName('dataAtual').AsDate := dataAtual;
-      qry.open;
+      TLog.d(qry);
+      qry.Open;
 
       while not qry.Eof do
       begin
@@ -565,7 +589,8 @@ begin
     except
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha GetParcelasVencendo: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha GetParcelasVencendo: ' + E.message);
       end;
     end;
   finally
@@ -580,42 +605,44 @@ begin
 
   qry := TFactory.Query();
 
-    try
+  try
 
-      qry.SQL.Text := ''
-        + 'SELECT c.nome, '
-        + '       pa.CODCLIENTE, '
-        + '       pe.NUMERO, '
-        + '       pa.CODVENRECEBIMENTO, '
-        + '       (pa.numparcela) numparcela , '
-        + '       (pa.valor) , '
-        + '       pe.ID IDPEDIDO, '
-        + '       pa.vencimento '
-        + 'FROM   parcelas pa, '
-        + '       pedido pe, '
-        + '       cliente c '
-        + 'WHERE  pa.idpedido = pe.id '
-        + '       AND pe.status = ''F'' '
-        + '       AND pa.recebido = ''N'' '
-        + '       AND pa.codcliente = c.codigo '
-        + '       AND pa.vencimento >= :dataInicial '
-        + '       AND pa.vencimento <= :dataFinal '
-      // + 'GROUP  BY c.nome,c.codigo, '
-      // + '          pa.vencimento '
-        + 'ORDER  BY pa.vencimento,c.nome ';
+    qry.SQL.Text := ''
+      + 'SELECT c.nome, '
+      + '       pa.CODCLIENTE, '
+      + '       pe.NUMERO, '
+      + '       pa.CODVENRECEBIMENTO, '
+      + '       (pa.numparcela) numparcela , '
+      + '       (pa.valor) , '
+      + '       pe.ID IDPEDIDO, '
+      + '       pa.vencimento '
+      + 'FROM   parcelas pa, '
+      + '       pedido pe, '
+      + '       cliente c '
+      + 'WHERE  pa.idpedido = pe.id '
+      + '       AND pe.status = ''F'' '
+      + '       AND pa.recebido = ''N'' '
+      + '       AND pa.codcliente = c.codigo '
+      + '       AND pa.vencimento >= :dataInicial '
+      + '       AND pa.vencimento <= :dataFinal '
+    // + 'GROUP  BY c.nome,c.codigo, '
+    // + '          pa.vencimento '
+      + 'ORDER  BY pa.vencimento,c.nome ';
 
-      qry.ParamByName('dataInicial').AsDate := dataInicial;
-      qry.ParamByName('dataFinal').AsDate := dataFinal;
-      qry.open;
+    qry.ParamByName('dataInicial').AsDate := dataInicial;
+    qry.ParamByName('dataFinal').AsDate := dataFinal;
+    TLog.d(qry);
+    qry.Open;
 
-      Result := qry;
+    Result := qry;
 
-    except
-      on E: Exception do
-      begin
-        raise TDaoException.Create('Falha GetParcelaVencendo: ' + E.Message);
-      end;
+  except
+    on E: Exception do
+    begin
+      TLog.d(E.message);
+      raise TDaoException.Create('Falha GetParcelaVencendo: ' + E.message);
     end;
+  end;
 
 end;
 
@@ -639,7 +666,8 @@ begin
   except
     on E: Exception do
     begin
-      raise TDaoException.Create('Falha GetParcelaVencendoObj: ' + E.Message);
+      TLog.d(E.message);
+      raise TDaoException.Create('Falha GetParcelaVencendoObj: ' + E.message);
     end;
   end;
 end;
@@ -667,14 +695,16 @@ begin
 
       qry.ParamByName('dataInicial').AsDate := dataInicial;
       qry.ParamByName('dataFinal').AsDate := dataFinal;
-      qry.open;
+      TLog.d(qry);
+      qry.Open;
 
       Result := qry.FieldByName('total').AsInteger;
 
     except
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha GetParcelasVencendo: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha GetParcelasVencendo: ' + E.message);
       end;
     end;
   finally
@@ -706,14 +736,16 @@ begin
 
       qry.ParamByName('CODCLIENTE').AsString := CODCLiente;
       qry.ParamByName('dataAtual').AsDate := dataAtual;
-      qry.open;
+      TLog.d(qry);
+      qry.Open;
 
       Result := qry.FieldByName('total').AsInteger;
 
     except
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha GetNumeroDeParcelasVencidas por Cliente: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha GetNumeroDeParcelasVencidas por Cliente: ' + E.message);
       end;
     end;
   finally
@@ -743,14 +775,16 @@ begin
         + '       AND pa.vencimento < :dataAtual ';
 
       qry.ParamByName('dataAtual').AsDate := dataAtual;
-      qry.open;
+      TLog.d(qry);
+      qry.Open;
 
       Result := qry.FieldByName('total').AsInteger;
 
     except
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha GetParcelasVencendo: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha GetParcelasVencendo: ' + E.message);
       end;
     end;
   finally
@@ -778,7 +812,8 @@ begin
         + 'order by NUMPARCELA ';
 
       qry.ParamByName('IDPEDIDO').AsInteger := IDPEDIDO;
-      qry.open;
+      TLog.d(qry);
+      qry.Open;
 
       while not qry.Eof do
       begin
@@ -789,7 +824,8 @@ begin
     except
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha GeTParcelas: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha GeTParcelas: ' + E.message);
       end;
     end;
   finally
@@ -827,6 +863,7 @@ begin
     try
 
       FConnection.StartTransaction;
+      TLog.d(qry);
       qry.ExecSQL;
 
       FConnection.Commit;
@@ -834,7 +871,8 @@ begin
       on E: Exception do
       begin
         FConnection.Rollback;
-        raise TDaoException.Create('Falha ao Gravar TParcelas - Parcela:' + IntToStr(Parcelas.NUMPARCELA) + ' - ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha ao Gravar TParcelas - Parcela:' + IntToStr(Parcelas.NUMPARCELA) + ' - ' + E.message);
       end;
     end;
   finally
@@ -876,7 +914,10 @@ begin
     end;
   except
     on E: Exception do
-      raise TDaoException.Create('Falha ao associar parâmetros TParcelas: ' + E.Message);
+    begin
+      TLog.d(E.message);
+      raise TDaoException.Create('Falha ao associar parâmetros TParcelas: ' + E.message);
+    end;
   end;
 end;
 
@@ -899,7 +940,10 @@ begin
 
   except
     on E: Exception do
-      raise TDaoException.Create('Falha no ParamsToObject Parcelas: ' + E.Message);
+    begin
+      TLog.d(E.message);
+      raise TDaoException.Create('Falha no ParamsToObject Parcelas: ' + E.message);
+    end;
   end;
 
 end;
@@ -937,14 +981,16 @@ begin
         + '       AND upper( ' + campo + ') like ' + QuotedStr(UpperCase(valor) + '%')
         + ' ORDER  BY pa.vencimento,c.nome ';
 
-      qry.open;
+      TLog.d(qry);
+      qry.Open;
 
       Result := qry;
 
     except
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha GeTParcelas: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha GeTParcelas: ' + E.message);
       end;
     end;
   finally
@@ -953,7 +999,7 @@ begin
 end;
 
 function TDaoParcelas.GeTParcelas(IDPEDIDO,
-  SEQPAGTO: INTEGER): TObjectList<TParcelas>;
+  SEQPAGTO: Integer): TObjectList<TParcelas>;
 var
   qry: TFDQuery;
 begin
@@ -974,7 +1020,8 @@ begin
 
       qry.ParamByName('IDPEDIDO').AsInteger := IDPEDIDO;
       qry.ParamByName('SEQPAGTO').AsInteger := SEQPAGTO;
-      qry.open;
+      TLog.d(qry);
+      qry.Open;
 
       while not qry.Eof do
       begin
@@ -985,7 +1032,8 @@ begin
     except
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha GeTParcelas: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha GeTParcelas: ' + E.message);
       end;
     end;
   finally

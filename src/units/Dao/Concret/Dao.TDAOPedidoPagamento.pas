@@ -7,7 +7,7 @@ uses System.Generics.Collections,
   FireDAC.Stan.Error,
   Data.DB, FireDAC.Comp.Client,
   Dominio.Entidades.Pedido.Pagamentos.Pagamento,
-  Dao.TDaoBase,
+  Dao.TDaoBase, Sistema.TLog,
   Dao.IDAOPedidoPagamento;
 
 type
@@ -83,13 +83,15 @@ begin
       Validar(aPagto);
       EntityToParams(qry, aPagto);
 
+      TLog.d(qry);
       qry.ExecSQL;
 
       GravaParcelas(aPagto);
     except
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha Atualiza Condicao Pagtos: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha Atualiza Condicao Pagtos: ' + E.message);
       end;
     end;
   finally
@@ -116,6 +118,7 @@ begin
       qry.ParamByName('ID').AsInteger := id;
 
       qry.ParamByName('id').AsInteger := id;
+      TLog.d(qry);
       qry.ExecSQL;
     except
       on E: EFDDBEngineException do
@@ -127,7 +130,8 @@ begin
       end;
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha ExcluirCliente: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha ExcluirCliente: ' + E.message);
       end;
     end;
   finally
@@ -151,6 +155,7 @@ begin
         + '     idpedido = :idpedido';
 
       qry.ParamByName('idpedido').AsInteger := idpedido;
+      TLog.d(qry);
       qry.ExecSQL;
     except
       on E: EFDDBEngineException do
@@ -162,7 +167,8 @@ begin
       end;
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha ExcluirCliente: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha ExcluirCliente: ' + E.message);
       end;
     end;
   finally
@@ -188,7 +194,8 @@ begin
 
       qry.ParamByName('IDPEDIDO').AsInteger := idpedido;
       qry.ParamByName('SEQ').AsInteger := SEQ;
-      qry.open;
+      TLog.d(qry);
+      qry.Open;
 
       if qry.IsEmpty then
         Result := nil
@@ -201,7 +208,8 @@ begin
     except
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha GeTPEDIDOPAGAMENTO: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha GeTPEDIDOPAGAMENTO: ' + E.message);
       end;
     end;
   finally
@@ -243,13 +251,15 @@ begin
 
       Validar(aPagto);
       EntityToParams(qry, aPagto);
+      TLog.d(qry);
       qry.ExecSQL;
 
       GravaParcelas(aPagto);
     except
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha Pagamento Cliente: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha Pagamento Cliente: ' + E.message);
       end;
     end;
   finally
@@ -278,7 +288,8 @@ begin
         + 'order by QUANTASVEZES';
 
       qry.ParamByName('IDPEDIDO').AsInteger := idpedido;
-      qry.open;
+      TLog.d(qry);
+      qry.Open;
 
       while not qry.Eof do
       begin
@@ -299,7 +310,8 @@ begin
   except
     on E: Exception do
     begin
-      raise TDaoException.Create('Falha Listar Pagto: ' + E.Message);
+      TLog.d(E.message);
+      raise TDaoException.Create('Falha Listar Pagto: ' + E.message);
     end;
   end;
 end;

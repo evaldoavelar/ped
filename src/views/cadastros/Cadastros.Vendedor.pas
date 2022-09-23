@@ -6,10 +6,10 @@ uses
   System.Bindings.Helper,
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Cadastros.Base,
-  Vcl.StdCtrls, Vcl.ComCtrls,
+  Vcl.StdCtrls, Vcl.ComCtrls, Dominio.Entidades.TEntity, System.Generics.Collections,
   Dao.IDaoVendedor, Dominio.Entidades.TVendedor, JvExMask, JvToolEdit, JvBaseEdits, JvComponentBase, JvEnterTab,
   Vcl.Mask, System.Actions, Vcl.ActnList, Vcl.WinXCtrls, Vcl.Buttons,
-  Vcl.ExtCtrls, Vcl.Imaging.jpeg;
+  Vcl.ExtCtrls, Vcl.Imaging.jpeg, Vcl.AutoComplete;
 
 type
   TfrmCadastroVendedor = class(TfrmCadastroBase)
@@ -35,7 +35,7 @@ type
     procedure chkPodeCancelarPedidoClick(Sender: TObject);
   private
     FVendedor: TVendedor;
-    DaoVendedor: IDaoVendedor;
+    FDaoVendedor: IDaoVendedor;
 
   protected
     procedure Excluir; override;
@@ -43,7 +43,9 @@ type
     procedure Cancelar; override;
     procedure Bind(); override;
     procedure Novo(); override;
-    procedure getEntity; override;
+    procedure getEntity(aEntity: TObject); override;
+    function MontaDescricaoPesquisa(aItem: TEntity): string; override;
+    function PesquisaPorDescricaoParcial(aValor: string): TObjectList<TEntity>; override;
     procedure AtualizarEntity(); override;
     procedure IncluirEntity(); override;
   end;
@@ -62,7 +64,7 @@ procedure TfrmCadastroVendedor.Excluir;
 begin
   inherited;
   try
-    DaoVendedor.ExcluirVendedor(FVendedor.CODIGO);
+    FDaoVendedor.ExcluirVendedor(FVendedor.CODIGO);
     FVendedor.Free;
     FVendedor := nil;
 
@@ -79,8 +81,8 @@ end;
 procedure TfrmCadastroVendedor.AtualizarEntity;
 begin
   inherited;
-  DaoVendedor.AtualizaVendedor(FVendedor);
-  edtPesquisa.Text := FVendedor.CODIGO;
+  FDaoVendedor.AtualizaVendedor(FVendedor);
+  edtPesquisa.Text := FVendedor.NOME;
 end;
 
 procedure TfrmCadastroVendedor.Bind;
@@ -89,7 +91,7 @@ begin
   FVendedor.ClearBindings;
   FVendedor.Bind('CODIGO', edtCodigo, 'Text');
   FVendedor.Bind('NOME', edtDescricao, 'Text');
-  FVendedor.Bind('NOME', lblCliente, 'Caption');
+//  FVendedor.Bind('NOME', lblCliente, 'Caption');
   FVendedor.Bind('COMISSAOV', edtComissaoValor, 'Text');
   FVendedor.Bind('COMISSAOP', edtComissaoPerc, 'Text');
   FVendedor.Bind('SENHA', edtSenha, 'Text');
@@ -107,7 +109,7 @@ begin
   try
     if Assigned(FVendedor) and (FVendedor.CODIGO <> '') then
     begin
-      FVendedor := DaoVendedor.GetVendedor(FVendedor.CODIGO);
+      FVendedor := FDaoVendedor.GetVendedor(FVendedor.CODIGO);
       Bind;
     end
     else
@@ -155,13 +157,30 @@ procedure TfrmCadastroVendedor.FormShow(Sender: TObject);
 begin
   inherited;
 
-  DaoVendedor := TFactory.DaoVendedor;
+  FDaoVendedor := TFactory.DaoVendedor;
 end;
 
-procedure TfrmCadastroVendedor.getEntity;
+procedure TfrmCadastroVendedor.getEntity(aEntity: TObject);
+var
+  LItem: TVendedor;
 begin
   try
-    FVendedor := DaoVendedor.GetVendedor(edtPesquisa.Text);
+
+    // edição
+    if (aEntity = nil) and (FVendedor <> nil) then
+    begin
+      FVendedor := FDaoVendedor.GetVendedor(FVendedor.CODIGO);
+    end
+    else
+    begin // pesquisa
+      LItem := aEntity as TVendedor;
+
+      if Assigned(FVendedor) then
+        FreeAndNil(FVendedor);
+
+      FVendedor := FDaoVendedor.GetVendedor(LItem.CODIGO);
+    end;
+
     if not Assigned(FVendedor) then
       raise Exception.Create('Vendedor não encontrado');
     Bind();
@@ -179,8 +198,16 @@ end;
 procedure TfrmCadastroVendedor.IncluirEntity;
 begin
   inherited;
-  DaoVendedor.IncluiVendedor(FVendedor);
-  edtPesquisa.Text := FVendedor.CODIGO;
+  FDaoVendedor.IncluiVendedor(FVendedor);
+  edtPesquisa.Text := FVendedor.NOME;
+end;
+
+function TfrmCadastroVendedor.MontaDescricaoPesquisa(aItem: TEntity): string;
+var
+  LItem: TVendedor;
+begin
+  LItem := aItem as TVendedor;
+  result := LItem.NOME;
 end;
 
 procedure TfrmCadastroVendedor.Novo;
@@ -209,6 +236,23 @@ begin
 
 end;
 
+function TfrmCadastroVendedor.PesquisaPorDescricaoParcial(
+  aValor: string): TObjectList<TEntity>;
+var
+  LLista: TObjectList<TVendedor>;
+  item: TVendedor;
+begin
+  LLista := FDaoVendedor.Listar(aValor);
+  result := TObjectList<TEntity>.Create();
+
+  for item in LLista do
+    result.Add(item);
+
+  LLista.OwnsObjects := false;
+  LLista.Free;
+
+end;
+
 procedure TfrmCadastroVendedor.Pesquisar;
 begin
   inherited;
@@ -220,7 +264,7 @@ begin
       if Assigned(frmConsultaVendedor.Vendedor) then
       begin
         Self.FVendedor := frmConsultaVendedor.Vendedor;
-        edtPesquisa.Text := Self.FVendedor.CODIGO;
+        edtPesquisa.Text := Self.FVendedor.NOME;
         Bind();
         inherited;
       end

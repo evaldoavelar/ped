@@ -5,7 +5,7 @@ interface
 uses
   System.SysUtils, System.Classes, Vcl.Graphics, Vcl.ExtCtrls, Vcl.Imaging.jpeg,
   Data.DB, FireDAC.Comp.Client, FireDAC.Stan.Param,
-  Dao.TDaoBase, Dao.IDaoParametros,
+  Dao.TDaoBase, Sistema.TLog, Dao.IDaoParametros,
   Sistema.TParametros;
 
 type
@@ -52,12 +52,14 @@ begin
 
       ObjectToParams(qry, Parametros);
 
+      TLog.d(qry);
       qry.ExecSQL;
 
     except
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha AtualizaParametros: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha AtualizaParametros: ' + E.message);
       end;
     end;
   finally
@@ -76,7 +78,8 @@ begin
     try
       qry.SQL.Text := '' + 'select *  ' + 'from  Parametros ';
 
-      qry.open;
+      TLog.d(qry);
+      qry.Open;
 
       if qry.IsEmpty then
         Result := nil
@@ -86,7 +89,8 @@ begin
     except
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha GetParametros: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha GetParametros: ' + E.message);
       end;
     end;
   finally
@@ -134,12 +138,14 @@ begin
 
       ObjectToParams(qry, Parametros);
 
+      TLog.d(qry);
       qry.ExecSQL;
 
     except
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha Incluir Parametros: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha Incluir Parametros: ' + E.message);
       end;
     end;
   finally
@@ -194,7 +200,10 @@ begin
 
   except
     on E: Exception do
-      raise TDaoException.Create('Falha ao associar parâmetros TDaoParametros: ' + E.Message);
+    begin
+      TLog.d(E.message);
+      raise TDaoException.Create('Falha ao associar parâmetros TDaoParametros: ' + E.message);
+    end;
   end;
 end;
 
@@ -225,7 +234,10 @@ begin
 
   except
     on E: Exception do
-      raise TDaoException.Create('Falha no ParamsToObject TParametros: ' + E.Message);
+    begin
+      TLog.d(E.message);
+      raise TDaoException.Create('Falha no ParamsToObject TParametros: ' + E.message);
+    end;
   end;
 end;
 

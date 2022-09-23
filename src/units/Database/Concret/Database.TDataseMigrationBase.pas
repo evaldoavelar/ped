@@ -51,7 +51,7 @@ uses
   Dominio.Entidades.TParcelas,
   Impressao.Parametros.Impressora.Termica,
   Util.Funcoes, Dominio.Entidades.TEmitente, Dominio.Entidades.TFornecedor, Dominio.Entidades.TFormaPagto, Dominio.Entidades.TProduto, Dominio.Entidades.CondicaoPagto,
-  Dominio.Entidades.Pedido.Pagamentos.Pagamento, Sangria.Suprimento.Informar, Dominio.Entidades.TSangriaSuprimento, Dominio.Entidades.TEstoqueProduto;
+  Dominio.Entidades.Pedido.Pagamentos.Pagamento, Sangria.Suprimento.Informar, Dominio.Entidades.TSangriaSuprimento, Dominio.Entidades.TEstoqueProduto, Sistema.TLog;
 
 function TDataseMigrationBase.getScript(Entity: TClass): TStringList;
 var
@@ -61,7 +61,7 @@ var
   prop: TRttiProperty;
   FTabela: TTabelaBD;
 begin
-
+  TLog.d('>>> Entrando em  TDataseMigrationBase.getScript ');
   FTabela := getTipoTabela;
 
   Rtti := TRttiContext.create;
@@ -79,7 +79,7 @@ begin
   result := FTabela.toScript();
 
   FreeAndNil(FTabela);
-
+  TLog.d('<<< Saindo de TDataseMigrationBase.getScript ');
 end;
 
 procedure TDataseMigrationBase.Migrate;
@@ -116,6 +116,7 @@ var
   Parametros: TParametros;
   Dao: IDaoParametros;
 begin
+  TLog.d('>>> Entrando em  TDataseMigrationBase.Migrate ');
   self.FErros.clear;
 
   if CompareVersaoBD() then
@@ -155,10 +156,13 @@ begin
 
     except
       on E: Exception do
+      begin
+        TLog.d(E.Message);
         raise Exception.create('Migrate: ' + classe.ClassName + ' - ' + E.Message);
+      end;
     end;
   end;
-
+  TLog.d('<<< Saindo de TDataseMigrationBase.Migrate ');
 end;
 
 procedure TDataseMigrationBase.Seed;
@@ -170,6 +174,7 @@ var
   Vendedor: TVendedor;
   I: Integer;
 begin
+  TLog.d('>>> Entrando em  TDataseMigrationBase.Seed ');
   try
     Emitente := TEmitente.create;
     Emitente.RAZAO_SOCIAL := 'EMPRESA DE TESTE';
@@ -229,8 +234,12 @@ begin
   except
 
     on E: Exception do
+    begin
+      TLog.d(E.Message);
       raise Exception.create('SEED: ' + ' - ' + E.Message);
+    end;
   end;
+  TLog.d('<<< Saindo de TDataseMigrationBase.Seed ');
 end;
 
 function TDataseMigrationBase.Atualiza(AClasse: TClass; AScripts: TStringList): Integer;
@@ -246,10 +255,12 @@ begin
     begin
       try
         qry.sql.Text := sql;
+        TLog.d(qry);
         qry.ExecSQL;
       except
         on E: Exception do
         begin
+          TLog.d(E.Message);
           self.FErros.Add(AClasse, E.Message + ' - ' + sql);
           Inc(result);
         end;
@@ -293,15 +304,18 @@ end;
 
 constructor TDataseMigrationBase.create(ATipo: tpBds);
 begin
+  TLog.d('>>> Entrando em  TDataseMigrationBase.create ');
   self.FTipoBD := ATipo;
   self.FErros := TDictionary<TClass, string>.create();
-
+  TLog.d('<<< Saindo de TDataseMigrationBase.create ');
 end;
 
 destructor TDataseMigrationBase.destroy;
 begin
+  TLog.d('>>> Entrando em  TDataseMigrationBase.destroy ');
   self.FErros.clear;
   self.FErros.Free;
+  TLog.d('<<< Saindo de TDataseMigrationBase.destroy ');
 end;
 
 function TDataseMigrationBase.getTipoTabela: TTabelaBD;

@@ -5,7 +5,7 @@ interface
 uses
   System.SysUtils, System.Classes, System.Generics.Collections,
   Data.DB,
-  Dao.TDaoBase,
+  Dao.TDaoBase, Sistema.TLog,
   Dominio.Entidades.TProduto;
 
 type

@@ -5,7 +5,7 @@ interface
 uses
   System.SysUtils, System.Classes, System.Generics.Collections,
   Data.DB,
-  Dao.TDaoBase,
+  Dao.TDaoBase, Sistema.TLog,
   Dominio.Entidades.TVendedor;
 
 type
@@ -15,8 +15,9 @@ type
     procedure ExcluirVendedor(codigo: string);
     procedure IncluiVendedor(vendedor: TVendedor);
     procedure ValidaVendedor(vendedor: TVendedor);
-    function Listar(campo, valor: string): TDataSet;overload;
-    function Listar(): TObjectList<TVendedor>;overload;
+    function Listar(campo, valor: string): TDataSet; overload;
+    function Listar(descricao: string): TObjectList<TVendedor>; overload;
+    function Listar(): TObjectList<TVendedor>; overload;
     procedure AtualizaVendedor(vendedor: TVendedor);
     function GetVendedor(codigo: string): TVendedor;
     function GetVendedorbyNome(nome: string): TVendedor;

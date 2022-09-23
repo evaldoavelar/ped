@@ -6,7 +6,7 @@ uses
   System.Generics.Collections,
   System.SysUtils, System.Classes,
   Data.DB, FireDAC.Comp.Client,
-  Dao.TDaoBase,
+  Dao.TDaoBase, Sistema.TLog,
   Helper.TPedidoPeriodo,
   Dao.IDAOPedidoPeriodo;
 
@@ -45,7 +45,8 @@ begin
 
     qry.ParamByName('dataInicial').AsDate := DataInicio;
     qry.ParamByName('dataFinal').AsDate := DataFim;
-    qry.open;
+    TLog.d(qry);
+    qry.Open;
 
     Result := TListaPeriodoPedido.Create();
 
@@ -64,13 +65,14 @@ begin
   except
     on E: Exception do
     begin
-      raise TDaoException.Create('Falha GetPorPeriodo: ' + E.Message);
+      TLog.d(E.message);
+      raise TDaoException.Create('Falha GetPorPeriodo: ' + E.message);
     end;
   end;
 
 end;
 
-function TDaoPedidoPeriodo.GetTotaisParcelado(DataInicio, DataFim: TDate):TListaPeriodoPedido;
+function TDaoPedidoPeriodo.GetTotaisParcelado(DataInicio, DataFim: TDate): TListaPeriodoPedido;
 var
   qry: TFDQuery;
   periodo: TPedidoPeriodo;
@@ -91,7 +93,8 @@ begin
 
     qry.ParamByName('dataInicial').AsDate := DataInicio;
     qry.ParamByName('dataFinal').AsDate := DataFim;
-    qry.open;
+    TLog.d(qry);
+    qry.Open;
 
     Result := TListaPeriodoPedido.Create();
 
@@ -110,7 +113,8 @@ begin
   except
     on E: Exception do
     begin
-      raise TDaoException.Create('Falha GetPorPeriodo: ' + E.Message);
+      TLog.d(E.message);
+      raise TDaoException.Create('Falha GetPorPeriodo: ' + E.message);
     end;
   end;
 

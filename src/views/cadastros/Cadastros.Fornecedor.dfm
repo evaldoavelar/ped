@@ -519,14 +519,4 @@ inherited frmCadastroFornecedor: TfrmCadastroFornecedor
       Font.Color = 10639360
     end
   end
-  inherited pnlTop: TPanel
-    inherited Label1: TLabel
-      Color = clWhite
-      ParentColor = False
-    end
-    inherited lblCliente: TLabel
-      Color = clWhite
-      ParentColor = False
-    end
-  end
 end

@@ -4,7 +4,7 @@ interface
 
 uses
   System.SysUtils, System.Classes,
-  Dao.TDaoBase,
+  Dao.TDaoBase, Sistema.TLog,
   Dominio.Entidades.TEmitente, Data.DB;
 
 type

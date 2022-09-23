@@ -5,7 +5,7 @@ interface
 uses
   System.SysUtils, System.Classes,
   Data.DB, FireDAC.Comp.Client,
-  Dao.TDaoBase,
+  Dao.TDaoBase, Sistema.TLog,
   Dominio.Entidades.TEmitente, Dao.IDaoEmitente;
 
 type
@@ -57,12 +57,15 @@ begin
 
       ObjectToParams(qry, Emitente);
 
+      TLog.d(qry);
+
       qry.ExecSQL;
 
     except
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha AtualizaEmitente: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha AtualizaEmitente: ' + E.message);
       end;
     end;
   finally
@@ -83,7 +86,8 @@ begin
         + 'select *  '
         + 'from  Emitente ';
 
-      qry.open;
+      TLog.d(qry);
+      qry.Open;
 
       if qry.IsEmpty then
         Result := nil
@@ -93,7 +97,8 @@ begin
     except
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha GetEmitente: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha GetEmitente: ' + E.message);
       end;
     end;
   finally
@@ -114,14 +119,16 @@ begin
       + 'select *  '
       + 'from  Emitente ';
 
-    qry.open;
+    TLog.d(qry);
+    qry.Open;
 
     Result := qry;
 
   except
     on E: Exception do
     begin
-      raise TDaoException.Create('Falha GetEmitente: ' + E.Message);
+      TLog.d(E.message);
+      raise TDaoException.Create('Falha GetEmitente: ' + E.message);
     end;
   end;
 end;
@@ -171,12 +178,14 @@ begin
 
       ObjectToParams(qry, Emitente);
 
+      TLog.d(qry);
       qry.ExecSQL;
 
     except
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha Incluir Emitente: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha Incluir Emitente: ' + E.message);
       end;
     end;
   finally
@@ -224,7 +233,10 @@ begin
     // ds.Params.ParamByName('EMAIL').AsString := Emitente.EMAIL;
   except
     on E: Exception do
-      raise TDaoException.Create('Falha ao associar parâmetros TDaoVendedor: ' + E.Message);
+    begin
+      TLog.d(E.message);
+      raise TDaoException.Create('Falha ao associar parâmetros TDaoVendedor: ' + E.message);
+    end;
   end;
 end;
 
@@ -252,7 +264,10 @@ begin
     // Result.EMAIL := ds.FieldByName('EMAIL').AsString;
   except
     on E: Exception do
-      raise TDaoException.Create('Falha no ParamsToObject: ' + E.Message);
+    begin
+      TLog.d(E.message);
+      raise TDaoException.Create('Falha no ParamsToObject: ' + E.message);
+    end;
   end;
 end;
 

@@ -7,7 +7,7 @@ uses
   System.SysUtils, System.Classes,
   FireDAC.Stan.Error,
   Data.DB, FireDAC.Comp.Client,
-  Dao.TDaoBase, Dao.IDaoFormaPagto,
+  Dao.TDaoBase, Sistema.TLog, Dao.IDaoFormaPagto,
   Dominio.Entidades.TFormaPagto, Dao.TDaoCondicaoPagto, Dao.IDaoCondicaoPagto;
 
 type
@@ -26,7 +26,8 @@ type
     function GeTFormaPagto(id: Integer): TFormaPagto;
     function GeTFormaByDescricao(DESCRICAO: string): TFormaPagto;
     function Lista(): TDataSet;
-    function Listar(campo, valor: string): TDataSet;
+    function Listar(aDescricao: string): TObjectList<TFormaPagto>; overload;
+    function Listar(campo, valor: string): TDataSet; overload;
     function ListaObject(): TObjectList<TFormaPagto>;
     function ListaAtivosObject(): TObjectList<TFormaPagto>;
     function GeraID: Integer;
@@ -64,6 +65,7 @@ begin
         + '     id = :id';
 
       qry.ParamByName('id').AsInteger := id;
+      TLog.d(qry);
       qry.ExecSQL;
     except
       on E: EFDDBEngineException do
@@ -75,7 +77,8 @@ begin
       end;
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha ExcluirCliente: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha ExcluirCliente: ' + E.message);
       end;
     end;
   finally
@@ -104,6 +107,7 @@ begin
       ValidaForma(FormaPagtos);
       ObjectToParams(qry, FormaPagtos);
 
+      TLog.d(qry);
       qry.ExecSQL;
 
       for condicao in FormaPagtos.CONDICAODEPAGTO do
@@ -122,7 +126,8 @@ begin
     except
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha AtualizaFormaPagtos: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha AtualizaFormaPagtos: ' + E.message);
       end;
     end;
   finally
@@ -151,7 +156,8 @@ begin
         + '    DESCRICAO = :DESCRICAO ';
 
       qry.ParamByName('DESCRICAO').AsString := DESCRICAO;
-      qry.open;
+      TLog.d(qry);
+      qry.Open;
 
       if qry.IsEmpty then
         Result := nil
@@ -161,7 +167,8 @@ begin
     except
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha GeTFormaPagto: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha GeTFormaPagto: ' + E.message);
       end;
     end;
   finally
@@ -185,7 +192,8 @@ begin
         + '    id = :id ';
 
       qry.ParamByName('ID').AsInteger := id;
-      qry.open;
+      TLog.d(qry);
+      qry.Open;
 
       if qry.IsEmpty then
         Result := nil
@@ -198,7 +206,8 @@ begin
     except
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha GeTFormaPagto: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha GeTFormaPagto: ' + E.message);
       end;
     end;
   finally
@@ -233,6 +242,7 @@ begin
       ValidaForma(FormaPagtos);
       ObjectToParams(qry, FormaPagtos);
 
+      TLog.d(qry);
       qry.ExecSQL;
 
       for condicao in FormaPagtos.CONDICAODEPAGTO do
@@ -251,7 +261,8 @@ begin
     except
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha Pagamento Cliente: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha Pagamento Cliente: ' + E.message);
       end;
     end;
   finally
@@ -275,14 +286,16 @@ begin
       + ' UPPER( ' + campo + ') like UPPER( ' + QuotedStr(valor) + ') '
       + 'order by DESCRICAO';
 
-    qry.open;
+    TLog.d(qry);
+    qry.Open;
 
     Result := qry;
 
   except
     on E: Exception do
     begin
-      raise TDaoException.Create('Falha Listar Pagto: ' + E.Message);
+      TLog.d(E.message);
+      raise TDaoException.Create('Falha Listar Pagto: ' + E.message);
     end;
   end;
 
@@ -301,14 +314,16 @@ begin
       + 'from  FORMAPAGTO '
       + 'order by DESCRICAO';
 
-    qry.open;
+    TLog.d(qry);
+    qry.Open;
 
     Result := qry;
 
   except
     on E: Exception do
     begin
-      raise TDaoException.Create('Falha Listar Pagto: ' + E.Message);
+      TLog.d(E.message);
+      raise TDaoException.Create('Falha Listar Pagto: ' + E.message);
     end;
   end;
 end;
@@ -329,7 +344,8 @@ begin
         + 'where ativo = 1 '
         + 'order by DESCRICAO';
 
-      qry.open;
+      TLog.d(qry);
+      qry.Open;
 
       while not qry.Eof do
       begin
@@ -346,7 +362,8 @@ begin
   except
     on E: Exception do
     begin
-      raise TDaoException.Create('Falha Listar Pagto: ' + E.Message);
+      TLog.d(E.message);
+      raise TDaoException.Create('Falha Listar Pagto: ' + E.message);
     end;
   end;
 
@@ -366,7 +383,8 @@ begin
         + 'from  FORMAPAGTO '
         + 'order by DESCRICAO';
 
-      qry.open;
+      TLog.d(qry);
+      qry.Open;
 
       while not qry.Eof do
       begin
@@ -381,7 +399,46 @@ begin
   except
     on E: Exception do
     begin
-      raise TDaoException.Create('Falha Listar Pagto: ' + E.Message);
+      TLog.d(E.message);
+      raise TDaoException.Create('Falha Listar Pagto: ' + E.message);
+    end;
+  end;
+
+end;
+
+function TDaoFormaPagto.Listar(aDescricao: string): TObjectList<TFormaPagto>;
+var
+  qry: TFDQuery;
+begin
+
+  qry := TFactory.Query();
+  Result := TObjectList<TFormaPagto>.Create();
+  try
+    try
+      qry.SQL.Text := ''
+        + 'select *  '
+        + 'from  FORMAPAGTO '
+        + ' where UPPER( DESCRICAO ) like UPPER( ' + QuotedStr('%' + aDescricao + '%') + ')'
+        + 'order by DESCRICAO';
+
+      TLog.d(qry);
+      qry.Open;
+
+      while not qry.Eof do
+      begin
+        Result.Add(ParamsToObject(qry));
+        qry.next;
+      end;
+
+    finally
+      FreeAndNil(qry);
+    end;
+
+  except
+    on E: Exception do
+    begin
+      TLog.d(E.message);
+      raise TDaoException.Create('Falha Listar Pagto: ' + E.message);
     end;
   end;
 
@@ -403,7 +460,10 @@ begin
 
   except
     on E: Exception do
-      raise TDaoException.Create('Falha ao associar parâmetros TFormaPagto: ' + E.Message);
+    begin
+      TLog.d(E.message);
+      raise TDaoException.Create('Falha ao associar parâmetros TFormaPagto: ' + E.message);
+    end;
   end;
 end;
 
@@ -420,7 +480,10 @@ begin
 
   except
     on E: Exception do
-      raise TDaoException.Create('Falha no ParamsToObject TFormaPagto: ' + E.Message);
+    begin
+      TLog.d(E.message);
+      raise TDaoException.Create('Falha no ParamsToObject TFormaPagto: ' + E.message);
+    end;
   end;
 end;
 

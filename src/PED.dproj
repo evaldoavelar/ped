@@ -431,6 +431,8 @@
             <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="units\relatorio\Relatorio.FREtiquetas.Modelo4x2.pas"/>
+        <DCCReference Include="units\Sistema\Sistema.TLog.pas"/>
+        <DCCReference Include="units\Util\Utils.IO.pas"/>
         <None Include="ModelSupport_PED\default.txaPackage"/>
         <None Include="ModelSupport_PED\default.txvpck"/>
         <None Include="ModelSupport_PED\Pedido\default.txvpck"/>

@@ -6,9 +6,10 @@ uses
   System.Bindings.Helper,
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Cadastros.Base, Vcl.StdCtrls,
-  Vcl.ComCtrls,
+  Vcl.ComCtrls, Dominio.Entidades.TEntity, System.Generics.Collections,
   Dao.IDaoFornecedor, Dominio.Entidades.TFornecedor, Vcl.Mask, JvComponentBase, JvEnterTab,
-  System.Actions, Vcl.ActnList, Vcl.WinXCtrls, Vcl.Buttons, Vcl.ExtCtrls, Vcl.Imaging.jpeg;
+  System.Actions, Vcl.ActnList, Vcl.WinXCtrls, Vcl.Buttons, Vcl.ExtCtrls, Vcl.Imaging.jpeg,
+  Vcl.AutoComplete;
 
 type
   TfrmCadastroFornecedor = class(TfrmCadastroBase)
@@ -63,7 +64,9 @@ type
     procedure Cancelar; override;
     procedure Bind(); override;
     procedure Novo(); override;
-    procedure getEntity; override;
+    procedure getEntity(aEntity: TObject); override;
+    function MontaDescricaoPesquisa(aItem: TEntity): string; override;
+    function PesquisaPorDescricaoParcial(aValor: string): TObjectList<TEntity>; override;
     procedure AtualizarEntity(); override;
     procedure IncluirEntity(); override;
   public
@@ -103,7 +106,7 @@ procedure TfrmCadastroFornecedor.AtualizarEntity;
 begin
   inherited;
   DaoFornecedor.AtualizaFornecedors(FFornecedor);
-  edtPesquisa.Text := FFornecedor.CODIGO;
+  edtPesquisa.Text := FFornecedor.NOME;
 end;
 
 procedure TfrmCadastroFornecedor.Bind;
@@ -112,7 +115,7 @@ begin
   FFornecedor.ClearBindings;
   FFornecedor.Bind('CODIGO', edtCodigo, 'Text');
   FFornecedor.Bind('NOME', edtNome, 'Text');
-  FFornecedor.BindReadOnly('NOME', lblCliente, 'Caption');
+//  FFornecedor.BindReadOnly('NOME', lblCliente, 'Caption');
   FFornecedor.Bind('FANTASIA', edtFantasia, 'Text');
   FFornecedor.Bind('CNPJ_CNPF', edtCpf, 'Text');
   FFornecedor.Bind('IE_RG', edtIE, 'Text');
@@ -186,12 +189,30 @@ begin
   DaoFornecedor := TFactory.DaoFornecedor;
 end;
 
-procedure TfrmCadastroFornecedor.getEntity;
+procedure TfrmCadastroFornecedor.getEntity(aEntity: TObject);
+var
+  LItem: TFornecedor;
 begin
   try
-    FFornecedor := DaoFornecedor.GeFornecedor(edtPesquisa.Text);
+
+    // edição
+    if (aEntity = nil) and (FFornecedor <> nil) then
+    begin
+      FFornecedor := DaoFornecedor.GeFornecedor(FFornecedor.CODIGO);
+    end
+    else
+    begin // pesquisa
+      LItem := aEntity as TFornecedor;
+
+      if Assigned(FFornecedor) then
+        FreeAndNil(FFornecedor);
+
+      FFornecedor := DaoFornecedor.GeFornecedor(LItem.CODIGO);
+    end;
+
     if not Assigned(FFornecedor) then
       raise Exception.Create('Fornecedor não encontrado');
+
     Bind();
     tratabotoes;
   except
@@ -209,7 +230,15 @@ begin
   inherited;
   FFornecedor.CODIGO := DaoFornecedor.GeraID;
   DaoFornecedor.IncluiFornecedor(FFornecedor);
-  edtPesquisa.Text := FFornecedor.CODIGO;
+  edtPesquisa.Text := FFornecedor.NOME;
+end;
+
+function TfrmCadastroFornecedor.MontaDescricaoPesquisa(aItem: TEntity): string;
+var
+  LItem: TFornecedor;
+begin
+  LItem := aItem as TFornecedor;
+  result := LItem.NOME;
 end;
 
 procedure TfrmCadastroFornecedor.Novo;
@@ -238,6 +267,23 @@ begin
 
 end;
 
+function TfrmCadastroFornecedor.PesquisaPorDescricaoParcial(
+  aValor: string): TObjectList<TEntity>;
+var
+  LLista: TObjectList<TFornecedor>;
+  item: TFornecedor;
+begin
+  LLista := DaoFornecedor.Listar(aValor);
+  result := TObjectList<TEntity>.Create();
+
+  for item in LLista do
+    result.Add(item);
+
+  LLista.OwnsObjects := false;
+  LLista.Free;
+
+end;
+
 procedure TfrmCadastroFornecedor.Pesquisar;
 begin
   inherited;
@@ -249,7 +295,7 @@ begin
       if Assigned(frmConsultaFornecedor.Fornecedor) then
       begin
         Self.FFornecedor := frmConsultaFornecedor.Fornecedor;
-        edtPesquisa.Text := Self.FFornecedor.CODIGO;
+        edtPesquisa.Text := Self.FFornecedor.NOME;
         Bind();
         inherited;
       end

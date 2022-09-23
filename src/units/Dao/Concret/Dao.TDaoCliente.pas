@@ -31,7 +31,7 @@ type
 implementation
 
 uses
-  Util.Exceptions, Dominio.Entidades.TFactory, Util.Funcoes;
+  Util.Exceptions, Dominio.Entidades.TFactory, Util.Funcoes, Sistema.TLog;
 
 { TDaoVendedor }
 
@@ -89,12 +89,16 @@ begin
 
       ObjectToParams(qry, Cliente);
 
+      TLog.d(qry);
       qry.ExecSQL;
 
     except
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha Atualizar Cliente: ' + E.Message);
+        begin
+          TLog.d(E.message);
+          raise TDaoException.Create('Falha Atualizar Cliente: ' + E.message);
+        end;
       end;
     end;
   finally
@@ -117,6 +121,7 @@ begin
         + '     CODIGO = :CODIGO';
 
       qry.ParamByName('CODIGO').AsString := codigo;
+      TLog.d(qry);
       qry.ExecSQL;
     except
       on E: EFDDBEngineException do
@@ -128,7 +133,8 @@ begin
       end;
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha ExcluirCliente: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha ExcluirCliente: ' + E.message);
       end;
     end;
   finally
@@ -157,7 +163,8 @@ begin
         + '     CODIGO = :CODIGO';
 
       qry.ParamByName('CODIGO').AsString := codigo;
-      qry.open;
+      TLog.d(qry);
+      qry.Open;
 
       if qry.IsEmpty then
         Result := nil
@@ -167,7 +174,8 @@ begin
     except
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha GeTCliente: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha GeTCliente: ' + E.message);
       end;
     end;
   finally
@@ -191,7 +199,8 @@ begin
         + '     NOME = :NOME';
 
       qry.ParamByName('NOME').AsString := nome;
-      qry.open;
+      TLog.d(qry);
+      qry.Open;
 
       if qry.IsEmpty then
         Result := nil
@@ -201,7 +210,8 @@ begin
     except
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha GeTClienteByName: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha GeTClienteByName: ' + E.message);
       end;
     end;
   finally
@@ -222,14 +232,12 @@ begin
         + 'select *  '
         + 'from  cliente '
         + 'WHERE '
-        + ' UPPER( NOME) like  UPPER( :NOME ) '
+        + '  UPPER( nome ) like UPPER( ' + QuotedStr(nome + '%') + ')'
         + ' order by nome ';
 
-      if Length(nome) > 60 then
-        nome := copy(nome, 0, 60);
-
-      qry.ParamByName('NOME').AsString := nome + '%';
-      qry.open;
+      // qry.ParamByName('NOME').AsString := '%' + nome + '%';
+      TLog.d(qry);
+      qry.Open;
 
       Result := TObjectList<TCliente>.Create();
 
@@ -242,7 +250,8 @@ begin
     except
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha GeTClienteByName: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha GeTClienteByName: ' + E.message);
       end;
     end;
   finally
@@ -346,12 +355,14 @@ begin
       ValidaCliente(Cliente);
       ObjectToParams(qry, Cliente);
 
+      TLog.d(qry);
       qry.ExecSQL;
 
     except
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha Inserir Cliente: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha Inserir Cliente: ' + E.message);
       end;
     end;
   finally
@@ -375,14 +386,16 @@ begin
       + ' UPPER( ' + campo + ') like UPPER( ' + QuotedStr(valor) + ') '
       + 'order by NOME';
 
-    qry.open;
+    TLog.d(qry);
+    qry.Open;
 
     Result := qry;
 
   except
     on E: Exception do
     begin
-      raise TDaoException.Create('Falha Listar Cliente: ' + E.Message);
+      TLog.d(E.message);
+      raise TDaoException.Create('Falha Listar Cliente: ' + E.message);
     end;
   end;
 
@@ -559,7 +572,10 @@ begin
     // Result.BLOQUEADO := ds.FieldByName('BLOQUEADO').AsInteger = 1;
   except
     on E: Exception do
-      raise TDaoException.Create('Falha no ParamsToObject Cliente: ' + E.Message);
+    begin
+      TLog.d(E.message);
+      raise TDaoException.Create('Falha no ParamsToObject Cliente: ' + E.message);
+    end;
   end;
 
 end;

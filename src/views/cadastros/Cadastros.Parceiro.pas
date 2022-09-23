@@ -4,9 +4,10 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Dominio.Entidades.TEntity, System.Generics.Collections,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Cadastros.Base, JvComponentBase, JvEnterTab, System.Actions, Vcl.ActnList, Vcl.StdCtrls, Vcl.WinXCtrls, Vcl.Buttons, Vcl.ComCtrls,
   Vcl.ExtCtrls, Dominio.Entidades.TFactory, Dao.IDaoParceiro, Dominio.Entidades.TParceiro, Consulta.Parceiro,
-  System.Bindings.Helper, Vcl.Imaging.jpeg;
+  System.Bindings.Helper, Vcl.Imaging.jpeg, Vcl.AutoComplete;
 
 type
   TfrmCadastroParceiro = class(TfrmCadastroBase)
@@ -33,7 +34,9 @@ type
     procedure Cancelar; override;
     procedure Bind(); override;
     procedure Novo(); override;
-    procedure getEntity; override;
+    procedure getEntity(aEntity: TObject); override;
+    function MontaDescricaoPesquisa(aItem: TEntity): string; override;
+    function PesquisaPorDescricaoParcial(aValor: string): TObjectList<TEntity>; override;
     procedure AtualizarEntity(); override;
     procedure IncluirEntity(); override;
   end;
@@ -77,7 +80,7 @@ begin
   FParceiro.ClearBindings;
   FParceiro.Bind('CODIGO', edtCodigo, 'Text');
   FParceiro.Bind('NOME', edtDescricao, 'Text');
-  FParceiro.Bind('NOME', lblCliente, 'Caption');
+//  FParceiro.Bind('NOME', lblCliente, 'Caption');
   FParceiro.Bind('INATIVO', chkINATIVO, 'Checked');
 end;
 
@@ -136,12 +139,30 @@ begin
   DaoParceiro := TFactory.DaoParceiro;
 end;
 
-procedure TfrmCadastroParceiro.getEntity;
+procedure TfrmCadastroParceiro.getEntity(aEntity: TObject);
+var
+  LItem: TParceiro;
 begin
   try
-    FParceiro := DaoParceiro.GetParceiro(edtPesquisa.Text);
+
+    // edição
+    if (aEntity = nil) and (FParceiro <> nil) then
+    begin
+      FParceiro := DaoParceiro.GetParceiro(FParceiro.CODIGO);
+    end
+    else
+    begin // pesquisa
+      LItem := aEntity as TParceiro;
+
+      if Assigned(FParceiro) then
+        FreeAndNil(FParceiro);
+
+      FParceiro := DaoParceiro.GetParceiro(LItem.CODIGO);
+    end;
+
     if not Assigned(FParceiro) then
       raise Exception.Create('Parceiro não encontrado');
+
     Bind();
     tratabotoes;
   except
@@ -156,15 +177,21 @@ end;
 
 procedure TfrmCadastroParceiro.IncluirEntity;
 begin
-
   DaoParceiro.IncluiParceiro(FParceiro);
   inherited;
+end;
+
+function TfrmCadastroParceiro.MontaDescricaoPesquisa(aItem: TEntity): string;
+var
+  LItem: TParceiro;
+begin
+  LItem := aItem as TParceiro;
+  result := LItem.NOME;
 end;
 
 procedure TfrmCadastroParceiro.Novo;
 begin
   try
-
 
     if Assigned(FParceiro) then
     begin
@@ -182,11 +209,27 @@ begin
       on e: Exception do
     end;
 
-
   except
     on e: Exception do
       MessageDlg(e.Message, mtError, [mbOK], 0);
   end;
+
+end;
+
+function TfrmCadastroParceiro.PesquisaPorDescricaoParcial(
+  aValor: string): TObjectList<TEntity>;
+var
+  LLista: TObjectList<TParceiro>;
+  item: TParceiro;
+begin
+  LLista := DaoParceiro.Listar(aValor);
+  result := TObjectList<TEntity>.Create();
+
+  for item in LLista do
+    result.Add(item);
+
+  LLista.OwnsObjects := false;
+  LLista.Free;
 
 end;
 
@@ -201,14 +244,14 @@ begin
       if Assigned(frmConsultaParceiro.Parceiro) then
       begin
         Self.FParceiro := frmConsultaParceiro.Parceiro;
-        edtPesquisa.Text := Self.FParceiro.CODIGO;
+        edtPesquisa.Text := Self.FParceiro.NOME;
         Bind();
         inherited;
       end
       else
       begin
         state := TState.stBrowser;
-        TrataBotoes;
+        tratabotoes;
       end;
     finally
       frmConsultaParceiro.Free;

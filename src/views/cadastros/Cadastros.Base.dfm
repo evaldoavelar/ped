@@ -12,9 +12,9 @@ inherited frmCadastroBase: TfrmCadastroBase
   TextHeight = 13
   object pnlContainer: TPanel
     Left = 0
-    Top = 65
+    Top = 47
     Width = 674
-    Height = 415
+    Height = 433
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 1
@@ -23,7 +23,7 @@ inherited frmCadastroBase: TfrmCadastroBase
       Left = 3
       Top = 3
       Width = 668
-      Height = 409
+      Height = 427
       Align = alClient
       Font.Charset = DEFAULT_CHARSET
       Font.Color = 10639360
@@ -118,19 +118,15 @@ inherited frmCadastroBase: TfrmCadastroBase
     Left = 0
     Top = 0
     Width = 674
-    Height = 65
+    Height = 47
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 0
-    DesignSize = (
-      674
-      65)
     object Image1: TImage
       Left = 0
       Top = 0
-      Width = 674
-      Height = 67
-      Anchors = [akLeft, akTop, akRight, akBottom]
+      Width = 684
+      Height = 86
       Picture.Data = {
         0A544A504547496D616765E7460000FFD8FFE000104A46494600010101012C01
         2C0000FFE1061645786966000049492A00080000000A000E0102003300000086
@@ -700,64 +696,20 @@ inherited frmCadastroBase: TfrmCadastroBase
         87358E2F1859696A8308ADC0136CDB0F80943611DF2016804C02C429F58E0196
         D368E0FD47F27CD4004DF5FF00C02E08B95F12D7DCD40ABCE5C5C43BCF31BAED
         C29B235885BCEE52E6E8CEF52AD52AE8ACCF0C7FFFD9}
-    end
-    object Label1: TLabel
-      Left = 8
-      Top = 1
-      Width = 37
-      Height = 13
-      Caption = 'C'#243'digo:'
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWhite
-      Font.Height = -11
-      Font.Name = 'Tahoma'
-      Font.Style = []
-      ParentFont = False
-    end
-    object lblCliente: TLabel
-      AlignWithMargins = True
-      Left = 8
-      Top = 39
-      Width = 649
-      Height = 23
-      AutoSize = False
-      Caption = 'Cliente Balc'#227'o'
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWhite
-      Font.Height = -19
-      Font.Name = 'Tahoma'
-      Font.Style = [fsBold]
-      ParentFont = False
-      Layout = tlCenter
-    end
-    object edtPesquisa: TSearchBox
-      Tag = 1
-      Left = 8
-      Top = 14
-      Width = 193
-      Height = 21
-      Hint = 'Pesquisa'
-      Color = 13816530
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = 5259564
-      Font.Height = -11
-      Font.Name = 'Tahoma'
-      Font.Style = [fsBold]
-      ParentFont = False
-      ParentShowHint = False
-      ShowHint = True
-      TabOrder = 1
-      OnEnter = edtPesquisaEnter
-      OnExit = edtPesquisaExit
-      OnInvokeSearch = edtPesquisaInvokeSearch
+      Stretch = True
     end
     object btnPesquisar: TBitBtn
-      Left = 207
-      Top = 12
+      AlignWithMargins = True
+      Left = 555
+      Top = 10
       Width = 104
-      Height = 25
+      Height = 27
+      Margins.Top = 10
+      Margins.Right = 15
+      Margins.Bottom = 10
       Action = actPesquisar
-      Caption = 'Pesquisar'
+      Align = alRight
+      Caption = 'Filtro'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
@@ -765,6 +717,37 @@ inherited frmCadastroBase: TfrmCadastroBase
       Font.Style = [fsBold]
       ParentFont = False
       TabOrder = 0
+    end
+    object edtPesquisa: TAutoComplete
+      Tag = 1
+      AlignWithMargins = True
+      Left = 15
+      Top = 10
+      Width = 506
+      Height = 27
+      Hint = 'Pesquisa'
+      Margins.Left = 15
+      Margins.Top = 10
+      Margins.Right = 15
+      Margins.Bottom = 10
+      Align = alLeft
+      CharCase = ecUpperCase
+      Color = 13816530
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = 5259564
+      Font.Height = -16
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 1
+      OnClick = edtPesquisaClick
+      OnEnter = edtPesquisaEnter
+      OnExit = edtPesquisaExit
+      OnKeyPress = edtPesquisaKeyPress
+      OnKeyUp = edtPesquisaKeyUp
+      DropDownWidth = 0
     end
   end
   object act1: TActionList
