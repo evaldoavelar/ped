@@ -11,6 +11,8 @@ uses System.Generics.Collections,
   Dao.IDAOPedidoPagamento;
 
 type
+  TArrayInterger = array of Integer;
+
   TDAOPedidoPagamento = class(TDaoBase, IDAOPedidoPagamento)
   public
   public
@@ -21,6 +23,7 @@ type
     procedure Atualiza(aPagto: TPEDIDOPAGAMENTO);
     function GetPAGTO(SEQ: Integer; idpedido: Integer): TPEDIDOPAGAMENTO;
     function ListaObject(idpedido: Integer): tLIST<TPEDIDOPAGAMENTO>;
+    function TiposPagamento(idpedido: Integer): TArray<Integer>;
   private
     procedure GravaParcelas(aPagto: TPEDIDOPAGAMENTO);
 
@@ -32,7 +35,7 @@ type
 
 implementation
 
-uses Dominio.Entidades.TFactory, Util.Exceptions, Dao.TDaoParcelas, Dominio.Entidades.TParcelas;
+uses Dominio.Entidades.TFactory, Util.Exceptions, Dao.TDaoParcelas, Dominio.Entidades.TParcelas, Utils.ArrayUtil;
 { TClasseBase }
 
 procedure TDAOPedidoPagamento.GravaParcelas(aPagto: TPEDIDOPAGAMENTO);
@@ -319,6 +322,42 @@ end;
 class function TDAOPedidoPagamento.New(Connection: TFDConnection): IDAOPedidoPagamento;
 begin
   Result := TDAOPedidoPagamento.Create(Connection);
+end;
+
+function TDAOPedidoPagamento.TiposPagamento(idpedido: Integer): TArray<Integer>;
+var
+  qry: TFDQuery;
+begin
+  qry := TFactory.Query();
+
+  try
+    try
+      qry.SQL.Text := ''
+        + 'select distinct tipo  '
+        + 'from  PEDIDOPAGAMENTO '
+        + 'where  '
+        + '    IDPEDIDO = :IDPEDIDO ';
+
+      qry.ParamByName('IDPEDIDO').AsInteger := idpedido;
+      TLog.d(qry);
+      qry.Open;
+
+      while not qry.Eof do
+      begin
+        TArrayUtil<Integer>.Append(Result, qry.fieldByname('tipo').AsInteger);
+        qry.next;
+      end;
+
+    finally
+      FreeAndNil(qry);
+    end;
+  except
+    on E: Exception do
+    begin
+      TLog.d(E.message);
+      raise TDaoException.Create('Falha TiposPagamento: ' + E.message);
+    end;
+  end;
 end;
 
 procedure TDAOPedidoPagamento.Validar(aPagto: TPEDIDOPAGAMENTO);

@@ -68,6 +68,10 @@ object FrmPedidoVenda: TFrmPedidoVenda
       TabOrder = 1
       object tsGeral: TTabSheet
         Caption = 'tsGeral'
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object Image3: TImage
           Left = 0
           Top = 0
@@ -3349,6 +3353,10 @@ object FrmPedidoVenda: TFrmPedidoVenda
         Margins.Bottom = 0
         Caption = 'tsPagamento'
         ImageIndex = 1
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object Label2: TLabel
           Left = 15
           Top = 168

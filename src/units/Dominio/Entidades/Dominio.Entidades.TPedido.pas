@@ -294,7 +294,7 @@ begin
   result := 0;
 
   for Pagtos in Self.Pagamentos.FormasDePagamento do
-    if Pagtos.TipoPagamento = TTipoPagto.parcelado then
+    if Pagtos.TipoPagamento = TTipoPagto.Crediario then
       for Item in Pagtos.parcelas do
         result := result + Item.VALOR;
 

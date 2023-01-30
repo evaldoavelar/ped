@@ -4,7 +4,7 @@ interface
 
 type
 
-  TTipoPagto = (Nenhum = 0, Dinheiro = 1, Debito = 2, Credito = 3, Outros = 4, Parcelado = 5, Pix = 6);
+  TTipoPagto = (Nenhum = 0, Dinheiro = 1, Debito = 2, Credito = 3, Outros = 4, Crediario = 5, Pix = 6);
 
   TTipoPagtoHelper = record helper for TTipoPagto
   public
@@ -35,6 +35,8 @@ begin
       Result := 'PIX';
     Outros:
       Result := 'OUTROS';
+    Crediario:
+      Result := 'CREDIÁRIO';
   end;
 end;
 

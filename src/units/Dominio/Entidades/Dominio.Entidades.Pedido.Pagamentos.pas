@@ -4,6 +4,7 @@ interface
 
 uses
   Dominio.Entidades.Pedido.Pagamentos.Pagamento, System.Generics.Collections,
+   Dominio.Entidades.TFormaPagto.Tipo,
   Dominio.Entidades.TEntity, Dominio.Entidades.Observable, Dominio.Entidades.Observe;
 
 type
@@ -56,8 +57,9 @@ type
 
     procedure AssignedPagamentos(aFormasDePagamento: TLIST<TPEDIDOPAGAMENTO>);
 
-    procedure Clear;
+    function ContemTipo(aTipo: TTipoPagto): boolean;
 
+    procedure Clear;
 
   public
     constructor Create;
@@ -116,6 +118,19 @@ procedure TPAGAMENTOS.Clear;
 begin
   TRttiUtil.ListDisposeOf<TPEDIDOPAGAMENTO>(FFormasDePagamento);
   FFormasDePagamento := TLIST<TPEDIDOPAGAMENTO>.Create;
+end;
+
+function TPAGAMENTOS.ContemTipo(aTipo: TTipoPagto): boolean;
+begin
+  Result := false;
+  for var item in Self.FFormasDePagamento do
+  begin
+    if (item.TipoPagamento = aTipo) then
+    begin
+      Result := true;
+      Break;
+    end;
+  end;
 end;
 
 constructor TPAGAMENTOS.Create;

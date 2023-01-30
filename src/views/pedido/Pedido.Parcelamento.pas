@@ -369,7 +369,7 @@ begin
 
     for Pagto in pagtos do
     begin
-      if Pagto.TipoPagamento = TTipoPagto.Parcelado then
+      if Pagto.TipoPagamento = TTipoPagto.Crediario then
         lstFormaPagto.Items.AddObject(Pagto.DESCRICAO, Pagto);
     end;
 

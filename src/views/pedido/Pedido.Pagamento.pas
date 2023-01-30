@@ -256,9 +256,9 @@ begin
       and (forma.TipoPagamento <> TTipoPagto.dinheiro) then
       raise Exception.Create('TROCO SOMENTE PERMITIDO PARA PAGAMENTO EM DINHEIRO!');
 
-    if (forma.TipoPagamento = TTipoPagto.Parcelado) then
+    if (forma.TipoPagamento = TTipoPagto.Crediario) then
       if (not Assigned(FPedido.Cliente)) or (FPedido.Cliente.CODIGO = '000000') or (FPedido.Cliente.CODIGO = '') then
-        raise Exception.Create('PARA VENDER PARCELADO É PRECISO INFORMAR O CLIENTE!');
+        raise Exception.Create('PARA VENDER NO CREDIÁRIO É PRECISO INFORMAR O CLIENTE!');
 
     var
     pagto := FPedido.Pagamentos.NewPagamento();
@@ -272,7 +272,7 @@ begin
     pagto.QUANTASVEZES := condicao.QUANTASVEZES;
     pagto.ACRESCIMO := totalCrescimo;
 
-    if (pagto.TipoPagamento = TTipoPagto.Parcelado) then
+    if (pagto.TipoPagamento = TTipoPagto.Crediario) then
       ParcelaPedido(pagto);
 
     FPedido.Pagamentos.AddPagamento(pagto);
@@ -415,6 +415,9 @@ begin
   inherited;
   TListBox(Sender).Font.Size := TListBox(Sender).Font.Size + 1;
   TListBox(Sender).Color := clWhite;
+  if TListBox(Sender).Items.count = 1 then
+  TListBox(Sender).ItemIndex :=0;
+
 end;
 
 procedure TFrmPagamento.lvFormaPagtoExit(Sender: TObject);

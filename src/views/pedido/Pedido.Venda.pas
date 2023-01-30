@@ -273,7 +273,7 @@ implementation
 
 uses
   Util.Funcoes, Pedido.Parcelamento, Pedido.SelecionaCliente, Util.Exceptions,
-  Consulta.Produto, Pedido.CancelarItem, Filtro.Pedidos,
+  Consulta.Produto, Pedido.CancelarItem, Filtro.Pedidos, Dominio.Entidades.TFormaPagto.Tipo,
   Pedido.Observacao, Dao.IDaoEmitente, Dominio.Entidades.TEmitente, Relatorio.TRPedido,
   Pedido.Pagamento, Pedido.Venda.Part.Pagamento, Sistema.TLog;
 
@@ -825,6 +825,10 @@ begin
 
     self.edtTroco.Text := FormatCurr('R$ ###,##0.00', Pedido.Pagamentos.Troco);
     self.edtValorRecebido.Text := FormatCurr('R$ ###,##0.00', Pedido.Pagamentos.ValorRecebido);
+
+    if Pedido.Pagamentos.ContemTipo(TTipoPagto.Crediario) then
+      if Pedido.Cliente.CODIGO = '000000' then
+        raise Exception.Create('Para a forma de pagamento crediário é preciso informar o cliente');
 
     for var pagto in Pedido.Pagamentos.FormasDePagamento do
     begin

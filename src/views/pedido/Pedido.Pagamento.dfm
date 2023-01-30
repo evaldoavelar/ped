@@ -692,7 +692,6 @@ inherited FrmPagamento: TFrmPagamento
         OnEnter = edtValorPagtoEnter
         OnExit = edtValorPagtoExit
         OnKeyPress = edtValorPagtoKeyPress
-        ExplicitTop = 10
       end
     end
     object Panel1: TPanel
@@ -950,8 +949,6 @@ inherited FrmPagamento: TFrmPagamento
         Text = '0,00'
         OnExit = edtDescontoExit
         OnKeyPress = edtDescontoKeyPress
-        ExplicitLeft = 9
-        ExplicitHeight = 35
       end
     end
     object rbPorcentagem: TRadioButton
