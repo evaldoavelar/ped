@@ -6,7 +6,7 @@ uses
   System.Generics.Collections,
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Filtro.Datas, System.Actions, Vcl.ActnList, Vcl.StdCtrls, Vcl.Buttons, Vcl.Mask, JvExMask, JvToolEdit, Vcl.Imaging.jpeg, Vcl.ExtCtrls,
-  Dominio.Entidades.TVendedor, Dominio.Entidades.TFactory, Util.Exceptions;
+  Dominio.Entidades.TVendedor, Factory.Dao, Util.Exceptions;
 
 type
   TfrmFiltroDataVendedor = class(TfrmFiltroDatas)
@@ -21,7 +21,7 @@ type
     { Private declarations }
   public
     { Public declarations }
-    property Vendedor:TVendedor read FVendedor write SetVendedor;
+    property Vendedor: TVendedor read FVendedor write SetVendedor;
   end;
 
 var
@@ -73,7 +73,10 @@ begin
   inherited;
   cbbVendedor.Items.Clear;
 
-  vendedores := TFactory.DaoVendedor.Listar();
+  vendedores := TFactory
+    .new
+    .DaoVendedor
+    .Listar();
 
   for item in vendedores do
   begin

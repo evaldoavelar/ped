@@ -34,7 +34,7 @@ type
 implementation
 
 uses
-  Util.Exceptions, Dominio.Entidades.TFactory;
+  Util.Exceptions, Factory.Dao;
 
 { TDaoParceiro }
 
@@ -43,7 +43,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
       qry.SQL.Text := ''
@@ -80,7 +80,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
       qry.SQL.Text := ''
@@ -120,7 +120,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
       qry.SQL.Text := ''
@@ -156,7 +156,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
       qry.SQL.Text := ''
@@ -192,7 +192,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
       qry.SQL.Text := ''
@@ -233,7 +233,7 @@ begin
 
   Parceiro.codigo := Self.GeraID;
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
       qry.SQL.Text := ''
@@ -269,7 +269,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   Result := TList<TParceiro>.Create();
 
   try
@@ -302,7 +302,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   Result := TObjectList<TParceiro>.Create();
 
   try
@@ -340,7 +340,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   Result := TObjectList<TParceiro>.Create();
 
   try
@@ -374,7 +374,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
 
   try
     qry.SQL.Text := ''

@@ -114,36 +114,38 @@ implementation
 
 uses
   Utils.Rtti,
-  Helpers.HelperString, Util.Thread, Dominio.Entidades.TFactory, Util.Funcoes;
+  Helpers.HelperString, Util.Thread, Factory.Dao, Util.Funcoes, Sistema.TLog, Factory.Entidades;
 
 {$R *.dfm}
 
 
 procedure TFrmEstoqueAtualizar.Salvar();
 begin
+  TLog.d('>>> Entrando em  TFrmEstoqueAtualizar.Salvar ');
   try
-    TFactory.Conexao().StartTransaction;
+    fFactory.Conexao().StartTransaction;
 
     for var aEstoque in FLancamentos do
     begin
-      TFactory.DaoEstoqueProduto.Inclui(aEstoque);
-      TFactory.DaoProduto.EntradaSaidaEstoque(aEstoque.CODIGOPRD, aEstoque.QUANTIDADE, false)
+      fFactory.DaoEstoqueProduto.Inclui(aEstoque);
+      fFactory.DaoProduto.EntradaSaidaEstoque(aEstoque.CODIGOPRD, aEstoque.QUANTIDADE, false)
     end;
 
-    TFactory.Conexao().Commit;
+    fFactory.Conexao().Commit;
   except
     on E: Exception do
     begin
-      // flog.d(E.Message);
-      TFactory.Conexao().Rollback;
+      TLog.d(E.Message);
+      fFactory.Conexao().Rollback;
       raise;
     end;
   end;
+  TLog.d('<<< Saindo de TFrmEstoqueAtualizar.Salvar ');
 end;
 
 procedure TFrmEstoqueAtualizar.BindEstoque(aEstoque: TEstoqueProduto);
 begin
-
+  TLog.d('>>> Entrando em  TFrmEstoqueAtualizar.BindEstoque ');
   TFrameEstoquePartsAtualizar
     .new(nil)
     .setParams([aEstoque])
@@ -151,17 +153,19 @@ begin
     .setOnObjectChange(
     procedure(aobj: TObject)
     begin
-      // Flog.d('Produto cancelado');
+      TLog.d('Produto cancelado');
       FLancamentos.Remove(aobj as TEstoqueProduto);
       aobj.Free;
 
     end).SetUp;
+  TLog.d('<<< Saindo de TFrmEstoqueAtualizar.BindEstoque ');
 end;
 
 procedure TFrmEstoqueAtualizar.actIncluirExecute(Sender: TObject);
 var
   Produto: TProduto;
 begin
+  TLog.d('>>> Entrando em  TFrmEstoqueAtualizar.actIncluirExecute ');
   inherited;
   try
     if edtPesquisaProduto.ItemIndex <> -1 then
@@ -186,6 +190,7 @@ begin
   except
     on E: Exception do
     begin
+      TLog.d(E.Message);
       MessageDlg(E.Message, mtError, [mbOK], 0);
       try
         edtPesquisaProduto.Text := StrPesquisa;
@@ -193,25 +198,29 @@ begin
       except
       end;
     end;
-  end
+  end;
+  TLog.d('<<< Saindo de TFrmEstoqueAtualizar.actIncluirExecute ');
 end;
 
 procedure TFrmEstoqueAtualizar.actIncrementaQuantidadeExecute(
   Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TFrmEstoqueAtualizar.actIncrementaQuantidadeExecute ');
   inherited;
   try
     SomaSubtraiQuantidade(1);
   except
     on E: Exception do
     begin
-      // Flog.E('SomaSubtraiQuantidade: ' + E.Message);
+      TLog.d('SomaSubtraiQuantidade: ' + E.Message);
     end;
   end;
+  TLog.d('<<< Saindo de TFrmEstoqueAtualizar.actIncrementaQuantidadeExecute ');
 end;
 
 procedure TFrmEstoqueAtualizar.actNovoExecute(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TFrmEstoqueAtualizar.actNovoExecute ');
   inherited;
   try
     PageControl1.ActivePage := tsEntrada;
@@ -228,22 +237,24 @@ begin
   except
     on E: Exception do
     begin
-      // Flog.d(E.Message);
+      TLog.d(E.Message);
       MessageDlg(E.Message, mtError, [mbOK], 0);
     end;
   end;
+  TLog.d('<<< Saindo de TFrmEstoqueAtualizar.actNovoExecute ');
 end;
 
 procedure TFrmEstoqueAtualizar.actProximoExecute(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TFrmEstoqueAtualizar.actProximoExecute ');
   inherited;
   DarEntradaEstoqueThread;
-
+  TLog.d('<<< Saindo de TFrmEstoqueAtualizar.actProximoExecute ');
 end;
 
 procedure TFrmEstoqueAtualizar.DarEntradaEstoqueThread();
 begin
-  // Flog.d('>>> Entrando em  TFrmEstoqueAtualizar.DarEntradaEstoqueThread ');
+  TLog.d('>>> Entrando em  TFrmEstoqueAtualizar.DarEntradaEstoqueThread ');
   TThreadUtil.Executar(
   // Exception
     procedure(E: Exception)
@@ -277,7 +288,7 @@ begin
     end
     );
 
-  // Flog.d('<<< Saindo de TFrmEstoqueAtualizar.DarEntradaEstoqueThread ');
+  TLog.d('<<< Saindo de TFrmEstoqueAtualizar.DarEntradaEstoqueThread ');
 end;
 
 procedure TFrmEstoqueAtualizar.actSairExecute(Sender: TObject);
@@ -294,7 +305,7 @@ begin
   except
     on E: Exception do
     begin
-      // Flog.E('actSubtraiQuantidadeExecute: ' + E.Message);
+      TLog.d('actSubtraiQuantidadeExecute: ' + E.Message);
     end;
   end;
 end;
@@ -373,7 +384,7 @@ begin
           and (Key <> VK_RETURN) then
         begin
           OutputDebugString(PWideChar(edtPesquisaProduto.Text));
-          itens := TFactory.DaoProduto.GetProdutosPorDescricaoParcial(edtPesquisaProduto.Text);
+          itens := fFactory.DaoProduto.GetProdutosPorDescricaoParcial(edtPesquisaProduto.Text);
           itens.OwnsObjects := false;
 
           for Item in itens do
@@ -405,15 +416,20 @@ end;
 
 function TFrmEstoqueAtualizar.MontaDescricaoPesquisaProduto(const aItem: TProduto): string;
 begin
+  //TLog.d('>>> Entrando em  TFrmEstoqueAtualizar.MontaDescricaoPesquisaProduto ');
+
   result := Format('%s %s %s', [
     aItem.DESCRICAO.RemoveAcentos
     , aItem.CODIGO
     , FormatCurr(' R$ 0.,00', aItem.PRECO_VENDA)
-    ])
+    ]);
+
+ // TLog.d('<<< Saindo de TFrmEstoqueAtualizar.MontaDescricaoPesquisaProduto ');
 end;
 
 procedure TFrmEstoqueAtualizar.FormCreate(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TFrmEstoqueAtualizar.FormCreate ');
   inherited;
   FCachePesquisaProduto := TStringList.Create;
   FLancamentos := TList<TEstoqueProduto>.Create();
@@ -421,41 +437,44 @@ begin
   OcultaTabs(PageControl1);
   PageControl1.ActivePage := tsEntrada;
   LimpaScrollBox(scrlProdutos);
+  TLog.d('<<< Saindo de TFrmEstoqueAtualizar.FormCreate ');
 end;
 
 procedure TFrmEstoqueAtualizar.OcultaTabs(aPageControl: TPageControl);
 var
   I: Integer;
 begin
-  // FLog.d('>>> Entrando em  TViewBase.OcultaTabs ');
+  TLog.d('>>> Entrando em  TViewBase.OcultaTabs ');
   for I := 0 to aPageControl.PageCount - 1 do
     aPageControl.Pages[I].TabVisible := false;
-  // FLog.d('<<< Saindo de TViewBase.OcultaTabs ');
+  TLog.d('<<< Saindo de TViewBase.OcultaTabs ');
 end;
 
 procedure TFrmEstoqueAtualizar.FormDestroy(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TFrmEstoqueAtualizar.FormDestroy ');
   inherited;
   LiberaProdutosedtPesquisaProduto;
   FLancamentos.Free;
+  TLog.d('<<< Saindo de TFrmEstoqueAtualizar.FormDestroy ');
 end;
 
 procedure TFrmEstoqueAtualizar.FormShow(Sender: TObject);
 begin
-  // Flog.d('>>> Entrando em  TFrmEstoqueAtualizar.FormShow ');
+  TLog.d('>>> Entrando em  TFrmEstoqueAtualizar.FormShow ');
   inherited;
   try
     edtQuantidade.SetFocus;
   except
   end;
-  // Flog.d('<<< Saindo de TFrmEstoqueAtualizar.FormShow ');
+  TLog.d('<<< Saindo de TFrmEstoqueAtualizar.FormShow ');
 end;
 
 procedure TFrmEstoqueAtualizar.VendeItemPorDescricao(Produto: TProduto);
 var
   qtd: Double;
 begin
-  // Flog.d('>>> Entrando em  TFrmEstoqueAtualizar.VendeItemPorDescricao ');
+  TLog.d('>>> Entrando em  TFrmEstoqueAtualizar.VendeItemPorDescricao ');
   try
 
     if not Assigned(Produto) then
@@ -504,12 +523,12 @@ begin
   except
     on E: EAbort do
     begin
-      // Flog.d('Abortado...');
+      TLog.d('Abortado...');
       Exit;
     end;
     on E: Exception do
     begin
-      // Flog.d(E.Message);
+      TLog.d(E.Message);
       MessageDlg(E.Message, mtError, [mbOK], 0);
       try
         edtPesquisaProduto.Text := StrPesquisa;
@@ -518,12 +537,13 @@ begin
       end;
     end;
   end;
-  // Flog.d('<<< Saindo de TFrmEstoqueAtualizar.VendeItemPorDescricao ');
+  TLog.d('<<< Saindo de TFrmEstoqueAtualizar.VendeItemPorDescricao ');
 end;
 
 function TFrmEstoqueAtualizar.AddEntradaEstoque(aQuantidade: Double;
 aProduto: TProduto; aNumeroNF: string): TEstoqueProduto;
 begin
+  TLog.d('>>> Entrando em  TFrmEstoqueAtualizar.AddEntradaEstoque ');
   TRttiUtil.Validation<Exception>((aQuantidade < 0), 'QUANTIDADE DO PRODUTO PRECISA SER MAIOR QUE ZERO!!! ');
   TRttiUtil.Validation<Exception>(aProduto = nil, 'INFORME O PRODUTO!!! ');
 
@@ -538,22 +558,26 @@ begin
   result.TIPO := 'E';
   result.Status := 'A';
   result.StatusBD := TEstoqueProduto.TStatusBD.stCriar;
-  result.USUARIOCRIACAO := TFactory.VendedorLogado.NOME;
+  result.USUARIOCRIACAO := TFactoryEntidades.new.VendedorLogado.NOME;
   FLancamentos.Add(result);
+  TLog.d('<<< Saindo de TFrmEstoqueAtualizar.AddEntradaEstoque ');
 end;
 
 procedure TFrmEstoqueAtualizar.LiberaProdutosedtPesquisaProduto;
 var
   I: Integer;
 begin
+  TLog.d('>>> Entrando em  TFrmEstoqueAtualizar.LiberaProdutosedtPesquisaProduto ');
   edtPesquisaProduto.Clear;
   FCachePesquisaProduto.Clear;
+  TLog.d('<<< Saindo de TFrmEstoqueAtualizar.LiberaProdutosedtPesquisaProduto ');
 end;
 
 procedure TFrmEstoqueAtualizar.SomaSubtraiQuantidade(aValue: Double);
 var
   qtd: Double;
 begin
+  TLog.d('>>> Entrando em  TFrmEstoqueAtualizar.SomaSubtraiQuantidade ');
   inherited;
   qtd := StrToFloatDef(edtQuantidade.Text, 1);
 
@@ -563,10 +587,12 @@ begin
   qtd := TUtil.IFF<Double>(qtd >= 999, qtd, 999);
 
   edtQuantidade.Text := qtd.ToString;
+  TLog.d('<<< Saindo de TFrmEstoqueAtualizar.SomaSubtraiQuantidade ');
 end;
 
 procedure TFrmEstoqueAtualizar.tsEntradaShow(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TFrmEstoqueAtualizar.tsEntradaShow ');
   inherited;
   try
     edtPesquisaProduto.SetFocus;
@@ -574,6 +600,7 @@ begin
   except
     on E: Exception do
   end;
+  TLog.d('<<< Saindo de TFrmEstoqueAtualizar.tsEntradaShow ');
 end;
 
 initialization

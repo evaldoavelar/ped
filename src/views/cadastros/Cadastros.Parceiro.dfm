@@ -7,6 +7,10 @@ inherited frmCadastroParceiro: TfrmCadastroParceiro
       ActivePage = tsParceiro
       object tsParceiro: TTabSheet
         Caption = 'Parceiro'
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object Label2: TLabel
           Left = 54
           Top = 86

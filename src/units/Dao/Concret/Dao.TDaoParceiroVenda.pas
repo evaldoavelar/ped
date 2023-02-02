@@ -32,12 +32,12 @@ type
     function ListaObject(): TObjectList<TParceiroVenda>;
     function GeraID: Integer;
 
-    constructor Create(Connection: TFDConnection); override;
+    constructor Create(Connection: TFDConnection; aKeepConection: Boolean); override;
   end;
 
 implementation
 
-uses Dominio.Entidades.TFactory, Util.Exceptions;
+uses Factory.Dao, Util.Exceptions;
 
 { TDaoParceiroVenda }
 
@@ -46,7 +46,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
       qry.SQL.Text := ''
@@ -90,9 +90,9 @@ var
   pagto: TParceiroVendaPagto;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
-    TFactory.Conexao().StartTransaction;
+    FConnection.StartTransaction;
     try
       qry.SQL.Text := ''
         + 'INSERT INTO PARCEIROVENDA '
@@ -116,7 +116,7 @@ begin
         + '             :IDPEDIDO )';
 
       ValidaParceiroVenda(ParceiroVendas);
-      ParceiroVendas.id := self.GeraID;
+      ParceiroVendas.id := Self.GeraID;
       ObjectToParams(qry, ParceiroVendas);
 
       TLog.d(qry);
@@ -127,12 +127,12 @@ begin
         FDaoParceiroVendaPagto.IncluiPagto(pagto);
       end;
 
-      TFactory.Conexao().Commit;
+      FConnection.Commit;
 
     except
       on E: Exception do
       begin
-        TFactory.Conexao().Rollback;
+        FConnection.Rollback;
         TLog.d(E.message);
         raise TDaoException.Create('Falha Inclui Pagto: ' + E.message);
       end;
@@ -143,11 +143,13 @@ begin
 
 end;
 
-constructor TDaoParceiroVenda.Create(Connection: TFDConnection);
+constructor TDaoParceiroVenda.Create(Connection: TFDConnection; aKeepConection: Boolean);
 begin
   inherited;
 
-  self.FDaoParceiroVendaPagto := TFactory.DaoParceiroVendaPagto;
+  Self.FDaoParceiroVendaPagto := TFactory
+    .new(FConnection,true)
+    .DaoParceiroVendaPagto;
 end;
 
 procedure TDaoParceiroVenda.ExcluirParceiroVenda(id: Integer);
@@ -155,7 +157,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
       qry.SQL.Text := ''
@@ -197,7 +199,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
       qry.SQL.Text := ''
@@ -233,7 +235,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
 
   try
     qry.SQL.Text := ''
@@ -261,7 +263,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   Result := TObjectList<TParceiroVenda>.Create();
   try
     try
@@ -299,7 +301,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
 
   try
 
@@ -338,7 +340,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
 
   try
     qry.SQL.Text := ''
@@ -403,18 +405,18 @@ begin
     Result := TParceiroVenda.Create();
     FieldsToEntity(ds, Result);
     if (ds.FieldByName('CODVEN').IsNull = False) or (ds.FieldByName('CODVEN').AsString <> '') then
-      Result.Vendedor := TFactory.DaoVendedor.GetVendedor(ds.FieldByName('CODVEN').AsString);
+      Result.Vendedor := TFactory
+        .new(FConnection,true)
+        .DaoVendedor
+        .GetVendedor(ds.FieldByName('CODVEN').AsString);
 
     if (ds.FieldByName('CODPARCEIRO').IsNull = False) or (ds.FieldByName('CODPARCEIRO').AsString <> '') then
-      Result.Parceiro := TFactory.DaoParceiro.GetParceiro(ds.FieldByName('CODPARCEIRO').AsString);
+      Result.Parceiro := TFactory
+        .new(FConnection,true)
+        .DaoParceiro
+        .GetParceiro(ds.FieldByName('CODPARCEIRO').AsString);
 
     Result.Pagamentos.AddRange(FDaoParceiroVendaPagto.ListaObject(Result.id));
-
-    // Result.id := ds.FieldByName('ID').AsInteger;
-    // Result.DESCRICAO := ds.FieldByName('DESCRICAO').AsString;
-    // Result.QUANTASVEZES := ds.FieldByName('QUANTASVEZES').AsInteger;
-    // Result.JUROS := ds.FieldByName('JUROS').AsCurrency;
-
   except
     on E: Exception do
     begin
@@ -436,7 +438,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
 
   try
 

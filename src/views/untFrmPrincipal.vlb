@@ -1,3 +1,6 @@
 ﻿[FrmCadastroOrcamento.DataGeneratorAdapter1]
 Visible=False
 
+[ViewEstoqueMovimentacoes.DataGeneratorAdapter1]
+Visible=False
+

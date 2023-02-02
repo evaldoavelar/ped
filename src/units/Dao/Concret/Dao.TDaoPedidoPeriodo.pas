@@ -22,7 +22,7 @@ implementation
 
 { TDaoPedidoPeriodo }
 
-uses Util.Exceptions, Dominio.Entidades.TFactory;
+uses Util.Exceptions, Factory.Dao;
 
 function TDaoPedidoPeriodo.GetTotaisBrutoPedido(DataInicio, DataFim: TDate): TListaPeriodoPedido;
 var
@@ -30,7 +30,7 @@ var
   periodo: TPedidoPeriodo;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
 
     qry.SQL.Text := ''
@@ -78,7 +78,7 @@ var
   periodo: TPedidoPeriodo;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
 
     qry.SQL.Text := ''

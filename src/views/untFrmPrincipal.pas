@@ -230,7 +230,8 @@ type
     procedure actEtiquetasModelo4x2Execute(Sender: TObject);
   private
     { Private declarations }
-    DaoParcelas: IDaoParcelas;
+
+    FConfigurarDataBase: Boolean;
     procedure ExibeVencidos;
     procedure ExibeVencendo;
     procedure Backup(arquivo: string; force: Boolean = false);
@@ -252,6 +253,7 @@ type
     procedure WMGetMinmaxInfo(var Msg: TWMGetMinmaxInfo);
       message WM_GETMINMAXINFO;
     procedure InciaLog(habilitar: Boolean);
+    procedure Inicializar;
   public
     { Public declarations }
   end;
@@ -262,7 +264,7 @@ var
 implementation
 
 uses
-  Pedido.Venda, Util.Funcoes, Recebimento.Recebe, Dominio.Entidades.TFactory,
+  Pedido.Venda, Util.Funcoes, Recebimento.Recebe, Factory.Dao,
   Cadastros.Cliente, Cadastros.FormaPagto,
   Cadastros.Vendedor, Cadastros.Produto, Cadastros.Fornecedor,
   Configuracoes.Parametros, Splash.Form,
@@ -273,7 +275,8 @@ uses
   Grafico.Pedidos,
   Sangria.Suprimento.Informar, Dominio.Entidades.TSangriaSuprimento.Tipo,
   Estoque.Atualizar,
-  Estoque.Consultar, Etiquetas.Modelo3x2, Etiquetas.Modelo4x2, Sistema.TLog;
+  Estoque.Consultar, Etiquetas.Modelo3x2, Etiquetas.Modelo4x2, Sistema.TLog, Factory.Entidades, IFactory.Dao, IFactory.Entidades,
+  Sistema.TBancoDeDados;
 
 {$R *.dfm}
 
@@ -288,7 +291,7 @@ begin
     ForceDirectories(diretoriolog);
 
   TLog.Ativar := habilitar;
-  TLog.ArquivoLog := diretoriolog + 'TEF-LOG-' + FormatDateTime('dd-mm-yyyy', Now) + '.txt';
+  TLog.ArquivoLog := diretoriolog + 'PED-LOG-' + FormatDateTime('dd-mm-yyyy', Now) + '.txt';
   TLog.Clean(15);
 end;
 
@@ -478,7 +481,7 @@ procedure TFrmPrincipal.actCadVendedorExecute(Sender: TObject);
 begin
   TLog.d('>>> Entrando em  TFrmPrincipal.actCadVendedorExecute ');
   try
-    if not TFactory.VendedorLogado.PODEACESSARCADASTROVENDEDOR then
+    if not TFactoryEntidades.new.VendedorLogado.PODEACESSARCADASTROVENDEDOR then
       raise Exception.Create
         ('Vendedor não tem permissão para acessar cadastro de vendedores');
 
@@ -735,7 +738,7 @@ begin
       if FrmLogin.ShowModal = mrAbort then
         abort;
 
-      TFactory.VendedorLogado := FrmLogin.Vendedor;
+      TFactoryEntidades.new.VendedorLogado := FrmLogin.Vendedor;
 
       DefineLabelVendedor();
     finally
@@ -801,7 +804,7 @@ begin
       Licenca := TLicenca.Create;
       try
         if not(Licenca.LicencaValida(RetornaNomeArquivoLicenca(),
-          TFactory.DadosEmitente.CNPJ, Now)) then
+          TFactory.new.DadosEmitente.CNPJ, Now)) then
           raise Exception.Create('O serial não é válido!');
         CheckLicenca;
       finally
@@ -818,7 +821,7 @@ end;
 procedure TFrmPrincipal.DefineLabelVendedor;
 begin
   TLog.d('>>> Entrando em  TFrmPrincipal.DefineLabelVendedor ');
-  lblUsuario.Caption := TFactory.VendedorLogado.NOME;
+  lblUsuario.Caption := TFactoryEntidades.new.VendedorLogado.NOME;
   TLog.d('<<< Saindo de TFrmPrincipal.DefineLabelVendedor ');
 end;
 
@@ -887,7 +890,7 @@ begin
   TLog.d('>>> Entrando em  TFrmPrincipal.actRecebimentoExecute ');
   try
     FechaSubMenu;
-    if not TFactory.VendedorLogado.PODERECEBERPARCELA then
+    if not TFactoryEntidades.new.VendedorLogado.PODERECEBERPARCELA then
       raise Exception.Create
         ('Vendedor não tem permissão para acessar recebimento de parcelas');
 
@@ -914,6 +917,7 @@ var
   Cliente: TCliente;
   parcelasVencidas: TObjectList<TParcelas>;
   parcelasVencendo: TObjectList<TParcelas>;
+  LFactory: IFactoryDao;
 begin
   TLog.d('>>> Entrando em  TFrmPrincipal.actRelatorioParcelasClienteExecute ');
   try
@@ -934,14 +938,15 @@ begin
       (Cliente.CODIGO = '') then
       abort;
 
-    parcelasVencidas := TFactory.DaoParcelas.GeTParcelasVencidasPorCliente
+    LFactory := TFactory.new(nil, true);
+    parcelasVencidas := LFactory.DaoParcelas.GeTParcelasVencidasPorCliente
       (Cliente.CODIGO, Now);
-    parcelasVencendo := TFactory.DaoParcelas.GeTParcelasVencendoPorCliente
+    parcelasVencendo := LFactory.DaoParcelas.GeTParcelasVencendoPorCliente
       (Cliente.CODIGO, Now);
 
-    impressao := TRParcelasCliente.Create(TFactory.Parametros.ImpressoraTermica);
+    impressao := TRParcelasCliente.Create(TFactoryEntidades.Parametros.ImpressoraTermica);
 
-    impressao.Imprime(Cliente, TFactory.DadosEmitente, parcelasVencidas,
+    impressao.Imprime(Cliente, LFactory.DadosEmitente, parcelasVencidas,
       parcelasVencendo);
 
     FreeAndNil(Cliente);
@@ -949,6 +954,7 @@ begin
     FreeAndNil(parcelasVencidas);
     FreeAndNil(parcelasVencendo);
 
+    LFactory.Close;
   except
     on E: EAbort do
       exit;
@@ -966,6 +972,7 @@ var
   impressao: TRProdutosVendidos;
   DataIncio, DataFim: TDate;
   ProdutosVenda: TList<TProdutoVenda>;
+  LFactory: IFactoryDao;
 begin
   TLog.d('>>> Entrando em  TFrmPrincipal.actRelatorioProdutosVendidosExecute ');
   try
@@ -981,16 +988,18 @@ begin
       frmFiltroDatas.Free;
     end;
 
-    ProdutosVenda := TFactory.DaoPedido.ProdutosVendidos(DataIncio, DataFim);
+    LFactory := TFactory.new(nil, true);
 
-    impressao := TRProdutosVendidos.Create(TFactory.Parametros.ImpressoraTermica);
+    ProdutosVenda := LFactory.DaoPedido.ProdutosVendidos(DataIncio, DataFim);
 
-    impressao.Imprime(DataIncio, DataFim, TFactory.VendedorLogado,
-      TFactory.DadosEmitente, ProdutosVenda);
+    impressao := TRProdutosVendidos.Create(TFactoryEntidades.Parametros.ImpressoraTermica);
+
+    impressao.Imprime(DataIncio, DataFim, TFactoryEntidades.new.VendedorLogado,
+      LFactory.DadosEmitente, ProdutosVenda);
 
     FreeAndNil(ProdutosVenda);
     FreeAndNil(impressao);
-
+    LFactory.Close;
   except
     on E: Exception do
     begin
@@ -1019,7 +1028,7 @@ begin
     try
       if frmFiltroVencimento.ShowModal = mrOk then
       begin
-        Parcelas := DaoParcelas.GetParcelaVencendoObj
+        Parcelas := TFactory.new.DaoParcelas.GetParcelaVencendoObj
           (frmFiltroVencimento.edtDataIncio.Date,
           frmFiltroVencimento.edtDataFim.Date);
         ListaParcelas('Parcelas Vencendo', Parcelas);
@@ -1046,7 +1055,7 @@ var
 begin
   TLog.d('>>> Entrando em  TFrmPrincipal.actRelatorioVencidasExecute ');
   try
-    Parcelas := DaoParcelas.GetParcelaVencidasObj(Now);
+    Parcelas := TFactory.new.DaoParcelas.GetParcelaVencidasObj(Now);
     ListaParcelas('Parcelas Vencidas', Parcelas);
 
     if Assigned(Parcelas) then
@@ -1065,6 +1074,8 @@ procedure TFrmPrincipal.actRelatorioVendasDoDiaExecute(Sender: TObject);
 var
   impressao: TRVendasDoDia;
   DataIncio, DataFim: TDate;
+
+  LFactory: IFactoryDao;
 begin
   TLog.d('>>> Entrando em  TFrmPrincipal.actRelatorioVendasDoDiaExecute ');
   try
@@ -1079,17 +1090,18 @@ begin
     finally
       frmFiltroDatas.Free;
     end;
+    LFactory := TFactory.new(nil, true);
 
-    impressao := TRVendasDoDia.Create(TFactory.Parametros.ImpressoraTermica);
+    impressao := TRVendasDoDia.Create(TFactoryEntidades.Parametros.ImpressoraTermica);
 
     impressao.Imprime(DataIncio,
       DataFim,
-      TFactory.VendedorLogado,
-      TFactory.DadosEmitente,
-      TFactory.DaoPedido.Totais(DataIncio, DataFim));
+      TFactoryEntidades.new.VendedorLogado,
+      LFactory.DadosEmitente,
+      LFactory.DaoPedido.Totais(DataIncio, DataFim));
 
     FreeAndNil(impressao);
-
+    LFactory.Close;
   except
     on E: Exception do
     begin
@@ -1138,6 +1150,7 @@ var
   impressao: TRVendasDoDia;
   DataIncio, DataFim: TDate;
   Vendedor: TVendedor;
+  LFactory: IFactoryDao;
 begin
   TLog.d('>>> Entrando em  TFrmPrincipal.actVendasDoDiaPorVendedorExecute ');
   try
@@ -1157,14 +1170,16 @@ begin
     if not Assigned(Vendedor) then
       raise Exception.Create('Vendedor Não selecionado');
 
-    impressao := TRVendasDoDia.Create(TFactory.Parametros.ImpressoraTermica);
+    LFactory := TFactory.new(nil, true);
 
-    impressao.Imprime(Vendedor, DataIncio, DataFim, TFactory.VendedorLogado,
-      TFactory.DadosEmitente, TFactory.DaoPedido.Totais(DataIncio, DataFim,
+    impressao := TRVendasDoDia.Create(TFactoryEntidades.Parametros.ImpressoraTermica);
+
+    impressao.Imprime(Vendedor, DataIncio, DataFim, TFactoryEntidades.new.VendedorLogado,
+      LFactory.DadosEmitente, LFactory.DaoPedido.Totais(DataIncio, DataFim,
       Vendedor.CODIGO));
 
     FreeAndNil(impressao);
-
+    LFactory.Close;
   except
     on E: Exception do
     begin
@@ -1179,6 +1194,8 @@ procedure TFrmPrincipal.actVendasPorParceiroExecute(Sender: TObject);
 var
   impressao: TRVendasPorParceiro;
   DataIncio, DataFim: TDate;
+
+  LFactory: IFactoryDao;
 begin
   TLog.d('>>> Entrando em  TFrmPrincipal.actVendasPorParceiroExecute ');
   try
@@ -1193,14 +1210,15 @@ begin
     finally
       frmFiltroDatas.Free;
     end;
+    LFactory := TFactory.new(nil, true);
 
-    impressao := TRVendasPorParceiro.Create(TFactory.Parametros.ImpressoraTermica);
+    impressao := TRVendasPorParceiro.Create(TFactoryEntidades.Parametros.ImpressoraTermica);
 
-    impressao.Imprime(TFactory.VendedorLogado, DataIncio, DataFim,
-      TFactory.DadosEmitente);
+    impressao.Imprime(TFactoryEntidades.new.VendedorLogado, DataIncio, DataFim,
+      LFactory.DadosEmitente);
 
     FreeAndNil(impressao);
-
+    LFactory.Close;
   except
     on E: Exception do
     begin
@@ -1239,7 +1257,7 @@ begin
   Licenca := TLicenca.Create;
   try
     if (Licenca.LicencaValida(RetornaNomeArquivoLicenca(),
-      TFactory.DadosEmitente.CNPJ, Now)) then
+      TFactory.new.DadosEmitente.CNPJ, Now)) then
       MessageDlg('Licença válida de ' + DateToStr(Licenca.DataDeIncio) + ' até '
         + DateToStr(Licenca.DataVencimento) + #13 + 'CNPJ: ' +
         TUtil.PadL(Licenca.cnpjLicenca, 14, '*'), mtInformation, [mbOK], 0)
@@ -1252,6 +1270,8 @@ begin
 end;
 
 procedure TFrmPrincipal.Backup(arquivo: string; force: Boolean = false);
+var
+  LBancoDeDados: TParametrosBancoDeDados;
 begin
   TLog.d('>>> Entrando em  TFrmPrincipal.Backup ');
   try
@@ -1261,10 +1281,14 @@ begin
       if FileExists(arquivo) then
         exit;
 
+    LBancoDeDados := TFactory.new.DaoParametrosBancoDeDados.Carregar();
+
     // FDIBBackup.Host := TFactory.Conexao.Params.;
-    FDIBBackup.Database := TFactory.Conexao.Params.Database;
-    FDIBBackup.Password := TFactory.Conexao.Params.Password;
-    FDIBBackup.UserName := TFactory.Conexao.Params.UserName;
+    FDIBBackup.Database := LBancoDeDados.Database;
+    FDIBBackup.Password := LBancoDeDados.Senhaproxy;
+    FDIBBackup.UserName := LBancoDeDados.Usuario;
+
+    FreeAndNil(LBancoDeDados);
 
     FDIBBackup.BackupFiles.Clear;
     FDIBBackup.BackupFiles.Add(arquivo);
@@ -1288,6 +1312,8 @@ function TFrmPrincipal.CheckLicenca: Boolean;
 var
   Licenca: TLicenca;
   CNPJ: string;
+  LFactory: IFactoryDao;
+  LEmitente: TEmitente;
 begin
   TLog.d('>>> Entrando em  TFrmPrincipal.CheckLicenca ');
   exit(true);
@@ -1296,8 +1322,10 @@ begin
 
   CNPJ := '';
 
-  if Assigned(TFactory.DadosEmitente) then
-    CNPJ := TFactory.DadosEmitente.CNPJ;
+  LEmitente := TFactory.new.DadosEmitente;
+
+  if Assigned(LEmitente) then
+    CNPJ := LEmitente.CNPJ;
 
   Licenca := TLicenca.Create;
   try
@@ -1458,7 +1486,7 @@ procedure TFrmPrincipal.ExibeVencendo;
 var
   Parcelas: TObjectList<TParcelas>;
 begin
-  Parcelas := DaoParcelas.GetParcelaVencendoObj(Now, IncMonth(Now, 2));
+  Parcelas := TFactory.new.DaoParcelas.GetParcelaVencendoObj(Now, IncMonth(Now, 2));
   ListaParcelas('Parcelas Vencendo', Parcelas);
   if Assigned(Parcelas) then
     FreeAndNil(Parcelas);
@@ -1469,7 +1497,7 @@ var
   Parcelas: TObjectList<TParcelas>;
 begin
   TLog.d('>>> Entrando em  TFrmPrincipal.ExibeVencidos ');
-  Parcelas := DaoParcelas.GetParcelaVencidasObj(Now);
+  Parcelas := TFactory.new.DaoParcelas.GetParcelaVencidasObj(Now);
   ListaParcelas('Parcelas Vencidas', Parcelas);
 
   if Assigned(Parcelas) then
@@ -1504,17 +1532,21 @@ begin
 end;
 
 procedure TFrmPrincipal.FormActivate(Sender: TObject);
+var
+  LVendedorLogado: TVendedor;
 begin
   TLog.d('>>> Entrando em  TFrmPrincipal.FormActivate ');
-  try
-    CheckLicenca();
-  except
-  end;
+  // try
+  // CheckLicenca();
+  // except
+  // end;
 
-  if Assigned(TFactory.VendedorLogado) then
+  Self.WindowState := TWindowState.wsMaximized;
+
+  if Assigned(TFactoryEntidades.new.VendedorLogado) then
     exit;
 
-  if DebugHook = 0 then
+  if { DebugHook = 0 } true then
   begin
 
     // Self.BorderStyle := bsNone;
@@ -1526,51 +1558,56 @@ begin
       if FrmLogin.ShowModal = mrAbort then
         Halt(0);
 
-      TFactory.VendedorLogado := FrmLogin.Vendedor;
+      TFactoryEntidades.new.VendedorLogado := FrmLogin.Vendedor;
     finally
       FrmLogin.Free;
     end;
   end
   else
   begin
-    TFactory.VendedorLogado := TFactory.Vendedor;
-    TFactory.VendedorLogado.CODIGO := '001';
-    TFactory.VendedorLogado.NOME := 'Debug';
-    TFactory.VendedorLogado.PODEACESSARCADASTROVENDEDOR := true;
-    TFactory.VendedorLogado.PODECANCELARPEDIDO := true;
-    TFactory.VendedorLogado.PODERECEBERPARCELA := true;
-    TFactory.VendedorLogado.PODECANCELARORCAMENTO := true;
+    LVendedorLogado := TFactoryEntidades.new.VendedorLogado;
+
+    LVendedorLogado.CODIGO := '001';
+    LVendedorLogado.NOME := 'Debug';
+    LVendedorLogado.PODEACESSARCADASTROVENDEDOR := true;
+    LVendedorLogado.PODECANCELARPEDIDO := true;
+    LVendedorLogado.PODERECEBERPARCELA := true;
+    LVendedorLogado.PODECANCELARORCAMENTO := true;
 
   end;
   DefineLabelVendedor();
-  Self.WindowState := TWindowState.wsMaximized;
+  Self.BringToFront;
+
   TLog.d('<<< Saindo de TFrmPrincipal.FormActivate ');
 end;
 
 procedure TFrmPrincipal.FormCreate(Sender: TObject);
 begin
   try
+    FConfigurarDataBase := false;
     InciaLog(true);
     TLog.d('>>> Entrando em  TFrmPrincipal.FormCreate ');
     Self.Menu := nil;
 
     ReportMemoryLeaksOnShutdown := DebugHook <> 0;
 
-    MigrateBD();
-
     TVclFuncoes.DisableVclStyles(pnlContainer, 'TPanel');
     TVclFuncoes.DisableVclStyles(pnlContainer, 'TLabel');
-    DaoParcelas := TFactory.DaoParcelas;
 
     ConfiguraMenuLateral;
 
     ExibeAtalhos;
 
+    MigrateBD();
+
   except
     on E: Exception do
     begin
       TLog.d(E.Message);
-      MessageDlg(E.Message, mtError, [mbOK], 0);
+      if E.Message.Contains('una') then
+        FConfigurarDataBase := true
+      else
+        MessageDlg(E.Message, mtError, [mbOK], 0);
     end;
   end;
   TLog.d('<<< Saindo de TFrmPrincipal.FormCreate ');
@@ -1635,8 +1672,7 @@ begin
 end;
 
 procedure TFrmPrincipal.FormShow(Sender: TObject);
-var
-  task: ITask;
+
 begin
   TLog.d('>>> Entrando em  TFrmPrincipal.FormShow ');
   // with Screen.WorkAreaRect do
@@ -1653,11 +1689,27 @@ begin
     end;
   end;
 
+  if FConfigurarDataBase then
+    exit;
+
+  Inicializar;
+  TLog.d('<<< Saindo de TFrmPrincipal.FormShow ');
+end;
+
+procedure TFrmPrincipal.Inicializar;
+var
+  LFactory: IFactoryDao;
+  task: ITask;
+begin
+  TLog.d('>>> Entrando em  TFrmPrincipal.Inicializar ');
+  LFactory := TFactory.new(nil, true);
+  TFactoryEntidades.setParametros(LFactory.DaoParametros.GetParametros);
+
+  Self.Caption := 'Pedidos - ' + LFactory.DadosEmitente.FANTASIA;
+  LFactory.Close;
+
   VerificaParcelasVencendo;
-
-  Self.Caption := 'Pedidos - ' + TFactory.DadosEmitente.FANTASIA;
-
-  if TFactory.Parametros.BACKUPDIARIO then
+  if TFactoryEntidades.Parametros.BACKUPDIARIO then
   begin
     // abri uma tarefa de backup
     task := TTask.Create(
@@ -1681,7 +1733,7 @@ begin
       end);
     task.Start;
   end;
-  TLog.d('<<< Saindo de TFrmPrincipal.FormShow ');
+  TLog.d('<<< Saindo de TFrmPrincipal.Inicializar ');
 end;
 
 procedure TFrmPrincipal.Image3Click(Sender: TObject);
@@ -1741,10 +1793,15 @@ procedure TFrmPrincipal.VerificaParcelasVencendo;
 var
   vencendo: Integer;
   vencidas: Integer;
+  LDaoParcelas: IDaoParcelas;
+
 begin
   TLog.d('>>> Entrando em  TFrmPrincipal.VerificaParcelasVencendo ');
   try
-    vencendo := DaoParcelas.GetNumeroDeParcelasVencendo(Now, IncMonth(Now, 2));
+
+    LDaoParcelas := TFactory.new.DaoParcelas;
+
+    vencendo := LDaoParcelas.GetNumeroDeParcelasVencendo(Now, IncMonth(Now, 2));
 
     if vencendo > 0 then
     begin
@@ -1755,7 +1812,7 @@ begin
     else
       lblVencendo.Visible := false;
 
-    vencidas := DaoParcelas.GetNumeroDeParcelasVencidas(Now);
+    vencidas := LDaoParcelas.GetNumeroDeParcelasVencidas(Now);
 
     if vencidas > 0 then
     begin

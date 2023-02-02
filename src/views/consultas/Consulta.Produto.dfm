@@ -1,7 +1,6 @@
 inherited FrmConsultaProdutos: TFrmConsultaProdutos
   Caption = 'Consulta Produtos'
   ClientWidth = 874
-  OnCreate = FormCreate
   ExplicitWidth = 890
   PixelsPerInch = 96
   TextHeight = 13
@@ -58,8 +57,10 @@ inherited FrmConsultaProdutos: TFrmConsultaProdutos
   end
   inherited jvPnl1: TPanel
     Width = 874
+    ExplicitWidth = 874
     inherited Image1: TImage
       Width = 879
+      ExplicitWidth = 879
     end
     inherited cbbPesquisa: TComboBox
       Items.Strings = (

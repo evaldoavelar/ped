@@ -63,8 +63,8 @@ var
 
 implementation
 
-uses Relatorio.TRParcelas, Dominio.Entidades.TFactory, Dominio.Entidades.TPedido, Recebimento.DetalhesPedido, Dao.IDaoPedido, Recebimento.ConfirmaBaixa,
-  Recebimento.Recebe;
+uses Relatorio.TRParcelas, Factory.Dao, Dominio.Entidades.TPedido, Recebimento.DetalhesPedido, Dao.IDaoPedido, Recebimento.ConfirmaBaixa,
+  Recebimento.Recebe, Sistema.TLog, Factory.Entidades;
 
 procedure TfrmFiltroParcelas.actDetalhesExecute(Sender: TObject);
 begin
@@ -131,15 +131,14 @@ end;
 procedure TfrmFiltroParcelas.Detalhes;
 var
   Pedido: TPedido;
-  daoPedido: IDaoPedido;
 begin
+  TLog.d('>>> Entrando em  TfrmFiltroParcelas.Detalhes ');
   try
     // ValidaGrid;
 
     frmDetalhesPedido := TfrmDetalhesPedido.create(self);
     try
-      daoPedido := TFactory.daoPedido();
-      Pedido := daoPedido.getPedido(dbGridResultado.DataSource.DataSet.FieldByName('ID').AsInteger);
+      Pedido := fFactory.daoPedido.getPedido(dbGridResultado.DataSource.DataSet.FieldByName('ID').AsInteger);
 
       frmDetalhesPedido.Pedido := Pedido;
       frmDetalhesPedido.ShowModal;
@@ -150,55 +149,63 @@ begin
       FreeAndNil(frmDetalhesPedido);
     end;
   except
-    on E: Exception do
-      MessageDlg(E.Message, mtError, [mbOK], 0);
+    on e: Exception do
+    begin
+      TLog.d(e.Message);
+      MessageDlg(e.Message, mtError, [mbOK], 0);
+    end;
   end;
-
+  TLog.d('<<< Saindo de TfrmFiltroParcelas.Detalhes ');
 end;
 
 procedure TfrmFiltroParcelas.FormCreate(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TfrmFiltroParcelas.FormCreate ');
   inherited;
-  DaoParcelas := TFactory.DaoParcelas();
+  DaoParcelas := fFactory.DaoParcelas();
+
+  TLog.d('<<< Saindo de TfrmFiltroParcelas.FormCreate ');
 end;
 
 procedure TfrmFiltroParcelas.FormShow(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TfrmFiltroParcelas.FormShow ');
   inherited;
   edtDataInicial.Date := now;
   edtDataFinal.Date := IncMonth(now, 1);
   chkVencidas.Checked := True;
   Pesquisar;
+  TLog.d('<<< Saindo de TfrmFiltroParcelas.FormShow ');
 end;
 
 procedure TfrmFiltroParcelas.Imprimir;
 var
   impressao: TRParcela;
 begin
-
+  TLog.d('>>> Entrando em  TfrmFiltroParcelas.Imprimir ');
   try
 
-    impressao := TRParcela.create(TFactory.Parametros.ImpressoraTermica);
+    impressao := TRParcela.create(TFactoryEntidades.Parametros.ImpressoraTermica);
 
     if dbGridResultado.DataSource.DataSet.IsEmpty then
       raise Exception.create('Nada para imprimir');
 
-//    impressao.ImprimeLista(
-//      edtDataInicial.Date,
-//      edtDataFinal.Date,
-//      TFactory.DadosEmitente,
-//      dbGridResultado.DataSource.DataSet);
-
   except
-    on E: Exception do
-      MessageDlg(E.Message, mtError, [mbOK], 0);
+    on e: Exception do
+    begin
+      TLog.d(e.Message);
+      MessageDlg(e.Message, mtError, [mbOK], 0);
+    end;
   end;
+
+  TLog.d('<<< Saindo de TfrmFiltroParcelas.Imprimir ');
 end;
 
 procedure TfrmFiltroParcelas.Pesquisar;
 var
   campo: string;
 begin
+  TLog.d('>>> Entrando em  TfrmFiltroParcelas.Pesquisar ');
   // inherited;
   try
 
@@ -217,9 +224,8 @@ begin
         campo := 'pe.NUMERO';
       end;
 
-
       if chkVencidas.Checked and (Trim(edtValor.Text) <> '') then
-        dbGridResultado.DataSource.DataSet := DaoParcelas.GetParcelaVencidasDS(campo, edtValor.Text,now)
+        dbGridResultado.DataSource.DataSet := DaoParcelas.GetParcelaVencidasDS(campo, edtValor.Text, now)
       else if chkVencidas.Checked then
         dbGridResultado.DataSource.DataSet := DaoParcelas.GetParcelaVencidasDS(now)
       else if chkEntreDatas.Checked and (Trim(edtValor.Text) <> '') then
@@ -229,16 +235,21 @@ begin
       else
         dbGridResultado.DataSource.DataSet := DaoParcelas.GeTParcelas(edtDataInicial.Date, edtDataFinal.Date);
 
-      TCurrencyField(dbGridResultado.DataSource.DataSet.FieldByName('Valor')).Currency := true;
+      TCurrencyField(dbGridResultado.DataSource.DataSet.FieldByName('Valor')).Currency := True;
       CalculaTotais;
 
     finally
-      self.actPesquisa.Enabled := true;
+      self.actPesquisa.Enabled := True;
     end;
   except
-    on E: Exception do
-      MessageDlg(E.Message, mtError, [mbOK], 0);
+    on e: Exception do
+    begin
+      TLog.d(e.Message);
+      MessageDlg(e.Message, mtError, [mbOK], 0);
+    end;
   end;
+
+  TLog.d('<<< Saindo de TfrmFiltroParcelas.Pesquisar ');
 end;
 
 procedure TfrmFiltroParcelas.CalculaTotais;
@@ -248,6 +259,7 @@ var
   totalRecebido: Currency;
 
 begin
+  TLog.d('>>> Entrando em  TfrmFiltroParcelas.CalculaTotais ');
   TTask.Run(
     procedure
     begin
@@ -292,6 +304,8 @@ begin
 
         );
     end);
+
+  TLog.d('<<< Saindo de TfrmFiltroParcelas.CalculaTotais ');
 end;
 
 procedure TfrmFiltroParcelas.chkEntreDatasClick(Sender: TObject);
@@ -312,9 +326,10 @@ end;
 
 procedure TfrmFiltroParcelas.Receber;
 begin
+  TLog.d('>>> Entrando em  TfrmFiltroParcelas.Receber ');
   try
 
-    if not TFactory.VendedorLogado.PODERECEBERPARCELA then
+    if not TFactoryEntidades.new.VendedorLogado.PODERECEBERPARCELA then
       raise Exception.create('Vendedor não tem permissão para acessar recebimento de parcelas');
 
     frmRecebimento := TfrmRecebimento.create(self);
@@ -326,9 +341,13 @@ begin
       FreeAndNil(frmRecebimento);
     end;
   except
-    on E: Exception do
-      MessageDlg(E.Message, mtError, [mbOK], 0);
+    on e: Exception do
+    begin
+      TLog.d(e.Message);
+      MessageDlg(e.Message, mtError, [mbOK], 0);
+    end;
   end;
+  TLog.d('<<< Saindo de TfrmFiltroParcelas.Receber ');
 end;
 
 end.

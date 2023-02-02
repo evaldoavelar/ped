@@ -92,9 +92,9 @@ var
 
 implementation
 
-uses Dominio.Entidades.TFactory, Vcl.Printers, System.StrUtils,
+uses Factory.Dao, Vcl.Printers, System.StrUtils,
   Consulta.Produto, Relatorio.FREtiquetas.Modelo4x2, Utils.ArrayUtil,
-  Util.Funcoes;
+  Util.Funcoes, Factory.Entidades;
 
 {$R *.dfm}
 
@@ -438,19 +438,19 @@ procedure TFrmEtiquetasModelo4x2.FormCreate(Sender: TObject);
 begin
   inherited;
   CachePesquisa := TStringList.Create;
-  FDaoProdutos := TFactory.DaoProduto;
+  FDaoProdutos := FFactory.DaoProduto;
   try
-    FEmitente := TFactory.DaoEmitente.GetEmitente();
+    FEmitente := FFactory.DaoEmitente.GetEmitente();
 
     if not Assigned(FEmitente) then
     begin
-      FEmitente := TFactory.Emitente;
+      FEmitente := TFactoryEntidades.new.Emitente;
     end;
 
-    FParametros := TFactory.DaoParametros.GetParametros;
+    FParametros := TParametros.Create;
     if not Assigned(FParametros) then
     begin
-      FParametros := TFactory.Parametros;
+      FParametros := TParametros.Create;
     end;
 
     Bind;

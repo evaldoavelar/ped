@@ -7,8 +7,9 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, untFrmBase, System.Actions, Vcl.ActnList, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.Buttons,
   Dao.IDaoCliente, Dominio.Entidades.TCliente, Vcl.Imaging.jpeg, Dao.IDaoParcelas, Dominio.Entidades.TParcelas,
-  Consulta.Cliente, Dominio.Entidades.TFactory, Util.Exceptions, Cadastros.Cliente,
-  System.Generics.Collections, Vcl.Imaging.pngimage;
+  Consulta.Cliente, Factory.Dao, Util.Exceptions, Cadastros.Cliente,
+  System.Generics.Collections, Vcl.Imaging.pngimage, IFactory.Dao,
+  Sistema.TParametros;
 
 type
   TFrmInfoCliente = class(TfrmBase)
@@ -65,6 +66,8 @@ type
     procedure actAdicionarExecute(Sender: TObject);
   private
     FCliente: TCliente;
+    FFactory: IFactoryDao;
+    FParametros: TParametros;
     daoCliente: IDaoCliente;
     parcelas: TObjectList<TParcelas>;
     procedure IncializaComponentes;
@@ -83,24 +86,29 @@ var
 
 implementation
 
+uses
+  Sistema.TLog, Factory.Entidades;
 
 {$R *.dfm}
 
 
 procedure TFrmInfoCliente.IncializaComponentes;
 begin
+  TLog.d('>>> Entrando em  TFrmInfoCliente.IncializaComponentes ');
   try
-    if ( self.FCliente.CODIGO = '000000') or ( self.FCliente.CODIGO = '') then
+    if (self.FCliente.CODIGO = '000000') or (self.FCliente.CODIGO = '') then
       btnPesquisaCliente.SetFocus
     else
       btnOk.SetFocus;
   except
     on E: Exception do
   end;
+  TLog.d('<<< Saindo de TFrmInfoCliente.IncializaComponentes ');
 end;
 
 procedure TFrmInfoCliente.actAdicionarExecute(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TFrmInfoCliente.actAdicionarExecute ');
   inherited;
   frmCadastroCliente := TfrmCadastroCliente.Create(self);
   try
@@ -108,12 +116,15 @@ begin
   finally
     frmCadastroCliente.Free;
   end;
+  TLog.d('<<< Saindo de TFrmInfoCliente.actAdicionarExecute ');
 end;
 
 procedure TFrmInfoCliente.actCancelarExecute(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TFrmInfoCliente.actCancelarExecute ');
   inherited;
   self.Close;
+  TLog.d('<<< Saindo de TFrmInfoCliente.actCancelarExecute ');
 end;
 
 procedure TFrmInfoCliente.VerificaParcelasEmAtraso(CODIGO: string);
@@ -122,7 +133,8 @@ var
   item: TParcelas;
   Total: Currency;
 begin
-  daoParcelas := TFactory.daoParcelas;
+  TLog.d('>>> Entrando em  TFrmInfoCliente.VerificaParcelasEmAtraso ');
+  daoParcelas := FFactory.daoParcelas;
   Total := 0;
   parcelas := daoParcelas.GeTParcelasVencidasPorCliente(CODIGO, now);
 
@@ -148,7 +160,7 @@ begin
     mmoAlerta.Lines.Add('');
     mmoAlerta.Lines.Add(Format('Total Devido: %s', [FormatCurr('R$ 0.,00', Total)]));
 
-    if TFactory.Parametros.BLOQUEARCLIENTECOMATRASO then
+    if fParametros.BLOQUEARCLIENTECOMATRASO then
     begin
       mmoAlerta.Lines.Add('--------------------------------------------');
       mmoAlerta.Lines.Add('O SISTEMA ESTÁ PARAMETRIZADO PARA BLOQUEAR A VENDA PARA CLIENTES COM PARCELAS EM ATRASO!!!');
@@ -162,11 +174,13 @@ begin
     self.Width := 453;
     self.ReCenter;
   end;
-
+  TLog.d(mmoAlerta.Lines.Text);
+  TLog.d('<<< Saindo de TFrmInfoCliente.VerificaParcelasEmAtraso ');
 end;
 
 procedure TFrmInfoCliente.PesquisaCliente;
 begin
+  TLog.d('>>> Entrando em  TFrmInfoCliente.PesquisaCliente ');
   try
     frmConsultaCliente := TFrmConsultaCliente.Create(self);
     try
@@ -193,13 +207,18 @@ begin
     BindFields;
     btnOk.SetFocus;
   except
-    on ex: Exception do
-      MessageDlg(ex.Message, mtError, [mbOK], 0);
+    on E: Exception do
+    begin
+      TLog.d(E.message);
+      MessageDlg(E.message, mtError, [mbOK], 0);
+    end;
   end;
+  TLog.d('<<< Saindo de TFrmInfoCliente.PesquisaCliente ');
 end;
 
 procedure TFrmInfoCliente.BindFields;
 begin
+  TLog.d('>>> Entrando em  TFrmInfoCliente.BindFields ');
   FCliente.ClearBindings;
   FCliente.Bind('CODIGO', edtCodigo, 'Text');
   FCliente.Bind('NOME', edtNome, 'Text');
@@ -214,38 +233,45 @@ begin
   FCliente.Bind('TELEFONE', edtTelefone, 'Text');
   FCliente.Bind('NUMERO', edtNumero, 'Text');
   FCliente.Bind('OBSERVACOES', mmoObservacao, 'Text');
+  TLog.d('<<< Saindo de TFrmInfoCliente.BindFields ');
 end;
 
 procedure TFrmInfoCliente.actOkExecute(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TFrmInfoCliente.actOkExecute ');
   inherited;
   try
-   // if (not Assigned(FCliente)) or (FCliente.CODIGO = '000000') or (FCliente.CODIGO = '') then
-    //  raise TValidacaoException.Create('Cliente não pode ser Padrão');
+    // if (not Assigned(FCliente)) or (FCliente.CODIGO = '000000') or (FCliente.CODIGO = '') then
+    // raise TValidacaoException.Create('Cliente não pode ser Padrão');
 
-    if TFactory.Parametros.BLOQUEARCLIENTECOMATRASO then
+    if FParametros.BLOQUEARCLIENTECOMATRASO then
       if Assigned(parcelas) and (parcelas.Count > 0) then
       begin
         raise TValidacaoException.Create('Cliente Bloqueado Pelo Sistema por estar com parcelas em atraso! ');
       end;
 
-    if TFactory.Parametros.ATUALIZACLIENTENAVENDA then
+    if FParametros.ATUALIZACLIENTENAVENDA then
     begin
       daoCliente.AtualizaCliente(FCliente);
     end;
 
     self.Close;
   except
-    on ex: Exception do
-      MessageDlg(ex.Message, mtError, [mbOK], 0);
+    on E: Exception do
+    begin
+      TLog.d(E.message);
+      MessageDlg(E.message, mtError, [mbOK], 0);
+    end;
   end;
-
+  TLog.d('<<< Saindo de TFrmInfoCliente.actOkExecute ');
 end;
 
 procedure TFrmInfoCliente.actPesquisaClienteExecute(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TFrmInfoCliente.actPesquisaClienteExecute ');
   inherited;
   PesquisaCliente();
+  TLog.d('<<< Saindo de TFrmInfoCliente.actPesquisaClienteExecute ');
 end;
 
 procedure TFrmInfoCliente.Edit1KeyPress(Sender: TObject; var Key: Char);
@@ -263,28 +289,35 @@ end;
 
 procedure TFrmInfoCliente.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
+  TLog.d('>>> Entrando em  TFrmInfoCliente.FormClose ');
   inherited;
   if Assigned(FCliente) then
     FCliente.ClearBindings;
 
-  if Assigned(parcelas) then
     FreeAndNil(parcelas);
+  TLog.d('<<< Saindo de TFrmInfoCliente.FormClose ');
 end;
 
 procedure TFrmInfoCliente.FormCreate(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TFrmInfoCliente.FormCreate ');
   inherited;
-  daoCliente := TFactory.daoCliente;
+  FFactory := TFactory.new(nil,true);
+  daoCliente := FFactory.daoCliente;
+  FParametros := TFactoryEntidades.Parametros;
+  TLog.d('<<< Saindo de TFrmInfoCliente.FormCreate ');
 end;
 
 procedure TFrmInfoCliente.FormShow(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TFrmInfoCliente.FormShow ');
   inherited;
   self.Width := 453;
   IncializaComponentes();
   BindFields;
   if Assigned(self.Cliente) then
     VerificaParcelasEmAtraso(self.Cliente.CODIGO);
+  TLog.d('<<< Saindo de TFrmInfoCliente.FormShow ');
 end;
 
 function TFrmInfoCliente.getCliente: TCliente;

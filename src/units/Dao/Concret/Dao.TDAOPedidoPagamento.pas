@@ -29,13 +29,13 @@ type
 
   public
 
-    class function New(Connection: TFDConnection): IDAOPedidoPagamento;
+    class function New(Connection: TFDConnection; aKeepConection: Boolean): IDAOPedidoPagamento;
 
   end;
 
 implementation
 
-uses Dominio.Entidades.TFactory, Util.Exceptions, Dao.TDaoParcelas, Dominio.Entidades.TParcelas, Utils.ArrayUtil;
+uses Factory.Dao, Util.Exceptions, Dao.TDaoParcelas, Dominio.Entidades.TParcelas, Utils.ArrayUtil;
 { TClasseBase }
 
 procedure TDAOPedidoPagamento.GravaParcelas(aPagto: TPEDIDOPAGAMENTO);
@@ -43,7 +43,7 @@ VAR
   DAOParcelas: TDaoParcelas;
   parcela: TParcelas;
 begin
-  DAOParcelas := TDaoParcelas.Create(Self.FConnection);
+  DAOParcelas := TDaoParcelas.Create(Self.FConnection, true);
 
   for parcela in aPagto.Parcelas do
   begin
@@ -62,7 +62,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
       qry.SQL.Text := ''
@@ -107,7 +107,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
       qry.SQL.Text := ''
@@ -148,7 +148,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
       qry.SQL.Text := ''
@@ -185,7 +185,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
       qry.SQL.Text := ''
@@ -225,7 +225,7 @@ procedure TDAOPedidoPagamento.Inclui(aPagto: TPEDIDOPAGAMENTO);
 var
   qry: TFDQuery;
 begin
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
 
@@ -277,9 +277,9 @@ VAR
   qry: TFDQuery;
   condicao: TPEDIDOPAGAMENTO;
 begin
-  DAOParcelas := TDaoParcelas.Create(FConnection);
+  DAOParcelas := TDaoParcelas.Create(FConnection, true);
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   Result := tLIST<TPEDIDOPAGAMENTO>.Create();
   try
     try
@@ -319,16 +319,16 @@ begin
   end;
 end;
 
-class function TDAOPedidoPagamento.New(Connection: TFDConnection): IDAOPedidoPagamento;
+class function TDAOPedidoPagamento.New(Connection: TFDConnection; aKeepConection: Boolean): IDAOPedidoPagamento;
 begin
-  Result := TDAOPedidoPagamento.Create(Connection);
+  Result := TDAOPedidoPagamento.Create(Connection, aKeepConection);
 end;
 
 function TDAOPedidoPagamento.TiposPagamento(idpedido: Integer): TArray<Integer>;
 var
   qry: TFDQuery;
 begin
-  qry := TFactory.Query();
+  qry := Self.Query();
 
   try
     try

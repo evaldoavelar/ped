@@ -2,10 +2,9 @@ inherited frmGraficoPedidos: TfrmGraficoPedidos
   Caption = 'Gr'#225'ficos'
   ClientHeight = 609
   ClientWidth = 845
-  OnCreate = FormCreate
   OnShow = FormShow
   ExplicitWidth = 861
-  ExplicitHeight = 647
+  ExplicitHeight = 648
   PixelsPerInch = 96
   TextHeight = 13
   object spl1: TSplitter
@@ -105,6 +104,8 @@ inherited frmGraficoPedidos: TfrmGraficoPedidos
       object ts2: TTabSheet
         Caption = 'Gr'#225'fico 2'
         ImageIndex = 1
+        ExplicitLeft = 0
+        ExplicitTop = 0
         ExplicitWidth = 281
         ExplicitHeight = 165
         object Chart1: TChart

@@ -27,7 +27,7 @@ type
 implementation
 
 uses
-  Util.Exceptions, Dominio.Entidades.TFactory;
+  Util.Exceptions, Factory.Dao;
 
 { TDaoEstoqueProduto }
 
@@ -35,7 +35,7 @@ procedure TDaoEstoqueProduto.Delete(aESTOQUEPRODUTO: TEstoqueProduto);
 var
   qry: TFDQuery;
 begin
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
 
@@ -70,7 +70,7 @@ procedure TDaoEstoqueProduto.Inclui(aESTOQUEPRODUTO: TEstoqueProduto);
 var
   qry: TFDQuery;
 begin
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
       aESTOQUEPRODUTO.ID := GeraID;
@@ -125,7 +125,7 @@ var
   estoque: TEstoqueProduto;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   Result := tLIST<TEstoqueProduto>.Create();
   try
     try
@@ -182,7 +182,7 @@ end;
 class function TDaoEstoqueProduto.New(
   Connection: TFDConnection): IDaoEstoqueProduto;
 begin
-  Result := TDaoEstoqueProduto.Create(Connection);
+  Result := TDaoEstoqueProduto.Create(Connection,true);
 end;
 
 function TDaoEstoqueProduto.UpdateStatus(aIDPEDIDO, aSEQ: Integer;
@@ -190,7 +190,7 @@ function TDaoEstoqueProduto.UpdateStatus(aIDPEDIDO, aSEQ: Integer;
 var
   qry: TFDQuery;
 begin
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
 
     try

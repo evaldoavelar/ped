@@ -1,6 +1,5 @@
 inherited frmConsultaFormaPagto: TfrmConsultaFormaPagto
   Caption = 'Consulta Forma Pagamento'
-  OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
   inherited dbGridResultado: TJvDBUltimGrid

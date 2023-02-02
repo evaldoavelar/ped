@@ -82,10 +82,11 @@ implementation
 {$R *.dfm}
 
 
-uses Dominio.Entidades.TFactory, Consulta.Fornecedor;
+uses Factory.Dao, Consulta.Fornecedor, Sistema.TLog, Factory.Entidades;
 
 procedure TfrmCadastroFornecedor.Excluir;
 begin
+  TLog.d('>>> Entrando em  TfrmCadastroFornecedor.Excluir ');
   inherited;
   try
     DaoFornecedor.ExcluirFornecedor(FFornecedor.CODIGO);
@@ -96,26 +97,31 @@ begin
   except
     on e: Exception do
     begin
+      TLog.d(e.Message);
       MessageDlg(e.Message, mtError, [mbOK], 0);
       edtPesquisa.SetFocus;
     end;
   end;
+  TLog.d('<<< Saindo de TfrmCadastroFornecedor.Excluir ');
 end;
 
 procedure TfrmCadastroFornecedor.AtualizarEntity;
 begin
+  TLog.d('>>> Entrando em  TfrmCadastroFornecedor.AtualizarEntity ');
   inherited;
   DaoFornecedor.AtualizaFornecedors(FFornecedor);
   edtPesquisa.Text := FFornecedor.NOME;
+  TLog.d('<<< Saindo de TfrmCadastroFornecedor.AtualizarEntity ');
 end;
 
 procedure TfrmCadastroFornecedor.Bind;
 begin
+  TLog.d('>>> Entrando em  TfrmCadastroFornecedor.Bind ');
   inherited;
   FFornecedor.ClearBindings;
   FFornecedor.Bind('CODIGO', edtCodigo, 'Text');
   FFornecedor.Bind('NOME', edtNome, 'Text');
-//  FFornecedor.BindReadOnly('NOME', lblCliente, 'Caption');
+  // FFornecedor.BindReadOnly('NOME', lblCliente, 'Caption');
   FFornecedor.Bind('FANTASIA', edtFantasia, 'Text');
   FFornecedor.Bind('CNPJ_CNPF', edtCpf, 'Text');
   FFornecedor.Bind('IE_RG', edtIE, 'Text');
@@ -131,10 +137,12 @@ begin
   FFornecedor.Bind('TELEFONE', edtTelefone, 'Text');
   FFornecedor.Bind('EMAIL', edtEmail, 'Text');
   FFornecedor.Bind('OBSERVACOES', mmoObservacao, 'Text');
+  TLog.d('<<< Saindo de TfrmCadastroFornecedor.Bind ');
 end;
 
 procedure TfrmCadastroFornecedor.Cancelar;
 begin
+  TLog.d('>>> Entrando em  TfrmCadastroFornecedor.Cancelar ');
   try
     if Assigned(FFornecedor) and (FFornecedor.CODIGO <> '') then
     begin
@@ -152,15 +160,17 @@ begin
       Exit;
     on e: Exception do
     begin
+      TLog.d(e.Message);
       MessageDlg(e.Message, mtError, [mbOK], 0);
       edtPesquisa.SetFocus;
     end;
   end;
-
+  TLog.d('<<< Saindo de TfrmCadastroFornecedor.Cancelar ');
 end;
 
 procedure TfrmCadastroFornecedor.FormDestroy(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TfrmCadastroFornecedor.FormDestroy ');
   DaoFornecedor := nil;
   if Assigned(FFornecedor) then
   begin
@@ -168,7 +178,7 @@ begin
     FFornecedor := nil;
   end;
   inherited;
-
+  TLog.d('<<< Saindo de TfrmCadastroFornecedor.FormDestroy ');
 end;
 
 procedure TfrmCadastroFornecedor.edtCodigoChange(Sender: TObject);
@@ -184,15 +194,18 @@ end;
 
 procedure TfrmCadastroFornecedor.FormShow(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TfrmCadastroFornecedor.FormShow ');
   inherited;
 
-  DaoFornecedor := TFactory.DaoFornecedor;
+  DaoFornecedor := fFactory.DaoFornecedor;
+  TLog.d('<<< Saindo de TfrmCadastroFornecedor.FormShow ');
 end;
 
 procedure TfrmCadastroFornecedor.getEntity(aEntity: TObject);
 var
   LItem: TFornecedor;
 begin
+  TLog.d('>>> Entrando em  TfrmCadastroFornecedor.getEntity ');
   try
 
     // edição
@@ -218,31 +231,37 @@ begin
   except
     on e: Exception do
     begin
+      TLog.d(e.Message);
       MessageDlg(e.Message, mtError, [mbOK], 0);
       edtPesquisa.SetFocus;
     end;
   end;
-
+  TLog.d('<<< Saindo de TfrmCadastroFornecedor.getEntity ');
 end;
 
 procedure TfrmCadastroFornecedor.IncluirEntity;
 begin
+  TLog.d('>>> Entrando em  TfrmCadastroFornecedor.IncluirEntity ');
   inherited;
   FFornecedor.CODIGO := DaoFornecedor.GeraID;
   DaoFornecedor.IncluiFornecedor(FFornecedor);
   edtPesquisa.Text := FFornecedor.NOME;
+  TLog.d('<<< Saindo de TfrmCadastroFornecedor.IncluirEntity ');
 end;
 
 function TfrmCadastroFornecedor.MontaDescricaoPesquisa(aItem: TEntity): string;
 var
   LItem: TFornecedor;
 begin
+  TLog.d('>>> Entrando em  TfrmCadastroFornecedor.MontaDescricaoPesquisa ');
   LItem := aItem as TFornecedor;
   result := LItem.NOME;
+  TLog.d('<<< Saindo de TfrmCadastroFornecedor.MontaDescricaoPesquisa ');
 end;
 
 procedure TfrmCadastroFornecedor.Novo;
 begin
+  TLog.d('>>> Entrando em  TfrmCadastroFornecedor.Novo ');
   try
     inherited;
 
@@ -252,7 +271,7 @@ begin
       FFornecedor := nil;
     end;
 
-    Self.FFornecedor := TFactory.Fornecedor;
+    Self.FFornecedor := TFactoryEntidades.new.Fornecedor;
     Bind;
     try
       edtNome.SetFocus;
@@ -262,9 +281,12 @@ begin
 
   except
     on e: Exception do
+    begin
+      TLog.d(e.Message);
       MessageDlg(e.Message, mtError, [mbOK], 0);
+    end;
   end;
-
+  TLog.d('<<< Saindo de TfrmCadastroFornecedor.Novo ');
 end;
 
 function TfrmCadastroFornecedor.PesquisaPorDescricaoParcial(
@@ -273,6 +295,7 @@ var
   LLista: TObjectList<TFornecedor>;
   item: TFornecedor;
 begin
+  TLog.d('>>> Entrando em  TfrmCadastroFornecedor.PesquisaPorDescricaoParcial ');
   LLista := DaoFornecedor.Listar(aValor);
   result := TObjectList<TEntity>.Create();
 
@@ -281,11 +304,12 @@ begin
 
   LLista.OwnsObjects := false;
   LLista.Free;
-
+  TLog.d('<<< Saindo de TfrmCadastroFornecedor.PesquisaPorDescricaoParcial ');
 end;
 
 procedure TfrmCadastroFornecedor.Pesquisar;
 begin
+  TLog.d('>>> Entrando em  TfrmCadastroFornecedor.Pesquisar ');
   inherited;
   try
     frmConsultaFornecedor := TfrmConsultaFornecedor.Create(Self);
@@ -309,8 +333,12 @@ begin
     end;
   except
     on e: Exception do
+    begin
+      TLog.d(e.Message);
       MessageDlg(e.Message, mtError, [mbOK], 0);
+    end;
   end;
+  TLog.d('<<< Saindo de TfrmCadastroFornecedor.Pesquisar ');
 end;
 
 end.

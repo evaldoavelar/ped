@@ -28,6 +28,11 @@ type
     FLOGOMARCAETIQUETA: TImage;
     FImpressoraTinta: TParametrosImpressoraTinta;
     FDIRETORIORELATORIOS: string;
+    FNUMCAIXA: string;
+    FSERVIDORSENHA: string;
+    FSERVIDORDATABASE: string;
+    FSERVIDORUSUARIO: string;
+    FFUNCIONARCOMOCLIENTE: Boolean;
 
     function getVENDECLIENTEBLOQUEADO: Boolean;
     procedure setVENDECLIENTEBLOQUEADO(const Value: Boolean);
@@ -48,9 +53,16 @@ type
     procedure SetImpressoraTinta(const Value: TParametrosImpressoraTinta);
     procedure SetDIRETORIORELATORIOS(const Value: string);
     function GETDIRETORIORELATORIOS: string;
+    procedure SetNUMCAIXA(const Value: string);
+    procedure SetSERVIDORDATABASE(const Value: string);
+    procedure SetSERVIDORSENHA(const Value: string);
+    procedure SetSERVIDORUSUARIO(const Value: string);
+    procedure SetFUNCIONARCOMOCLIENTE(const Value: Boolean);
+    function GetSERVIDORSENHAProxy: string;
+    procedure SetSERVIDORSENHAProxy(const Value: string);
 
   public
-    destructor Destroy; override;
+
     [campo('VENDECLIENTEBLOQUEADO', tpINTEGER)]
     property VENDECLIENTEBLOQUEADO: Boolean read getVENDECLIENTEBLOQUEADO write setVENDECLIENTEBLOQUEADO;
 
@@ -84,14 +96,31 @@ type
     [campo('DIRETORIORELATORIOS', tpVARCHAR, 2000)]
     property DIRETORIORELATORIOS: string read GETDIRETORIORELATORIOS;
 
+    [campo('NUMCAIXA', tpVARCHAR, 10, 0, True, 'caixa-01')]
+    property NUMCAIXA: string read FNUMCAIXA write SetNUMCAIXA;
+
+    [campo('SERVIDORDATABASE', tpVARCHAR, 300)]
+    property SERVIDORDATABASE: string read FSERVIDORDATABASE write SetSERVIDORDATABASE;
+
+    [campo('SERVIDORUSUARIO', tpVARCHAR, 60)]
+    property SERVIDORUSUARIO: string read FSERVIDORUSUARIO write SetSERVIDORUSUARIO;
+
+    [campo('SERVIDORSENHA', tpVARCHAR, 60)]
+    property SERVIDORSENHA: string read FSERVIDORSENHA write SetSERVIDORSENHA;
+    property SERVIDORSENHAProxy: string read GetSERVIDORSENHAProxy write SetSERVIDORSENHAProxy;
+
+    [campo('FUNCIONARCOMOCLIENTE', tpINTEGER, 0, 0, FALSE, '0')]
+    property FUNCIONARCOMOCLIENTE: Boolean read FFUNCIONARCOMOCLIENTE write SetFUNCIONARCOMOCLIENTE;
+
     constructor create; override;
+    destructor Destroy; override;
 
   end;
 
 implementation
 
 uses
-  Util.Funcoes;
+  Util.Funcoes, Util.TCript, Sistema.Constantes;
 
 { TParametros }
 
@@ -144,6 +173,11 @@ begin
   result := FPESQUISAPRODUTOPOR;
 end;
 
+function TParametros.GetSERVIDORSENHAProxy: string;
+begin
+  result := TCript.StringDescripty(CHAVE, FSERVIDORSENHA);
+end;
+
 function TParametros.getVENDECLIENTEBLOQUEADO: Boolean;
 begin
   result := FVENDECLIENTEBLOQUEADO
@@ -191,6 +225,15 @@ begin
   end;
 end;
 
+procedure TParametros.SetFUNCIONARCOMOCLIENTE(const Value: Boolean);
+begin
+  if Value <> FFUNCIONARCOMOCLIENTE then
+  begin
+    FFUNCIONARCOMOCLIENTE := Value;
+    Notify('FUNCIONARCOMOCLIENTE');
+  end;
+end;
+
 procedure TParametros.setImpressora(const Value: TParametrosImpressoraTermica);
 begin
   Self.FImpressora := Value;
@@ -215,6 +258,11 @@ begin
   end;
 end;
 
+procedure TParametros.SetNUMCAIXA(const Value: string);
+begin
+  FNUMCAIXA := Value;
+end;
+
 procedure TParametros.SetPESQUISAPRODUTOPOR(const Value: Integer);
 begin
   if Value <> FPESQUISAPRODUTOPOR then
@@ -222,6 +270,40 @@ begin
     FPESQUISAPRODUTOPOR := Value;
     Notify('PESQUISAPRODUTOPOR');
   end;
+end;
+
+procedure TParametros.SetSERVIDORDATABASE(const Value: string);
+begin
+  if Value <> FSERVIDORDATABASE then
+  begin
+    FSERVIDORDATABASE := Value;
+    Notify('SERVIDORDATABASE');
+  end;
+end;
+
+procedure TParametros.SetSERVIDORSENHA(const Value: string);
+begin
+
+  if Value <> FSERVIDORSENHA then
+  begin
+    FSERVIDORSENHA := Value;
+    Notify('SERVIDORSENHA');
+  end;
+end;
+
+procedure TParametros.SetSERVIDORSENHAProxy(const Value: string);
+begin
+  FSERVIDORSENHA := TCript.StringEncripty(CHAVE, Value);
+end;
+
+procedure TParametros.SetSERVIDORUSUARIO(const Value: string);
+begin
+  if Value <> FSERVIDORUSUARIO then
+  begin
+    FSERVIDORUSUARIO := Value;
+    Notify('SERVIDORUSUARIO');
+  end;
+
 end;
 
 procedure TParametros.SetVALIDADEORCAMENTO(const Value: Integer);

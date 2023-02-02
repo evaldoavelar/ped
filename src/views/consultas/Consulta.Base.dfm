@@ -4,9 +4,8 @@ inherited frmConsultaBase: TfrmConsultaBase
   ClientWidth = 779
   OnDestroy = FormDestroy
   OnShow = FormShow
-  ExplicitLeft = -52
   ExplicitWidth = 795
-  ExplicitHeight = 542
+  ExplicitHeight = 543
   PixelsPerInch = 96
   TextHeight = 13
   object dbGridResultado: TJvDBUltimGrid

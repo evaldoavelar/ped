@@ -70,7 +70,7 @@ uses
   Dominio.Mapeamento.Atributos in 'units\Dominio\Mapeamento\Dominio.Mapeamento.Atributos.pas',
   Dominio.Entidades.TCliente in 'units\Dominio\Entidades\Dominio.Entidades.TCliente.pas',
   Dominio.Entidades.TEmitente in 'units\Dominio\Entidades\Dominio.Entidades.TEmitente.pas',
-  Dominio.Entidades.TFactory in 'units\Dominio\Entidades\Dominio.Entidades.TFactory.pas',
+  Factory.Dao in 'units\Factorys\Concret\Factory.Dao.pas',
   Dominio.Entidades.TFormaPagto in 'units\Dominio\Entidades\Dominio.Entidades.TFormaPagto.pas',
   Dominio.Entidades.TFornecedor in 'units\Dominio\Entidades\Dominio.Entidades.TFornecedor.pas',
   Dominio.Entidades.TItemPedido in 'units\Dominio\Entidades\Dominio.Entidades.TItemPedido.pas',
@@ -191,7 +191,16 @@ uses
   Etiquetas.Modelo4x2 in 'views\etiquetas\Etiquetas.Modelo4x2.pas' {FrmEtiquetasModelo4x2},
   Relatorio.FREtiquetas.Modelo4x2 in 'units\relatorio\Relatorio.FREtiquetas.Modelo4x2.pas',
   Sistema.TLog in 'units\Sistema\Sistema.TLog.pas',
-  Utils.IO in 'units\Util\Utils.IO.pas';
+  Utils.IO in 'units\Util\Utils.IO.pas',
+  Configuracoes.Database in 'views\configuracoes\Configuracoes.Database.pas' {FrmConfiguracoesDatabase},
+  Sistema.TBancoDeDados in 'units\Sistema\Sistema.TBancoDeDados.pas',
+  Sistema.TCaixa in 'units\Sistema\Sistema.TCaixa.pas',
+  Dao.TParametrosBancoDeDados in 'units\Dao\Concret\Dao.TParametrosBancoDeDados.pas',
+  Dao.IDaoParametrosBancoDeDados in 'units\Dao\Abstract\Dao.IDaoParametrosBancoDeDados.pas',
+  IFactory.Dao in 'units\Factorys\Abstract\IFactory.Dao.pas',
+  IFactory.Entidades in 'units\Factorys\Abstract\IFactory.Entidades.pas',
+  Factory.Entidades in 'units\Factorys\Concret\Factory.Entidades.pas',
+  Sistema.Constantes in 'units\Sistema\Sistema.Constantes.pas';
 
 {$R *.res}
 

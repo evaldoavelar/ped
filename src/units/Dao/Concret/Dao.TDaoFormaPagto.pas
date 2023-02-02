@@ -31,20 +31,20 @@ type
     function ListaObject(): TObjectList<TFormaPagto>;
     function ListaAtivosObject(): TObjectList<TFormaPagto>;
     function GeraID: Integer;
-    constructor Create(Connection: TFDConnection); override;
+    constructor Create(Connection: TFDConnection; aKeepConection: Boolean); override;
   end;
 
 implementation
 
 { TDaoFormaPagto }
 
-uses Dominio.Entidades.TFactory, Util.Exceptions, Dominio.Entidades.CondicaoPagto;
+uses Factory.Dao, Util.Exceptions, Dominio.Entidades.CondicaoPagto;
 
-constructor TDaoFormaPagto.Create(Connection: TFDConnection);
+constructor TDaoFormaPagto.Create(Connection: TFDConnection; aKeepConection: Boolean);
 begin
   inherited;
 
-  FDaoCondicaoPagto := TDaoCondicaoPagto.new(Connection);
+  FDaoCondicaoPagto := TDaoCondicaoPagto.new(Connection, true);
 end;
 
 procedure TDaoFormaPagto.ExcluirFormaPagto(id: Integer);
@@ -52,7 +52,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
 
@@ -93,7 +93,7 @@ var
   condicao: TCONDICAODEPAGTO;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
       qry.SQL.Text := ''
@@ -146,7 +146,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
       qry.SQL.Text := ''
@@ -182,7 +182,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
       qry.SQL.Text := ''
@@ -225,7 +225,7 @@ begin
   if Self.GeTFormaByDescricao(FormaPagtos.DESCRICAO) <> nil then
     raise Exception.Create('Forma de pagamento já existe');
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
       qry.SQL.Text := ''
@@ -276,7 +276,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
 
   try
     qry.SQL.Text := ''
@@ -306,7 +306,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
 
   try
     qry.SQL.Text := ''
@@ -334,7 +334,7 @@ var
   pagto: TFormaPagto;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   Result := TObjectList<TFormaPagto>.Create();
   try
     try
@@ -374,7 +374,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   Result := TObjectList<TFormaPagto>.Create();
   try
     try
@@ -411,7 +411,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   Result := TObjectList<TFormaPagto>.Create();
   try
     try

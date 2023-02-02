@@ -37,14 +37,14 @@ implementation
 
 { TDaoParceiroFormaPagto }
 
-uses Dominio.Entidades.TFactory, Util.Exceptions;
+uses Factory.Dao, Util.Exceptions;
 
 procedure TDaoParceiroFormaPagto.ExcluirParceiroFormaPagto(id: Integer);
 var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
       qry.SQL.Text := ''
@@ -81,7 +81,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
       qry.SQL.Text := ''
@@ -121,7 +121,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
       qry.SQL.Text := ''
@@ -157,7 +157,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
       qry.SQL.Text := ''
@@ -196,7 +196,7 @@ begin
   if Self.GeTFormaByDescricao(ParceiroFormaPagtos.DESCRICAO) <> nil then
     raise Exception.Create('Forma de pagamento já existe');
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
       qry.SQL.Text := ''
@@ -232,7 +232,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
 
   try
     qry.SQL.Text := ''
@@ -262,7 +262,7 @@ function TDaoParceiroFormaPagto.Listar(
 var
   qry: TFDQuery;
 begin
-  qry := TFactory.Query();
+  qry := Self.Query();
   Result := TObjectList<TParceiroFormaPagto>.Create();
   try
     try
@@ -304,7 +304,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   Result := TObjectList<TParceiroFormaPagto>.Create();
   try
     try
@@ -342,7 +342,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
 
   try
     qry.SQL.Text := ''
@@ -369,7 +369,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   Result := TObjectList<TParceiroFormaPagto>.Create();
   try
     try

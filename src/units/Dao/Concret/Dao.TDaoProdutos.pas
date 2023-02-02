@@ -34,7 +34,7 @@ type
 implementation
 
 uses
-  Util.Exceptions, Dominio.Entidades.TFactory;
+  Util.Exceptions, Factory.Dao;
 
 { TDaoProduto }
 
@@ -43,7 +43,7 @@ var
   aCampoValor: TDictionary<string, Variant>;
   qry: TFDQuery;
 begin
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
 
     aCampoValor := TDictionary<string, Variant>.Create();
@@ -87,7 +87,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
       qry.SQL.Text := ''
@@ -125,7 +125,7 @@ var
   ProdutoTeste: TProduto;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
 
@@ -215,7 +215,7 @@ var
 
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
       qry.SQL.Text := ''
@@ -252,7 +252,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
       qry.SQL.Text := ''
@@ -288,7 +288,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
       qry.SQL.Text := ''
@@ -332,7 +332,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
       qry.SQL.Text := ''
@@ -376,7 +376,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
       qry.SQL.Text := ''
@@ -416,7 +416,7 @@ var
   descricao: string;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
 
@@ -510,7 +510,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
 
   try
     qry.SQL.Text := ''
@@ -628,7 +628,9 @@ function TDaoProduto.ParamsToObject(ds: TFDQuery): TProduto;
 var
   DaoFornecedor: IDaoFornecedor;
 begin
-  DaoFornecedor := TFactory.DaoFornecedor();
+  DaoFornecedor := TFactory
+    .new(FConnection,true)
+    .DaoFornecedor();
 
   try
 

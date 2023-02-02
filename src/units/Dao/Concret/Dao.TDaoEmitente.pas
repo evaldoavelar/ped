@@ -26,14 +26,14 @@ implementation
 
 { TDaoEmitente }
 
-uses Dominio.Entidades.TFactory, Util.Exceptions;
+uses Factory.Dao, Util.Exceptions;
 
 procedure TDaoEmitente.AtualizaEmitente(Emitente: TEmitente);
 var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
       qry.SQL.Text := ''
@@ -79,7 +79,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
       qry.SQL.Text := ''
@@ -112,7 +112,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
 
   try
     qry.SQL.Text := ''
@@ -138,7 +138,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
       qry.SQL.Text := ''

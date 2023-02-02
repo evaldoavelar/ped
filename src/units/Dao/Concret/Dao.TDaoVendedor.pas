@@ -32,7 +32,7 @@ type
 implementation
 
 uses
-  Util.Exceptions, Dominio.Entidades.TFactory;
+  Util.Exceptions, Factory.Dao;
 
 { TDaoVendedor }
 
@@ -41,7 +41,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
       qry.SQL.Text := ''
@@ -78,7 +78,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
       qry.SQL.Text := ''
@@ -125,7 +125,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
       qry.SQL.Text := ''
@@ -147,7 +147,11 @@ begin
       on E: Exception do
       begin
         TLog.d(E.message);
-        raise TDaoException.Create('Falha GetVendedor: ' + E.message);
+
+        if E.message.Contains('unavailable database') then
+          raise Exception.Create('Banco de dados não disponível')
+        else
+          raise TDaoException.Create('Falha GetVendedor: ' + E.message);
       end;
     end;
   finally
@@ -161,7 +165,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
       qry.SQL.Text := ''
@@ -202,7 +206,7 @@ begin
 
   vendedor.codigo := Self.GeraID;
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
       qry.SQL.Text := ''
@@ -252,7 +256,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   Result := TObjectList<TVendedor>.Create();
 
   try
@@ -285,7 +289,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   Result := TObjectList<TVendedor>.Create();
 
   try
@@ -319,7 +323,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
 
   try
     qry.SQL.Text := ''

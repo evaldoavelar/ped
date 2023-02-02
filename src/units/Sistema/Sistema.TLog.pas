@@ -3,7 +3,7 @@ unit Sistema.TLog;
 interface
 
 uses
-  SysUtils, System.Classes, Data.DB, Utils.IO,  FireDAC.Comp.Client,
+  SysUtils, System.Classes, Data.DB, Utils.IO, FireDAC.Comp.Client,
   Winapi.Windows;
 
 type
@@ -42,6 +42,9 @@ type
     class procedure FinalizaCache; overload;
 
   end;
+
+var
+  csCriticalSection: TRTLCriticalSection;
 
 implementation
 
@@ -128,35 +131,38 @@ var
   tft: TextFile;
   linha: string;
 begin
-
-  if not Ativar then
-    Exit;
-
-  if (ArquivoLog = '') then
-    raise Exception.Create('O nome do Arquivo de Log não foi informado!');
-
   try
-    case aTipo of
-      TTipoLog.Custom:
-        linha := 'C-' + FormatDateTime('dd/mm/yy hh:mm:ss - ', Now) + aTexto;
-      TTipoLog.Info:
-        linha := 'I-' + FormatDateTime('dd/mm/yy hh:mm:ss - ', Now) + aTexto;
-      TTipoLog.Debug:
-        linha := 'D-' + FormatDateTime('dd/mm/yy hh:mm:ss - ', Now) + aTexto;
+    EnterCriticalSection(csCriticalSection);
+
+    if not Ativar then
+      Exit;
+
+    if (ArquivoLog = '') then
+      raise Exception.Create('O nome do Arquivo de Log não foi informado!');
+    try
+      case aTipo of
+        TTipoLog.Custom:
+          linha := 'C-' + FormatDateTime('dd/mm/yy hh:mm:ss - ', Now) + aTexto;
+        TTipoLog.Info:
+          linha := 'I-' + FormatDateTime('dd/mm/yy hh:mm:ss - ', Now) + aTexto;
+        TTipoLog.Debug:
+          linha := 'D-' + FormatDateTime('dd/mm/yy hh:mm:ss - ', Now) + aTexto;
+      end;
+      OutputDebugString(PChar(linha));
+
+      AssignFile(tft, ArquivoLog);
+      if FileExists(ArquivoLog) then
+        Append(tft)
+      else
+        ReWrite(tft);
+
+      Writeln(tft, linha);
+      Closefile(tft);
+    except
     end;
-    OutputDebugString(PChar(linha));
-
-    AssignFile(tft, ArquivoLog);
-    if FileExists(ArquivoLog) then
-      Append(tft)
-    else
-      ReWrite(tft);
-
-    Writeln(tft, linha);
-    Closefile(tft);
-  except
+  finally
+    LeaveCriticalSection(csCriticalSection);
   end;
-
 end;
 
 class procedure TLog.i(aTexto: string);
@@ -214,5 +220,13 @@ begin
 
   ds.First;
 end;
+
+initialization
+
+InitializeCriticalSection(csCriticalSection);
+
+finalization
+
+DeleteCriticalSection(csCriticalSection);
 
 end.

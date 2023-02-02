@@ -602,6 +602,10 @@ inherited frmDetalhesPedido: TfrmDetalhesPedido
     object TabSheet2: TTabSheet
       Caption = 'Cliente'
       ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label6: TLabel
         Left = 11
         Top = 24
@@ -1200,6 +1204,10 @@ inherited frmDetalhesPedido: TfrmDetalhesPedido
     object TabSheet3: TTabSheet
       Caption = 'Produtos'
       ImageIndex = 2
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Panel5: TPanel
         Left = 0
         Top = 0
@@ -1249,6 +1257,10 @@ inherited frmDetalhesPedido: TfrmDetalhesPedido
     object tsPagamento: TTabSheet
       Caption = 'Pagamentos'
       ImageIndex = 5
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object strGridPagamentos: TStringGrid
         Left = 0
         Top = 25
@@ -1295,6 +1307,10 @@ inherited frmDetalhesPedido: TfrmDetalhesPedido
     object TabSheet4: TTabSheet
       Caption = 'Parcelas'
       ImageIndex = 3
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Panel6: TPanel
         Left = 0
         Top = 0
@@ -1340,6 +1356,10 @@ inherited frmDetalhesPedido: TfrmDetalhesPedido
     object ts1: TTabSheet
       Caption = 'Comprovante'
       ImageIndex = 4
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Panel8: TPanel
         Left = 0
         Top = 352

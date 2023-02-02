@@ -39,6 +39,7 @@ type
     procedure edtSenhaKeyPress(Sender: TObject; var Key: Char);
     procedure edtCodigoExit(Sender: TObject);
     procedure actSairExecute(Sender: TObject);
+    procedure btnBancoDeDadosClick(Sender: TObject);
   private
     FVendedor: TVendedor;
     daoVendedor: IDaoVendedor;
@@ -59,7 +60,7 @@ implementation
 {$R *.dfm}
 
 
-uses Dominio.Entidades.TFactory;
+uses Factory.Dao, Configuracoes.Database;
 
 procedure TfrmLogin.actLoginExecute(Sender: TObject);
 
@@ -75,9 +76,25 @@ begin
   self.ModalResult := mrAbort;
 end;
 
+procedure TfrmLogin.btnBancoDeDadosClick(Sender: TObject);
+var
+  FrmConfiguracoesDatabase: TFrmConfiguracoesDatabase;
+begin
+  inherited;
+  FrmConfiguracoesDatabase := TFrmConfiguracoesDatabase.Create(self);
+  try
+    FrmConfiguracoesDatabase.showmodal;
+  finally
+    FrmConfiguracoesDatabase.Free;
+  end;
+end;
+
 procedure TfrmLogin.edtCodigoExit(Sender: TObject);
 begin
   inherited;
+  if daoVendedor = nil then
+    daoVendedor := FFactory.daoVendedor;
+
   FVendedor := daoVendedor.getVendedor(edtCodigo.Text);
   // if Assigned(FVendedor) then
   // edtNome.Text := FVendedor.NOME;
@@ -102,7 +119,7 @@ end;
 procedure TfrmLogin.FormCreate(Sender: TObject);
 begin
   inherited;
-  daoVendedor := TFactory.daoVendedor;
+  daoVendedor := FFactory.daoVendedor;
 end;
 
 function TfrmLogin.getVendedor: TVendedor;

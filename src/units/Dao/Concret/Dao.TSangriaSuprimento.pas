@@ -3,7 +3,7 @@ unit Dao.TSangriaSuprimento;
 interface
 
 uses System.Generics.Collections,
-  System.SysUtils, System.Classes, Dominio.Entidades.TFactory,
+  System.SysUtils, System.Classes, Factory.Dao,
   FireDAC.Stan.Error,
   Data.DB, FireDAC.Comp.Client, Dao.IDAOTSangriaSuprimento,
   Dao.TDaoBase, Sistema.TLog, Dominio.Entidades.TSangriaSuprimento;
@@ -20,7 +20,7 @@ type
     function GeraID: Integer;
   public
 
-    class function New(Connection: TFDConnection): IDAOTSangriaSuprimento;
+    class function New(Connection: TFDConnection; aKeepConection: Boolean): IDAOTSangriaSuprimento;
   end;
 
 implementation
@@ -40,7 +40,7 @@ procedure TDaoSangriaSuprimento.Inclui(aObj: TSangriaSuprimento);
 var
   qry: TFDQuery;
 begin
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
       Valida(aObj);
@@ -88,7 +88,7 @@ var
   LSangriaSuprimento: TSangriaSuprimento;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   Result := TObjectList<TSangriaSuprimento>.Create();
   try
     try
@@ -126,9 +126,9 @@ begin
 end;
 
 class function TDaoSangriaSuprimento.New(
-  Connection: TFDConnection): IDAOTSangriaSuprimento;
+  Connection: TFDConnection; aKeepConection: Boolean): IDAOTSangriaSuprimento;
 begin
-  Result := TDaoSangriaSuprimento.Create(Connection);
+  Result := TDaoSangriaSuprimento.Create(Connection,aKeepConection);
 end;
 
 procedure TDaoSangriaSuprimento.Valida(aObj: TSangriaSuprimento);

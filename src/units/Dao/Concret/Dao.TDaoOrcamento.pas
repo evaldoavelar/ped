@@ -29,11 +29,15 @@ type
     function Listar(campo, valor: string; dataInicio, dataFim: TDate): TDataSet; overload;
     function Listar(campo, valor: string): TDataSet; overload;
     function Listar(dataInicio, dataFim: TDate): TDataSet; overload;
+
+    procedure StartTransaction;
+    procedure Commit;
+    procedure Rollback;
   end;
 
 implementation
 
-uses Dominio.Entidades.TFactory;
+uses Factory.Dao;
 { TDaoOrcamento }
 
 procedure TDaoOrcamento.AtualizaStatus(Orcamento: TOrcamento);
@@ -41,7 +45,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     qry.SQL.Text := ''
       + 'UPDATE Orcamento '
@@ -67,12 +71,18 @@ begin
 
 end;
 
+procedure TDaoOrcamento.Commit;
+begin
+  TLog.d('### TDaoOrcamento.Commit ### ');
+  Self.FConnection.Commit;
+end;
+
 procedure TDaoOrcamento.AtualizaOrcamento(Orcamento: TOrcamento);
 var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     qry.SQL.Text := ''
       + 'UPDATE Orcamento '
@@ -113,7 +123,7 @@ procedure TDaoOrcamento.ExcluiItem(Item: TItemOrcamento);
 var
   DaoItemOrcamento: TDaoItemOrcamento;
 begin
-  DaoItemOrcamento := TDaoItemOrcamento.Create(Self.FConnection);
+  DaoItemOrcamento := TDaoItemOrcamento.Create(Self.FConnection, true);
   DaoItemOrcamento.ExcluiItemOrcamento(Item.SEQ, Item.IDORCAMENTO);
   DaoItemOrcamento.Free;
 
@@ -126,7 +136,7 @@ begin
 
   Valida(Orcamento);
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     qry.SQL.Text := ''
       + 'UPDATE Orcamento '
@@ -166,7 +176,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
       qry.SQL.Text := ''
@@ -202,7 +212,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
 
   try
 
@@ -235,7 +245,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
 
   try
 
@@ -271,7 +281,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
 
   try
 
@@ -311,7 +321,7 @@ var
 begin
   Valida(Orcamento);
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     qry.Connection := FConnection;
     qry.SQL.Text := ''
@@ -408,8 +418,8 @@ var
   bmp: TBitmap;
 begin
   try
-    DaoVendedor := TDaoVendedor.Create(Self.FConnection);
-    DaoItensOrcamento := TDaoItemOrcamento.Create(Self.FConnection);
+    DaoVendedor := TDaoVendedor.Create(Self.FConnection, true);
+    DaoItensOrcamento := TDaoItemOrcamento.Create(Self.FConnection, true);
 
     Result := TOrcamento.Create;
     Result.id := ds.FieldByName('ID').AsInteger;
@@ -440,6 +450,18 @@ begin
   end;
 end;
 
+procedure TDaoOrcamento.Rollback;
+begin
+  TLog.d('### TDaoOrcamento.Rollback ### ');
+  Self.FConnection.Rollback;
+end;
+
+procedure TDaoOrcamento.StartTransaction;
+begin
+  TLog.d('### TDaoOrcamento.StartTransaction ### ');
+  Self.FConnection.StartTransaction;
+end;
+
 procedure TDaoOrcamento.Valida(Orcamento: TOrcamento);
 begin
   if Orcamento.Vendedor = nil then
@@ -454,7 +476,7 @@ procedure TDaoOrcamento.VendeItem(Item: TItemOrcamento);
 var
   DaoItemOrcamento: TDaoItemOrcamento;
 begin
-  DaoItemOrcamento := TDaoItemOrcamento.Create(Self.FConnection);
+  DaoItemOrcamento := TDaoItemOrcamento.Create(Self.FConnection, true);
   DaoItemOrcamento.IncluiItemOrcamento(Item);
   FreeAndNil(DaoItemOrcamento);
 end;

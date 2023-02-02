@@ -7,7 +7,7 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Cadastros.Base, JvComponentBase, JvEnterTab,
   System.Actions, Vcl.ActnList, Vcl.StdCtrls, Vcl.WinXCtrls, Vcl.Buttons,
   Vcl.ComCtrls, Vcl.ExtCtrls, Dominio.Entidades.TParceiro.FormaPagto, System.Generics.Collections,
-  Dao.IDaoParceiro.FormaPagto, Dominio.Entidades.TFactory, Vcl.Mask, JvExMask, JvToolEdit, JvBaseEdits,
+  Dao.IDaoParceiro.FormaPagto, Factory.Dao, Vcl.Mask, JvExMask, JvToolEdit, JvBaseEdits,
   System.Bindings.Helper, Consulta.Parceiro.FormaPagto, Vcl.Imaging.jpeg,
   Vcl.AutoComplete, Dominio.Entidades.TEntity;
 
@@ -47,12 +47,16 @@ var
 
 implementation
 
+uses
+  Sistema.TLog, Factory.Entidades;
+
 {$R *.dfm}
 
 { TfrmCadastroBase1 }
 
 procedure TFrmCadastroFormaPagtoParceiro.Excluir;
 begin
+  TLog.d('>>> Entrando em  TFrmCadastroFormaPagtoParceiro.Excluir ');
   inherited;
   try
     DaoParceiroFormaPagto.ExcluirParceiroFormaPagto(FParceiroFormaPagto.ID);
@@ -63,32 +67,38 @@ begin
   except
     on e: Exception do
     begin
-      MessageDlg(e.Message, mtError, [mbOK], 0);
+      TLog.d(e.message);
+      MessageDlg(e.message, mtError, [mbOK], 0);
       edtPesquisa.SetFocus;
     end;
   end;
+  TLog.d('<<< Saindo de TFrmCadastroFormaPagtoParceiro.Excluir ');
 end;
 
 procedure TFrmCadastroFormaPagtoParceiro.AtualizarEntity;
 begin
+  TLog.d('>>> Entrando em  TFrmCadastroFormaPagtoParceiro.AtualizarEntity ');
   inherited;
   DaoParceiroFormaPagto.AtualizaParceiroFormaPagtos(FParceiroFormaPagto);
   edtPesquisa.Text := FParceiroFormaPagto.DESCRICAO;
+  TLog.d('<<< Saindo de TFrmCadastroFormaPagtoParceiro.AtualizarEntity ');
 end;
 
 procedure TFrmCadastroFormaPagtoParceiro.Bind;
 begin
+  TLog.d('>>> Entrando em  TFrmCadastroFormaPagtoParceiro.Bind ');
   inherited;
   FParceiroFormaPagto.ClearBindings;
   FParceiroFormaPagto.Bind('ID', edtCodigo, 'Text');
   FParceiroFormaPagto.Bind('DESCRICAO', edtDescricao, 'Text');
   FParceiroFormaPagto.Bind('COMISSAOPERCENTUAL', edtComissaoValor, 'Text');
-//  FParceiroFormaPagto.BindReadOnly('DESCRICAO', lblCliente, 'Caption');
-
+  // FParceiroFormaPagto.BindReadOnly('DESCRICAO', lblCliente, 'Caption');
+  TLog.d('<<< Saindo de TFrmCadastroFormaPagtoParceiro.Bind ');
 end;
 
 procedure TFrmCadastroFormaPagtoParceiro.Cancelar;
 begin
+  TLog.d('>>> Entrando em  TFrmCadastroFormaPagtoParceiro.Cancelar ');
   try
     if Assigned(FParceiroFormaPagto) and (FParceiroFormaPagto.ID > 0) then
     begin
@@ -106,11 +116,12 @@ begin
       Exit;
     on e: Exception do
     begin
-      MessageDlg(e.Message, mtError, [mbOK], 0);
+      TLog.d(e.message);
+      MessageDlg(e.message, mtError, [mbOK], 0);
       edtPesquisa.SetFocus;
     end;
   end;
-
+  TLog.d('<<< Saindo de TFrmCadastroFormaPagtoParceiro.Cancelar ');
 end;
 
 procedure TFrmCadastroFormaPagtoParceiro.edtCodigoChange(Sender: TObject);
@@ -121,6 +132,7 @@ end;
 
 procedure TFrmCadastroFormaPagtoParceiro.FormDestroy(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TFrmCadastroFormaPagtoParceiro.FormDestroy ');
   DaoParceiroFormaPagto := nil;
   if Assigned(FParceiroFormaPagto) then
   begin
@@ -128,18 +140,22 @@ begin
     FParceiroFormaPagto := nil;
   end;
   inherited;
+  TLog.d('<<< Saindo de TFrmCadastroFormaPagtoParceiro.FormDestroy ');
 end;
 
 procedure TFrmCadastroFormaPagtoParceiro.FormShow(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TFrmCadastroFormaPagtoParceiro.FormShow ');
   inherited;
-  DaoParceiroFormaPagto := TFactory.DaoParceiroFormaPagto;
+  DaoParceiroFormaPagto := fFactory.DaoParceiroFormaPagto;
+  TLog.d('<<< Saindo de TFrmCadastroFormaPagtoParceiro.FormShow ');
 end;
 
 procedure TFrmCadastroFormaPagtoParceiro.getEntity(aEntity: TObject);
 var
   LItem: TParceiroFormaPagto;
 begin
+  TLog.d('>>> Entrando em  TFrmCadastroFormaPagtoParceiro.getEntity ');
   try
 
     // edição
@@ -164,19 +180,22 @@ begin
   except
     on e: Exception do
     begin
-      MessageDlg(e.Message, mtError, [mbOK], 0);
+      TLog.d(e.message);
+      MessageDlg(e.message, mtError, [mbOK], 0);
       edtPesquisa.SetFocus;
     end;
   end;
-
+  TLog.d('<<< Saindo de TFrmCadastroFormaPagtoParceiro.getEntity ');
 end;
 
 procedure TFrmCadastroFormaPagtoParceiro.IncluirEntity;
 begin
+  TLog.d('>>> Entrando em  TFrmCadastroFormaPagtoParceiro.IncluirEntity ');
   inherited;
   FParceiroFormaPagto.ID := DaoParceiroFormaPagto.GeraID;
   DaoParceiroFormaPagto.IncluiPagto(FParceiroFormaPagto);
   edtPesquisa.Text := FParceiroFormaPagto.DESCRICAO;
+  TLog.d('<<< Saindo de TFrmCadastroFormaPagtoParceiro.IncluirEntity ');
 end;
 
 function TFrmCadastroFormaPagtoParceiro.MontaDescricaoPesquisa(
@@ -190,6 +209,7 @@ end;
 
 procedure TFrmCadastroFormaPagtoParceiro.Novo;
 begin
+  TLog.d('>>> Entrando em  TFrmCadastroFormaPagtoParceiro.Novo ');
   try
     inherited;
 
@@ -199,7 +219,7 @@ begin
       FParceiroFormaPagto := nil;
     end;
 
-    Self.FParceiroFormaPagto := TFactory.ParceiroFormaPagto;
+    Self.FParceiroFormaPagto := TFactoryEntidades.new.ParceiroFormaPagto;
     Bind;
     try
       edtDescricao.SetFocus;
@@ -209,9 +229,12 @@ begin
 
   except
     on e: Exception do
-      MessageDlg(e.Message, mtError, [mbOK], 0);
+    begin
+      TLog.d(e.message);
+      MessageDlg(e.message, mtError, [mbOK], 0);
+    end;
   end;
-
+  TLog.d('<<< Saindo de TFrmCadastroFormaPagtoParceiro.Novo ');
 end;
 
 function TFrmCadastroFormaPagtoParceiro.PesquisaPorDescricaoParcial(
@@ -233,6 +256,7 @@ end;
 
 procedure TFrmCadastroFormaPagtoParceiro.Pesquisar;
 begin
+  TLog.d('>>> Entrando em  TFrmCadastroFormaPagtoParceiro.Pesquisar ');
   inherited;
   try
     FrmConsultaFormaPagtoParceiro := TFrmConsultaFormaPagtoParceiro.Create(Self);
@@ -256,8 +280,12 @@ begin
     end;
   except
     on e: Exception do
-      MessageDlg(e.Message, mtError, [mbOK], 0);
+    begin
+      TLog.d(e.message);
+      MessageDlg(e.message, mtError, [mbOK], 0);
+    end;
   end;
+  TLog.d('<<< Saindo de TFrmCadastroFormaPagtoParceiro.Pesquisar ');
 end;
 
 end.

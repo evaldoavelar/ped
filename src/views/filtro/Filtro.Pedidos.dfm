@@ -2,7 +2,6 @@ inherited frmFiltroPedidos: TfrmFiltroPedidos
   Caption = 'Filtro Pedidos'
   ClientHeight = 672
   ClientWidth = 1089
-  OnCreate = FormCreate
   ExplicitWidth = 1105
   ExplicitHeight = 711
   PixelsPerInch = 96
@@ -190,6 +189,12 @@ inherited frmFiltroPedidos: TfrmFiltroPedidos
       end
       item
         Expanded = False
+        FieldName = 'NUMCAIXA'
+        Title.Caption = 'Caixa'
+        Visible = True
+      end
+      item
+        Expanded = False
         FieldName = 'DATAPEDIDO'
         Title.Caption = 'Data'
         Width = 70
@@ -269,7 +274,7 @@ inherited frmFiltroPedidos: TfrmFiltroPedidos
     Width = 1089
     Height = 70
     ExplicitTop = 602
-    ExplicitWidth = 1016
+    ExplicitWidth = 1089
     ExplicitHeight = 70
     DesignSize = (
       1089
@@ -343,7 +348,7 @@ inherited frmFiltroPedidos: TfrmFiltroPedidos
       Left = 977
       Top = 38
       TabOrder = 5
-      ExplicitLeft = 904
+      ExplicitLeft = 977
       ExplicitTop = 38
     end
     object BitBtn1: TBitBtn

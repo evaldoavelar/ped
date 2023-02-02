@@ -3,10 +3,9 @@ inherited FrmSangria: TFrmSangria
   Caption = 'Sangria'
   ClientHeight = 355
   ClientWidth = 300
-  OnCreate = FormCreate
   OnDestroy = FormDestroy
   ExplicitWidth = 306
-  ExplicitHeight = 386
+  ExplicitHeight = 384
   PixelsPerInch = 96
   TextHeight = 13
   object Label1: TLabel

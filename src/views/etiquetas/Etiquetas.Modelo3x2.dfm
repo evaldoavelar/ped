@@ -2,7 +2,6 @@ inherited FrmEtiquetasModelo3x2: TFrmEtiquetasModelo3x2
   Caption = 'Etiquetas'
   ClientHeight = 631
   ClientWidth = 955
-  OnCreate = FormCreate
   OnDestroy = FormDestroy
   ExplicitWidth = 971
   ExplicitHeight = 670
@@ -62,7 +61,7 @@ inherited FrmEtiquetasModelo3x2: TFrmEtiquetasModelo3x2
         Left = 3
         Top = 3
         Width = 36
-        Height = 29
+        Height = 13
         Align = alLeft
         Caption = 'C'#243'pias:'
         Color = clWhite
@@ -75,7 +74,6 @@ inherited FrmEtiquetasModelo3x2: TFrmEtiquetasModelo3x2
         ParentFont = False
         Transparent = True
         Layout = tlCenter
-        ExplicitHeight = 13
       end
       object edtNumCopias: TEdit
         AlignWithMargins = True
@@ -210,7 +208,7 @@ inherited FrmEtiquetasModelo3x2: TFrmEtiquetasModelo3x2
             Left = 30
             Top = 3
             Width = 64
-            Height = 30
+            Height = 23
             Margins.Left = 30
             Align = alLeft
             Alignment = taRightJustify
@@ -225,7 +223,6 @@ inherited FrmEtiquetasModelo3x2: TFrmEtiquetasModelo3x2
             ParentFont = False
             Transparent = True
             Layout = tlCenter
-            ExplicitHeight = 23
           end
           object edtPreco1: TEdit
             AlignWithMargins = True
@@ -674,7 +671,7 @@ inherited FrmEtiquetasModelo3x2: TFrmEtiquetasModelo3x2
             AlignWithMargins = True
             Left = 3
             Top = 90
-            Width = 145
+            Width = 63
             Height = 16
             Margins.Top = 1
             Align = alTop
@@ -690,7 +687,6 @@ inherited FrmEtiquetasModelo3x2: TFrmEtiquetasModelo3x2
             ParentFont = False
             Transparent = True
             Layout = tlCenter
-            ExplicitWidth = 63
           end
           object lblDescricao1: TLabel
             AlignWithMargins = True
@@ -1094,9 +1090,9 @@ inherited FrmEtiquetasModelo3x2: TFrmEtiquetasModelo3x2
           TabOrder = 0
           object lblCidade1: TLabel
             AlignWithMargins = True
-            Left = 3
+            Left = 55
             Top = 29
-            Width = 159
+            Width = 107
             Height = 13
             Align = alTop
             Alignment = taRightJustify
@@ -1111,14 +1107,12 @@ inherited FrmEtiquetasModelo3x2: TFrmEtiquetasModelo3x2
             ParentFont = False
             Transparent = True
             Layout = tlCenter
-            ExplicitLeft = 55
-            ExplicitWidth = 107
           end
           object lblRua1: TLabel
             AlignWithMargins = True
-            Left = 1
+            Left = 28
             Top = 10
-            Width = 163
+            Width = 136
             Height = 13
             Margins.Left = 1
             Margins.Top = 10
@@ -1136,8 +1130,6 @@ inherited FrmEtiquetasModelo3x2: TFrmEtiquetasModelo3x2
             ParentFont = False
             Transparent = True
             Layout = tlCenter
-            ExplicitLeft = 28
-            ExplicitWidth = 136
           end
         end
       end
@@ -1188,7 +1180,7 @@ inherited FrmEtiquetasModelo3x2: TFrmEtiquetasModelo3x2
             Left = 30
             Top = 3
             Width = 64
-            Height = 30
+            Height = 23
             Margins.Left = 30
             Align = alLeft
             Alignment = taRightJustify
@@ -1203,7 +1195,6 @@ inherited FrmEtiquetasModelo3x2: TFrmEtiquetasModelo3x2
             ParentFont = False
             Transparent = True
             Layout = tlCenter
-            ExplicitHeight = 23
           end
           object edtPreco2: TEdit
             AlignWithMargins = True
@@ -1650,7 +1641,7 @@ inherited FrmEtiquetasModelo3x2: TFrmEtiquetasModelo3x2
             AlignWithMargins = True
             Left = 3
             Top = 94
-            Width = 148
+            Width = 63
             Height = 16
             Margins.Top = 1
             Align = alTop
@@ -1666,7 +1657,6 @@ inherited FrmEtiquetasModelo3x2: TFrmEtiquetasModelo3x2
             ParentFont = False
             Transparent = True
             Layout = tlCenter
-            ExplicitWidth = 63
           end
           object lblDescricao2: TLabel
             AlignWithMargins = True
@@ -2064,9 +2054,9 @@ inherited FrmEtiquetasModelo3x2: TFrmEtiquetasModelo3x2
           TabOrder = 0
           object lblCidade2: TLabel
             AlignWithMargins = True
-            Left = 3
+            Left = 56
             Top = 29
-            Width = 160
+            Width = 107
             Height = 13
             Align = alTop
             Alignment = taRightJustify
@@ -2081,14 +2071,12 @@ inherited FrmEtiquetasModelo3x2: TFrmEtiquetasModelo3x2
             ParentFont = False
             Transparent = True
             Layout = tlCenter
-            ExplicitLeft = 56
-            ExplicitWidth = 107
           end
           object lblRua2: TLabel
             AlignWithMargins = True
-            Left = 3
+            Left = 27
             Top = 10
-            Width = 160
+            Width = 136
             Height = 13
             Margins.Top = 10
             Align = alTop
@@ -2104,8 +2092,6 @@ inherited FrmEtiquetasModelo3x2: TFrmEtiquetasModelo3x2
             ParentFont = False
             Transparent = True
             Layout = tlCenter
-            ExplicitLeft = 27
-            ExplicitWidth = 136
           end
         end
       end
@@ -2156,7 +2142,7 @@ inherited FrmEtiquetasModelo3x2: TFrmEtiquetasModelo3x2
             Left = 30
             Top = 3
             Width = 64
-            Height = 30
+            Height = 23
             Margins.Left = 30
             Align = alLeft
             Alignment = taRightJustify
@@ -2171,7 +2157,6 @@ inherited FrmEtiquetasModelo3x2: TFrmEtiquetasModelo3x2
             ParentFont = False
             Transparent = True
             Layout = tlCenter
-            ExplicitHeight = 23
           end
           object edtPreco3: TEdit
             AlignWithMargins = True
@@ -2619,7 +2604,7 @@ inherited FrmEtiquetasModelo3x2: TFrmEtiquetasModelo3x2
             AlignWithMargins = True
             Left = 3
             Top = 94
-            Width = 157
+            Width = 63
             Height = 16
             Margins.Top = 1
             Align = alTop
@@ -2635,7 +2620,6 @@ inherited FrmEtiquetasModelo3x2: TFrmEtiquetasModelo3x2
             ParentFont = False
             Transparent = True
             Layout = tlCenter
-            ExplicitWidth = 63
           end
           object lblDescricao3: TLabel
             AlignWithMargins = True
@@ -3033,9 +3017,9 @@ inherited FrmEtiquetasModelo3x2: TFrmEtiquetasModelo3x2
           TabOrder = 0
           object lblCidade3: TLabel
             AlignWithMargins = True
-            Left = 3
+            Left = 65
             Top = 29
-            Width = 169
+            Width = 107
             Height = 13
             Align = alTop
             Alignment = taRightJustify
@@ -3050,14 +3034,12 @@ inherited FrmEtiquetasModelo3x2: TFrmEtiquetasModelo3x2
             ParentFont = False
             Transparent = True
             Layout = tlCenter
-            ExplicitLeft = 65
-            ExplicitWidth = 107
           end
           object lblRua3: TLabel
             AlignWithMargins = True
-            Left = 3
+            Left = 36
             Top = 10
-            Width = 169
+            Width = 136
             Height = 13
             Margins.Top = 10
             Align = alTop
@@ -3073,8 +3055,6 @@ inherited FrmEtiquetasModelo3x2: TFrmEtiquetasModelo3x2
             ParentFont = False
             Transparent = True
             Layout = tlCenter
-            ExplicitLeft = 36
-            ExplicitWidth = 136
           end
         end
       end
@@ -3125,7 +3105,7 @@ inherited FrmEtiquetasModelo3x2: TFrmEtiquetasModelo3x2
             Left = 30
             Top = 3
             Width = 64
-            Height = 30
+            Height = 23
             Margins.Left = 30
             Align = alLeft
             Alignment = taRightJustify
@@ -3140,7 +3120,6 @@ inherited FrmEtiquetasModelo3x2: TFrmEtiquetasModelo3x2
             ParentFont = False
             Transparent = True
             Layout = tlCenter
-            ExplicitHeight = 23
           end
           object edtPreco4: TEdit
             AlignWithMargins = True
@@ -3594,7 +3573,7 @@ inherited FrmEtiquetasModelo3x2: TFrmEtiquetasModelo3x2
             AlignWithMargins = True
             Left = 3
             Top = 94
-            Width = 147
+            Width = 63
             Height = 16
             Margins.Top = 1
             Align = alTop
@@ -3610,7 +3589,6 @@ inherited FrmEtiquetasModelo3x2: TFrmEtiquetasModelo3x2
             ParentFont = False
             Transparent = True
             Layout = tlCenter
-            ExplicitWidth = 63
           end
           object lblDescricao4: TLabel
             AlignWithMargins = True
@@ -4009,9 +3987,9 @@ inherited FrmEtiquetasModelo3x2: TFrmEtiquetasModelo3x2
           TabOrder = 0
           object lblCidade4: TLabel
             AlignWithMargins = True
-            Left = 3
+            Left = 55
             Top = 29
-            Width = 159
+            Width = 107
             Height = 13
             Align = alTop
             Alignment = taRightJustify
@@ -4026,14 +4004,12 @@ inherited FrmEtiquetasModelo3x2: TFrmEtiquetasModelo3x2
             ParentFont = False
             Transparent = True
             Layout = tlCenter
-            ExplicitLeft = 55
-            ExplicitWidth = 107
           end
           object lblRua4: TLabel
             AlignWithMargins = True
-            Left = 3
+            Left = 26
             Top = 10
-            Width = 159
+            Width = 136
             Height = 13
             Margins.Top = 10
             Align = alTop
@@ -4049,8 +4025,6 @@ inherited FrmEtiquetasModelo3x2: TFrmEtiquetasModelo3x2
             ParentFont = False
             Transparent = True
             Layout = tlCenter
-            ExplicitLeft = 26
-            ExplicitWidth = 136
           end
         end
       end
@@ -4101,7 +4075,7 @@ inherited FrmEtiquetasModelo3x2: TFrmEtiquetasModelo3x2
             Left = 30
             Top = 3
             Width = 64
-            Height = 30
+            Height = 23
             Margins.Left = 30
             Align = alLeft
             Alignment = taRightJustify
@@ -4116,7 +4090,6 @@ inherited FrmEtiquetasModelo3x2: TFrmEtiquetasModelo3x2
             ParentFont = False
             Transparent = True
             Layout = tlCenter
-            ExplicitHeight = 23
           end
           object edtPreco5: TEdit
             AlignWithMargins = True
@@ -4563,7 +4536,7 @@ inherited FrmEtiquetasModelo3x2: TFrmEtiquetasModelo3x2
             AlignWithMargins = True
             Left = 3
             Top = 94
-            Width = 148
+            Width = 63
             Height = 16
             Margins.Top = 1
             Align = alTop
@@ -4579,7 +4552,6 @@ inherited FrmEtiquetasModelo3x2: TFrmEtiquetasModelo3x2
             ParentFont = False
             Transparent = True
             Layout = tlCenter
-            ExplicitWidth = 63
           end
           object lblDescricao5: TLabel
             AlignWithMargins = True
@@ -4979,9 +4951,9 @@ inherited FrmEtiquetasModelo3x2: TFrmEtiquetasModelo3x2
           TabOrder = 0
           object lblCidade5: TLabel
             AlignWithMargins = True
-            Left = 3
+            Left = 56
             Top = 29
-            Width = 160
+            Width = 107
             Height = 13
             Align = alTop
             Alignment = taRightJustify
@@ -4996,14 +4968,12 @@ inherited FrmEtiquetasModelo3x2: TFrmEtiquetasModelo3x2
             ParentFont = False
             Transparent = True
             Layout = tlCenter
-            ExplicitLeft = 56
-            ExplicitWidth = 107
           end
           object lblRua5: TLabel
             AlignWithMargins = True
-            Left = 3
+            Left = 27
             Top = 10
-            Width = 160
+            Width = 136
             Height = 13
             Margins.Top = 10
             Align = alTop
@@ -5019,8 +4989,6 @@ inherited FrmEtiquetasModelo3x2: TFrmEtiquetasModelo3x2
             ParentFont = False
             Transparent = True
             Layout = tlCenter
-            ExplicitLeft = 27
-            ExplicitWidth = 136
           end
         end
       end
@@ -5071,7 +5039,7 @@ inherited FrmEtiquetasModelo3x2: TFrmEtiquetasModelo3x2
             Left = 30
             Top = 3
             Width = 64
-            Height = 30
+            Height = 23
             Margins.Left = 30
             Align = alLeft
             Alignment = taRightJustify
@@ -5086,7 +5054,6 @@ inherited FrmEtiquetasModelo3x2: TFrmEtiquetasModelo3x2
             ParentFont = False
             Transparent = True
             Layout = tlCenter
-            ExplicitHeight = 23
           end
           object edtPreco6: TEdit
             AlignWithMargins = True
@@ -5534,7 +5501,7 @@ inherited FrmEtiquetasModelo3x2: TFrmEtiquetasModelo3x2
             AlignWithMargins = True
             Left = 3
             Top = 94
-            Width = 157
+            Width = 63
             Height = 16
             Margins.Top = 1
             Align = alTop
@@ -5550,7 +5517,6 @@ inherited FrmEtiquetasModelo3x2: TFrmEtiquetasModelo3x2
             ParentFont = False
             Transparent = True
             Layout = tlCenter
-            ExplicitWidth = 63
           end
           object lblDescricao6: TLabel
             AlignWithMargins = True
@@ -5935,9 +5901,9 @@ inherited FrmEtiquetasModelo3x2: TFrmEtiquetasModelo3x2
           TabOrder = 0
           object lblCidade6: TLabel
             AlignWithMargins = True
-            Left = 3
+            Left = 65
             Top = 29
-            Width = 169
+            Width = 107
             Height = 13
             Align = alTop
             Alignment = taRightJustify
@@ -5952,14 +5918,12 @@ inherited FrmEtiquetasModelo3x2: TFrmEtiquetasModelo3x2
             ParentFont = False
             Transparent = True
             Layout = tlCenter
-            ExplicitLeft = 65
-            ExplicitWidth = 107
           end
           object lblRua6: TLabel
             AlignWithMargins = True
-            Left = 3
+            Left = 36
             Top = 10
-            Width = 169
+            Width = 136
             Height = 13
             Margins.Top = 10
             Align = alTop
@@ -5975,8 +5939,6 @@ inherited FrmEtiquetasModelo3x2: TFrmEtiquetasModelo3x2
             ParentFont = False
             Transparent = True
             Layout = tlCenter
-            ExplicitLeft = 36
-            ExplicitWidth = 136
           end
         end
       end

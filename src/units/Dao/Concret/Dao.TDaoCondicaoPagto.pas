@@ -23,12 +23,12 @@ type
     function GeraID: Integer;
   public
 
-    class function New(Connection: TFDConnection): IDaoCondicaoPagto;
+    class function New(Connection: TFDConnection; aKeepConection: Boolean): IDaoCondicaoPagto;
   end;
 
 implementation
 
-uses Dominio.Entidades.TFactory, Util.Exceptions;
+uses Factory.Dao, Util.Exceptions;
 { TClasseBase }
 
 procedure TDaoCondicaoPagto.Atualiza(aCondicaoPagto: TCONDICAODEPAGTO);
@@ -36,7 +36,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
       qry.SQL.Text := ''
@@ -71,7 +71,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
       qry.SQL.Text := ''
@@ -108,7 +108,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
       qry.SQL.Text := ''
@@ -145,7 +145,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
       qry.SQL.Text := ''
@@ -188,7 +188,7 @@ procedure TDaoCondicaoPagto.Inclui(aCondicaoPagto: TCONDICAODEPAGTO);
 var
   qry: TFDQuery;
 begin
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
       aCondicaoPagto.id := GeraID;
@@ -230,7 +230,7 @@ var
   condicao: TCONDICAODEPAGTO;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   Result := tLIST<TCONDICAODEPAGTO>.Create();
   try
     try
@@ -266,9 +266,9 @@ begin
   end;
 end;
 
-class function TDaoCondicaoPagto.New(Connection: TFDConnection): IDaoCondicaoPagto;
+class function TDaoCondicaoPagto.New(Connection: TFDConnection; aKeepConection: Boolean): IDaoCondicaoPagto;
 begin
-  Result := TDaoCondicaoPagto.Create(Connection);
+  Result := TDaoCondicaoPagto.Create(Connection,aKeepConection);
 end;
 
 procedure TDaoCondicaoPagto.ValidaCondicao(aCondicaoPagto: TCONDICAODEPAGTO);

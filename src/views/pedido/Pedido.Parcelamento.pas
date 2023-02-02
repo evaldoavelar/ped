@@ -8,7 +8,7 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, untFrmBase, Vcl.StdCtrls, Vcl.Mask, JvExMask, JvToolEdit, JvBaseEdits, Vcl.ExtCtrls, Vcl.Buttons,
   JvExStdCtrls, JvEdit, JvValidateEdit, JvMaskEdit, JvCheckedMaskEdit, JvDatePickerEdit, Vcl.ActnList,
   Dao.IDaoFormaPagto,
-  Dominio.Entidades.TPedido, Dominio.Entidades.TParcelas, Dominio.Entidades.TFormaPagto, Dominio.Entidades.TFactory,
+  Dominio.Entidades.TPedido, Dominio.Entidades.TParcelas, Dominio.Entidades.TFormaPagto, Factory.Dao,
   System.Actions, Vcl.Imaging.jpeg, Util.VclFuncoes, Vcl.Imaging.pngimage,
   Dominio.Entidades.Pedido.Pagamentos.Pagamento;
 
@@ -89,7 +89,8 @@ var
 implementation
 
 uses
-  Util.Funcoes, Util.Exceptions, Dominio.Entidades.TFormaPagto.Tipo;
+  Util.Funcoes, Util.Exceptions, Dominio.Entidades.TFormaPagto.Tipo,
+  Sistema.TLog;
 
 {$R *.dfm}
 
@@ -160,27 +161,33 @@ end;
 
 procedure TFrmParcelamento.FormCreate(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TFrmParcelamento.FormCreate ');
   inherited;
   TVclFuncoes.DisableVclStyles(self, 'TLabel');
   TVclFuncoes.DisableVclStyles(self, 'TListBox');
-  daoTFormaPagto := TFactory.DaoFormaPagto;
+  daoTFormaPagto := fFactory.DaoFormaPagto;
+  TLog.d('<<< Saindo de TFrmParcelamento.FormCreate ');
 end;
 
 procedure TFrmParcelamento.FormDestroy(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TFrmParcelamento.FormDestroy ');
   FreeAndNil(pagtos);
   inherited;
+  TLog.d('<<< Saindo de TFrmParcelamento.FormDestroy ');
 end;
 
 procedure TFrmParcelamento.FormShow(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TFrmParcelamento.FormShow ');
   inherited;
   IncializaComponentes;
-
+  TLog.d('<<< Saindo de TFrmParcelamento.FormShow ');
 end;
 
 procedure TFrmParcelamento.IncializaComponentes;
 begin
+  TLog.d('>>> Entrando em  TFrmParcelamento.IncializaComponentes ');
   try
     try
       self.lblSubTotal.Caption := FormatCurr('R$ ###,##0.00', Pedido.ValorLiquido);
@@ -210,8 +217,12 @@ begin
 
   except
     on E: Exception do
+    begin
+      TLog.d(E.Message);
       MessageDlg(E.Message, mtError, [mbOK], 0);
+    end;
   end;
+  TLog.d('<<< Saindo de TFrmParcelamento.IncializaComponentes ');
 end;
 
 procedure TFrmParcelamento.lstFormaPagtoEnter(Sender: TObject);
@@ -322,6 +333,7 @@ var
   NumParcelas: Integer;
   VencimentoPrimeiraParcela: TDate;
 begin
+  TLog.d('>>> Entrando em  TFrmParcelamento.ParcelaPedido ');
   try
     NumParcelas := TFormaPagto(lstFormaPagto.Items.Objects[lstFormaPagto.ItemIndex]).CONDICAODEPAGTO[0].quantasVezes;
     try
@@ -357,6 +369,7 @@ begin
     on E: Exception do
       raise Exception.Create(E.Message);
   end;
+  TLog.d('<<< Saindo de TFrmParcelamento.ParcelaPedido ');
 end;
 
 procedure TFrmParcelamento.PopulaLista;
@@ -364,6 +377,7 @@ var
   Pagto: TFormaPagto;
   I: Integer;
 begin
+  TLog.d('>>> Entrando em  TFrmParcelamento.PopulaLista ');
   try
     pagtos := daoTFormaPagto.ListaObject();
 
@@ -379,10 +393,8 @@ begin
     on E: Exception do
       raise Exception.Create('Falha ao popular lista: ' + E.Message);
   end;
-
+  TLog.d('<<< Saindo de TFrmParcelamento.PopulaLista ');
 end;
-
-
 
 procedure TFrmParcelamento.SetPagto(const Value: TPEDIDOPAGAMENTO);
 begin

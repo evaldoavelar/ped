@@ -9,7 +9,7 @@ uses
   JvDBUltimGrid, Vcl.Mask,
   JvExMask, JvToolEdit, Vcl.StdCtrls, Vcl.Buttons, Vcl.Imaging.pngimage,
   Vcl.Imaging.jpeg, Vcl.ExtCtrls, Dao.TDaoParceiroVenda, Dominio.Entidades.TParceiroVenda,
-  Dominio.Entidades.TFactory, parceiro.PagtoDetalhes;
+  Factory.Dao, parceiro.PagtoDetalhes;
 
 type
   TfrmFiltroVendasParceiro = class(TfrmFiltroBase)
@@ -50,6 +50,9 @@ var
 
 implementation
 
+uses
+  Sistema.TLog, Factory.Entidades;
+
 {$R *.dfm}
 
 
@@ -57,6 +60,7 @@ procedure TfrmFiltroVendasParceiro.Pesquisar;
 var
   campo: string;
 begin
+  TLog.d('>>> Entrando em  TfrmFiltroVendasParceiro.Pesquisar ');
   // inherited;
   try
     if Assigned(dbGridResultado.DataSource.DataSet) then
@@ -79,13 +83,13 @@ begin
       end;
 
       if (chkEntreDatas.checked) and (trim(edtValor.Text) <> '') then
-        dbGridResultado.DataSource.DataSet := TFactory.DaoParceiroVenda.Listar(campo, edtValor.Text, edtDataInicial.Date, edtDataFinal.Date)
+        dbGridResultado.DataSource.DataSet := FFactory.DaoParceiroVenda.Listar(campo, edtValor.Text, edtDataInicial.Date, edtDataFinal.Date)
       else if chkEntreDatas.checked and (trim(edtValor.Text) = '') then
-        dbGridResultado.DataSource.DataSet := TFactory.DaoParceiroVenda.Listar(edtDataInicial.Date, edtDataFinal.Date)
+        dbGridResultado.DataSource.DataSet := FFactory.DaoParceiroVenda.Listar(edtDataInicial.Date, edtDataFinal.Date)
       else if (not chkEntreDatas.checked) and (trim(edtValor.Text) <> '') then
-        dbGridResultado.DataSource.DataSet := TFactory.DaoParceiroVenda.Listar(campo, edtValor.Text + '%')
+        dbGridResultado.DataSource.DataSet := FFactory.DaoParceiroVenda.Listar(campo, edtValor.Text + '%')
       else
-        dbGridResultado.DataSource.DataSet := TFactory.DaoParceiroVenda.Listar(Date, Date);
+        dbGridResultado.DataSource.DataSet := FFactory.DaoParceiroVenda.Listar(Date, Date);
 
       TCurrencyField(dbGridResultado.DataSource.DataSet.FieldByName('TOTALCOMISSAO')).Currency := true;
       TCurrencyField(dbGridResultado.DataSource.DataSet.FieldByName('TOTALPAGAMENTO')).Currency := true;
@@ -94,31 +98,36 @@ begin
       self.actPesquisa.Enabled := true;
     end;
   except
-    on E: Exception do
-      MessageDlg(E.Message, mtError, [mbOK], 0);
+    on e: Exception do
+    begin
+      TLog.d(e.message);
+      MessageDlg(e.message, mtError, [mbOK], 0);
+    end;
   end;
+  TLog.d('<<< Saindo de TfrmFiltroVendasParceiro.Pesquisar ');
 end;
 
 procedure TfrmFiltroVendasParceiro.actCancelarExecute(Sender: TObject);
 var
   ParceiroVenda: TParceiroVenda;
 begin
+  TLog.d('>>> Entrando em  TfrmFiltroVendasParceiro.actCancelarExecute ');
   try
     ValidaGrid;
 
-    if not TFactory.VendedorLogado.PODECANCELARPEDIDO then
+    if not TFactoryEntidades.new.VendedorLogado.PODECANCELARPEDIDO then
       raise Exception.create('Vendedor não tem permissão para cancelar pedido');
 
     if MessageDlg('Deseja Cancelar a venda do Parceiro?', mtConfirmation, [mbYes, mbNo], 0) = mrYes then
     begin
-      ParceiroVenda := TFactory
+      ParceiroVenda := FFactory
         .DaoParceiroVenda
         .GeTParceiroVenda(dbGridResultado.DataSource.DataSet.FieldByName('ID').AsInteger);
       ParceiroVenda.STATUS := 'C';
-      ParceiroVenda.VendedorCancelamento := TFactory.DaoVendedor.GetVendedor(TFactory.VendedorLogado.CODIGO);
+      ParceiroVenda.VendedorCancelamento := FFactory.DaoVendedor.GetVendedor(TFactoryEntidades.new.VendedorLogado.CODIGO);
       ParceiroVenda.DATACANCELAMENTO := now;
 
-      TFactory
+      fFactory
         .DaoParceiroVenda
         .AtualizaParceiroVendas(ParceiroVenda);
 
@@ -130,15 +139,21 @@ begin
     end;
 
   except
-    on E: Exception do
-      MessageDlg(E.Message, mtError, [mbOK], 0);
+    on e: Exception do
+    begin
+      TLog.d(e.message);
+      MessageDlg(e.message, mtError, [mbOK], 0);
+    end;
   end;
+  TLog.d('<<< Saindo de TfrmFiltroVendasParceiro.actCancelarExecute ');
 end;
 
 procedure TfrmFiltroVendasParceiro.actDetalhesExecute(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TfrmFiltroVendasParceiro.actDetalhesExecute ');
   inherited;
   Detalhes;
+  TLog.d('<<< Saindo de TfrmFiltroVendasParceiro.actDetalhesExecute ');
 end;
 
 procedure TfrmFiltroVendasParceiro.CalculaTotais;
@@ -149,6 +164,7 @@ var
 
   campo: string;
 begin
+  TLog.d('>>> Entrando em  TfrmFiltroVendasParceiro.CalculaTotais ');
   TTask.Run(
     procedure
     begin
@@ -200,7 +216,7 @@ begin
 
         );
     end);
-
+  TLog.d('<<< Saindo de TfrmFiltroVendasParceiro.CalculaTotais ');
 end;
 
 procedure TfrmFiltroVendasParceiro.cbbCampoSomarChange(Sender: TObject);
@@ -237,6 +253,7 @@ procedure TfrmFiltroVendasParceiro.Detalhes;
 var
   ParceiroVenda: TParceiroVenda;
 begin
+  TLog.d('>>> Entrando em  TfrmFiltroVendasParceiro.Detalhes ');
   try
     if (dbGridResultado.DataSource.DataSet = nil) or dbGridResultado.DataSource.DataSet.IsEmpty then
       raise Exception.create('Nenhum registro selecionado');
@@ -245,7 +262,9 @@ begin
 
     FrmPagtoDetalhes := TFrmPagtoDetalhes.create(self);
     try
-      ParceiroVenda := TFactory.DaoParceiroVenda.GeTParceiroVenda(dbGridResultado.DataSource.DataSet.FieldByName('ID').AsInteger);
+      ParceiroVenda := FFactory
+        .DaoParceiroVenda
+        .GeTParceiroVenda(dbGridResultado.DataSource.DataSet.FieldByName('ID').AsInteger);
 
       FrmPagtoDetalhes.SetParceiroVenda(ParceiroVenda);
       FrmPagtoDetalhes.ShowModal;
@@ -256,9 +275,13 @@ begin
       FreeAndNil(FrmPagtoDetalhes);
     end;
   except
-    on E: Exception do
-      MessageDlg(E.Message, mtError, [mbOK], 0);
+    on e: Exception do
+    begin
+      TLog.d(e.message);
+      MessageDlg(e.message, mtError, [mbOK], 0);
+    end;
   end;
+  TLog.d('<<< Saindo de TfrmFiltroVendasParceiro.Detalhes ');
 end;
 
 procedure TfrmFiltroVendasParceiro.edtDataInicialKeyPress(Sender: TObject; var Key: Char);
@@ -270,17 +293,20 @@ end;
 
 procedure TfrmFiltroVendasParceiro.FormShow(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TfrmFiltroVendasParceiro.FormShow ');
   inherited;
   edtDataInicial.Date := now;
   edtDataFinal.Date := IncMonth(now, 1);
   Pesquisar;
+  TLog.d('<<< Saindo de TfrmFiltroVendasParceiro.FormShow ');
 end;
 
 procedure TfrmFiltroVendasParceiro.ValidaGrid;
 begin
+  TLog.d('>>> Entrando em  TfrmFiltroVendasParceiro.ValidaGrid ');
   if (dbGridResultado.DataSource.DataSet = nil) or dbGridResultado.DataSource.DataSet.IsEmpty then
     raise Exception.create('Nenhum registro selecionado');
-
+  TLog.d('<<< Saindo de TfrmFiltroVendasParceiro.ValidaGrid ');
 end;
 
 end.

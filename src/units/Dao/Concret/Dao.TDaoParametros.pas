@@ -24,14 +24,14 @@ type
 implementation
 
 { TDaoParametros }
-uses Dominio.Entidades.TFactory, Util.Exceptions;
+uses Factory.Dao, Util.Exceptions;
 
 procedure TDaoParametros.AtualizaParametros(Parametros: TParametros);
 var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
       qry.SQL.Text := '' +
@@ -48,6 +48,11 @@ begin
         '       IMPRIMIRITENS2VIA = :IMPRIMIRITENS2VIA,' +
         '       VALIDADEORCAMENTO = :VALIDADEORCAMENTO, ' +
         '       LOGOMARCAETIQUETA = :LOGOMARCAETIQUETA, ' +
+        '       SERVIDORDATABASE = :SERVIDORDATABASE, ' +
+        '       SERVIDORUSUARIO = :SERVIDORUSUARIO, ' +
+        '       SERVIDORSENHA = :SERVIDORSENHA, ' +
+        '       FUNCIONARCOMOCLIENTE = :FUNCIONARCOMOCLIENTE, ' +
+        '       NUMCAIXA = :NUMCAIXA, ' +
         '       PESQUISAPRODUTOPOR = :PESQUISAPRODUTOPOR ';
 
       ObjectToParams(qry, Parametros);
@@ -73,10 +78,12 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
-      qry.SQL.Text := '' + 'select *  ' + 'from  Parametros ';
+      qry.SQL.Text := ''
+        + 'select *  '
+        + 'from  Parametros ';
 
       TLog.d(qry);
       qry.Open;
@@ -104,7 +111,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
       qry.SQL.Text := '' +
@@ -121,6 +128,11 @@ begin
         '             VALIDADEORCAMENTO, ' +
         '             PESQUISAPRODUTOPOR, ' +
         '             LOGOMARCAETIQUETA, ' +
+        '             FUNCIONARCOMOCLIENTE, ' +
+        '             SERVIDORUSUARIO, ' +
+        '             SERVIDORDATABASE, ' +
+        '             SERVIDORSENHA, ' +
+        '             NUMCAIXA, ' +
         '             velocidade) ' +
         'VALUES     ( :VENDECLIENTEBLOQUEADO, ' +
         '             :ATUALIZACLIENTENAVENDA, ' +
@@ -134,6 +146,11 @@ begin
         '             :VALIDADEORCAMENTO, ' +
         '             :PESQUISAPRODUTOPOR, ' +
         '             :LOGOMARCAETIQUETA, ' +
+        '             :FUNCIONARCOMOCLIENTE, ' +
+        '             :SERVIDORUSUARIO, ' +
+        '             :SERVIDORDATABASE, ' +
+        '             :SERVIDORSENHA, ' +
+        '             :NUMCAIXA, ' +
         '             :VELOCIDADE )';
 
       ObjectToParams(qry, Parametros);
@@ -192,12 +209,22 @@ begin
     if ds.Params.FindParam('VERSAOBD') <> nil then
       ds.Params.ParamByName('VERSAOBD').AsString := Parametros.VERSAOBD;
 
+    if ds.Params.FindParam('SERVIDORDATABASE') <> nil then
+      ds.Params.ParamByName('SERVIDORDATABASE').AsString := Parametros.SERVIDORDATABASE;
+    if ds.Params.FindParam('SERVIDORUSUARIO') <> nil then
+      ds.Params.ParamByName('SERVIDORUSUARIO').AsString := Parametros.SERVIDORUSUARIO;
+    if ds.Params.FindParam('SERVIDORSENHA') <> nil then
+      ds.Params.ParamByName('SERVIDORSENHA').AsString := Parametros.SERVIDORSENHA;
+    if ds.Params.FindParam('FUNCIONARCOMOCLIENTE') <> nil then
+      ds.Params.ParamByName('FUNCIONARCOMOCLIENTE').AsBoolean := Parametros.FUNCIONARCOMOCLIENTE;
+
     if ds.Params.FindParam('LOGOMARCAETIQUETA') <> nil then
     begin
       if Parametros.LOGOMARCAETIQUETA <> nil then
         ds.Params.ParamByName('LOGOMARCAETIQUETA').Assign(Parametros.LOGOMARCAETIQUETA.Picture.Graphic);
     end;
 
+    ds.ParamByName('NUMCAIXA').AsString := Parametros.NUMCAIXA;
   except
     on E: Exception do
     begin
@@ -224,6 +251,11 @@ begin
     Result.ImpressoraTermica.IMPRIMIR2VIAS := ds.FieldByName('IMPRIMIR2VIAS').AsInteger = 1;
     Result.ImpressoraTermica.IMPRIMIRITENS2VIA := ds.FieldByName('IMPRIMIRITENS2VIA').AsInteger = 1;
     Result.VERSAOBD := ds.FieldByName('VERSAOBD').AsString;
+    Result.FUNCIONARCOMOCLIENTE := ds.FieldByName('FUNCIONARCOMOCLIENTE').AsInteger = 1;
+    Result.SERVIDORUSUARIO := ds.FieldByName('SERVIDORUSUARIO').AsString;
+    Result.SERVIDORDATABASE := ds.FieldByName('SERVIDORDATABASE').AsString;
+    Result.SERVIDORSENHA := ds.FieldByName('SERVIDORSENHA').AsString;
+    Result.NUMCAIXA := ds.FieldByName('NUMCAIXA').AsString;
 
     if not ds.FieldByName('LOGOMARCAETIQUETA').IsNull then
     begin

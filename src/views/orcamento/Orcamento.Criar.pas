@@ -6,13 +6,13 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, untFrmBase, Data.DB, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.Buttons, Vcl.Grids, Vcl.DBGrids, JvExDBGrids, JvDBGrid, JvDBUltimGrid, JvExControls,
   JvNavigationPane, System.DateUtils, System.Types,
-  Vcl.Mask, JvExMask, JvToolEdit, Dao.IDaoProdutos, Dominio.Entidades.TProduto, System.Generics.Collections, Dominio.Entidades.TFactory, System.Actions, Vcl.ActnList,
-  Data.Bind.GenData,
+  Vcl.Mask, JvExMask, JvToolEdit, Dao.IDaoProdutos, Dominio.Entidades.TProduto, System.Generics.Collections, Factory.Dao, System.Actions, Vcl.ActnList,
+  Data.Bind.GenData, IFactory.Dao, IFactory.Entidades, Factory.Entidades,
   Data.Bind.EngExt, Vcl.Bind.DBEngExt, Vcl.Bind.Grid, System.Rtti, System.Bindings.Outputs, Vcl.Bind.Editors, Data.Bind.Components, Data.Bind.Grid, Data.Bind.ObjectScope,
   Dominio.Entidades.TItemOrcamento, Dominio.Entidades.TOrcamento, Util.Exceptions, Dao.IDaoVendedor, Dao.IDaoOrcamento, Helper.TBindGrid, Helper.TLiveBindingFormatCurr,
   Util.Backup, Util.Funcoes,
   Pedido.CancelarItem, Relatorio.TROrcamento, Helper.TItemOrcamento, JvExStdCtrls, JvCombobox, Dominio.Entidades.TCliente, Dao.IDAOCliente,
-  Vcl.ComCtrls, Vcl.Imaging.jpeg;
+  Vcl.ComCtrls, Vcl.Imaging.jpeg, Sistema.TParametros;
 
 type
 
@@ -95,6 +95,7 @@ type
     procedure cbbClienteExit(Sender: TObject);
     procedure actCPesquisaProdutoExecute(Sender: TObject);
     procedure edtTelefoneKeyPress(Sender: TObject; var Key: Char);
+    procedure FormShow(Sender: TObject);
   private
     { Private declarations }
     CachePesquisa: TStringList;
@@ -102,8 +103,9 @@ type
     FblEmVEnda: Boolean;
     FTotal: Currency;
     FDesconto: Currency;
-
+    FParametros: TParametros;
     Orcamento: TOrcamento;
+    FFactory: IFactoryDao;
     DaoProdutos: IDaoProdutos;
     DaoCliente: IDAOCliente;
     DaoVen: IDaoVendedor;
@@ -137,7 +139,8 @@ var
 implementation
 
 uses
-  Consulta.Produto;
+  Consulta.Produto,
+  Sistema.TLog;
 
 procedure TFrmCadastroOrcamento.BindTitulos;
 var
@@ -294,12 +297,15 @@ end;
 procedure TFrmCadastroOrcamento.Imprime;
 var
   Impressora: TROrcamento;
+  LFactory: IFactoryDao;
 begin
   try // todo: buscar dos parametros
-    Impressora := TROrcamento.create(TFactory.Parametros.ImpressoraTermica);
+    LFactory := TFactory.new();
+
+    Impressora := TROrcamento.create(TFactoryEntidades.Parametros.ImpressoraTermica);
 
     try
-      Impressora.ImprimeCupom(TFactory.DadosEmitente, Orcamento);
+      Impressora.ImprimeCupom(LFactory.DadosEmitente, Orcamento);
     finally
       FreeAndNil(Impressora);
     end;
@@ -514,7 +520,8 @@ end;
 
 procedure TFrmCadastroOrcamento.AbreOrcamento;
 begin
-  Orcamento := TFactory.Orcamento;
+  TLog.d('>>> Entrando em  TFrmCadastroOrcamento.AbreOrcamento ');
+  Orcamento := TOrcamento.create;
 
   try
 
@@ -527,14 +534,14 @@ begin
     Orcamento.DATAVENCIMENTO := edtValidade.Date;
     Orcamento.TELEFONE := edtTelefone.Text;
     Orcamento.STATUS := 'A';
-    Orcamento.Vendedor := DaoVen.GetVendedor(TFactory.VendedorLogado.CODIGO);
+    Orcamento.Vendedor := DaoVen.GetVendedor(TFactoryEntidades.new.VendedorLogado.CODIGO);
     Orcamento.Cliente := cbbCliente.Text;
 
-    TFactory.Conexao.StartTransaction;
+    DaoOrcamento.StartTransaction;
     Orcamento.id := DaoOrcamento.GeraID;
     Orcamento.NUMERO := Format('%.6d', [Orcamento.id]);
     DaoOrcamento.AbreOrcamento(Orcamento);
-    TFactory.Conexao.Commit;
+    DaoOrcamento.Commit;
 
     edtNumOrcamento.Text := Orcamento.NUMERO;
     FblEmVEnda := True;
@@ -542,23 +549,24 @@ begin
   except
     on E: TValidacaoException do
     begin
-      TFactory.Conexao.Rollback;
+      DaoOrcamento.Rollback;
       FreeAndNil(Orcamento);
       raise Exception.create(E.Message);
     end;
     on E: TDaoException do
     begin
-      TFactory.Conexao.Rollback;
+      DaoOrcamento.Rollback;
       FreeAndNil(Orcamento);
       raise Exception.create('Dao: ' + E.Message);
     end;
     on E: Exception do
     begin
-      TFactory.Conexao.Rollback;
+      DaoOrcamento.Rollback;
       FreeAndNil(Orcamento);
       raise Exception.create('Falha ao abrir pedido: ' + E.Message);
     end;
   end;
+  TLog.d('<<< Saindo de TFrmCadastroOrcamento.AbreOrcamento ');
 end;
 
 procedure TFrmCadastroOrcamento.IniciaCampos;
@@ -571,7 +579,7 @@ begin
   cbbCliente.ItemIndex := -1;
   mmoObservacoes.Clear;
   cbbCliente.Text := '';
-  edtValidade.Date := incDay(Now, (TFactory.Parametros.VALIDADEORCAMENTO));
+  edtValidade.Date := incDay(Now, (FParametros.VALIDADEORCAMENTO));
   IniciaEdits();
   NSeqItem := 1;
   FblEmVEnda := False;
@@ -844,29 +852,36 @@ end;
 
 procedure TFrmCadastroOrcamento.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
 begin
+  TLog.d('>>> Entrando em  TFrmCadastroOrcamento.FormCloseQuery ');
   if FblEmVEnda then
     if MessageDlg('O Orçamento não foi finalizado! Deseja sair mesmo assim?', mtConfirmation, [mbYes, mbNo], 0) = mrNo then
     begin
       CanClose := False;
     end;
+  TLog.d('<<< Saindo de TFrmCadastroOrcamento.FormCloseQuery ');
 end;
 
 procedure TFrmCadastroOrcamento.FormCreate(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TFrmCadastroOrcamento.FormCreate ');
   inherited;
   cbbTipoDesconto.ItemIndex := 1;
   CachePesquisa := TStringList.create;
-  DaoProdutos := TFactory.DaoProduto;
-  DaoOrcamento := TFactory.DaoOrcamento;
-  DaoVen := TFactory.DaoVendedor;
-  DaoCliente := TFactory.DaoCliente;
+  FFactory := TFactory.new(nil, True);
+  DaoProdutos := FFactory.DaoProduto;
+  DaoOrcamento := FFactory.DaoOrcamento;
+  DaoVen := FFactory.DaoVendedor;
+  DaoCliente := FFactory.DaoCliente;
+  FParametros := TFactoryEntidades.Parametros;
   IniciaCampos;
+  TLog.d('<<< Saindo de TFrmCadastroOrcamento.FormCreate ');
 end;
 
 procedure TFrmCadastroOrcamento.FormDestroy(Sender: TObject);
 var
   i: Integer;
 begin
+  TLog.d('>>> Entrando em  TFrmCadastroOrcamento.FormDestroy ');
   AdapterBindSource1.Active := False;
 
   FreeAndNil(CachePesquisa);
@@ -880,7 +895,22 @@ begin
   if Assigned(Orcamento) then
     FreeAndNil(Orcamento);
 
+  if Assigned(FParametros) then
+    FreeAndNil(FParametros);
+  FFactory.Close;
   inherited;
+  TLog.d('<<< Saindo de TFrmCadastroOrcamento.FormDestroy ');
+end;
+
+procedure TFrmCadastroOrcamento.FormShow(Sender: TObject);
+begin
+  inherited;
+  try
+    cbbCliente.SetFocus;
+  except
+    on E: Exception do
+  end;
+
 end;
 
 end.

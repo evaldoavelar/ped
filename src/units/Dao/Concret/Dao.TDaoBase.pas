@@ -12,16 +12,20 @@ uses
 type
 
   TDaoBase = class(TInterfacedObject)
+  private
+    FKeepConection: Boolean;
 
   protected
     FConnection: TFDConnection;
+    function Query: TFDQuery;
     function DataSetToObject<T: class>(ds: TDataSet): T;
     function AutoIncremento(tabela, campo: string): Integer;
     procedure EntityToParams(ds: TFDQuery; Entity: TEntity); virtual;
     procedure FieldsToEntity(ds: TDataSet; Entity: TEntity); virtual;
   public
 
-    constructor Create(Connection: TFDConnection); virtual;
+    constructor Create(Connection: TFDConnection; aKeepConection: Boolean); virtual;
+    destructor destroy; override;
   end;
 
 implementation
@@ -30,6 +34,12 @@ uses
   Util.Exceptions;
 
 { TDaoBase }
+
+function TDaoBase.Query: TFDQuery;
+begin
+  result := TFDQuery.Create(nil);
+  result.Connection := FConnection;
+end;
 
 function TDaoBase.AutoIncremento(tabela, campo: string): Integer;
 var
@@ -94,7 +104,7 @@ begin
         qry.ExecSQL;
       end;
 
-      Result := inResult;
+      result := inResult;
 
     finally
       FreeAndNil(qry);
@@ -108,14 +118,31 @@ begin
   end;
 end;
 
-constructor TDaoBase.Create(Connection: TFDConnection);
+constructor TDaoBase.Create(Connection: TFDConnection; aKeepConection: Boolean);
 begin
   self.FConnection := Connection;
+  FKeepConection := aKeepConection;
 end;
 
 function TDaoBase.DataSetToObject<T>(ds: TDataSet): T;
 begin
 
+end;
+
+destructor TDaoBase.destroy;
+begin
+  //TLog.d('>>> Entrando em  TDaoBase.destroy ');
+
+  if FKeepConection = false then
+    if Assigned(FConnection) then
+    begin
+      TLog.d('>>> Entrando em  TDaoBase.destroy FConnection');
+      FConnection.Close;
+      FreeAndNil(FConnection);
+      TLog.d('<<< Saindo de TDaoBase.destroy ');
+    end;
+  inherited;
+ // TLog.d('<<< Saindo de TDaoBase.destroy ');
 end;
 
 procedure TDaoBase.EntityToParams(ds: TFDQuery; Entity: TEntity);

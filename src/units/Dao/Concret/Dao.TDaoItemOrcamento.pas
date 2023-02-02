@@ -28,7 +28,7 @@ type
 implementation
 
 uses
-  Util.Exceptions, Dominio.Entidades.TFactory, Dao.TDaoProdutos;
+  Util.Exceptions, Factory.Dao, Dao.TDaoProdutos;
 
 { TDaoVendedor }
 
@@ -42,7 +42,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
       qry.SQL.Text := ''
@@ -80,7 +80,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
       qry.SQL.Text := ''
@@ -118,7 +118,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
 
     try
@@ -159,7 +159,7 @@ var
 begin
   ValidaItem(ItemOrcamento);
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     qry.Connection := FConnection;
     qry.SQL.Text := ''

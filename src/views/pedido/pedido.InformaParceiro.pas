@@ -7,7 +7,7 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, untFrmBase, Vcl.StdCtrls, Vcl.Buttons,
   Vcl.ExtCtrls, System.Actions, Vcl.ActnList,
   System.Generics.Collections, Dominio.Entidades.TParceiro,
-  Dominio.Entidades.TFactory, Vcl.Imaging.pngimage;
+  Factory.Dao, Vcl.Imaging.pngimage;
 
 type
   TFrmPedidoInformaParceiroVenda = class(TfrmBase)
@@ -39,14 +39,19 @@ var
 
 implementation
 
+uses
+  Sistema.TLog;
+
 {$R *.dfm}
 
 
 procedure TFrmPedidoInformaParceiroVenda.actOkExecute(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TFrmPedidoInformaParceiroVenda.actOkExecute ');
   inherited;
   SetParceiroVenda();
   Close;
+  TLog.d('<<< Saindo de TFrmPedidoInformaParceiroVenda.actOkExecute ');
 end;
 
 procedure TFrmPedidoInformaParceiroVenda.cbbParceiroVendaKeyPress(Sender: TObject; var Key: Char);
@@ -58,6 +63,7 @@ end;
 
 procedure TFrmPedidoInformaParceiroVenda.FormShow(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TFrmPedidoInformaParceiroVenda.FormShow ');
   inherited;
   PopulaLista;
 
@@ -65,6 +71,7 @@ begin
     cbbParceiroVenda.SetFocus;
   except
   end;
+  TLog.d('<<< Saindo de TFrmPedidoInformaParceiroVenda.FormShow ');
 end;
 
 procedure TFrmPedidoInformaParceiroVenda.PopulaLista;
@@ -73,9 +80,9 @@ var
   Parceiro: TParceiro;
   i: Integer;
 begin
-
+  TLog.d('>>> Entrando em  TFrmPedidoInformaParceiroVenda.PopulaLista ');
   try
-    Parceiros := TFactory.DaoParceiro.ListarAtivos();
+    Parceiros := fFactory.DaoParceiro.ListarAtivos();
 
     cbbParceiroVenda.Clear;
     for Parceiro in Parceiros do
@@ -91,20 +98,21 @@ begin
     on E: Exception do
       raise Exception.Create('Falha ao popular lista: ' + E.Message);
   end;
-
+  TLog.d('<<< Saindo de TFrmPedidoInformaParceiroVenda.PopulaLista ');
 end;
 
 procedure TFrmPedidoInformaParceiroVenda.SetParceiroVenda();
 var
   parceiroSelecionado: TParceiro;
 begin
+  TLog.d('>>> Entrando em  TFrmPedidoInformaParceiroVenda.SetParceiroVenda ');
   if cbbParceiroVenda.ItemIndex >= 0 then
   begin
 
     if Assigned(FParceiroVenda) = false then
       ParceiroVenda := TParceiro.Create;
 
-    // ParceiroVenda.Vendedor := TFactory.DaoVendedor.GetVendedor(TFactory.VendedorLogado.CODIGO);
+    // ParceiroVenda.Vendedor := FFactory.DaoVendedor.GetVendedor(TFactory.VendedorLogado.CODIGO);
     // ParceiroVenda.DATA := Now;
 
     parceiroSelecionado := TParceiro(
@@ -113,11 +121,12 @@ begin
       .Objects[cbbParceiroVenda.ItemIndex]
       );
 
-    FParceiroVenda := (TFactory
+    FParceiroVenda := (fFactory
       .DaoParceiro
       .GetParceiro(parceiroSelecionado.CODIGO));
 
   end;
+  TLog.d('<<< Saindo de TFrmPedidoInformaParceiroVenda.SetParceiroVenda ');
 end;
 
 end.

@@ -52,7 +52,7 @@ implementation
 {$R *.dfm}
 
 
-uses Dao.IDAOPedidoPeriodo, Helper.TPedidoPeriodo, Dominio.Entidades.TFactory, Util.Funcoes;
+uses Dao.IDAOPedidoPeriodo, Helper.TPedidoPeriodo, Factory.Dao, Util.Funcoes;
 
 procedure TfrmGraficoPedidos.Bind;
 var
@@ -80,7 +80,7 @@ var
   posX: Integer;
 begin
 
-  Dao := TFactory.DaoPedidoPeriodo();
+  Dao := fFactory.DaoPedidoPeriodo();
   listaPeriodo := Dao.GetTotaisBrutoPedido(edtDataIncio.Date, edtDataFim.Date);
 
   SeriesLinha.Clear;

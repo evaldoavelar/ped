@@ -6,10 +6,11 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, untFrmBase, Vcl.StdCtrls, Vcl.Buttons, Vcl.Mask,
   JvExMask, JvToolEdit, JvBaseEdits, Vcl.ExtCtrls, Dominio.Entidades.TParceiro.FormaPagto,
-  Dao.IDaoParceiro.FormaPagto, Dominio.Entidades.TFactory, System.Bindings.Helper,
+  Dao.IDaoParceiro.FormaPagto, Factory.Dao, System.Bindings.Helper,
   Consulta.parceiro.FormaPagto, System.Generics.Collections,
-   Dominio.Entidades.TParceiro, Dao.IDaoParceiro, JvComponentBase, JvEnterTab, parceiro.FramePagamento,
-  Dominio.Entidades.TParceiroVenda, Dominio.Entidades.TParceiroVenda.Pagamentos, System.Actions, Vcl.ActnList;
+  Dominio.Entidades.TParceiro, Dao.IDaoParceiro, JvComponentBase, JvEnterTab, parceiro.FramePagamento,
+  Dominio.Entidades.TParceiroVenda, Dominio.Entidades.TParceiroVenda.Pagamentos, System.Actions, Vcl.ActnList,
+  IFactory.Dao;
 
 type
   TFrmParceiroInfoPagto = class(TfrmBase)
@@ -67,6 +68,8 @@ type
     procedure actIncluirExecute(Sender: TObject);
     procedure actCancelarExecute(Sender: TObject);
   private
+
+    FFactory: IFactoryDao;
     pagtos: TObjectList<TParceiroFormaPagto>;
     parceiros: TObjectList<TParceiro>;
     DaoParceiroFormaPagto: IDaoParceiroFormaPagto;
@@ -93,47 +96,63 @@ var
 
 implementation
 
+uses
+  Factory.Entidades, Sistema.TLog;
+
 {$R *.dfm}
 
 
 procedure TFrmParceiroInfoPagto.FormCreate(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TFrmParceiroInfoPagto.FormCreate ');
   inherited;
-  DaoParceiroFormaPagto := TFactory.DaoParceiroFormaPagto;
-  DaoParceiro := TFactory.DaoParceiro;
+  FFactory := TFactory.new(nil, true);
+  DaoParceiroFormaPagto := FFactory.DaoParceiroFormaPagto;
+  DaoParceiro := FFactory.DaoParceiro;
 
   PopulaLista;
-
+  TLog.d('<<< Saindo de TFrmParceiroInfoPagto.FormCreate ');
 end;
 
 procedure TFrmParceiroInfoPagto.FormDestroy(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TFrmParceiroInfoPagto.FormDestroy ');
   inherited;
   FreeAndNil(parceiros);
   FreeAndNil(pagtos);
   FreeAndNil(ParceiroVenda);
+  FFactory.Close;
+  TLog.d('<<< Saindo de TFrmParceiroInfoPagto.FormDestroy ');
 end;
 
 procedure TFrmParceiroInfoPagto.FormShow(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TFrmParceiroInfoPagto.FormShow ');
   Inicializa;
-
+  TLog.d('<<< Saindo de TFrmParceiroInfoPagto.FormShow ');
 end;
 
 procedure TFrmParceiroInfoPagto.actAdicionarExecute(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TFrmParceiroInfoPagto.actAdicionarExecute ');
   inherited;
   try
     AdicionarPagamento;
 
   except
     on E: Exception do
-      MessageDlg(E.Message, mtError, [mbOK], 0);
-  end;;
+    begin
+      TLog.d(E.message);
+      MessageDlg(E.message, mtError, [mbOK], 0);
+    end;
+  end;
+
+  TLog.d('<<< Saindo de TFrmParceiroInfoPagto.actAdicionarExecute ');
 end;
 
 procedure TFrmParceiroInfoPagto.actCancelarExecute(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TFrmParceiroInfoPagto.actCancelarExecute ');
   inherited;
   if ParceiroVenda.Pagamentos.Count >= 1 then
   begin
@@ -142,16 +161,20 @@ begin
   end
   else
     Close;
+  TLog.d('<<< Saindo de TFrmParceiroInfoPagto.actCancelarExecute ');
 end;
 
 procedure TFrmParceiroInfoPagto.actExcluiPagamentoExecute(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TFrmParceiroInfoPagto.actExcluiPagamentoExecute ');
   inherited;
   ParceiroVenda.RemoveUltimoPagamento();
+  TLog.d('<<< Saindo de TFrmParceiroInfoPagto.actExcluiPagamentoExecute ');
 end;
 
 procedure TFrmParceiroInfoPagto.actIncluirExecute(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TFrmParceiroInfoPagto.actIncluirExecute ');
   inherited;
   // DaoParceiroVenda
   try
@@ -160,21 +183,29 @@ begin
     Inicializa;
   except
     on E: Exception do
-      MessageDlg(E.Message, mtError, [mbOK], 0);
+    begin
+      TLog.d(E.message);
+      MessageDlg(E.message, mtError, [mbOK], 0);
+    end;
   end;
+  TLog.d('<<< Saindo de TFrmParceiroInfoPagto.actIncluirExecute ');
 end;
 
 procedure TFrmParceiroInfoPagto.Incluir;
 begin
-  TFactory.DaoParceiroVenda.IncluiPagto(ParceiroVenda);
+  TLog.d('>>> Entrando em  TFrmParceiroInfoPagto.Incluir ');
+  FFactory.DaoParceiroVenda.IncluiPagto(ParceiroVenda);
+  TLog.d('<<< Saindo de TFrmParceiroInfoPagto.Incluir ');
 end;
 
 procedure TFrmParceiroInfoPagto.SetParceiro();
 var
   parceiro: TParceiro;
 begin
-  parceiro := TFactory.DaoParceiro.GetParceiro(TParceiro(cbbParceiro.Items.Objects[cbbParceiro.ItemIndex]).CODIGO);
+  TLog.d('>>> Entrando em  TFrmParceiroInfoPagto.SetParceiro ');
+  parceiro := FFactory.DaoParceiro.GetParceiro(TParceiro(cbbParceiro.Items.Objects[cbbParceiro.ItemIndex]).CODIGO);
   ParceiroVenda.AddParceiro(parceiro);
+  TLog.d('<<< Saindo de TFrmParceiroInfoPagto.SetParceiro ');
 end;
 
 procedure TFrmParceiroInfoPagto.AdicionarPagamento;
@@ -182,6 +213,7 @@ var
   pagto: TParceiroVendaPagto;
   FormaPagto: TParceiroFormaPagto;
 begin
+  TLog.d('>>> Entrando em  TFrmParceiroInfoPagto.AdicionarPagamento ');
   inherited;
 
   if cbbParceiro.ItemIndex < 0 then
@@ -212,7 +244,7 @@ begin
 
   edtValorPagto.Text := '0';
   lstFormaPagto.SetFocus;
-
+  TLog.d('<<< Saindo de TFrmParceiroInfoPagto.AdicionarPagamento ');
 end;
 
 procedure TFrmParceiroInfoPagto.cbbParceiroKeyPress(Sender: TObject; var Key: Char);
@@ -236,7 +268,7 @@ var
   stFrameName: string;
   pagto: TParceiroVendaPagto;
 begin
-
+  TLog.d('>>> Entrando em  TFrmParceiroInfoPagto.ExibePagamento ');
   LimpaScrollBox(scrBoxPagamentos);
 
   if ParceiroVenda.Pagamentos.Count = 0 then
@@ -267,18 +299,20 @@ begin
   end;
 
   scrBoxPagamentos.VertScrollBar.Position := 0;
-
+  TLog.d('<<< Saindo de TFrmParceiroInfoPagto.ExibePagamento ');
 end;
 
 procedure TFrmParceiroInfoPagto.LimpaScrollBox(aScroll: TScrollBox);
 var
   i: Integer;
 begin
+  TLog.d('>>> Entrando em  TFrmParceiroInfoPagto.LimpaScrollBox ');
 
   for i := aScroll.ControlCount - 1 downto 0 do
   Begin
     aScroll.Controls[i].Free;
   End;
+  TLog.d('<<< Saindo de TFrmParceiroInfoPagto.LimpaScrollBox ');
 
 end;
 
@@ -317,7 +351,7 @@ end;
 
 procedure TFrmParceiroInfoPagto.Inicializa;
 begin
-
+  TLog.d('>>> Entrando em  TFrmParceiroInfoPagto.Inicializa ');
   lblValorLiquido.Caption := '0,00';
   lblTotalComissao.Caption := '0,00';
   edtValorPagto.Text := '';
@@ -330,7 +364,7 @@ begin
   ParceiroVenda.STATUS := 'A';
   ParceiroVenda.OnAddPgamento := OnAddPagamento;
   ParceiroVenda.OnRemovePagamento := OnRemovePagamento;
-  ParceiroVenda.Vendedor := TFactory.DaoVendedor.GetVendedor(TFactory.VendedorLogado.CODIGO);
+  ParceiroVenda.Vendedor := FFactory.DaoVendedor.GetVendedor(TFactoryEntidades.new.VendedorLogado.CODIGO);
   ParceiroVenda.DATA := Now;
 
   inherited;
@@ -340,6 +374,7 @@ begin
   except
     on E: Exception do
   end;
+  TLog.d('<<< Saindo de TFrmParceiroInfoPagto.Inicializa ');
 end;
 
 procedure TFrmParceiroInfoPagto.PopulaLista;
@@ -348,6 +383,7 @@ var
   parceiro: TParceiro;
   i: Integer;
 begin
+  TLog.d('>>> Entrando em  TFrmParceiroInfoPagto.PopulaLista ');
   try
     pagtos := DaoParceiroFormaPagto.ListaObject();
 
@@ -359,7 +395,7 @@ begin
 
   except
     on E: Exception do
-      raise Exception.Create('Falha ao popular lista: ' + E.Message);
+      raise Exception.Create('Falha ao popular lista: ' + E.message);
   end;
 
   try
@@ -373,9 +409,9 @@ begin
 
   except
     on E: Exception do
-      raise Exception.Create('Falha ao popular lista: ' + E.Message);
+      raise Exception.Create('Falha ao popular lista: ' + E.message);
   end;
-
+  TLog.d('<<< Saindo de TFrmParceiroInfoPagto.PopulaLista ');
 end;
 
 end.

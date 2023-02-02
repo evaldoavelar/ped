@@ -8,7 +8,7 @@ uses
   Relatorio.TRBase,
   Data.DB,
   Dominio.Entidades.TEmitente,
-  Dominio.Entidades.TVendedor, Dominio.Entidades.TParceiro, Dominio.Entidades.TFactory;
+  Dominio.Entidades.TVendedor, Dominio.Entidades.TParceiro, Factory.Dao;
 
 type
 
@@ -83,7 +83,7 @@ var
   TotalVenda: Currency;
   TotalComissao: Currency;
 begin
-  Parceiros := TFactory.DaoParceiro.ListarAtivos();
+  Parceiros := fFactory.DaoParceiro.ListarAtivos();
 
   Buffer.Add(esc20Cpi +
     ACBrStr(PadSpace('#PARCEIRO|VENDAS R$|COMISSÃO R$',
@@ -95,7 +95,7 @@ begin
 
     Buffer.Add(esc20Cpi + escBoldOn + Parceiro.CODIGO + ' ' + Parceiro.NOME + escBoldOff);
 
-    ds := TFactory
+    ds := fFactory
       .DaoParceiroVendaPagto
       .TotalizadorPorParceiro(Parceiro.CODIGO, DataInicio, DataFim);
 
@@ -120,7 +120,7 @@ begin
       ds.Next;
     end;
 
-    Totalizadores := TFactory
+    Totalizadores := fFactory
       .DaoPedido
       .TotaisParceiro(DataInicio, DataFim, Parceiro.CODIGO);
 

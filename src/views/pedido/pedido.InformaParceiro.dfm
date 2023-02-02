@@ -5,7 +5,7 @@ inherited FrmPedidoInformaParceiroVenda: TFrmPedidoInformaParceiroVenda
   ClientWidth = 391
   OnShow = FormShow
   ExplicitWidth = 397
-  ExplicitHeight = 365
+  ExplicitHeight = 366
   PixelsPerInch = 96
   TextHeight = 13
   object Panel1: TPanel
@@ -36,7 +36,7 @@ inherited FrmPedidoInformaParceiroVenda: TFrmPedidoInformaParceiroVenda
       Font.Name = 'Segoe UI'
       Font.Style = []
       ParentFont = False
-      ExplicitWidth = 294
+      ExplicitWidth = 292
     end
     object Image1: TImage
       AlignWithMargins = True
@@ -331,9 +331,6 @@ inherited FrmPedidoInformaParceiroVenda: TFrmPedidoInformaParceiroVenda
       Items.Strings = (
         'ALEX'
         'EGUINALDO')
-      ExplicitLeft = 21
-      ExplicitTop = 206
-      ExplicitWidth = 204
     end
   end
   object Panel2: TPanel

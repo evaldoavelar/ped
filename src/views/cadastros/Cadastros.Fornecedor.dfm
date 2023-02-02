@@ -7,6 +7,10 @@ inherited frmCadastroFornecedor: TfrmCadastroFornecedor
       ActivePage = ts1
       object ts1: TTabSheet
         Caption = 'Fornecedor'
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object lbl3: TLabel
           Left = 48
           Top = 40

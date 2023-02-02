@@ -9,7 +9,7 @@ uses
   Vcl.ExtCtrls, System.Actions, Vcl.ActnList, Vcl.StdCtrls, Vcl.Buttons,
   Vcl.Grids, Vcl.WinXCtrls,
   Dominio.Entidades.TParcelas, Dao.IDaoParcelas, Dao.IDaoCliente, Dominio.Entidades.TCliente, Dao.IDaoPedido,
-  Vcl.Imaging.jpeg, Util.VclFuncoes;
+  Vcl.Imaging.jpeg, Util.VclFuncoes, IFactory.Dao;
 
 type
   TfrmRecebimento = class(TfrmBase)
@@ -48,6 +48,7 @@ type
   private
     { Private declarations }
     FCliente: TCliente;
+    FFactory: IFactoryDao;
     FParcelas: TObjectList<TParcelas>;
     DaoParcelas: IDaoParcelas;
     DaoCliente: IDaoCliente;
@@ -74,14 +75,16 @@ implementation
 {$R *.dfm}
 
 
-uses Helper.TBindGrid, Util.Funcoes, Consulta.Cliente, Dominio.Entidades.TFactory,
-  Recebimento.ConfirmaBaixa, Recebimento.DetalhesPedido, Dominio.Entidades.TPedido;
+uses Helper.TBindGrid, Util.Funcoes, Consulta.Cliente, Factory.Dao, Sistema.TLog,
+  Recebimento.ConfirmaBaixa, Recebimento.DetalhesPedido, Dominio.Entidades.TPedido,
+  Factory.Entidades;
 
 procedure TfrmRecebimento.AbrePedido;
 var
   item: TParcelas;
   Pedido: TPedido;
 begin
+  TLog.d('>>> Entrando em  TfrmRecebimento.AbrePedido ');
   try
     if Assigned(strGridParcelas.Objects[0, strGridParcelas.row]) then
     begin
@@ -98,58 +101,74 @@ begin
       end;
     end;
   except
-    on E: Exception do
-      MessageDlg(E.Message, mtError, [mbOK], 0);
+    on e: Exception do
+    begin
+      TLog.d(e.message);
+      MessageDlg(e.message, mtError, [mbOK], 0);
+    end;
   end;
+  TLog.d('<<< Saindo de TfrmRecebimento.AbrePedido ');
 end;
 
 procedure TfrmRecebimento.actConfirmaRecebimentoExecute(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TfrmRecebimento.actConfirmaRecebimentoExecute ');
   inherited;
   ConfirmaRerecebimento;
+  TLog.d('<<< Saindo de TfrmRecebimento.actConfirmaRecebimentoExecute ');
 end;
 
 procedure TfrmRecebimento.actEstornaExecute(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TfrmRecebimento.actEstornaExecute ');
   inherited;
-  EstornaParcela
+  EstornaParcela;
+  TLog.d('<<< Saindo de TfrmRecebimento.actEstornaExecute ');
 end;
 
 procedure TfrmRecebimento.actOkExecute(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TfrmRecebimento.actOkExecute ');
   inherited;
   self.Close;
+  TLog.d('<<< Saindo de TfrmRecebimento.actOkExecute ');
 end;
 
 procedure TfrmRecebimento.actPedidoExecute(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TfrmRecebimento.actPedidoExecute ');
   inherited;
   AbrePedido;
+  TLog.d('<<< Saindo de TfrmRecebimento.actPedidoExecute ');
 end;
 
 procedure TfrmRecebimento.actPesquisarExecute(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TfrmRecebimento.actPesquisarExecute ');
   inherited;
   Pesquisa;
+  TLog.d('<<< Saindo de TfrmRecebimento.actPesquisarExecute ');
 end;
 
 procedure TfrmRecebimento.Bind;
 var
   total: Currency;
 begin
-
+  TLog.d('>>> Entrando em  TfrmRecebimento.Bind ');
   TBindGrid.BindParcelas(strGridParcelas, FParcelas);
   edtPesquisa.Text := self.FCliente.CODIGO;
   lblCliente.Caption := self.FCliente.Nome;
 
   total := DaoParcelas.GeTParcelasTotal(self.FCliente.CODIGO, GetStatusFitltro());
   lblTotal.Caption := FormatCurr('R$ ###,##0.00', total);
+  TLog.d('<<< Saindo de TfrmRecebimento.Bind ');
 end;
 
 procedure TfrmRecebimento.ConfirmaRerecebimento;
 var
   item: TParcelas;
 begin
+  TLog.d('>>> Entrando em  TfrmRecebimento.ConfirmaRerecebimento ');
   try
     if Assigned(strGridParcelas.Objects[0, strGridParcelas.row]) then
     begin
@@ -161,7 +180,7 @@ begin
       frmConfirmaBaixa := TfrmConfirmaBaixa.Create(self);
       try
         item.DATABAIXA := now;
-        item.VendedorRecebimento := TFactory.DaoVendedor.GetVendedor(TFactory.VendedorLogado.CODIGO);
+        item.VendedorRecebimento := FFactory.DaoVendedor.GetVendedor(TFactoryEntidades.new.VendedorLogado.CODIGO);
         frmConfirmaBaixa.Parcela := item;
 
         if frmConfirmaBaixa.ShowModal = mrYes then
@@ -180,18 +199,21 @@ begin
       end;
     end;
   except
-    on E: Exception do
+    on e: Exception do
     begin
-      MessageDlg(E.Message, mtError, [mbOK], 0);
+      TLog.d(e.message);
+      MessageDlg(e.message, mtError, [mbOK], 0);
       edtPesquisa.SetFocus;
     end;
   end;
+  TLog.d('<<< Saindo de TfrmRecebimento.ConfirmaRerecebimento ');
 end;
 
 function TfrmRecebimento.CriaButton(item: TParcelas): TButton;
 var
   button: TButton;
 begin
+  TLog.d('>>> Entrando em  TfrmRecebimento.CriaButton ');
   button := TButton.Create(self); // creates an instance of TButton
   // sets the coordinates of the button, where the button should appear on the form
   button.Top := strGridParcelas.Height + 10;
@@ -202,7 +224,7 @@ begin
 
   button.Caption := 'cell[0,0]';
   // associate the new button with the first cell of the grid
-
+  TLog.d('<<< Saindo de TfrmRecebimento.CriaButton ');
 end;
 
 procedure TfrmRecebimento.edtPesquisaInvokeSearch(Sender: TObject);
@@ -215,6 +237,7 @@ procedure TfrmRecebimento.EstornaParcela;
 var
   item: TParcelas;
 begin
+  TLog.d('>>> Entrando em  TfrmRecebimento.EstornaParcela ');
   try
     if Assigned(strGridParcelas.Objects[0, strGridParcelas.row]) then
     begin
@@ -244,44 +267,55 @@ begin
       end;
     end;
   except
-    on E: Exception do
+    on e: Exception do
     begin
-      MessageDlg(E.Message, mtError, [mbOK], 0);
+      TLog.d(e.message);
+      MessageDlg(e.message, mtError, [mbOK], 0);
       edtPesquisa.SetFocus;
     end;
   end;
+  TLog.d('<<< Saindo de TfrmRecebimento.EstornaParcela ');
 end;
 
 procedure TfrmRecebimento.FormCreate(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TfrmRecebimento.FormCreate ');
   inherited;
-  DaoParcelas := TFactory.DaoParcelas;
-  DaoCliente := TFactory.DaoCliente;
-  DaoPedido := TFactory.DaoPedido;
+  FFactory := Tfactory.new(nil, true);
+  DaoParcelas := FFactory.DaoParcelas;
+  DaoCliente := FFactory.DaoCliente;
+  DaoPedido := FFactory.DaoPedido;
+  TLog.d('<<< Saindo de TfrmRecebimento.FormCreate ');
 end;
 
 procedure TfrmRecebimento.FormDestroy(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TfrmRecebimento.FormDestroy ');
   if Assigned(FCliente) then
     FreeAndNil(FCliente);
   if Assigned(FParcelas) then
     FreeAndNil(FParcelas);
+
+  FFactory.Close;
   inherited;
+  TLog.d('<<< Saindo de TfrmRecebimento.FormDestroy ');
 end;
 
 procedure TfrmRecebimento.FormShow(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TfrmRecebimento.FormShow ');
   inherited;
   TVclFuncoes.DisableVclStyles(self, 'TLabel');
   TVclFuncoes.DisableVclStyles(self, 'TStringGrid');
   TVclFuncoes.DisableVclStyles(self, 'TPanel');
   if edtPesquisa.Text = '' then
     TBindGrid.BindParcelas(strGridParcelas, nil);
-
+  TLog.d('<<< Saindo de TfrmRecebimento.FormShow ');
 end;
 
 procedure TfrmRecebimento.getCliente;
 begin
+  TLog.d('>>> Entrando em  TfrmRecebimento.getCliente ');
   try
     if Assigned(FCliente) then
       FreeAndNil(FCliente);
@@ -294,11 +328,12 @@ begin
       FreeAndNil(FParcelas);
     FParcelas := DaoParcelas.GeTParcelasPorCliente(self.FCliente.CODIGO, GetStatusFitltro());
     Bind();
-
+    TLog.d('<<< Saindo de TfrmRecebimento.getCliente ');
   except
-    on E: Exception do
+    on e: Exception do
     begin
-      MessageDlg(E.Message, mtError, [mbOK], 0);
+      TLog.d(e.message);
+      MessageDlg(e.message, mtError, [mbOK], 0);
       edtPesquisa.SetFocus;
     end;
   end;
@@ -318,6 +353,7 @@ end;
 
 procedure TfrmRecebimento.Pesquisa;
 begin
+  TLog.d('>>> Entrando em  TfrmRecebimento.Pesquisa ');
   try
     frmConsultaCliente := TFrmConsultaCliente.Create(self);
     try
@@ -339,19 +375,25 @@ begin
       FreeAndNil(frmConsultaCliente);
     end;
   except
-    on E: Exception do
-      MessageDlg(E.Message, mtError, [mbOK], 0);
+    on e: Exception do
+    begin
+      TLog.d(e.message);
+      MessageDlg(e.message, mtError, [mbOK], 0);
+    end;
   end;
+  TLog.d('<<< Saindo de TfrmRecebimento.Pesquisa ');
 end;
 
 procedure TfrmRecebimento.rgFiltroClick(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TfrmRecebimento.rgFiltroClick ');
   inherited;
   if Trim(edtPesquisa.Text) <> '' then
     getCliente;
 
   actEstorna.Enabled := rgFiltro.ItemIndex = 1;
   actConfirmaRecebimento.Enabled := (rgFiltro.ItemIndex = 0);
+  TLog.d('<<< Saindo de TfrmRecebimento.rgFiltroClick ');
 end;
 
 end.

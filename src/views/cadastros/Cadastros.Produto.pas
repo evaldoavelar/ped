@@ -92,7 +92,8 @@ implementation
 {$R *.dfm}
 
 
-uses Dominio.Entidades.TFactory, Consulta.Produto, Consulta.Fornecedor, Sistema.TLog;
+uses Factory.Dao, Consulta.Produto, Consulta.Fornecedor, Sistema.TLog,
+  Factory.Entidades;
 
 procedure TfrmCadastroProduto.Excluir;
 begin
@@ -274,7 +275,7 @@ procedure TfrmCadastroProduto.FormShow(Sender: TObject);
 begin
   TLog.d('>>> Entrando em  TfrmCadastroProduto.FormShow ');
   inherited;
-  FDaoProduto := TFactory.DaoProduto;
+  FDaoProduto := fFactory.DaoProduto;
   TLog.d('<<< Saindo de TfrmCadastroProduto.FormShow ');
 end;
 
@@ -346,7 +347,7 @@ begin
       FreeAndNil(FProduto);
     end;
 
-    Self.FProduto := TFactory.Produto;
+    Self.FProduto := TFactoryEntidades.new.Produto;
     Bind;
     try
       edtDescricao.SetFocus;

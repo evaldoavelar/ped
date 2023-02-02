@@ -13,6 +13,10 @@ inherited frmCadastroProduto: TfrmCadastroProduto
       ExplicitHeight = 468
       object ts1: TTabSheet
         Caption = 'Produto'
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object lbl3: TLabel
           Left = 55
           Top = 40
@@ -340,7 +344,7 @@ inherited frmCadastroProduto: TfrmCadastroProduto
               AlignWithMargins = True
               Left = 3
               Top = 3
-              Width = 107
+              Width = 89
               Height = 13
               Align = alTop
               Caption = 'Estoque Min'#237'mo'
@@ -350,7 +354,6 @@ inherited frmCadastroProduto: TfrmCadastroProduto
               Font.Name = 'Tahoma'
               Font.Style = [fsBold]
               ParentFont = False
-              ExplicitWidth = 89
             end
             object edtEstoqueMinimo: TEdit
               AlignWithMargins = True
@@ -387,7 +390,7 @@ inherited frmCadastroProduto: TfrmCadastroProduto
               AlignWithMargins = True
               Left = 3
               Top = 3
-              Width = 107
+              Width = 78
               Height = 13
               Align = alTop
               Caption = 'Estoque Atual'
@@ -397,7 +400,6 @@ inherited frmCadastroProduto: TfrmCadastroProduto
               Font.Name = 'Tahoma'
               Font.Style = [fsBold]
               ParentFont = False
-              ExplicitWidth = 78
             end
             object edtEstoque: TEdit
               AlignWithMargins = True

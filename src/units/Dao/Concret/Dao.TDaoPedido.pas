@@ -45,8 +45,8 @@ type
 implementation
 
 uses
-  Util.Exceptions, Dao.TDaoItemPedido, Dao.TDaoParcelas, Dao.TDaoVendedor, Dao.TDaoCliente, Dominio.Entidades.TFactory, Dao.TDaoFormaPagto, Dao.TDAOPedidoPagamento,
-  Dominio.Entidades.TEstoqueProduto, Utils.ArrayUtil;
+  Util.Exceptions, Dao.TDaoItemPedido, Dao.TDaoParcelas, Dao.TDaoVendedor, Dao.TDaoCliente, Factory.Dao, Dao.TDaoFormaPagto, Dao.TDAOPedidoPagamento,
+  Dominio.Entidades.TEstoqueProduto, Utils.ArrayUtil, IFactory.Dao;
 
 { TDaoPedido }
 
@@ -57,7 +57,7 @@ var
 begin
   result := TList<TProdutoVenda>.Create;
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     qry.SQL.Text := ''
       + 'SELECT pr.codigo, '
@@ -113,7 +113,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     qry.SQL.Text := ''
       + 'UPDATE pedido '
@@ -143,7 +143,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     qry.SQL.Text := ''
       + 'UPDATE pedido '
@@ -190,7 +190,7 @@ procedure TDaoPedido.ExcluiItem(Item: TItemPedido);
 var
   DaoItemPedido: TDaoItemPedido;
 begin
-  DaoItemPedido := TDaoItemPedido.Create(Self.FConnection);
+  DaoItemPedido := TDaoItemPedido.Create(Self.FConnection, true);
   DaoItemPedido.ExcluiItemPedido(Item.SEQ, Item.IDPEDIDO);
   DaoItemPedido.Free;
 
@@ -206,7 +206,7 @@ begin
   // if pedido.Cliente.CODIGO = '000000' then
   // raise TValidacaoException.Create('O Consulmidor do pedido precisa ser identificado');
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     qry.SQL.Text := ''
       + 'UPDATE pedido '
@@ -244,7 +244,10 @@ begin
 end;
 
 function TDaoPedido.AtualizarEstoque(Pedido: TPedido): Integer;
+var
+  LFactory: IFactoryDao;
 BEGIN
+  LFactory := TFactory.new(FConnection,true);
 
   for var ProdutoServicoOS in Pedido.itens do
   begin
@@ -266,50 +269,16 @@ BEGIN
     if Pedido.STATUS = 'C' then
     begin
       // Flog.d('PRODUTO DELETADO REMOVER ENTRADA DO ESTOQUE %d', [ProdutoServicoOS.DESCRICAO]);
-      TFactory.DaoEstoqueProduto.Delete(ESTOQUE);
+      LFactory.DaoEstoqueProduto.Delete(ESTOQUE);
       // Flog.d('DEVOLVER O SALDO');
-      TFactory.DaoProduto.EntradaSaidaEstoque(ESTOQUE.CODIGOPRD, (ESTOQUE.QUANTIDADE), false);
+      LFactory.DaoProduto.EntradaSaidaEstoque(ESTOQUE.CODIGOPRD, (ESTOQUE.QUANTIDADE), false);
     end
     else
     begin
-      TFactory.DaoEstoqueProduto.Inclui(ESTOQUE);
+      LFactory.DaoEstoqueProduto.Inclui(ESTOQUE);
       // // Flog.d('BAIXAR O ESTOQUE');
-      TFactory.DaoProduto.EntradaSaidaEstoque(ESTOQUE.CODIGOPRD, (ESTOQUE.QUANTIDADE * -1), false);
+      LFactory.DaoProduto.EntradaSaidaEstoque(ESTOQUE.CODIGOPRD, (ESTOQUE.QUANTIDADE * -1), false);
     end;
-
-    // case ProdutoServicoOS.StatusBD of
-    // TPedido.TStatusBD.stAdicionado, TPedido.TStatusBD.stCriar:
-    // begin
-    //
-    // // Flog.d('CRIAR MOVIMENTAÇÃO DE ESTOQUE');
-    // TFactory.DaoEstoqueProduto.Inclui(ESTOQUE);
-    // // Flog.d('BAIXAR O ESTOQUE');
-    // TFactory.DaoProduto.EntradaSaidaEstoque(ESTOQUE.CODIGOPRD, (ESTOQUE.QUANTIDADE * -1), false);
-    //
-    // end;
-    // TPedido.TStatusBD.stDeletado:
-    // BEGIN
-    //
-    //
-    // // Flog.d('PRODUTO DELETADO REMOVER ENTRADA DO ESTOQUE %d', [ProdutoServicoOS.DESCRICAO]);
-    // TFactory.DaoEstoqueProduto.Delete(ESTOQUE);
-    // // Flog.d('DEVOLVER O SALDO');
-    // TFactory.DaoProduto.EntradaSaidaEstoque(ESTOQUE.CODIGOPRD, (ESTOQUE.QUANTIDADE), false);
-    //
-    // END;
-    // TPedido.TStatusBD.stAtualizar:
-    // BEGIN
-    //
-    // // estoque somente de produto
-    // if (ProdutoServicoOS.STATUS = 'C') then
-    // begin
-    // // Flog.d('PRODUTO CANCELADO CANCELAR ENTRADA DO ESTOQUE E DEVOLVER O SALDO');
-    // TFactory.DaoEstoqueProduto.UpdateStatus(ESTOQUE.IDPEDIDO, ESTOQUE.SEQPRODUTOPEDIDO, 'C');
-    // TFactory.DaoProduto.EntradaSaidaEstoque(ESTOQUE.CODIGOPRD, (ESTOQUE.QUANTIDADE), false);
-    // end;
-    //
-    // END;
-    // end;
 
     FreeAndNil(ESTOQUE);
   end;
@@ -318,7 +287,17 @@ END;
 
 function TDaoPedido.GeraID: Integer;
 begin
-  result := AutoIncremento('PEDIDO', 'ID');
+  try
+    FConnection.StartTransaction;
+    result := AutoIncremento('PEDIDO', 'ID');
+    FConnection.Commit;
+  except
+    on E: Exception do
+    begin
+      FConnection.Rollback;
+      raise;
+    end;
+  end;
 end;
 
 function TDaoPedido.getPedido(id: Integer): TPedido;
@@ -326,7 +305,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
       qry.SQL.Text := ''
@@ -362,7 +341,7 @@ var
   DaoFormaPagto: TDAOPedidoPagamento;
   pagto: TPEDIDOPAGAMENTO;
 begin
-  DaoFormaPagto := TDAOPedidoPagamento.Create(Self.FConnection);
+  DaoFormaPagto := TDAOPedidoPagamento.Create(Self.FConnection, true);
 
   for pagto in Pagamentos.FormasDePagamento do
   begin
@@ -381,7 +360,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
 
   try
 
@@ -416,7 +395,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
 
   try
 
@@ -453,7 +432,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
 
   try
 
@@ -495,13 +474,14 @@ var
 begin
   Valida(Pedido);
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     qry.Connection := FConnection;
     qry.SQL.Text := ''
       + 'INSERT INTO pedido '
       + '            (id, '
       + '             numero, '
+      + '             NUMCAIXA, '
       + '             datapedido, '
       + '             OBSERVACAO, '
       + '             valorbruto, '
@@ -517,6 +497,7 @@ begin
       + '             horapedido) '
       + 'VALUES      ( :ID, '
       + '              :NUMERO, '
+      + '              :NUMCAIXA, '
       + '              :DATAPEDIDO, '
       + '              :OBSERVACAO, '
       + '              :VALORBRUTO, '
@@ -604,6 +585,9 @@ begin
     if (ds.Params.FindParam('NOMEPARCEIRO') <> nil) and (Pedido.ParceiroVenda <> nil) then
       ds.Params.ParamByName('NOMEPARCEIRO').AsString := Pedido.ParceiroVenda.NOME;
 
+    if (ds.Params.FindParam('NUMCAIXA') <> nil) and (Pedido.NUMCAIXA <> '') then
+      ds.Params.ParamByName('NUMCAIXA').AsString := Pedido.NUMCAIXA;
+
   except
     on E: Exception do
     begin
@@ -640,16 +624,17 @@ var
   bmp: TBitmap;
 begin
   try
-    DaoVendedor := TDaoVendedor.Create(Self.FConnection);
-    DaoCliente := TDaoCliente.Create(Self.FConnection);
-    DaoItensPedido := TDaoItemPedido.Create(Self.FConnection);
-    DAOParcelas := TDaoParcelas.Create(Self.FConnection);
-    DaoParceiro := TDaoParceiro.Create(Self.FConnection);
-    DaoPagamentos := TDAOPedidoPagamento.Create(Self.FConnection);
+    DaoVendedor := TDaoVendedor.Create(Self.FConnection, true);
+    DaoCliente := TDaoCliente.Create(Self.FConnection, true);
+    DaoItensPedido := TDaoItemPedido.Create(Self.FConnection, true);
+    DAOParcelas := TDaoParcelas.Create(Self.FConnection, true);
+    DaoParceiro := TDaoParceiro.Create(Self.FConnection, true);
+    DaoPagamentos := TDAOPedidoPagamento.Create(Self.FConnection, true);
 
     result := TPedido.Create;
     result.id := ds.FieldByName('ID').AsInteger;
     result.NUMERO := ds.FieldByName('NUMERO').AsString;
+    result.NUMCAIXA := ds.FieldByName('NUMCAIXA').AsString;
     result.DATAPEDIDO := ds.FieldByName('DATAPEDIDO').AsDateTime;
     result.OBSERVACAO := ds.FieldByName('OBSERVACAO').AsString;
     // Result.VALORBRUTO := ds.FieldByName('VALORBRUTO').AsCurrency;
@@ -713,7 +698,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   result := TList < TPair < string, string >>.Create();
 
   try
@@ -876,7 +861,7 @@ var
   sinal: string;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   result := TList < TPair < string, string >>.Create();
 
   try
@@ -1055,7 +1040,7 @@ procedure TDaoPedido.VendeItem(Item: TItemPedido);
 var
   DaoItemPedido: TDaoItemPedido;
 begin
-  DaoItemPedido := TDaoItemPedido.Create(Self.FConnection);
+  DaoItemPedido := TDaoItemPedido.Create(Self.FConnection, true);
   DaoItemPedido.IncluiItemPedido(Item);
   FreeAndNil(DaoItemPedido);
 end;
@@ -1065,7 +1050,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   result := TList < TPair < string, Currency >>.Create();
 
   try

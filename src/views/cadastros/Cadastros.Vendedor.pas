@@ -58,10 +58,11 @@ implementation
 {$R *.dfm}
 
 
-uses Dominio.Entidades.TFactory, Consulta.Vendedor;
+uses Factory.Dao, Consulta.Vendedor, Sistema.TLog, Factory.Entidades;
 
 procedure TfrmCadastroVendedor.Excluir;
 begin
+  TLog.d('>>> Entrando em  TfrmCadastroVendedor.Excluir ');
   inherited;
   try
     FDaoVendedor.ExcluirVendedor(FVendedor.CODIGO);
@@ -72,26 +73,31 @@ begin
   except
     on e: Exception do
     begin
+      TLog.d(e.Message);
       MessageDlg(e.Message, mtError, [mbOK], 0);
       edtPesquisa.SetFocus;
     end;
   end;
+  TLog.d('<<< Saindo de TfrmCadastroVendedor.Excluir ');
 end;
 
 procedure TfrmCadastroVendedor.AtualizarEntity;
 begin
+  TLog.d('>>> Entrando em  TfrmCadastroVendedor.AtualizarEntity ');
   inherited;
   FDaoVendedor.AtualizaVendedor(FVendedor);
   edtPesquisa.Text := FVendedor.NOME;
+  TLog.d('<<< Saindo de TfrmCadastroVendedor.AtualizarEntity ');
 end;
 
 procedure TfrmCadastroVendedor.Bind;
 begin
+  TLog.d('>>> Entrando em  TfrmCadastroVendedor.Bind ');
   inherited;
   FVendedor.ClearBindings;
   FVendedor.Bind('CODIGO', edtCodigo, 'Text');
   FVendedor.Bind('NOME', edtDescricao, 'Text');
-//  FVendedor.Bind('NOME', lblCliente, 'Caption');
+  // FVendedor.Bind('NOME', lblCliente, 'Caption');
   FVendedor.Bind('COMISSAOV', edtComissaoValor, 'Text');
   FVendedor.Bind('COMISSAOP', edtComissaoPerc, 'Text');
   FVendedor.Bind('SENHA', edtSenha, 'Text');
@@ -101,11 +107,12 @@ begin
   FVendedor.Bind('PODEACESSARCADASTROVENDEDOR', chkPodeAcessarCadastroVendedor, 'Checked');
   FVendedor.Bind('PODECANCELARORCAMENTO', chkPodeCancelarOrcamento, 'Checked');
   FVendedor.Bind('PODEACESSARPARAMETROS', chkPodeAcessarParametros, 'Checked');
-
+  TLog.d('<<< Saindo de TfrmCadastroVendedor.Bind ');
 end;
 
 procedure TfrmCadastroVendedor.Cancelar;
 begin
+  TLog.d('>>> Entrando em  TfrmCadastroVendedor.Cancelar ');
   try
     if Assigned(FVendedor) and (FVendedor.CODIGO <> '') then
     begin
@@ -123,11 +130,12 @@ begin
       Exit;
     on e: Exception do
     begin
+      TLog.d(e.Message);
       MessageDlg(e.Message, mtError, [mbOK], 0);
       edtPesquisa.SetFocus;
     end;
   end;
-
+  TLog.d('<<< Saindo de TfrmCadastroVendedor.Cancelar ');
 end;
 
 procedure TfrmCadastroVendedor.chkPodeCancelarPedidoClick(Sender: TObject);
@@ -145,25 +153,30 @@ end;
 
 procedure TfrmCadastroVendedor.FormDestroy(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TfrmCadastroVendedor.FormDestroy ');
   if Assigned(FVendedor) then
   begin
     FVendedor.Free;
     FVendedor := nil;
   end;
   inherited;
+  TLog.d('<<< Saindo de TfrmCadastroVendedor.FormDestroy ');
 end;
 
 procedure TfrmCadastroVendedor.FormShow(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TfrmCadastroVendedor.FormShow ');
   inherited;
 
-  FDaoVendedor := TFactory.DaoVendedor;
+  FDaoVendedor := fFactory.DaoVendedor;
+  TLog.d('<<< Saindo de TfrmCadastroVendedor.FormShow ');
 end;
 
 procedure TfrmCadastroVendedor.getEntity(aEntity: TObject);
 var
   LItem: TVendedor;
 begin
+  TLog.d('>>> Entrando em  TfrmCadastroVendedor.getEntity ');
   try
 
     // edição
@@ -188,18 +201,21 @@ begin
   except
     on e: Exception do
     begin
+      TLog.d(e.Message);
       MessageDlg(e.Message, mtError, [mbOK], 0);
       edtPesquisa.SetFocus;
     end;
   end;
-
+  TLog.d('<<< Saindo de TfrmCadastroVendedor.getEntity ');
 end;
 
 procedure TfrmCadastroVendedor.IncluirEntity;
 begin
+  TLog.d('>>> Entrando em  TfrmCadastroVendedor.IncluirEntity ');
   inherited;
   FDaoVendedor.IncluiVendedor(FVendedor);
   edtPesquisa.Text := FVendedor.NOME;
+  TLog.d('<<< Saindo de TfrmCadastroVendedor.IncluirEntity ');
 end;
 
 function TfrmCadastroVendedor.MontaDescricaoPesquisa(aItem: TEntity): string;
@@ -212,6 +228,7 @@ end;
 
 procedure TfrmCadastroVendedor.Novo;
 begin
+  TLog.d('>>> Entrando em  TfrmCadastroVendedor.Novo ');
   try
     inherited;
 
@@ -221,7 +238,7 @@ begin
       FVendedor := nil;
     end;
 
-    Self.FVendedor := TFactory.Vendedor;
+    Self.FVendedor := TFactoryEntidades.new.Vendedor;
     Bind;
     try
       edtDescricao.SetFocus;
@@ -231,9 +248,12 @@ begin
 
   except
     on e: Exception do
+    begin
+      TLog.d(e.Message);
       MessageDlg(e.Message, mtError, [mbOK], 0);
+    end;
   end;
-
+  TLog.d('<<< Saindo de TfrmCadastroVendedor.Novo ');
 end;
 
 function TfrmCadastroVendedor.PesquisaPorDescricaoParcial(
@@ -255,6 +275,7 @@ end;
 
 procedure TfrmCadastroVendedor.Pesquisar;
 begin
+  TLog.d('>>> Entrando em  TfrmCadastroVendedor.Pesquisar ');
   inherited;
   try
     frmConsultaVendedor := TfrmConsultaVendedor.Create(Self);
@@ -278,8 +299,12 @@ begin
     end;
   except
     on e: Exception do
+    begin
+      TLog.d(e.Message);
       MessageDlg(e.Message, mtError, [mbOK], 0);
+    end;
   end;
+  TLog.d('<<< Saindo de TfrmCadastroVendedor.Pesquisar ');
 end;
 
 end.

@@ -5,8 +5,8 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, System.Generics.Collections,
-  Dominio.Entidades.TCliente, Dominio.Entidades.TFactory, Dao.IDAOCliente, untFrmBase, Vcl.Buttons, Vcl.StdCtrls, Vcl.Imaging.jpeg, Vcl.ExtCtrls, System.Actions, Vcl.ActnList,
-  Consulta.Cliente;
+  Dominio.Entidades.TCliente, Factory.Dao, Dao.IDAOCliente, untFrmBase, Vcl.Buttons, Vcl.StdCtrls, Vcl.Imaging.jpeg, Vcl.ExtCtrls, System.Actions, Vcl.ActnList,
+  Consulta.Cliente, IFactory.Dao;
 
 type
   TfrmFiltroCliente = class(TfrmBase)
@@ -26,8 +26,10 @@ type
     procedure actOkExecute(Sender: TObject);
     procedure actPesquisaClienteExecute(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
   private
     FCliente: TCliente;
+    FFactory: IFactoryDao;
     procedure SetCliente(const Value: TCliente);
     procedure PesquisaCliente;
     procedure BindFields(ACliente: TCliente);
@@ -42,6 +44,9 @@ var
 
 implementation
 
+uses
+  Sistema.TLog;
+
 {$R *.dfm}
 
 
@@ -49,12 +54,17 @@ procedure TfrmFiltroCliente.actOkExecute(Sender: TObject);
 var
   ACliente: TCliente;
 begin
+  TLog.d('>>> Entrando em  TfrmFiltroCliente.actOkExecute ');
   inherited;
   try
     if cbbCliente.ItemIndex >= 0 then
     begin
       ACliente := cbbCliente.Items.Objects[cbbCliente.ItemIndex] as TCliente;
-      Self.FCliente := TFactory.DaoCliente.GeTCliente(ACliente.CODIGO);
+
+      Self.FCliente := FFactory
+        .DaoCliente
+        .GeTCliente(ACliente.CODIGO);
+
       Close;
     end
     else
@@ -66,7 +76,8 @@ begin
       Exit;
     on E: Exception do
     begin
-      MessageDlg(E.Message, mtError, [mbOK], 0);
+      TLog.d(E.message);
+      MessageDlg(E.message, mtError, [mbOK], 0);
       try
         // cbbProduto.Text := '';
         cbbCliente.SetFocus;
@@ -74,18 +85,22 @@ begin
       end;
     end;
   end;
+  TLog.d('>>> Entrando em  TfrmFiltroCliente.actOkExecute ');
 end;
 
 procedure TfrmFiltroCliente.actPesquisaClienteExecute(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TfrmFiltroCliente.actPesquisaClienteExecute ');
   inherited;
   PesquisaCliente;
+  TLog.d('<<< Saindo de TfrmFiltroCliente.actPesquisaClienteExecute ');
 end;
 
 procedure TfrmFiltroCliente.PesquisaCliente;
 var
   ACliente: TCliente;
 begin
+  TLog.d('>>> Entrando em  TfrmFiltroCliente.PesquisaCliente ');
   try
     frmConsultaCliente := TFrmConsultaCliente.Create(Self);
     try
@@ -93,7 +108,9 @@ begin
 
       if Assigned(frmConsultaCliente.Cliente) then
       begin
-        ACliente := TFactory.DaoCliente.GeTCliente(frmConsultaCliente.Cliente.CODIGO);
+        ACliente := FFactory
+          .DaoCliente
+          .GeTCliente(frmConsultaCliente.Cliente.CODIGO);
       end;
     finally
       FreeAndNil(frmConsultaCliente);
@@ -105,9 +122,13 @@ begin
       btnOk.SetFocus;
     end;
   except
-    on ex: Exception do
-      MessageDlg(ex.Message, mtError, [mbOK], 0);
+    on E: Exception do
+    begin
+      TLog.d(E.message);
+      MessageDlg(E.message, mtError, [mbOK], 0);
+    end;
   end;
+  TLog.d('<<< Saindo de TfrmFiltroCliente.PesquisaCliente ');
 end;
 
 procedure TfrmFiltroCliente.BindFields(ACliente: TCliente);
@@ -158,7 +179,11 @@ begin
       and (Key <> VK_RETURN) then
     begin
       OutputDebugString(PWideChar(cbbCliente.Text));
-      itens := TFactory.DaoCliente.GeTClientesByName(cbbCliente.Text);
+
+      itens := FFactory
+        .DaoCliente
+        .GeTClientesByName(cbbCliente.Text);
+
       itens.OwnsObjects := False;
 
       for item in itens do
@@ -173,14 +198,24 @@ begin
 
 end;
 
+procedure TfrmFiltroCliente.FormCreate(Sender: TObject);
+begin
+  TLog.d('>>> Entrando em  TfrmFiltroCliente.FormCreate ');
+  inherited;
+  FFactory := TFactory.new(nil, True);
+  TLog.d('<<< Saindo de TfrmFiltroCliente.FormCreate ');
+end;
+
 procedure TfrmFiltroCliente.FormDestroy(Sender: TObject);
 var
   i: Integer;
 begin
+  TLog.d('>>> Entrando em  TfrmFiltroCliente.FormDestroy ');
   for i := 0 to cbbCliente.Items.Count - 1 do
     cbbCliente.Items.Objects[i].Free;
-
+  FFactory.Close;
   inherited;
+  TLog.d('<<< Saindo de TfrmFiltroCliente.FormDestroy ');
 end;
 
 procedure TfrmFiltroCliente.SetCliente(const Value: TCliente);

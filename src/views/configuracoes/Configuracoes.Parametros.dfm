@@ -3,11 +3,10 @@ inherited FrmConfiguracoes: TFrmConfiguracoes
   Caption = 'Configura'#231#245'es'
   ClientHeight = 403
   ClientWidth = 796
-  OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnShow = FormShow
   ExplicitWidth = 802
-  ExplicitHeight = 434
+  ExplicitHeight = 432
   PixelsPerInch = 96
   TextHeight = 13
   object pnl1: TPanel
@@ -39,11 +38,15 @@ inherited FrmConfiguracoes: TFrmConfiguracoes
     Top = 0
     Width = 796
     Height = 362
-    ActivePage = ts2
+    ActivePage = tsCaixa
     Align = alClient
     TabOrder = 0
     object ts1: TTabSheet
       Caption = 'Empresa'
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label1: TLabel
         Left = 13
         Top = 3
@@ -533,6 +536,9 @@ inherited FrmConfiguracoes: TFrmConfiguracoes
       Caption = 'Par'#226'metros'
       ImageIndex = 1
       ExplicitLeft = 5
+      ExplicitTop = 23
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object lbl1: TLabel
         Left = 16
         Top = 211
@@ -552,7 +558,7 @@ inherited FrmConfiguracoes: TFrmConfiguracoes
         Width = 217
         Height = 17
         Caption = 'Vender Para Cliente Bloqueado'
-        TabOrder = 4
+        TabOrder = 3
         OnClick = chkVenderClienteBloqueadoClick
       end
       object chkAtualizaClienteNaVenda: TCheckBox
@@ -561,12 +567,138 @@ inherited FrmConfiguracoes: TFrmConfiguracoes
         Width = 265
         Height = 17
         Caption = 'Atualizar Informa'#231#245'es do Cliente na Venda'
+        TabOrder = 1
+        OnClick = chkVenderClienteBloqueadoClick
+      end
+      object chkBakcup: TCheckBox
+        Left = 16
+        Top = 78
+        Width = 265
+        Height = 17
+        Caption = 'Fazer Backup Di'#225'rio'
         TabOrder = 2
         OnClick = chkVenderClienteBloqueadoClick
       end
+      object chkBloquearClienteComAtraso: TCheckBox
+        Left = 16
+        Top = 31
+        Width = 313
+        Height = 17
+        Caption = 'Bloquear Automaticamente Cliente Com Parcelas em Atraso '
+        TabOrder = 0
+        OnClick = chkVenderClienteBloqueadoClick
+      end
+      object edtValidadeOrcamento: TEdit
+        Left = 16
+        Top = 230
+        Width = 121
+        Height = 21
+        Color = 15524818
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = 10639360
+        Font.Height = -11
+        Font.Name = 'Tahoma'
+        Font.Style = []
+        NumbersOnly = True
+        ParentFont = False
+        TabOrder = 5
+        OnChange = edtRazaoSocialChange
+      end
+      object rgPesquisaPor: TRadioGroup
+        Left = 13
+        Top = 159
+        Width = 265
+        Height = 49
+        Caption = 'Pesquisar Produto na Venda  Por:'
+        Columns = 2
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = 10639360
+        Font.Height = -11
+        Font.Name = 'Tahoma'
+        Font.Style = []
+        Items.Strings = (
+          'Descri'#231#227'o'
+          'C'#243'digo/C'#243'digo Barras')
+        ParentFont = False
+        TabOrder = 4
+        OnClick = rgPesquisaPorClick
+      end
+      object chkInformarParceiroNaVenda: TCheckBox
+        Left = 16
+        Top = 125
+        Width = 217
+        Height = 17
+        Caption = 'Informar Parceiro Na Venda'
+        TabOrder = 6
+        OnClick = chkVenderClienteBloqueadoClick
+      end
+    end
+    object tsLogoMarca: TTabSheet
+      Caption = 'Logo Marca'
+      ImageIndex = 2
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
+      object Label17: TLabel
+        AlignWithMargins = True
+        Left = 3
+        Top = 3
+        Width = 333
+        Height = 13
+        Align = alTop
+        Caption = 'Logo marca para Impress'#227'o em Etiquetas (130 x 43 pixels)'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = 10639360
+        Font.Height = -11
+        Font.Name = 'Tahoma'
+        Font.Style = [fsBold]
+        ParentFont = False
+      end
+      object imgComprovante: TImage
+        AlignWithMargins = True
+        Left = 3
+        Top = 22
+        Width = 782
+        Height = 268
+        Align = alClient
+        Center = True
+        Proportional = True
+        ExplicitLeft = 0
+        ExplicitTop = 2
+        ExplicitWidth = 698
+        ExplicitHeight = 352
+      end
+      object Panel1: TPanel
+        AlignWithMargins = True
+        Left = 3
+        Top = 296
+        Width = 782
+        Height = 35
+        Align = alBottom
+        BevelOuter = bvNone
+        TabOrder = 0
+        object btnAnexarComprovante: TBitBtn
+          Left = 16
+          Top = 8
+          Width = 121
+          Height = 25
+          Caption = 'Carregar'
+          TabOrder = 0
+          OnClick = btnAnexarComprovanteClick
+        end
+      end
+    end
+    object tsImpressora: TTabSheet
+      Caption = 'Impressora'
+      ImageIndex = 3
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object grp1: TGroupBox
-        Left = 518
-        Top = 16
+        Left = 9
+        Top = 21
         Width = 249
         Height = 121
         Caption = 'Impressora Termica'
@@ -617,71 +749,9 @@ inherited FrmConfiguracoes: TFrmConfiguracoes
           OnClick = chkVenderClienteBloqueadoClick
         end
       end
-      object chkBakcup: TCheckBox
-        Left = 16
-        Top = 78
-        Width = 265
-        Height = 17
-        Caption = 'Fazer Backup Di'#225'rio'
-        TabOrder = 3
-        OnClick = chkVenderClienteBloqueadoClick
-      end
-      object chkBloquearClienteComAtraso: TCheckBox
-        Left = 16
-        Top = 32
-        Width = 313
-        Height = 17
-        Caption = 'Bloquear Automaticamente Cliente Com Parcelas em Atraso '
-        TabOrder = 1
-        OnClick = chkVenderClienteBloqueadoClick
-      end
-      object edtValidadeOrcamento: TEdit
-        Left = 16
-        Top = 230
-        Width = 121
-        Height = 21
-        Color = 15524818
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = 10639360
-        Font.Height = -11
-        Font.Name = 'Tahoma'
-        Font.Style = []
-        NumbersOnly = True
-        ParentFont = False
-        TabOrder = 6
-        OnChange = edtRazaoSocialChange
-      end
-      object rgPesquisaPor: TRadioGroup
-        Left = 13
-        Top = 159
-        Width = 265
-        Height = 49
-        Caption = 'Pesquisar Produto na Venda  Por:'
-        Columns = 2
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = 10639360
-        Font.Height = -11
-        Font.Name = 'Tahoma'
-        Font.Style = []
-        Items.Strings = (
-          'Descri'#231#227'o'
-          'C'#243'digo/C'#243'digo Barras')
-        ParentFont = False
-        TabOrder = 5
-        OnClick = rgPesquisaPorClick
-      end
-      object chkInformarParceiroNaVenda: TCheckBox
-        Left = 16
-        Top = 125
-        Width = 217
-        Height = 17
-        Caption = 'Informar Parceiro Na Venda'
-        TabOrder = 7
-        OnClick = chkVenderClienteBloqueadoClick
-      end
       object GroupBox1: TGroupBox
-        Left = 519
-        Top = 154
+        Left = 10
+        Top = 159
         Width = 249
         Height = 73
         Caption = 'Impressora Tinta/Laser'
@@ -691,7 +761,7 @@ inherited FrmConfiguracoes: TFrmConfiguracoes
         Font.Name = 'Tahoma'
         Font.Style = []
         ParentFont = False
-        TabOrder = 8
+        TabOrder = 1
         object Label18: TLabel
           Left = 20
           Top = 20
@@ -715,56 +785,208 @@ inherited FrmConfiguracoes: TFrmConfiguracoes
         end
       end
     end
-    object tsLogoMarca: TTabSheet
-      Caption = 'Logo Marca'
-      ImageIndex = 2
-      object Label17: TLabel
-        AlignWithMargins = True
-        Left = 3
-        Top = 3
-        Width = 782
-        Height = 13
-        Align = alTop
-        Caption = 'Logo marca para Impress'#227'o em Etiquetas (130 x 43 pixels)'
+    object tsCaixa: TTabSheet
+      Caption = 'Caixa'
+      ImageIndex = 4
+      ExplicitLeft = 5
+      ExplicitTop = 23
+      ExplicitWidth = 0
+      ExplicitHeight = 0
+      DesignSize = (
+        788
+        334)
+      object Label19: TLabel
+        Left = 11
+        Top = 24
+        Width = 98
+        Height = 16
+        Caption = 'N'#250'mero do Caixa'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = 10639360
-        Font.Height = -11
+        Font.Height = -13
         Font.Name = 'Tahoma'
-        Font.Style = [fsBold]
+        Font.Style = []
         ParentFont = False
-        ExplicitWidth = 333
       end
-      object imgComprovante: TImage
-        AlignWithMargins = True
-        Left = 3
-        Top = 22
-        Width = 782
-        Height = 268
-        Align = alClient
-        Center = True
-        Proportional = True
-        ExplicitLeft = 0
-        ExplicitTop = 2
-        ExplicitWidth = 698
-        ExplicitHeight = 352
-      end
-      object Panel1: TPanel
-        AlignWithMargins = True
-        Left = 3
-        Top = 296
-        Width = 782
-        Height = 35
-        Align = alBottom
-        BevelOuter = bvNone
+      object edtNumeroDoCaixa: TEdit
+        Left = 21
+        Top = 48
+        Width = 271
+        Height = 24
+        CharCase = ecUpperCase
+        Color = 15524818
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = 10639360
+        Font.Height = -13
+        Font.Name = 'MS Sans Serif'
+        Font.Style = []
+        MaxLength = 10
+        ParentFont = False
         TabOrder = 0
-        object btnAnexarComprovante: TBitBtn
-          Left = 16
-          Top = 8
-          Width = 121
-          Height = 25
-          Caption = 'Carregar'
+        OnChange = edtRazaoSocialChange
+      end
+      object Panel2: TPanel
+        Left = 18
+        Top = 102
+        Width = 738
+        Height = 202
+        Anchors = [akLeft, akTop, akRight, akBottom]
+        BevelOuter = bvNone
+        Color = clWhite
+        ParentBackground = False
+        TabOrder = 1
+        DesignSize = (
+          738
+          202)
+        object Label21: TLabel
+          Left = 56
+          Top = 47
+          Width = 37
+          Height = 16
+          Caption = 'Banco'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = 10639360
+          Font.Height = -13
+          Font.Name = 'Lato'
+          Font.Style = []
+          ParentFont = False
+        end
+        object Label22: TLabel
+          Left = 50
+          Top = 74
+          Width = 44
+          Height = 16
+          Caption = 'Usu'#225'rio'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = 10639360
+          Font.Height = -13
+          Font.Name = 'Lato'
+          Font.Style = []
+          ParentFont = False
+        end
+        object Label23: TLabel
+          Left = 56
+          Top = 99
+          Width = 37
+          Height = 16
+          Caption = 'Senha'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = 10639360
+          Font.Height = -13
+          Font.Name = 'Lato'
+          Font.Style = []
+          ParentFont = False
+        end
+        object edtBancoDeDados: TEdit
+          Left = 112
+          Top = 45
+          Width = 560
+          Height = 21
+          Anchors = [akLeft, akTop, akRight]
+          BevelInner = bvNone
+          BevelKind = bkFlat
+          BevelOuter = bvNone
+          BorderStyle = bsNone
+          Color = 15524818
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = 11757312
+          Font.Height = -11
+          Font.Name = 'Tahoma'
+          Font.Style = []
+          ParentFont = False
           TabOrder = 0
-          OnClick = btnAnexarComprovanteClick
+          OnChange = edtRazaoSocialChange
+        end
+        object edtSenha: TEdit
+          Left = 112
+          Top = 97
+          Width = 562
+          Height = 21
+          Anchors = [akLeft, akTop, akRight]
+          BevelInner = bvNone
+          BevelKind = bkFlat
+          BevelOuter = bvNone
+          BorderStyle = bsNone
+          Color = 15524818
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = 11757312
+          Font.Height = -11
+          Font.Name = 'Tahoma'
+          Font.Style = []
+          ParentFont = False
+          PasswordChar = '*'
+          TabOrder = 2
+          OnChange = edtRazaoSocialChange
+        end
+        object edtUsuario: TEdit
+          Left = 112
+          Top = 72
+          Width = 561
+          Height = 21
+          Anchors = [akLeft, akTop, akRight]
+          BevelInner = bvNone
+          BevelKind = bkFlat
+          BevelOuter = bvNone
+          BorderStyle = bsNone
+          Color = 15524818
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = 11757312
+          Font.Height = -11
+          Font.Name = 'Tahoma'
+          Font.Style = []
+          ParentFont = False
+          TabOrder = 1
+          OnChange = edtRazaoSocialChange
+        end
+        object Panel3: TPanel
+          Left = 605
+          Top = 141
+          Width = 67
+          Height = 29
+          Anchors = [akTop, akRight]
+          BevelOuter = bvNone
+          Color = 14342874
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -13
+          Font.Name = 'Tahoma'
+          Font.Style = []
+          ParentBackground = False
+          ParentFont = False
+          TabOrder = 3
+          object btnTestar: TSpeedButton
+            Left = 0
+            Top = 0
+            Width = 67
+            Height = 29
+            Align = alClient
+            Caption = 'TESTAR'
+            Flat = True
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = 10639360
+            Font.Height = -11
+            Font.Name = 'Tahoma'
+            Font.Style = [fsBold]
+            ParentFont = False
+            OnClick = btnTestarClick
+            ExplicitLeft = -13
+            ExplicitTop = -15
+          end
+        end
+        object chkFuncionarComoCliente: TCheckBox
+          Left = 25
+          Top = 8
+          Width = 313
+          Height = 17
+          Caption = 'Funcionar Como Cliente'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = 10639360
+          Font.Height = -11
+          Font.Name = 'Tahoma'
+          Font.Style = []
+          ParentFont = False
+          TabOrder = 4
+          OnClick = chkVenderClienteBloqueadoClick
         end
       end
     end

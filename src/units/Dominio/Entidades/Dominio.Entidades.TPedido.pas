@@ -54,6 +54,7 @@ type
     FVALORDESCONTO: currency;
     FVALORACRESCIMO: currency;
     FOnEstoqueBaixo: TOnEstoqueBaixo;
+    FNUMCAIXA: string;
 
     function GetValorBruto: currency;
     function getValorLiquido: currency;
@@ -95,6 +96,8 @@ type
     property ID: Integer read FID write FID;
     [campo('NUMERO', tpVARCHAR, 10)]
     property NUMERO: string read FNUMERO write FNUMERO;
+    [campo('NUMCAIXA', tpVARCHAR, 10,0,true,'caixa-01')]
+    property NUMCAIXA: string read FNUMCAIXA write FNUMCAIXA;
     [campo('DATAPEDIDO', tpDATE)]
     property DATAPEDIDO: TDateTime read FDATAPEDIDO write FDATAPEDIDO;
     [campo('HORAPEDIDO', tpTIME)]

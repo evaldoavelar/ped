@@ -2,7 +2,6 @@ inherited ViewEstoqueMovimentacoes: TViewEstoqueMovimentacoes
   Caption = 'Movimenta'#231#245'es'
   ClientHeight = 524
   ClientWidth = 922
-  OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnResize = FormResize
   OnShow = FormShow
@@ -25,7 +24,6 @@ inherited ViewEstoqueMovimentacoes: TViewEstoqueMovimentacoes
     Color = 15658734
     ParentBackground = False
     TabOrder = 0
-    ExplicitWidth = 769
     object Panel4: TPanel
       AlignWithMargins = True
       Left = 15
@@ -257,7 +255,6 @@ inherited ViewEstoqueMovimentacoes: TViewEstoqueMovimentacoes
     ParentBackground = False
     ShowCaption = False
     TabOrder = 1
-    ExplicitWidth = 719
   end
   object Panel7: TPanel
     AlignWithMargins = True
@@ -275,8 +272,6 @@ inherited ViewEstoqueMovimentacoes: TViewEstoqueMovimentacoes
     ParentBackground = False
     ShowCaption = False
     TabOrder = 2
-    ExplicitTop = 368
-    ExplicitWidth = 766
     DesignSize = (
       919
       34)
@@ -314,7 +309,6 @@ inherited ViewEstoqueMovimentacoes: TViewEstoqueMovimentacoes
       ParentColor = True
       ShowCaption = False
       TabOrder = 0
-      ExplicitLeft = 738
     end
     object BindNavigator1: TBindNavigator
       Left = 379
@@ -326,7 +320,6 @@ inherited ViewEstoqueMovimentacoes: TViewEstoqueMovimentacoes
       Anchors = []
       Orientation = orHorizontal
       TabOrder = 1
-      ExplicitLeft = 298
     end
   end
   object Panel9: TPanel
@@ -343,8 +336,6 @@ inherited ViewEstoqueMovimentacoes: TViewEstoqueMovimentacoes
     BevelOuter = bvNone
     Color = 15658734
     TabOrder = 3
-    ExplicitTop = 402
-    ExplicitWidth = 769
     object lblTotalSaidas: TLabel
       AlignWithMargins = True
       Left = 153
@@ -565,8 +556,6 @@ inherited ViewEstoqueMovimentacoes: TViewEstoqueMovimentacoes
     OnCustomDrawItem = lvPesquisaCustomDrawItem
     OnGetImageIndex = lvPesquisaGetImageIndex
     OnGetSubItemImage = lvPesquisaGetSubItemImage
-    ExplicitWidth = 759
-    ExplicitHeight = 282
   end
   object DataGeneratorAdapter1: TDataGeneratorAdapter
     FieldDefs = <

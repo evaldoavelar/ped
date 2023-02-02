@@ -107,7 +107,7 @@ implementation
 {$R *.dfm}
 
 
-uses Consulta.Cliente, Dominio.Entidades.TFactory;
+uses Consulta.Cliente, Factory.Dao, Factory.Entidades;
 
 procedure TfrmCadastroCliente.actNovoExecute(Sender: TObject);
 begin
@@ -128,7 +128,7 @@ begin
   inherited;
   FCliente.ClearBindings;
   FCliente.Bind('CODIGO', edtCodigo, 'Text');
-//  FCliente.BindReadOnly('NOME', lblCliente, 'Caption');
+  // FCliente.BindReadOnly('NOME', lblCliente, 'Caption');
   FCliente.Bind('NOME', edtNome, 'Text');
   FCliente.Bind('FANTASIA', edtFantasia, 'Text');
   FCliente.Bind('CNPJ_CNPF', edtCpf, 'Text');
@@ -280,7 +280,7 @@ var
   LItem: TCliente;
 begin
   LItem := aItem as TCliente;
-  result := LItem.NOME;
+  result := LItem.Nome;
 end;
 
 procedure TfrmCadastroCliente.FormDestroy(Sender: TObject);
@@ -301,7 +301,9 @@ end;
 procedure TfrmCadastroCliente.FormShow(Sender: TObject);
 begin
   inherited;
-  FDaoCliente := TFactory.DaoCliente;
+  FDaoCliente := TFactory
+    .new
+    .DaoCliente;
 end;
 
 procedure TfrmCadastroCliente.Novo;
@@ -314,7 +316,10 @@ begin
       FreeAndNil(FCliente);
     end;
 
-    Self.FCliente := TFactory.Cliente;
+    Self.FCliente := TFactoryEntidades
+      .new
+      .Cliente;
+
     Self.FCliente.UF := 'MG';
     Self.FCliente.CIDADE := 'Jaboticatubas';
     Self.FCliente.CEP := '35830-000';

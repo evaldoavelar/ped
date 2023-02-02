@@ -3,10 +3,9 @@ inherited FrmCadastroOrcamento: TFrmCadastroOrcamento
   ClientHeight = 606
   ClientWidth = 874
   OnCloseQuery = FormCloseQuery
-  OnCreate = FormCreate
-  OnDestroy = FormDestroy
+  OnShow = FormShow
   ExplicitWidth = 890
-  ExplicitHeight = 647
+  ExplicitHeight = 645
   PixelsPerInch = 96
   TextHeight = 13
   object pgc1: TPageControl
@@ -19,10 +18,6 @@ inherited FrmCadastroOrcamento: TFrmCadastroOrcamento
     TabOrder = 0
     object tsItens: TTabSheet
       Caption = 'Itens'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object strGridProdutos: TStringGrid
         Tag = 9
         Left = 0

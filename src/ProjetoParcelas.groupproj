@@ -6,15 +6,6 @@
         <Projects Include="PED.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="Testes\ParcelasTestes.dproj">
-            <Dependencies/>
-        </Projects>
-        <Projects Include="..\AppSerial\AppSerial.dproj">
-            <Dependencies/>
-        </Projects>
-        <Projects Include="..\AutoComplete\AutoCompleteVCL.dproj">
-            <Dependencies/>
-        </Projects>
     </ItemGroup>
     <ProjectExtensions>
         <Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -32,41 +23,14 @@
     <Target Name="PED:Make">
         <MSBuild Projects="PED.dproj" Targets="Make"/>
     </Target>
-    <Target Name="ParcelasTestes">
-        <MSBuild Projects="Testes\ParcelasTestes.dproj"/>
-    </Target>
-    <Target Name="ParcelasTestes:Clean">
-        <MSBuild Projects="Testes\ParcelasTestes.dproj" Targets="Clean"/>
-    </Target>
-    <Target Name="ParcelasTestes:Make">
-        <MSBuild Projects="Testes\ParcelasTestes.dproj" Targets="Make"/>
-    </Target>
-    <Target Name="AppSerial">
-        <MSBuild Projects="..\AppSerial\AppSerial.dproj"/>
-    </Target>
-    <Target Name="AppSerial:Clean">
-        <MSBuild Projects="..\AppSerial\AppSerial.dproj" Targets="Clean"/>
-    </Target>
-    <Target Name="AppSerial:Make">
-        <MSBuild Projects="..\AppSerial\AppSerial.dproj" Targets="Make"/>
-    </Target>
-    <Target Name="AutoCompleteVCL">
-        <MSBuild Projects="..\AutoComplete\AutoCompleteVCL.dproj"/>
-    </Target>
-    <Target Name="AutoCompleteVCL:Clean">
-        <MSBuild Projects="..\AutoComplete\AutoCompleteVCL.dproj" Targets="Clean"/>
-    </Target>
-    <Target Name="AutoCompleteVCL:Make">
-        <MSBuild Projects="..\AutoComplete\AutoCompleteVCL.dproj" Targets="Make"/>
-    </Target>
     <Target Name="Build">
-        <CallTarget Targets="PED;ParcelasTestes;AppSerial;AutoCompleteVCL"/>
+        <CallTarget Targets="PED"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="PED:Clean;ParcelasTestes:Clean;AppSerial:Clean;AutoCompleteVCL:Clean"/>
+        <CallTarget Targets="PED:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="PED:Make;ParcelasTestes:Make;AppSerial:Make;AutoCompleteVCL:Make"/>
+        <CallTarget Targets="PED:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

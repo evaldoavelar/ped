@@ -7,7 +7,7 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, untFrmBase, Vcl.StdCtrls, Vcl.Buttons,
   Vcl.Imaging.pngimage, Vcl.Imaging.jpeg, Vcl.ExtCtrls, Dominio.Entidades.CondicaoPagto,
   Dominio.Entidades.TPedido, System.Actions, Vcl.ActnList, Dominio.Entidades.TFormaPagto,
-  System.Generics.Collections, Dominio.Entidades.TFactory,
+  System.Generics.Collections, Factory.Dao,
   Dominio.Entidades.Pedido.Pagamentos.Pagamento;
 
 type
@@ -95,7 +95,7 @@ uses
   Helpers.HelperString,
   Util.Funcoes,
   Pedido.Venda.Part.Pagamento,
-  Pedido.Pagamento.Imagem,
+  Pedido.Pagamento.Imagem,   Sistema.TLog,
   Dominio.Entidades.TFormaPagto.Tipo;
 
 {$R *.dfm}
@@ -103,6 +103,7 @@ uses
 
 procedure TFrmPagamento.actCancelarExecute(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TFrmPagamento.actCancelarExecute ');
   inherited;
   for VAR I := FPedido.Pagamentos.FormasDePagamento.Count - 1 downto 0 do
   Begin
@@ -110,11 +111,12 @@ begin
   End;
 
   close;
+  TLog.d('<<< Saindo de TFrmPagamento.actCancelarExecute ');
 end;
 
 procedure TFrmPagamento.actFinalizaPagamentoExecute(Sender: TObject);
 begin
-
+  TLog.d('>>> Entrando em  TFrmPagamento.actFinalizaPagamentoExecute ');
   TRY
     inherited;
     if FPedido.Pagamentos.ValorRestante = 0 then
@@ -130,24 +132,30 @@ begin
         end;
     end;
   except
-    on E: Exception do
-      MessageDlg(E.Message, mtError, [mbOK], 0);
+    on e: Exception do
+    begin
+      TLog.d(e.message);
+      MessageDlg(e.message, mtError, [mbOK], 0);
+    end;
   end;
+  TLog.d('<<< Saindo de TFrmPagamento.actFinalizaPagamentoExecute ');
 end;
 
 procedure TFrmPagamento.BindLabelsPagamentos(ValorRecebido: Currency; aValorAcrescimo: Currency; ValorRestante: Currency; Troco: Currency);
 begin
+  TLog.d('>>> Entrando em  TFrmPagamento.BindLabelsPagamentos ');
   lblValorRestante.Caption := ValorRestante.ToReais;
   lblValorPago.Caption := ValorRecebido.ToReais;
   lblTroco.Caption := Troco.ToReais;
   lblValorLiquido.Caption := FPedido.VALORLIQUIDO.ToReais;
   // lblValorAcrescimo.Caption := aValorAcrescimo.ToReais;
   lblValorTotal.Caption := FPedido.ValorBruto.ToReais;
+  TLog.d('<<< Saindo de TFrmPagamento.BindLabelsPagamentos ');
 end;
 
 procedure TFrmPagamento.ConfiguraPagamento;
 begin
-  // flog.d('>>> Entrando em  TViewOrdemDeServico.ConfiguraPagamento ');
+  TLog.d('>>> Entrando em  TFrmPagamento.ConfiguraPagamento ');
   try
 
     LimpaScrollBox(scrBoxPagamentos);
@@ -166,7 +174,7 @@ begin
 
     BindLabelsPagamentos(FPedido.Pagamentos.ValorRecebido, FPedido.Pagamentos.ValorAcrescimo, FPedido.Pagamentos.ValorRestante, FPedido.Pagamentos.Troco);
     var
-    formaPagtos := TFactory
+    formaPagtos := fFactory
       .DaoFormaPagto
       .ListaAtivosObject();
 
@@ -184,17 +192,18 @@ begin
 
     lvFormaPagto.ItemIndex := lvFormaPagto.Items.IndexOf('DINHEIRO');
   except
-    on E: Exception do
+    on e: Exception do
     begin
       // flog.d(E);
-      raise Exception.Create('ConfiguraPagamento: ' + E.Message);
+      raise Exception.Create('ConfiguraPagamento: ' + e.message);
     end;
   end;
-  // flog.d('<<< Saindo de TViewOrdemDeServico.ConfiguraPagamento ');
+  TLog.d('<<< Saindo de TFrmPagamento.ConfiguraPagamento ');
 end;
 
 procedure TFrmPagamento.CarregaCondicaoDePagamento(aPagto: TList<TCONDICAODEPAGTO>);
 begin
+  TLog.d('>>> Entrando em  TFrmPagamento.CarregaCondicaoDePagamento ');
   lvCondicaoPagamento.Clear;
   for var condicao in aPagto do
   begin
@@ -214,13 +223,15 @@ begin
       condicao
       );
   end;
-  lvCondicaoPagamento.ItemIndex := 0
+  lvCondicaoPagamento.ItemIndex := 0;
+  TLog.d('<<< Saindo de TFrmPagamento.CarregaCondicaoDePagamento ');
 end;
 
 procedure TFrmPagamento.AddPagamento;
 VAR
   valor: Currency;
 begin
+  TLog.d('>>> Entrando em  TFrmPagamento.AddPagamento ');
   try
     if lvFormaPagto.ItemIndex < 0 then
       raise Exception.Create('SELECIONE A FORMA DE PAGAMENTO');
@@ -280,9 +291,13 @@ begin
     BindPagamentos(pagto);
 
   except
-    on E: Exception do
-      MessageDlg(E.Message, mtError, [mbOK], 0);
+    on e: Exception do
+    begin
+      TLog.d(e.message);
+      MessageDlg(e.message, mtError, [mbOK], 0);
+    end;
   end;
+  TLog.d('<<< Saindo de TFrmPagamento.AddPagamento ');
 end;
 
 procedure TFrmPagamento.ParcelaPedido(aPagto: TPEDIDOPAGAMENTO);
@@ -295,8 +310,8 @@ begin
     VencimentoPrimeiraParcela := IncMonth(now, 1);
     aPagto.ParcelarPedido(FPedido.Cliente.CODIGO, NumParcelas, VencimentoPrimeiraParcela);
   except
-    on E: Exception do
-      raise Exception.Create('Falha ao gerar parcelas: ' + E.Message);
+    on e: Exception do
+      raise Exception.Create('Falha ao gerar parcelas: ' + e.message);
   end;
 end;
 
@@ -374,6 +389,7 @@ end;
 
 procedure TFrmPagamento.FormShow(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TFrmPagamento.FormShow ');
   inherited;
   try
     edtDesconto.SetFocus;
@@ -381,10 +397,12 @@ begin
   end;
 
   ConfiguraPagamento();
+  TLog.d('<<< Saindo de TFrmPagamento.FormShow ');
 end;
 
 procedure TFrmPagamento.lvCondicaoPagamentoExit(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TFrmPagamento.lvCondicaoPagamentoExit ');
   inherited;
   TListBox(Sender).Font.Size := TListBox(Sender).Font.Size - 1;
   TListBox(Sender).Color := corDestaque;
@@ -394,6 +412,7 @@ begin
     condicao := TCONDICAODEPAGTO(lvCondicaoPagamento.Items.Objects[lvCondicaoPagamento.ItemIndex]);
     edtValorPagto.Text := condicao.CalculaAcrescimo(FPedido.Pagamentos.ValorRestante).ToStrDuasCasasSemPonto;
   end;
+  TLog.d('<<< Saindo de TFrmPagamento.lvCondicaoPagamentoExit ');
 end;
 
 procedure TFrmPagamento.lvCondicaoPagamentoKeyPress(Sender: TObject;
@@ -415,13 +434,14 @@ begin
   inherited;
   TListBox(Sender).Font.Size := TListBox(Sender).Font.Size + 1;
   TListBox(Sender).Color := clWhite;
-  if TListBox(Sender).Items.count = 1 then
-  TListBox(Sender).ItemIndex :=0;
+  if TListBox(Sender).Items.Count = 1 then
+    TListBox(Sender).ItemIndex := 0;
 
 end;
 
 procedure TFrmPagamento.lvFormaPagtoExit(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TFrmPagamento.lvFormaPagtoExit ');
   inherited;
   TListBox(Sender).Font.Size := TListBox(Sender).Font.Size - 1;
   TListBox(Sender).Color := corDestaque;
@@ -438,6 +458,7 @@ begin
     condicao := TCONDICAODEPAGTO(lvCondicaoPagamento.Items.Objects[lvCondicaoPagamento.ItemIndex]);
     edtValorPagto.Text := condicao.CalculaAcrescimo(FPedido.Pagamentos.ValorRestante).ToStrDuasCasasSemPonto;
   end;
+  TLog.d('<<< Saindo de TFrmPagamento.lvFormaPagtoExit ');
 end;
 
 procedure TFrmPagamento.lvFormaPagtoKeyPress(Sender: TObject;

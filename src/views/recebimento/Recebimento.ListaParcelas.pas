@@ -72,7 +72,8 @@ implementation
 
 uses
   Dominio.Entidades.TPedido, Dao.IDaoPedido, Recebimento.DetalhesPedido,
-  Dominio.Entidades.TFactory, Relatorio.TRParcelas, Recebimento.Recebe;
+  Factory.Dao, Relatorio.TRParcelas, Recebimento.Recebe, Sistema.TLog,
+  Factory.Entidades;
 
 {$R *.dfm}
 
@@ -90,37 +91,47 @@ end;
 
 procedure TfrmParcelasVencendo.actCloseALLExecute(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TfrmParcelasVencendo.actCloseALLExecute ');
   inherited;
   CategoryPanelGroup.CollapseAll;
+  TLog.d('<<< Saindo de TfrmParcelasVencendo.actCloseALLExecute ');
 end;
 
 procedure TfrmParcelasVencendo.actImprimirExecute(Sender: TObject);
 var
   impressao: TRParcela;
 begin
+  TLog.d('>>> Entrando em  TfrmParcelasVencendo.actImprimirExecute ');
   try
     if Parcelas.Count <= 0 then
       raise Exception.Create('Nenhum dado para imprimir');
 
-    impressao := TRParcela.Create( TFactory.Parametros.ImpressoraTermica);
+    impressao := TRParcela.Create(TFactoryEntidades.Parametros.ImpressoraTermica);
 
     impressao.ImprimeLista(
       Self.Caption,
-      TFactory.DadosEmitente,
+      fFactory.DadosEmitente,
       Parcelas);
 
     FreeAndNil(impressao);
 
   except
-    on E: Exception do
-      MessageDlg(E.Message, mtError, [mbOK], 0);
+    on e: Exception do
+    begin
+      TLog.d(e.Message);
+      MessageDlg(e.Message, mtError, [mbOK], 0);
+    end;
   end;
+
+  TLog.d('<<< Saindo de TfrmParcelasVencendo.actImprimirExecute ');
 end;
 
 procedure TfrmParcelasVencendo.actOpenALLExecute(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TfrmParcelasVencendo.actOpenALLExecute ');
   inherited;
   CategoryPanelGroup.ExpandAll;
+  TLog.d('<<< Saindo de TfrmParcelasVencendo.actOpenALLExecute ');
 end;
 
 procedure TfrmParcelasVencendo.AddParcelaPanel(CatPanel: TCategoryPanel; Parcela: TParcelas);
@@ -132,6 +143,7 @@ var
   Cor: TColor;
   btn: TSpeedButton;
 begin
+  //TLog.d('>>> Entrando em  TfrmParcelasVencendo.AddParcelaPanel ');
 
   if Parcela.VENCIMENTO < Date() then
     Cor := $000D1CB8
@@ -168,7 +180,7 @@ begin
   lblNome.Width := 260;
   lblNome.Height := 13;
   lblNome.AutoSize := False;
-  lblNome.Caption := IntToStr(Parcela.NUMPARCELA) + 'ª Parcela do pedido ' +Format('%.*d',[6, parcela.IDPEDIDO]);
+  lblNome.Caption := IntToStr(Parcela.NUMPARCELA) + 'ª Parcela do pedido ' + Format('%.*d', [6, Parcela.IDPEDIDO]);
   lblNome.Parent := pnl;
   lblNome.Font.Color := Cor;
 
@@ -210,7 +222,7 @@ begin
   btn.ShowHint := True;
   btn.Parcela := Parcela;
   btn.OnClick := btnReceberClick;
-
+//  TLog.d('<<< Saindo de TfrmParcelasVencendo.AddParcelaPanel ');
 end;
 
 procedure TfrmParcelasVencendo.Bind;
@@ -218,11 +230,13 @@ var
   Parcela: TParcelas;
   panel: TCategoryPanel;
 begin
+  TLog.d('>>> Entrando em  TfrmParcelasVencendo.Bind ');
   for Parcela in Parcelas do
   begin
     panel := RetornaPanel(FormatDateTime('dd/mm/yyyy', Parcela.VENCIMENTO));
     AddParcelaPanel(panel, Parcela);
   end;
+  TLog.d('<<< Saindo de TfrmParcelasVencendo.Bind ');
 end;
 
 procedure TfrmParcelasVencendo.btn2Click(Sender: TObject);
@@ -234,15 +248,16 @@ end;
 procedure TfrmParcelasVencendo.btnDetalhesClick(Sender: TObject);
 var
   Pedido: TPedido;
-  daoPedido: IDaoPedido;
+
 begin
+  TLog.d('>>> Entrando em  TfrmParcelasVencendo.btnDetalhesClick ');
   try
     // ValidaGrid;
 
     frmDetalhesPedido := TfrmDetalhesPedido.Create(Self);
     try
-      daoPedido := TFactory.daoPedido();
-      Pedido := daoPedido.getPedido(TSpeedButton(Sender).Parcela.IDPEDIDO);
+
+      Pedido := fFactory.daoPedido.getPedido(TSpeedButton(Sender).Parcela.IDPEDIDO);
 
       frmDetalhesPedido.Pedido := Pedido;
       frmDetalhesPedido.ShowModal;
@@ -253,17 +268,21 @@ begin
       FreeAndNil(frmDetalhesPedido);
     end;
   except
-    on E: Exception do
-      MessageDlg(E.Message, mtError, [mbOK], 0);
+    on e: Exception do
+    begin
+      TLog.d(e.Message);
+      MessageDlg(e.Message, mtError, [mbOK], 0);
+    end;
   end;
-
+  TLog.d('<<< Saindo de TfrmParcelasVencendo.btnDetalhesClick ');
 end;
 
 procedure TfrmParcelasVencendo.btnReceberClick(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TfrmParcelasVencendo.btnReceberClick ');
   try
 
-    if not TFactory.VendedorLogado.PODERECEBERPARCELA then
+    if not TFactoryEntidades.new.VendedorLogado.PODERECEBERPARCELA then
       raise Exception.Create('Vendedor não tem permissão para acessar recebimento de parcelas');
 
     frmRecebimento := TfrmRecebimento.Create(Self);
@@ -275,34 +294,45 @@ begin
       FreeAndNil(frmRecebimento);
     end;
   except
-    on E: Exception do
-      MessageDlg(E.Message, mtError, [mbOK], 0);
+    on e: Exception do
+    begin
+      TLog.d(e.Message);
+      MessageDlg(e.Message, mtError, [mbOK], 0);
+    end;
   end;
+
+  TLog.d('<<< Saindo de TfrmParcelasVencendo.btnReceberClick ');
 end;
 
 procedure TfrmParcelasVencendo.FormActivate(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TfrmParcelasVencendo.FormActivate ');
   inherited;
   Self.Top := FTop;
   Self.Left := FLeft;
+  TLog.d('<<< Saindo de TfrmParcelasVencendo.FormActivate ');
 end;
 
 procedure TfrmParcelasVencendo.FormShow(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TfrmParcelasVencendo.FormShow ');
   inherited;
   Bind();
-
+  TLog.d('<<< Saindo de TfrmParcelasVencendo.FormShow ');
 end;
 
 function TfrmParcelasVencendo.RetornaCaption(Data: string): string;
 begin
+ // TLog.d('>>> Entrando em  TfrmParcelasVencendo.RetornaCaption ');
   result := 'Vencimento: ' + Data;
+//  TLog.d('<<< Saindo de TfrmParcelasVencendo.RetornaCaption ');
 end;
 
 function TfrmParcelasVencendo.RetornaPanel(Data: string): TCategoryPanel;
 var
   panel: Pointer;
 begin
+//  TLog.d('>>> Entrando em  TfrmParcelasVencendo.RetornaPanel ');
 
   result := nil;
 
@@ -325,6 +355,7 @@ begin
     result.Height := 25;
   end;
 
+ // TLog.d('<<< Saindo de TfrmParcelasVencendo.RetornaPanel ');
 end;
 
 { TSpeedButtonHelp }

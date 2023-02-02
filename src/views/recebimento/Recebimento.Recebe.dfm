@@ -3,7 +3,6 @@ inherited frmRecebimento: TfrmRecebimento
   Caption = 'Recebimento'
   ClientHeight = 456
   ClientWidth = 737
-  OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnShow = FormShow
   ExplicitWidth = 743

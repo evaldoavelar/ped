@@ -52,7 +52,7 @@ type
 implementation
 
 uses
-  Util.Exceptions, Dominio.Entidades.TFactory;
+  Util.Exceptions, Factory.Dao;
 
 { TDaoVendedor }
 
@@ -62,7 +62,7 @@ var
 begin
   ValidaItem(Parcelas);
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     qry.Connection := FConnection;
     qry.SQL.Text := ''
@@ -99,7 +99,7 @@ var
 begin
   ValidaItem(Parcelas);
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     qry.Connection := FConnection;
     qry.SQL.Text := ''
@@ -137,7 +137,7 @@ var
 begin
   ValidaItem(Parcelas);
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     qry.Connection := FConnection;
     qry.SQL.Text := ''
@@ -173,7 +173,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
       qry.SQL.Text := ''
@@ -211,7 +211,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
 
   try
 
@@ -258,7 +258,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
 
   try
 
@@ -306,7 +306,7 @@ var
   ds: TDataSet;
 begin
 
-  ds := self.GetParcelaVencidasDS(dataAtual);
+  ds := Self.GetParcelaVencidasDS(dataAtual);
   try
     Result := TObjectList<TParcelas>.Create();
 
@@ -333,7 +333,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
 
     try
@@ -380,7 +380,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
 
   try
 
@@ -426,7 +426,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
 
     qry.SQL.Text := ''
@@ -473,7 +473,7 @@ var
 begin
 
   Result := 0;
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
 
     try
@@ -513,7 +513,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     Result := TObjectList<TParcelas>.Create();
 
@@ -558,7 +558,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     Result := TObjectList<TParcelas>.Create();
 
@@ -603,7 +603,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
 
   try
 
@@ -651,7 +651,7 @@ var
   ds: TDataSet;
 begin
 
-  ds := self.GetParcelaVencendoDS(dataInicial, dataFinal);
+  ds := Self.GetParcelaVencendoDS(dataInicial, dataFinal);
   try
     Result := TObjectList<TParcelas>.Create();
 
@@ -678,7 +678,7 @@ var
 begin
 
   Result := 0;
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
 
     try
@@ -719,7 +719,7 @@ var
 begin
 
   Result := 0;
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
 
     try
@@ -760,7 +760,7 @@ var
 begin
 
   Result := 0;
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
 
     try
@@ -798,7 +798,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
 
     try
@@ -840,7 +840,7 @@ var
 begin
   ValidaItem(Parcelas);
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     qry.Connection := FConnection;
     qry.SQL.Text := ''
@@ -928,7 +928,10 @@ begin
     FieldsToEntity(ds, Result);
 
     if not(ds.FieldByName('CODVENRECEBIMENTO').IsNull) then
-      Result.VendedorRecebimento := TFactory.DaoVendedor.GetVendedor(ds.FieldByName('CODVENRECEBIMENTO').AsString);
+      Result.VendedorRecebimento := TFactory
+        .new(FConnection, true)
+        .DaoVendedor
+        .GetVendedor(ds.FieldByName('CODVENRECEBIMENTO').AsString);
 
     // Result.NUMPARCELA := ds.FieldByName('NUMPARCELA').AsInteger;
     // Result.IDPEDIDO := ds.FieldByName('IDPEDIDO').AsInteger;
@@ -959,7 +962,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
 
@@ -1004,7 +1007,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
 
     try

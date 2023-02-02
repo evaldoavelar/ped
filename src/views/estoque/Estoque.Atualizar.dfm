@@ -2,7 +2,6 @@ inherited FrmEstoqueAtualizar: TFrmEstoqueAtualizar
   Caption = 'Estoque'
   ClientHeight = 432
   ClientWidth = 760
-  OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnShow = FormShow
   ExplicitWidth = 776
@@ -743,11 +742,15 @@ inherited FrmEstoqueAtualizar: TFrmEstoqueAtualizar
     object tsConcluido: TTabSheet
       Caption = 'tsConcluido'
       ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label4: TLabel
         Left = 0
         Top = 0
-        Width = 752
-        Height = 360
+        Width = 521
+        Height = 96
         Align = alClient
         Alignment = taCenter
         Caption = 'CONCLU'#205'DO!!!'
@@ -758,9 +761,6 @@ inherited FrmEstoqueAtualizar: TFrmEstoqueAtualizar
         Font.Style = []
         ParentFont = False
         Layout = tlCenter
-        ExplicitTop = 44
-        ExplicitWidth = 521
-        ExplicitHeight = 96
       end
       object Panel3: TPanel
         AlignWithMargins = True

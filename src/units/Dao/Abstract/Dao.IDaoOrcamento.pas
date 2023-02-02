@@ -26,6 +26,11 @@ type
     function Listar(campo, valor: string; dataInicio, dataFim: TDate): TDataSet; overload;
     function Listar(campo, valor: string): TDataSet; overload;
     function Listar(dataInicio, dataFim: TDate): TDataSet; overload;
+
+    procedure StartTransaction;
+    procedure Commit;
+    procedure Rollback;
+
   end;
 implementation
 

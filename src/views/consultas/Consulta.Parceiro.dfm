@@ -1,6 +1,5 @@
 inherited frmConsultaParceiro: TfrmConsultaParceiro
   Caption = 'Consulta Parceiro'
-  OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
   inherited dbGridResultado: TJvDBUltimGrid

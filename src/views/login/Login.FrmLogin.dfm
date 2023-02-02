@@ -3,18 +3,17 @@ inherited frmLogin: TfrmLogin
   BorderWidth = 1
   Caption = 'frmLogin'
   ClientHeight = 424
-  ClientWidth = 710
+  ClientWidth = 766
   Color = 10574592
   Position = poScreenCenter
-  OnCreate = FormCreate
-  ExplicitWidth = 712
+  ExplicitWidth = 768
   ExplicitHeight = 426
   PixelsPerInch = 96
   TextHeight = 13
   object Panel1: TPanel
     Left = 0
     Top = 0
-    Width = 710
+    Width = 766
     Height = 424
     Align = alClient
     BevelOuter = bvNone
@@ -27,15 +26,11 @@ inherited frmLogin: TfrmLogin
     ParentBackground = False
     ShowCaption = False
     TabOrder = 0
-    ExplicitLeft = -1
-    ExplicitTop = -8
-    ExplicitWidth = 800
-    ExplicitHeight = 397
     object Label2: TLabel
       AlignWithMargins = True
-      Left = 24
+      Left = 22
       Top = 55
-      Width = 259
+      Width = 317
       Height = 346
       Margins.Top = 35
       Margins.Right = 10
@@ -48,12 +43,11 @@ inherited frmLogin: TfrmLogin
       Font.Style = [fsBold]
       ParentFont = False
       Layout = tlCenter
-      ExplicitLeft = 60
-      ExplicitTop = 35
-      ExplicitHeight = 63
+      ExplicitLeft = 13
+      ExplicitHeight = 62
     end
     object Panel7: TPanel
-      Left = 293
+      Left = 349
       Top = 20
       Width = 387
       Height = 384
@@ -61,7 +55,6 @@ inherited frmLogin: TfrmLogin
       BevelOuter = bvNone
       Caption = 'Panel7'
       TabOrder = 0
-      ExplicitLeft = 262
       object Label3: TLabel
         AlignWithMargins = True
         Left = 3
@@ -79,7 +72,7 @@ inherited frmLogin: TfrmLogin
         Font.Style = []
         ParentFont = False
         Layout = tlCenter
-        ExplicitWidth = 74
+        ExplicitWidth = 90
       end
       object Panel3: TPanel
         AlignWithMargins = True
@@ -97,7 +90,6 @@ inherited frmLogin: TfrmLogin
         ParentBackground = False
         ShowCaption = False
         TabOrder = 1
-        ExplicitWidth = 465
         object Label4: TLabel
           AlignWithMargins = True
           Left = 13
@@ -115,7 +107,7 @@ inherited frmLogin: TfrmLogin
           Font.Style = []
           ParentFont = False
           Layout = tlCenter
-          ExplicitWidth = 43
+          ExplicitWidth = 51
         end
         object Label5: TLabel
           AlignWithMargins = True
@@ -134,7 +126,7 @@ inherited frmLogin: TfrmLogin
           Font.Style = []
           ParentFont = False
           Layout = tlCenter
-          ExplicitWidth = 37
+          ExplicitWidth = 45
         end
         object Panel4: TPanel
           AlignWithMargins = True
@@ -150,7 +142,6 @@ inherited frmLogin: TfrmLogin
           ParentBackground = False
           ShowCaption = False
           TabOrder = 1
-          ExplicitWidth = 439
           object edtSenha: TEdit
             AlignWithMargins = True
             Left = 15
@@ -172,10 +163,6 @@ inherited frmLogin: TfrmLogin
             PasswordChar = '*'
             TabOrder = 0
             OnKeyPress = edtSenhaKeyPress
-            ExplicitLeft = 39
-            ExplicitTop = 22
-            ExplicitWidth = 214
-            ExplicitHeight = 23
           end
         end
         object Panel5: TPanel
@@ -192,7 +179,6 @@ inherited frmLogin: TfrmLogin
           ParentBackground = False
           ShowCaption = False
           TabOrder = 0
-          ExplicitWidth = 439
           object edtCodigo: TEdit
             AlignWithMargins = True
             Left = 15
@@ -215,10 +201,6 @@ inherited frmLogin: TfrmLogin
             TabOrder = 0
             OnExit = edtCodigoExit
             OnKeyPress = edtCodigoKeyPress
-            ExplicitLeft = 39
-            ExplicitTop = 21
-            ExplicitWidth = 77
-            ExplicitHeight = 24
           end
         end
         object Panel2: TPanel
@@ -233,7 +215,6 @@ inherited frmLogin: TfrmLogin
           Color = 10574592
           ParentBackground = False
           TabOrder = 2
-          ExplicitWidth = 439
           object btnEntrar: TSpeedButton
             Left = 0
             Top = 0
@@ -266,7 +247,6 @@ inherited frmLogin: TfrmLogin
           Color = clWhite
           ParentBackground = False
           TabOrder = 3
-          ExplicitWidth = 445
           object Panel6: TPanel
             AlignWithMargins = True
             Left = 316
@@ -280,7 +260,6 @@ inherited frmLogin: TfrmLogin
             Color = clWhite
             ParentBackground = False
             TabOrder = 1
-            ExplicitLeft = 400
             object btnSair: TSpeedButton
               Left = 0
               Top = 0
@@ -353,6 +332,7 @@ inherited frmLogin: TfrmLogin
               ParentFont = False
               ParentShowHint = False
               ShowHint = True
+              OnClick = btnBancoDeDadosClick
               ExplicitLeft = 32
               ExplicitWidth = 60
               ExplicitHeight = 32
@@ -373,7 +353,6 @@ inherited frmLogin: TfrmLogin
         ParentBackground = False
         ShowCaption = False
         TabOrder = 0
-        ExplicitWidth = 471
       end
     end
   end

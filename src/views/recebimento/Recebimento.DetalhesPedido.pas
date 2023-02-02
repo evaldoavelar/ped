@@ -9,7 +9,7 @@ uses
   Vcl.ExtCtrls, Vcl.ComCtrls,
   Dominio.Entidades.TEntity, Dominio.Entidades.TPedido,
   Dominio.Entidades.TItemPedido, Dominio.Entidades.TParcelas,
-  Dominio.Entidades.TFactory, Dao.IDaoPedido,
+  Factory.Dao, Dao.IDaoPedido,
   Vcl.Mask, JvExMask, JvToolEdit,
   JvBaseEdits, JvExStdCtrls, JvTextListBox,
   System.Actions, Vcl.ActnList, Vcl.Grids, Vcl.ExtDlgs, Vcl.Imaging.jpeg,
@@ -136,38 +136,47 @@ implementation
 {$R *.dfm}
 
 
-uses Util.Funcoes, Helper.TBindGrid;
+uses Util.Funcoes, Helper.TBindGrid, Sistema.TLog;
 
 procedure TfrmDetalhesPedido.actAnexarComprovanteExecute(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TfrmDetalhesPedido.actAnexarComprovanteExecute ');
   inherited;
   AnexarComprovante;
+  TLog.d('<<< Saindo de TfrmDetalhesPedido.actAnexarComprovanteExecute ');
 end;
 
 procedure TfrmDetalhesPedido.actCancelarExecute(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TfrmDetalhesPedido.actCancelarExecute ');
   inherited;
   cancelar;
+  TLog.d('<<< Saindo de TfrmDetalhesPedido.actCancelarExecute ');
 end;
 
 procedure TfrmDetalhesPedido.actOkExecute(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TfrmDetalhesPedido.actOkExecute ');
   inherited;
   self.Close;
+  TLog.d('<<< Saindo de TfrmDetalhesPedido.actOkExecute ');
 end;
 
 procedure TfrmDetalhesPedido.actSalvarComprovanteExecute(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TfrmDetalhesPedido.actSalvarComprovanteExecute ');
   inherited;
   dlgSavePic.FileName := 'Comprovante.jpg';
   if dlgSavePic.Execute then
   begin
     imgComprovante.Picture.SaveToFile(dlgSavePic.FileName);
   end;
+  TLog.d('<<< Saindo de TfrmDetalhesPedido.actSalvarComprovanteExecute ');
 end;
 
 procedure TfrmDetalhesPedido.AnexarComprovante;
 begin
+  TLog.d('>>> Entrando em  TfrmDetalhesPedido.AnexarComprovante ');
   try
     if dlgOpenPic.Execute then
     begin
@@ -180,9 +189,13 @@ begin
       MessageDlg('Imagem  Anexada', mtInformation, [mbOK], 0);
     end;
   except
-    on E: Exception do
-      MessageDlg(E.Message, mtError, [mbOK], 0);
+    on e: Exception do
+    begin
+      TLog.d(e.message);
+      MessageDlg(e.message, mtError, [mbOK], 0);
+    end;
   end;
+  TLog.d('<<< Saindo de TfrmDetalhesPedido.AnexarComprovante ');
 end;
 
 procedure TfrmDetalhesPedido.Bind;
@@ -190,6 +203,7 @@ var
   pagto: TPEDIDOPAGAMENTO;
   parcela: TParcelas;
 begin
+  TLog.d('>>> Entrando em  TfrmDetalhesPedido.Bind ');
   FPedido.BindReadOnly('NUMERO', lblNumero, 'Caption');
   FPedido.BindReadOnly('HORAPEDIDO', lblHora, 'Caption');
   FPedido.BindReadOnly('DATAPEDIDO', lblData, 'Caption');
@@ -270,10 +284,13 @@ begin
       actSalvarComprovante.Enabled := false;
     end;
   except
-    on E: Exception do
-      MessageDlg('Falha ao mapear comprovante: ' + E.Message, mtError, [mbOK], 0);
+    on e: Exception do
+    begin
+      TLog.d(e.message);
+      MessageDlg('Falha ao mapear comprovante: ' + e.message, mtError, [mbOK], 0);
+    end;
   end;
-
+  TLog.d('<<< Saindo de TfrmDetalhesPedido.Bind ');
 end;
 
 procedure TfrmDetalhesPedido.cancelar;
@@ -290,12 +307,15 @@ end;
 
 procedure TfrmDetalhesPedido.FormCreate(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TfrmDetalhesPedido.FormCreate ');
   inherited;
-  DaoPedido := TFactory.DaoPedido;
+  DaoPedido := fFactory.DaoPedido;
+  TLog.d('<<< Saindo de TfrmDetalhesPedido.FormCreate ');
 end;
 
 procedure TfrmDetalhesPedido.FormShow(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TfrmDetalhesPedido.FormShow ');
   inherited;
   TVclFuncoes.DisableVclStyles(self, 'TLabel');
   TVclFuncoes.DisableVclStyles(pgPedido, 'TPanel');
@@ -304,6 +324,7 @@ begin
   TVclFuncoes.DisableVclStyles(self, 'TJvTextListBox');
   Bind();
   pgPedido.TabIndex := 0;
+  TLog.d('<<< Saindo de TfrmDetalhesPedido.FormShow ');
 end;
 
 end.

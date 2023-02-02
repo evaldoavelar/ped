@@ -5,7 +5,7 @@ inherited frmFiltroBase: TfrmFiltroBase
   OnDestroy = FormDestroy
   OnShow = FormShow
   ExplicitWidth = 872
-  ExplicitHeight = 693
+  ExplicitHeight = 694
   PixelsPerInch = 96
   TextHeight = 13
   object splEsquerda: TSplitter
@@ -310,7 +310,6 @@ inherited frmFiltroBase: TfrmFiltroBase
     ColorFrom = 10639360
     ColorTo = 10639360
     ImageIndex = 0
-    ExplicitTop = 622
     DesignSize = (
       856
       38)

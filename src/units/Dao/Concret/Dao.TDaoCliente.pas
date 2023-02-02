@@ -26,12 +26,14 @@ type
     procedure ExcluirCliente(codigo: string);
     function GeraID: string;
     function Listar(campo: string; valor: string): TDataSet;
+
+    destructor destroy; override;
   end;
 
 implementation
 
 uses
-  Util.Exceptions, Dominio.Entidades.TFactory, Util.Funcoes, Sistema.TLog;
+  Util.Exceptions, Factory.Dao, Util.Funcoes, Sistema.TLog;
 
 { TDaoVendedor }
 
@@ -40,7 +42,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
 
   try
     try
@@ -106,12 +108,19 @@ begin
   end;
 end;
 
+destructor TDaoCliente.destroy;
+begin
+  TLog.d('>>> Entrando em  TDaoCliente.destroy ');
+  inherited;
+  TLog.d('<<< Saindo de TDaoCliente.destroy ');
+end;
+
 procedure TDaoCliente.ExcluirCliente(codigo: string);
 var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
       qry.SQL.Text := ''
@@ -153,7 +162,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
       qry.SQL.Text := ''
@@ -189,7 +198,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
       qry.SQL.Text := ''
@@ -225,7 +234,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
       qry.SQL.Text := ''
@@ -268,7 +277,7 @@ begin
   if Self.GeTClienteByName(Cliente.nome) <> nil then
     raise Exception.Create('Já existe um cliente com este nome');
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
       qry.SQL.Text := ''
@@ -376,7 +385,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
 
   try
     qry.SQL.Text := ''

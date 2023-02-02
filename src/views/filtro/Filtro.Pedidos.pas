@@ -63,7 +63,8 @@ implementation
 {$R *.dfm}
 
 
-uses Dominio.Entidades.TFactory, Util.Funcoes, Recebimento.DetalhesPedido, Dominio.Entidades.TPedido, Relatorio.TRPedido;
+uses Factory.Dao, Util.Funcoes, Recebimento.DetalhesPedido, Dominio.Entidades.TPedido, Relatorio.TRPedido,
+  Sistema.TLog, Factory.Entidades;
 
 procedure TfrmFiltroPedidos.Pesquisar;
 var
@@ -140,32 +141,39 @@ var
   Impressora: TRPedido;
   ParcelasAtrasadas: TObjectList<TParcelas>;
 begin
+  TLog.d('>>> Entrando em  TfrmFiltroPedidos.Reimprimir ');
   inherited;
   try
     ValidaGrid;
     Pedido := daoPedido.getPedido(dbGridResultado.DataSource.DataSet.FieldByName('ID').AsInteger);
-    Impressora := TRPedido.create(TFactory.Parametros.ImpressoraTermica);
-    ParcelasAtrasadas := TFactory.daoParcelas.GeTParcelasVencidasPorCliente(Pedido.Cliente.CODIGO, now);
+    Impressora := TRPedido.create(FParametros.ImpressoraTermica);
+    ParcelasAtrasadas := fFactory.daoParcelas.GeTParcelasVencidasPorCliente(Pedido.Cliente.CODIGO, now);
 
-    Impressora.ImprimeCupom(TFactory.DadosEmitente,
+    Impressora.ImprimeCupom(fFactory.DadosEmitente,
       Pedido,
-      TFactory.daoParcelas.GeTParcelasVencidasPorCliente(Pedido.Cliente.CODIGO, now));
+      fFactory.daoParcelas.GeTParcelasVencidasPorCliente(Pedido.Cliente.CODIGO, now));
 
     FreeAndNil(Pedido);
     FreeAndNil(Impressora);
     FreeAndNil(ParcelasAtrasadas);
   except
     on E: Exception do
+    begin
+      TLog.d(E.Message);
       MessageDlg(E.Message, mtError, [mbOK], 0);
+    end;
   end;
+  TLog.d('<<< Saindo de TfrmFiltroPedidos.Reimprimir ');
 end;
 
 procedure TfrmFiltroPedidos.ValidaGrid;
 begin
+  TLog.d('>>> Entrando em  TfrmFiltroPedidos.ValidaGrid ');
   if (dbGridResultado.DataSource.DataSet = nil) or dbGridResultado.DataSource.DataSet.IsEmpty then
     raise Exception.create('Nenhum registro selecionado');
   if dbGridResultado.DataSource.DataSet.FieldByName('STATUS').AsString <> 'F' then
     raise Exception.create('Está ação só pode ser feita com os pedidos Finalizados');
+  TLog.d('<<< Saindo de TfrmFiltroPedidos.ValidaGrid ');
 end;
 
 procedure TfrmFiltroPedidos.CalculaTotais;
@@ -176,6 +184,7 @@ var
 
   campo: string;
 begin
+  TLog.d('>>> Entrando em  TfrmFiltroPedidos.CalculaTotais ');
   TTask.Run(
     procedure
     begin
@@ -230,23 +239,25 @@ begin
 
         );
     end);
+  TLog.d('<<< Saindo de TfrmFiltroPedidos.CalculaTotais ');
 end;
 
 procedure TfrmFiltroPedidos.Cancelar;
 var
   Pedido: TPedido;
 begin
+  TLog.d('>>> Entrando em  TfrmFiltroPedidos.Cancelar ');
   try
     ValidaGrid;
 
-    if not TFactory.VendedorLogado.PODECANCELARPEDIDO then
+    if not TFactoryEntidades.new.VendedorLogado.PODECANCELARPEDIDO then
       raise Exception.create('Vendedor não tem permissão para cancelar pedido');
 
     if MessageDlg('Deseja Cancelar O pedido?', mtConfirmation, [mbYes, mbNo], 0) = mrYes then
     begin
       Pedido := daoPedido.getPedido(dbGridResultado.DataSource.DataSet.FieldByName('ID').AsInteger);
       Pedido.STATUS := 'C';
-      Pedido.VendedorCancelamento := TFactory.DaoVendedor.GetVendedor(TFactory.VendedorLogado.CODIGO);
+      Pedido.VendedorCancelamento := fFactory.DaoVendedor.GetVendedor(TFactoryEntidades.new.VendedorLogado.CODIGO);
       Pedido.DATACANCELAMENTO := now;
 
       daoPedido.AtualizaPedido(Pedido);
@@ -260,8 +271,12 @@ begin
 
   except
     on E: Exception do
+    begin
+      TLog.d(E.Message);
       MessageDlg(E.Message, mtError, [mbOK], 0);
+    end;
   end;
+  TLog.d('<<< Saindo de TfrmFiltroPedidos.Cancelar ');
 end;
 
 procedure TfrmFiltroPedidos.cbbCampoSomarChange(Sender: TObject);
@@ -304,6 +319,7 @@ procedure TfrmFiltroPedidos.Detalhes;
 var
   Pedido: TPedido;
 begin
+  TLog.d('>>> Entrando em  TfrmFiltroPedidos.Detalhes ');
   try
     // ValidaGrid;
 
@@ -321,8 +337,12 @@ begin
     end;
   except
     on E: Exception do
+    begin
+      TLog.d(E.Message);
       MessageDlg(E.Message, mtError, [mbOK], 0);
+    end;
   end;
+  TLog.d('<<< Saindo de TfrmFiltroPedidos.Detalhes ');
 end;
 
 procedure TfrmFiltroPedidos.edtDataFinalKeyPress(Sender: TObject; var Key: Char);
@@ -341,16 +361,20 @@ end;
 
 procedure TfrmFiltroPedidos.FormCreate(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TfrmFiltroPedidos.FormCreate ');
   inherited;
-  daoPedido := TFactory.daoPedido;
+  daoPedido := fFactory.daoPedido;
+  TLog.d('<<< Saindo de TfrmFiltroPedidos.FormCreate ');
 end;
 
 procedure TfrmFiltroPedidos.FormShow(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TfrmFiltroPedidos.FormShow ');
   inherited;
   edtDataInicial.Date := now;
   edtDataFinal.Date := IncMonth(now, 1);
   Pesquisar;
+  TLog.d('<<< Saindo de TfrmFiltroPedidos.FormShow ');
 end;
 
 end.

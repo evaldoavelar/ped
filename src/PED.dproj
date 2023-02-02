@@ -86,8 +86,8 @@
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
         <BT_BuildType>Debug</BT_BuildType>
-        <VerInfo_Build>16</VerInfo_Build>
-        <VerInfo_Keys>CompanyName=Desenvolvido por Evaldo Avelar Marques;FileDescription=Sistema de Parcelas;FileVersion=1.0.0.16;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductVersion=1.0.0.0;Comments=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName)</VerInfo_Keys>
+        <VerInfo_Build>19</VerInfo_Build>
+        <VerInfo_Keys>CompanyName=Desenvolvido por Evaldo Avelar Marques;FileDescription=Sistema de Parcelas;FileVersion=1.0.0.19;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductVersion=1.0.0.0;Comments=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName)</VerInfo_Keys>
         <Icon_MainIcon>PED_Icon.ico</Icon_MainIcon>
         <VerInfo_Debug>true</VerInfo_Debug>
         <VerInfo_PreRelease>true</VerInfo_PreRelease>
@@ -236,7 +236,7 @@
         <DCCReference Include="units\Dominio\Mapeamento\Dominio.Mapeamento.Atributos.pas"/>
         <DCCReference Include="units\Dominio\Entidades\Dominio.Entidades.TCliente.pas"/>
         <DCCReference Include="units\Dominio\Entidades\Dominio.Entidades.TEmitente.pas"/>
-        <DCCReference Include="units\Dominio\Entidades\Dominio.Entidades.TFactory.pas"/>
+        <DCCReference Include="units\Factorys\Concret\Factory.Dao.pas"/>
         <DCCReference Include="units\Dominio\Entidades\Dominio.Entidades.TFormaPagto.pas"/>
         <DCCReference Include="units\Dominio\Entidades\Dominio.Entidades.TFornecedor.pas"/>
         <DCCReference Include="units\Dominio\Entidades\Dominio.Entidades.TItemPedido.pas"/>
@@ -433,6 +433,18 @@
         <DCCReference Include="units\relatorio\Relatorio.FREtiquetas.Modelo4x2.pas"/>
         <DCCReference Include="units\Sistema\Sistema.TLog.pas"/>
         <DCCReference Include="units\Util\Utils.IO.pas"/>
+        <DCCReference Include="views\configuracoes\Configuracoes.Database.pas">
+            <Form>FrmConfiguracoesDatabase</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="units\Sistema\Sistema.TBancoDeDados.pas"/>
+        <DCCReference Include="units\Sistema\Sistema.TCaixa.pas"/>
+        <DCCReference Include="units\Dao\Concret\Dao.TParametrosBancoDeDados.pas"/>
+        <DCCReference Include="units\Dao\Abstract\Dao.IDaoParametrosBancoDeDados.pas"/>
+        <DCCReference Include="units\Factorys\Abstract\IFactory.Dao.pas"/>
+        <DCCReference Include="units\Factorys\Abstract\IFactory.Entidades.pas"/>
+        <DCCReference Include="units\Factorys\Concret\Factory.Entidades.pas"/>
+        <DCCReference Include="units\Sistema\Sistema.Constantes.pas"/>
         <None Include="ModelSupport_PED\default.txaPackage"/>
         <None Include="ModelSupport_PED\default.txvpck"/>
         <None Include="ModelSupport_PED\Pedido\default.txvpck"/>

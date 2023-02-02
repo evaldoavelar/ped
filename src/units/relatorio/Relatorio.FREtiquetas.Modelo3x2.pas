@@ -23,6 +23,7 @@ type
 
   TFREtiquetasModelo3x2 = class(TRelatorioFastReportBase)
   private
+    FParametros: TParametros;
     FfrxEmitente: TfrxDBDataset;
     FfrxEtiqueta1: TfrxDBDataset;
     FfrxEtiqueta2: TfrxDBDataset;
@@ -55,7 +56,7 @@ type
 implementation
 
 uses
-  Dominio.Entidades.TFactory, Utils.Rtti, Utils.ArrayUtil;
+  Factory.Dao, Utils.Rtti, Utils.ArrayUtil, Factory.Entidades;
 
 { TFREtiquetasModelo3x2 }
 
@@ -67,7 +68,7 @@ VAR
 begin
   inherited;
 
-  dsEmitente := TFactory.DaoEmitente.GetEmitenteAsDataSet();
+  dsEmitente := TFactory.new.DaoEmitente.GetEmitenteAsDataSet();
 
   CopyDataSet(dsEmitente, cdsEmitente);
 
@@ -86,7 +87,7 @@ begin
     begin
       aDs.FieldByName(prop.Name).Value := prop.GetValue(aObj).AsVariant;
     end);
-  aDs.FieldByName('imgLogo').Assign(TFactory.Parametros.LOGOMARCAETIQUETA.Picture.Graphic);
+  aDs.FieldByName('imgLogo').Assign(FParametros.LOGOMARCAETIQUETA.Picture.Graphic);
   aDs.post;
 end;
 
@@ -119,11 +120,12 @@ end;
 constructor TFREtiquetasModelo3x2.Create(AOwner: TComponent);
 begin
   inherited;
+  FParametros := TFactoryEntidades.Parametros;
   SELF.NomeDocumento := 'ETIQUETAS 3x2';
   SELF.NumCopias := 1;
-  SELF.Impressora := TFactory.Parametros.ImpressoraTinta.MODELOIMPRESSORATINTA;
-  SELF.FastFile := TFactory.Parametros.DIRETORIORELATORIOS + '\ETIQUETAS.fr3';
-  SELF.FastFileDir := TFactory.Parametros.DIRETORIORELATORIOS;
+  SELF.Impressora := FParametros.ImpressoraTinta.MODELOIMPRESSORATINTA;
+  SELF.FastFile := FParametros.DIRETORIORELATORIOS + '\ETIQUETAS.fr3';
+  SELF.FastFileDir := FParametros.DIRETORIORELATORIOS;
   SELF.MostraPreview := true;
   frxReport.PreviewOptions.ZoomMode := zmDefault;
   // cdsEmitente

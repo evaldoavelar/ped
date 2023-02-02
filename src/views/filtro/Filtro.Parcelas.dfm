@@ -2,9 +2,8 @@ inherited frmFiltroParcelas: TfrmFiltroParcelas
   Caption = 'Filtro Parcelas'
   ClientHeight = 672
   ClientWidth = 957
-  OnCreate = FormCreate
   ExplicitWidth = 973
-  ExplicitHeight = 713
+  ExplicitHeight = 711
   PixelsPerInch = 96
   TextHeight = 13
   inherited splEsquerda: TSplitter

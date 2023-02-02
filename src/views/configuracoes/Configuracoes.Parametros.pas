@@ -10,7 +10,7 @@ uses
   ACBrPosPrinter, System.TypInfo,
   Dao.IDaoEmitente, Dominio.Entidades.TEmitente, Sistema.TParametros, Dao.IDaoParametros,
   Data.Bind.Components, Data.Bind.EngExt, Vcl.Bind.DBEngExt, System.Actions,
-  Vcl.ExtDlgs;
+  Vcl.ExtDlgs, Sistema.TBancoDeDados;
 
 type
   TFrmConfiguracoes = class(TfrmBase)
@@ -54,12 +54,7 @@ type
     edtEmail: TEdit;
     Label15: TLabel;
     chkAtualizaClienteNaVenda: TCheckBox;
-    grp1: TGroupBox;
-    Label16: TLabel;
-    cbxImpressoraTermicaModelo: TComboBox;
     BindingsList1: TBindingsList;
-    chkImprimir2Vias: TCheckBox;
-    chkImprimirItens2Via: TCheckBox;
     chkBakcup: TCheckBox;
     chkBloquearClienteComAtraso: TCheckBox;
     lbl1: TLabel;
@@ -73,9 +68,28 @@ type
     imgComprovante: TImage;
     dlgSavePic: TSavePictureDialog;
     dlgOpenPic: TOpenPictureDialog;
+    tsImpressora: TTabSheet;
+    grp1: TGroupBox;
+    Label16: TLabel;
+    cbxImpressoraTermicaModelo: TComboBox;
+    chkImprimir2Vias: TCheckBox;
+    chkImprimirItens2Via: TCheckBox;
     GroupBox1: TGroupBox;
     Label18: TLabel;
     cbbImpressoraTinta: TComboBox;
+    tsCaixa: TTabSheet;
+    Label19: TLabel;
+    edtNumeroDoCaixa: TEdit;
+    Panel2: TPanel;
+    Label21: TLabel;
+    Label22: TLabel;
+    Label23: TLabel;
+    edtBancoDeDados: TEdit;
+    edtSenha: TEdit;
+    edtUsuario: TEdit;
+    Panel3: TPanel;
+    btnTestar: TSpeedButton;
+    chkFuncionarComoCliente: TCheckBox;
     procedure edtRazaoSocialChange(Sender: TObject);
     procedure actOkExecute(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -85,6 +99,7 @@ type
     procedure chkVenderClienteBloqueadoClick(Sender: TObject);
     procedure rgPesquisaPorClick(Sender: TObject);
     procedure btnAnexarComprovanteClick(Sender: TObject);
+    procedure btnTestarClick(Sender: TObject);
   private
     { Private declarations }
     DaoEmitente: IDaoEmitente;
@@ -107,13 +122,14 @@ implementation
 {$R *.dfm}
 
 
-uses Dominio.Entidades.TFactory, Vcl.Printers;
+uses Factory.Dao, Vcl.Printers, Factory.Entidades, Sistema.TLog;
 
 procedure TFrmConfiguracoes.actOkExecute(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TFrmConfiguracoes.actOkExecute ');
   inherited;
   salvar();
-
+  TLog.d('<<< Saindo de TFrmConfiguracoes.actOkExecute ');
 end;
 
 procedure TFrmConfiguracoes.Bind;
@@ -121,6 +137,7 @@ var
   ModeloImpressora: TACBrPosPrinterModelo;
   I: Integer;
 begin
+  TLog.d('>>> Entrando em  TFrmConfiguracoes.Bind ');
   cbxImpressoraTermicaModelo.Items.Clear;
 
   for ModeloImpressora := Low(TACBrPosPrinterModelo) to High(TACBrPosPrinterModelo) do
@@ -155,8 +172,14 @@ begin
   FParametros.Bind('ImpressoraTermica.IMPRIMIR2VIAS', chkImprimir2Vias, 'Checked');
   FParametros.Bind('ImpressoraTermica.IMPRIMIRITENS2VIA', chkImprimirItens2Via, 'Checked');
   FParametros.Bind('VALIDADEORCAMENTO', edtValidadeOrcamento, 'Text');
+  FParametros.Bind('NUMCAIXA', edtNumeroDoCaixa, 'Text');
   FParametros.Bind('PESQUISAPRODUTOPOR', rgPesquisaPor, 'ItemIndex');
   FParametros.Bind('INFORMARPARCEIRONAVENDA', chkInformarParceiroNaVenda, 'Checked');
+
+  FParametros.Bind('SERVIDORDATABASE', edtBancoDeDados, 'Text');
+  FParametros.Bind('SERVIDORUSUARIO', edtUsuario, 'Text');
+  FParametros.Bind('SERVIDORSENHAProxy', edtSenha, 'Text');
+  FParametros.Bind('FUNCIONARCOMOCLIENTE', chkFuncionarComoCliente, 'Checked');
 
   try
     if FParametros.LOGOMARCAETIQUETA <> nil then
@@ -179,16 +202,50 @@ begin
     on E: Exception do
       raise Exception.Create('PopulaCombos ModeloImpressora:' + E.Message);
   end;
+  TLog.d('<<< Saindo de TFrmConfiguracoes.Bind ');
 end;
 
 procedure TFrmConfiguracoes.btnAnexarComprovanteClick(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TFrmConfiguracoes.btnAnexarComprovanteClick ');
   inherited;
   Carregarlogo;
+  TLog.d('<<< Saindo de TFrmConfiguracoes.btnAnexarComprovanteClick ');
+end;
+
+procedure TFrmConfiguracoes.btnTestarClick(Sender: TObject);
+var
+  LBancoDeDados: TParametrosBancoDeDados;
+begin
+  TLog.d('>>> Entrando em  TFrmConfiguracoes.btnTestarClick ');
+  inherited;
+  try
+    LBancoDeDados := TParametrosBancoDeDados.Create(
+      FParametros.SERVIDORDATABASE,
+      FParametros.SERVIDORUSUARIO,
+      FParametros.SERVIDORSENHA
+      );
+
+    try
+      TFactory.new.Conexao(LBancoDeDados);
+    finally
+      FreeAndNil(LBancoDeDados);
+    end;
+
+    MessageDlg('Conectado!', mtInformation, [mbOK], 0);
+  except
+    on E: Exception do
+    begin
+      TLog.d(E.Message);
+      MessageDlg(E.Message, mtError, [mbOK], 0);
+    end;
+  end;
+  TLog.d('<<< Saindo de TFrmConfiguracoes.btnTestarClick ');
 end;
 
 procedure TFrmConfiguracoes.Carregarlogo;
 begin
+  TLog.d('>>> Entrando em  TFrmConfiguracoes.Carregarlogo ');
   try
     if dlgOpenPic.Execute then
     begin
@@ -198,8 +255,12 @@ begin
     end;
   except
     on E: Exception do
+    begin
+      TLog.d(E.Message);
       MessageDlg(E.Message, mtError, [mbOK], 0);
+    end;
   end;
+  TLog.d('<<< Saindo de TFrmConfiguracoes.Carregarlogo ');
 end;
 
 procedure TFrmConfiguracoes.cbxImpressoraTermicaModeloChange(Sender: TObject);
@@ -228,13 +289,16 @@ end;
 
 procedure TFrmConfiguracoes.FormCreate(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TFrmConfiguracoes.FormCreate ');
   inherited;
-  DaoEmitente := TFactory.DaoEmitente;
-  DaoParametros := TFactory.DaoParametros;
+  DaoEmitente := fFactory.DaoEmitente;
+  DaoParametros := fFactory.DaoParametros;
+  TLog.d('<<< Saindo de TFrmConfiguracoes.FormCreate ');
 end;
 
 procedure TFrmConfiguracoes.FormDestroy(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TFrmConfiguracoes.FormDestroy ');
   inherited;
 
   if Assigned(FEmitente) then
@@ -242,41 +306,49 @@ begin
 
   if Assigned(FParametros) then
     FreeAndNil(FParametros);
-
+  TLog.d('<<< Saindo de TFrmConfiguracoes.FormDestroy ');
 end;
 
 procedure TFrmConfiguracoes.FormShow(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TFrmConfiguracoes.FormShow ');
   inherited;
   Get;
   pgc1.TabIndex := 0;
+  TLog.d('<<< Saindo de TFrmConfiguracoes.FormShow ');
 end;
 
 procedure TFrmConfiguracoes.Get;
 begin
+  TLog.d('>>> Entrando em  TFrmConfiguracoes.Get ');
   try
     FEmitente := DaoEmitente.GetEmitente();
 
     if not Assigned(FEmitente) then
     begin
-      FEmitente := TFactory.Emitente;
+      FEmitente := TFactoryEntidades.new.Emitente;
     end;
 
     FParametros := DaoParametros.GetParametros;
     if not Assigned(FParametros) then
     begin
-      FParametros := TFactory.Parametros;
+      FParametros := tParametros.Create;
     end;
 
     Bind;
   except
     on E: Exception do
-      MessageDlg('Falha no get: ' + E.Message, mtError, [mbYes], 0);
+    begin
+      TLog.d(E.Message);
+      MessageDlg(E.Message, mtError, [mbOK], 0);
+    end;
   end;
+  TLog.d('<<< Saindo de TFrmConfiguracoes.Get ');
 end;
 
 procedure TFrmConfiguracoes.salvar;
 begin
+  TLog.d('>>> Entrando em  TFrmConfiguracoes.salvar ');
   try
 
     FParametros.ImpressoraTinta.MODELOIMPRESSORATINTA := cbbImpressoraTinta.Text;
@@ -302,8 +374,12 @@ begin
     close;
   except
     on E: Exception do
-      MessageDlg('Falha no salvar: ' + E.Message, mtError, [mbYes], 0);
+    begin
+      TLog.d(E.Message);
+      MessageDlg(E.Message, mtError, [mbOK], 0);
+    end;
   end;
+  TLog.d('<<< Saindo de TFrmConfiguracoes.salvar ');
 end;
 
 end.

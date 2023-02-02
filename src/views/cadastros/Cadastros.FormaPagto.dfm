@@ -10,7 +10,6 @@ inherited frmCadastroFormaPagto: TfrmCadastroFormaPagto
   inherited pnlContainer: TPanel
     Width = 693
     Height = 488
-    ExplicitTop = 47
     ExplicitWidth = 693
     ExplicitHeight = 488
     inherited pgcPrincipal: TPageControl
@@ -21,6 +20,10 @@ inherited frmCadastroFormaPagto: TfrmCadastroFormaPagto
       ExplicitHeight = 482
       object ts1: TTabSheet
         Caption = 'Pagamento'
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object lbl3: TLabel
           Left = 48
           Top = 40
@@ -97,13 +100,12 @@ inherited frmCadastroFormaPagto: TfrmCadastroFormaPagto
             Left = 3
             Top = 0
             Width = 24
-            Height = 40
+            Height = 13
             Margins.Top = 0
             Align = alLeft
             Alignment = taRightJustify
             Caption = 'TIPO'
             Layout = tlCenter
-            ExplicitHeight = 13
           end
           object cbbTipo: TComboBox
             AlignWithMargins = True
@@ -154,7 +156,7 @@ inherited frmCadastroFormaPagto: TfrmCadastroFormaPagto
               Left = 47
               Top = 3
               Width = 142
-              Height = 27
+              Height = 13
               Align = alLeft
               Caption = 'CONDI'#199#195'O DE PAGAMENTO'
               Font.Charset = DEFAULT_CHARSET
@@ -164,7 +166,6 @@ inherited frmCadastroFormaPagto: TfrmCadastroFormaPagto
               Font.Style = []
               ParentFont = False
               Layout = tlCenter
-              ExplicitHeight = 13
             end
             object Image2: TImage
               AlignWithMargins = True
@@ -363,11 +364,10 @@ inherited frmCadastroFormaPagto: TfrmCadastroFormaPagto
                     object Label13: TLabel
                       Left = 0
                       Top = 0
-                      Width = 375
+                      Width = 63
                       Height = 13
                       Align = alTop
                       Caption = 'DESCRI'#199#195'O:'
-                      ExplicitWidth = 63
                     end
                     object edtCondicaoDescricao: TEdit
                       AlignWithMargins = True
@@ -396,11 +396,10 @@ inherited frmCadastroFormaPagto: TfrmCadastroFormaPagto
                     object Label6: TLabel
                       Left = 0
                       Top = 0
-                      Width = 114
+                      Width = 81
                       Height = 13
                       Align = alTop
                       Caption = 'QUANTAS VEZES'
-                      ExplicitWidth = 81
                     end
                     object edtCondicaoQuantasVezes: TEdit
                       AlignWithMargins = True
@@ -430,11 +429,10 @@ inherited frmCadastroFormaPagto: TfrmCadastroFormaPagto
                     object Label7: TLabel
                       Left = 0
                       Top = 0
-                      Width = 90
+                      Width = 60
                       Height = 13
                       Align = alTop
                       Caption = 'ACR'#201'SCIMO'
-                      ExplicitWidth = 60
                     end
                     object edtCondicaoAcrescimo: TEdit
                       AlignWithMargins = True
@@ -566,8 +564,10 @@ inherited frmCadastroFormaPagto: TfrmCadastroFormaPagto
   end
   inherited pnlTop: TPanel
     Width = 693
+    ExplicitWidth = 693
     inherited btnPesquisar: TBitBtn
       Left = 574
+      ExplicitLeft = 574
     end
   end
 end

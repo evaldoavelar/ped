@@ -11,12 +11,13 @@ uses
   Sistema.TFormaPesquisa,
   Dominio.Entidades.TPedido, Dominio.Entidades.TVendedor, Dominio.Entidades.TCliente,
   Dominio.Entidades.TItemPedido, Dominio.Entidades.TProduto, Dominio.Entidades.TParcelas,
-  Dominio.Entidades.TFactory, Dao.IDaoPedido, Dao.IDaoVendedor, Dao.IDaoProdutos, Dao.IDaoCliente, JvExExtCtrls, JvExtComponent, JvClock, JvExControls, JvNavigationPane,
+  Factory.Dao, Dao.IDaoPedido, Dao.IDaoVendedor, Dao.IDaoProdutos, Dao.IDaoCliente, JvExExtCtrls, JvExtComponent, JvClock, JvExControls, JvNavigationPane,
   Vcl.Imaging.jpeg, Util.VclFuncoes, Dao.IDaoParcelas, Orcamento.Criar, Vcl.StdCtrls,
   Pedido.InformaParceiro, Dominio.Entidades.TParceiro, parceiro.InformaPagto,
   Vcl.Buttons, Vcl.Imaging.pngimage, Pedido.Venda.IPart, Vcl.WinXCtrls, Pedido.Venda.Part.Item,
   Pedido.Venda.Part.ItemCancelamento, Pedido.Venda.Part.LogoItens, VCLTee.TeCanvas,
-  Vcl.AutoComplete, Dominio.Entidades.Pedido.Pagamentos.Pagamento;
+  Vcl.AutoComplete, Dominio.Entidades.Pedido.Pagamentos.Pagamento,
+  IFactory.Dao, Sistema.TParametros;
 
 type
 
@@ -210,6 +211,8 @@ type
 
   private
 
+    FFactory: IFactoryDao;
+    FParametros: TParametros;
     NSeqItem: Integer;
     FblEmVEnda: Boolean;
     Pedido: TPedido;
@@ -275,7 +278,8 @@ uses
   Util.Funcoes, Pedido.Parcelamento, Pedido.SelecionaCliente, Util.Exceptions,
   Consulta.Produto, Pedido.CancelarItem, Filtro.Pedidos, Dominio.Entidades.TFormaPagto.Tipo,
   Pedido.Observacao, Dao.IDaoEmitente, Dominio.Entidades.TEmitente, Relatorio.TRPedido,
-  Pedido.Pagamento, Pedido.Venda.Part.Pagamento, Sistema.TLog;
+  Pedido.Pagamento, Pedido.Venda.Part.Pagamento, Sistema.TLog,
+  Factory.Entidades, IFactory.Entidades;
 
 resourcestring
   StrPesquisa = '';
@@ -312,7 +316,7 @@ begin
     // if (not Assigned(Cliente)) or (Cliente.CODIGO = '000000') or (Cliente.CODIGO = '') then
     // exit;
 
-    if TFactory.Parametros.BLOQUEARCLIENTECOMATRASO and Assigned(Cliente) then
+    if FParametros.BLOQUEARCLIENTECOMATRASO and Assigned(Cliente) then
     begin
       TotalParcelas := daoParcelas.GetNumeroDeParcelasVencidas(now, Cliente.CODIGO);
       if TotalParcelas > 0 then
@@ -328,7 +332,7 @@ begin
     if Pedido.Pagamentos.ValorRestante > 0 then
       exit;
 
-    if TFactory.Parametros.INFORMARPARCEIRONAVENDA then
+    if FParametros.INFORMARPARCEIRONAVENDA then
       Pedido.AddParceiro(GetParceiroVenda());
 
     GetObservacao();
@@ -354,33 +358,25 @@ procedure TFrmPedidoVenda.AbrePedido;
 begin
   TLog.d('>>> Entrando em  TFrmPedidoVenda.AbrePedido ');
   try
+    if FParametros.NUMCAIXA = '' then
+      raise TValidacaoException.Create('O número do caixa não foi informado!');
 
-    Pedido := TFactory.Pedido;
+    Pedido := TFactoryEntidades.new.Pedido;
     Pedido.OnVendeItem := OnVendeItem;
     Pedido.OnExcluiItem := OnExcluiItem;
     Pedido.OnChange := OnPedidoChange;
     Pedido.OnParcela := OnParcelas;
 
-    try
-      TFactory.Conexao.StartTransaction;
-      Pedido.ID := DaoPedido.GeraID;
-      TFactory.Conexao.Commit;
-    except
-      on E: Exception do
-      begin
-        TFactory.Conexao.Rollback;
-        raise;
-      end;
-
-    end;
+    Pedido.ID := DaoPedido.GeraID;
     Pedido.NUMERO := Format('%.6d', [Pedido.ID]);
     Pedido.DATAPEDIDO := Date();
     Pedido.HORAPEDIDO := Time();
     Pedido.STATUS := 'A';
-    Pedido.Vendedor := DaoVen.GetVendedor(TFactory.VendedorLogado.CODIGO);
-    Pedido.Cliente := TFactory.Cliente();
+    Pedido.Vendedor := DaoVen.GetVendedor(TFactoryEntidades.new.VendedorLogado.CODIGO);
+    Pedido.Cliente := TFactoryEntidades.new.Cliente();
     Pedido.Cliente.CODIGO := '000000';
     Pedido.Cliente.NOME := 'Consumidor';
+    Pedido.NUMCAIXA := FParametros.NUMCAIXA;
 
     DaoPedido.AbrePedido(Pedido);
 
@@ -762,7 +758,7 @@ begin
           and (Key <> VK_RETURN) then
         begin
           OutputDebugString(PWideChar(cbbProduto.Text));
-          itens := TFactory.DaoProduto.GetProdutosPorDescricaoParcial(cbbProduto.Text);
+          itens := FFactory.DaoProduto.GetProdutosPorDescricaoParcial(cbbProduto.Text);
           itens.OwnsObjects := false;
 
           for Item in itens do
@@ -978,6 +974,9 @@ begin
   SendMessage(Handle, WM_SYSCOMMAND, SC_MAXIMIZE, 0);
   self.BorderStyle := bsNone;
 
+  FFactory := TFactory.new(nil, True);
+  FParametros := TFactoryEntidades.Parametros;
+
   TVclFuncoes.DisableVclStyles(self, 'TLabel');
   TVclFuncoes.DisableVclStyles(self, 'TEdit');
   TVclFuncoes.DisableVclStyles(self, 'TMaskEdit');
@@ -985,11 +984,11 @@ begin
   lblBarraData.Caption := FormatDateTime('dd/mm/yyyy', now);
   lblBarraHora.Caption := FormatDateTime('hh:mm', now);
 
-  DaoPedido := TFactory.DaoPedido();
-  DaoVen := TFactory.DaoVendedor();
-  DaoProduto := TFactory.DaoProduto();
-  DaoCliente := TFactory.DaoCliente();
-  daoParcelas := TFactory.daoParcelas();
+  DaoPedido := FFactory.DaoPedido();
+  DaoVen := FFactory.DaoVendedor();
+  DaoProduto := FFactory.DaoProduto();
+  DaoCliente := FFactory.DaoCliente();
+  daoParcelas := FFactory.daoParcelas();
 
   CachePesquisa := TStringList.Create;
 
@@ -998,7 +997,7 @@ begin
   cbbProduto.DropDownWidth := 600;
   cbbProduto.MaxRowCount := 30;
 
-  SetFormaPesquisaProduto(TFormaPesquisa(TFactory.Parametros.PESQUISAPRODUTOPOR));
+  SetFormaPesquisaProduto(TFormaPesquisa(FParametros.PESQUISAPRODUTOPOR));
 
   pgcEsquerdo.Brush.Color := $00F0F0F0;
 
@@ -1018,6 +1017,7 @@ begin
     FreeAndNil(Pedido);
 
   FreeAndNil(CachePesquisa);
+  FFactory.Close;
   TLog.d('<<< Saindo de TFrmPedidoVenda.FormDestroy ');
 end;
 
@@ -1519,9 +1519,9 @@ var
 begin
   TLog.d('>>> Entrando em  TFrmPedidoVenda.Imprime ');
   try // todo: buscar dos parametros
-    Impressora := TRPedido.Create(TFactory.Parametros.ImpressoraTermica);
-    ParcelasAtrasadas := TFactory.daoParcelas.GeTParcelasVencidasPorCliente(Pedido.Cliente.CODIGO, now);
-    Emitente := TFactory.DadosEmitente;
+    Impressora := TRPedido.Create(FParametros.ImpressoraTermica);
+    ParcelasAtrasadas := FFactory.daoParcelas.GeTParcelasVencidasPorCliente(Pedido.Cliente.CODIGO, now);
+    Emitente := FFactory.DadosEmitente;
 
     try
       Impressora.ImprimeCupom(
@@ -1570,10 +1570,10 @@ begin
   IncializaVariaveis();
   IncializaComponentes();
 
-  Emitente := TFactory.DadosEmitente;
+  Emitente := FFactory.DadosEmitente;
 
   if Assigned(Emitente) then
-    lblEmitente.Caption := 'VENDEDOR: ' + TFactory.VendedorLogado.NOME
+    lblEmitente.Caption := 'VENDEDOR: ' + TFactoryEntidades.new.VendedorLogado.NOME
   else
     lblEmitente.Caption := '';
   TLog.d('<<< Saindo de TFrmPedidoVenda.FormShow ');
