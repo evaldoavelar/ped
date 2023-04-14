@@ -11,12 +11,13 @@ type
     class function UltimaAlteracao(aFile: string): TDateTime;
     class function ListarArquivos(Diretorio, Extencao: string; SubDiretorio: Boolean): TStringList;
     class procedure DeleteArquivosAntigos(aDiretorio: string; aExtencao: string; SubDiretorio: Boolean; aNumDiasAposCriacao: integer);
+    class function ExtractDirectoryFromPath(const path: string): string;
   end;
 
 implementation
 
 uses
-  SysUtils, Windows, DateUtils;
+  SysUtils, System.RegularExpressions, Windows, DateUtils;
 
 { TUtilsIO }
 
@@ -61,6 +62,19 @@ begin
       Result := FileDateToDatetime(DosFT);
     end;
   end;
+end;
+
+class function TUtilsIO.ExtractDirectoryFromPath(const path: string): string;
+var
+  regex: TRegEx;
+  match: TMatch;
+begin
+  regex := TRegEx.Create('[a-zA-Z]:(.*\\).*');
+  match := regex.match(path);
+  if match.Success then
+    Result := match.Groups[0].Value
+  else
+    Result := '';
 end;
 
 class function TUtilsIO.ListarArquivos(Diretorio, Extencao: string; SubDiretorio: Boolean): TStringList;

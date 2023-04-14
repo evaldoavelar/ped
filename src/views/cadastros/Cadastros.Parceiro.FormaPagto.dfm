@@ -7,10 +7,6 @@ inherited FrmCadastroFormaPagtoParceiro: TFrmCadastroFormaPagtoParceiro
       ActivePage = ts1
       object ts1: TTabSheet
         Caption = 'Forma de Pagamento'
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 381
         object lbl3: TLabel
           Left = 48
           Top = 40

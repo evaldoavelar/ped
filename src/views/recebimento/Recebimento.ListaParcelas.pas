@@ -6,7 +6,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, untFrmBase, Data.DB,
   JvExDBGrids, JvDBGrid, JvDBUltimGrid, Vcl.Buttons,
-  Vcl.ExtCtrls, Vcl.Grids, Vcl.DBGrids, Vcl.StdCtrls,
+  Vcl.ExtCtrls, Vcl.StdCtrls,
   Dominio.Entidades.TParcelas,
   System.Generics.Collections, System.Actions, Vcl.ActnList, Vcl.Menus;
 
@@ -71,8 +71,8 @@ var
 implementation
 
 uses
-  Dominio.Entidades.TPedido, Dao.IDaoPedido, Recebimento.DetalhesPedido,
-  Factory.Dao, Relatorio.TRParcelas, Recebimento.Recebe, Sistema.TLog,
+  Dominio.Entidades.TPedido, Recebimento.DetalhesPedido,
+  Relatorio.TRParcelas, Recebimento.Recebe, Sistema.TLog,
   Factory.Entidades;
 
 {$R *.dfm}

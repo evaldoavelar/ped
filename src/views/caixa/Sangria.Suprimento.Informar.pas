@@ -6,8 +6,8 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, untFrmBase, Vcl.StdCtrls, Vcl.Buttons,
   Dominio.Entidades.TSangriaSuprimento, Dominio.Entidades.TSangriaSuprimento.Tipo,
-  Vcl.Mask, JvExMask, JvToolEdit, JvBaseEdits, Relatorio.TRSangriaSuprimento,
-  JvComponentBase, JvEnterTab;
+  JvExMask, JvToolEdit, JvBaseEdits, Relatorio.TRSangriaSuprimento,
+  JvComponentBase, JvEnterTab, Vcl.Mask;
 
 type
   TFrmSangria = class(TfrmBase)

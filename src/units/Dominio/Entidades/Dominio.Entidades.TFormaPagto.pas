@@ -20,6 +20,7 @@ type
     FATIVO: Boolean;
     FCONDICAODEPAGTO: tLIST<TCONDICAODEPAGTO>;
     FATIVOPROXY: string;
+    FDATAALTERACAO: TDateTime;
     function getID: integer;
     procedure setID(const Value: integer);
     function getDESCRICAO: string;
@@ -35,10 +36,11 @@ type
     procedure SetATIVO(const Value: Boolean);
     procedure SetATIVOPROXY(const Value: string);
     procedure SetCONDICAODEPAGTO(const Value: tLIST<TCONDICAODEPAGTO>);
+    procedure SetDATAALTERACAO(const Value: TDateTime);
   public
     function AddCondicao: TCONDICAODEPAGTO;
   public
-
+    [AutoInc('AUTOINC')]
     [campo('ID', tpINTEGER, 0, 0, True)]
     [PrimaryKey('PK_FORMAPAGTO', 'ID')]
     property ID: integer read getID write setID;
@@ -48,17 +50,23 @@ type
 
     [campo('TIPO', tpINTEGER, 0, 0, True)]
     property Tipo: integer read FTipo write SetTipo;
+    [IGNORE(True)]
     property TIPOPROXY: string read getTIPOPROXY;
+    [IGNORE(True)]
     property TipoPagamento: TTipoPagto read getTipoPagamento write SetTipoPagamento;
 
     [campo('ATIVO', tpINTEGER, 0, 0, True, '1')]
     property ATIVO: Boolean read FATIVO write SetATIVO;
+    [IGNORE(True)]
     property ATIVOPROXY: string read FATIVOPROXY write SetATIVOPROXY;
-
+    [IGNORE(True)]
     property CONDICAODEPAGTO: tLIST<TCONDICAODEPAGTO> read FCONDICAODEPAGTO write SetCONDICAODEPAGTO;
 
     [campo('QUANTASVEZES', tpINTEGER, 0, 0, True, '1')]
-    property QUANTASVEZES: integer read FQUANTASVEZES write SetQUANTASVEZES;
+    property QUANTASVEZES: integer read FQUANTASVEZES write setQUANTASVEZES;
+
+    [campo('DATAALTERACAO', tpTIMESTAMP)]
+    property DATAALTERACAO: TDateTime read FDATAALTERACAO write SetDATAALTERACAO;
 
     constructor create;
     destructor destroy; override;
@@ -77,8 +85,8 @@ begin
   Self.InicializarPropriedades(nil);
   FCONDICAODEPAGTO := tLIST<TCONDICAODEPAGTO>.create;
   FTipo := Ord(TTipoPagto.Nenhum);
-  self.ATIVO := true;
-  self.FQUANTASVEZES := 1;
+  Self.ATIVO := True;
+  Self.FQUANTASVEZES := 1;
 
 end;
 
@@ -142,6 +150,11 @@ end;
 procedure TFormaPagto.SetCONDICAODEPAGTO(const Value: tLIST<TCONDICAODEPAGTO>);
 begin
   FCONDICAODEPAGTO := Value;
+end;
+
+procedure TFormaPagto.SetDATAALTERACAO(const Value: TDateTime);
+begin
+  FDATAALTERACAO := Value;
 end;
 
 procedure TFormaPagto.setDESCRICAO(const Value: string);

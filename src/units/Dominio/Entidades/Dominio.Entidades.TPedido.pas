@@ -55,6 +55,7 @@ type
     FVALORACRESCIMO: currency;
     FOnEstoqueBaixo: TOnEstoqueBaixo;
     FNUMCAIXA: string;
+    FDATAALTERACAO: TDateTime;
 
     function GetValorBruto: currency;
     function getValorLiquido: currency;
@@ -80,6 +81,7 @@ type
     function getTotalAcrescimoPagamentos: currency;
     procedure SetVALORACRESCIMO(const Value: currency);
     procedure SetOnEstoqueBaixo(const Value: TOnEstoqueBaixo);
+    procedure SetDATAALTERACAO(const Value: TDateTime);
 
   public
     constructor create;
@@ -91,12 +93,13 @@ type
     procedure setDescontos(aTipo: TTipoDesconto; aValor: currency);
 
   published
+    [AutoInc('AUTOINC')]
     [campo('ID', tpINTEGER, 0, 0, True)]
     [PrimaryKey('PK_PEDIDO', 'ID')]
     property ID: Integer read FID write FID;
     [campo('NUMERO', tpVARCHAR, 10)]
     property NUMERO: string read FNUMERO write FNUMERO;
-    [campo('NUMCAIXA', tpVARCHAR, 10,0,true,'caixa-01')]
+    [campo('NUMCAIXA', tpVARCHAR, 10, 0, True, 'caixa-01')]
     property NUMCAIXA: string read FNUMCAIXA write FNUMCAIXA;
     [campo('DATAPEDIDO', tpDATE)]
     property DATAPEDIDO: TDateTime read FDATAPEDIDO write FDATAPEDIDO;
@@ -152,6 +155,9 @@ type
     [campo('COMPROVANTE', tpBLOB, 0, 9048)]
     property COMPROVANTE: TImage read FCOMPROVANTE write FCOMPROVANTE;
 
+    [campo('DATAALTERACAO', tpTIMESTAMP)]
+    property DATAALTERACAO: TDateTime read FDATAALTERACAO write SetDATAALTERACAO;
+
     property OnVendeItem: TOnVendeItem read FOnVendeItem write FOnVendeItem;
     property OnChange: TOnChange read FOnChange write FOnChange;
     property OnParcela: TOnParcela read FOnParcela write FOnParcela;
@@ -164,8 +170,8 @@ type
 implementation
 
 uses
-  Util.Funcoes, Util.Exceptions, Dominio.Entidades.TParceiroVenda.Pagamentos,
-  Dominio.Entidades.TFormaPagto.Tipo, Dao.TDaoPedido;
+  Util.Funcoes, Util.Exceptions,
+  Dominio.Entidades.TFormaPagto.Tipo;
 
 { TPedido }
 
@@ -353,6 +359,11 @@ begin
       raise TCalculoException.create('Falha no Calculo do Volume ' + E.Message);
   end;
 
+end;
+
+procedure TPedido.SetDATAALTERACAO(const Value: TDateTime);
+begin
+  FDATAALTERACAO := Value;
 end;
 
 procedure TPedido.SetDATACANCELAMENTO(const Value: TDateTime);

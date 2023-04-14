@@ -2,7 +2,6 @@ inherited frmConsultaBase: TfrmConsultaBase
   Caption = 'Pesquisa'
   ClientHeight = 504
   ClientWidth = 779
-  OnDestroy = FormDestroy
   OnShow = FormShow
   ExplicitWidth = 795
   ExplicitHeight = 543

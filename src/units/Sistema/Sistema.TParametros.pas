@@ -5,10 +5,11 @@ interface
 uses
   system.SysUtils, Vcl.ExtCtrls,
   Dominio.Entidades.TEntity,
-  Sistema.TFormaPesquisa,
+
   Impressao.Parametros.Impressora.Termica,
   Dominio.Mapeamento.Atributos,
-  Dominio.Mapeamento.Tipos, Impressao.Parametros.Impressora.Tinta;
+  Dominio.Mapeamento.Tipos, Impressao.Parametros.Impressora.Tinta,
+  Sistema.Parametros.PontoVenda;
 
 type
 
@@ -32,7 +33,9 @@ type
     FSERVIDORSENHA: string;
     FSERVIDORDATABASE: string;
     FSERVIDORUSUARIO: string;
-    FFUNCIONARCOMOCLIENTE: Boolean;
+
+    FDATAALTERACAO: TDateTime;
+    FPontoVenda: TPontoVenda;
 
     function getVENDECLIENTEBLOQUEADO: Boolean;
     procedure setVENDECLIENTEBLOQUEADO(const Value: Boolean);
@@ -57,9 +60,12 @@ type
     procedure SetSERVIDORDATABASE(const Value: string);
     procedure SetSERVIDORSENHA(const Value: string);
     procedure SetSERVIDORUSUARIO(const Value: string);
-    procedure SetFUNCIONARCOMOCLIENTE(const Value: Boolean);
+
     function GetSERVIDORSENHAProxy: string;
     procedure SetSERVIDORSENHAProxy(const Value: string);
+    procedure SetDATAALTERACAO(const Value: TDateTime);
+    procedure SetPontoVenda(const Value: TPontoVenda);
+    function getPontoVenda: TPontoVenda;
 
   public
 
@@ -96,9 +102,6 @@ type
     [campo('DIRETORIORELATORIOS', tpVARCHAR, 2000)]
     property DIRETORIORELATORIOS: string read GETDIRETORIORELATORIOS;
 
-    [campo('NUMCAIXA', tpVARCHAR, 10, 0, True, 'caixa-01')]
-    property NUMCAIXA: string read FNUMCAIXA write SetNUMCAIXA;
-
     [campo('SERVIDORDATABASE', tpVARCHAR, 300)]
     property SERVIDORDATABASE: string read FSERVIDORDATABASE write SetSERVIDORDATABASE;
 
@@ -107,10 +110,13 @@ type
 
     [campo('SERVIDORSENHA', tpVARCHAR, 60)]
     property SERVIDORSENHA: string read FSERVIDORSENHA write SetSERVIDORSENHA;
+    [IGNORE(True)]
     property SERVIDORSENHAProxy: string read GetSERVIDORSENHAProxy write SetSERVIDORSENHAProxy;
 
-    [campo('FUNCIONARCOMOCLIENTE', tpINTEGER, 0, 0, FALSE, '0')]
-    property FUNCIONARCOMOCLIENTE: Boolean read FFUNCIONARCOMOCLIENTE write SetFUNCIONARCOMOCLIENTE;
+    [campo('DATAALTERACAO', tpTIMESTAMP)]
+    property DATAALTERACAO: TDateTime read FDATAALTERACAO write SetDATAALTERACAO;
+
+    property PontoVenda: TPontoVenda read getPontoVenda write SetPontoVenda;
 
     constructor create; override;
     destructor Destroy; override;
@@ -131,6 +137,7 @@ begin
   Self.VALIDADEORCAMENTO := 15;
   Self.ImpressoraTermica := TParametrosImpressoraTermica.create;
   Self.ImpressoraTinta := TParametrosImpressoraTinta.create;
+  Self.PontoVenda := TPontoVenda.create;
 end;
 
 destructor TParametros.Destroy;
@@ -140,6 +147,9 @@ begin
 
   if Assigned(FImpressoraTinta) then
     FreeAndNil(FImpressoraTinta);
+
+  if Assigned(FPontoVenda) then
+    FreeAndNil(FPontoVenda);
   inherited;
 end;
 
@@ -171,6 +181,11 @@ end;
 function TParametros.getPESQUISAPRODUTOPOR: Integer;
 begin
   result := FPESQUISAPRODUTOPOR;
+end;
+
+function TParametros.getPontoVenda: TPontoVenda;
+begin
+  result := FPontoVenda
 end;
 
 function TParametros.GetSERVIDORSENHAProxy: string;
@@ -216,21 +231,17 @@ begin
   end;
 end;
 
+procedure TParametros.SetDATAALTERACAO(const Value: TDateTime);
+begin
+  FDATAALTERACAO := Value;
+end;
+
 procedure TParametros.SetDIRETORIORELATORIOS(const Value: string);
 begin
   if Value <> FDIRETORIORELATORIOS then
   begin
     FDIRETORIORELATORIOS := Value;
     Notify('DIRETORIORELATORIOS');
-  end;
-end;
-
-procedure TParametros.SetFUNCIONARCOMOCLIENTE(const Value: Boolean);
-begin
-  if Value <> FFUNCIONARCOMOCLIENTE then
-  begin
-    FFUNCIONARCOMOCLIENTE := Value;
-    Notify('FUNCIONARCOMOCLIENTE');
   end;
 end;
 
@@ -270,6 +281,14 @@ begin
     FPESQUISAPRODUTOPOR := Value;
     Notify('PESQUISAPRODUTOPOR');
   end;
+end;
+
+procedure TParametros.SetPontoVenda(const Value: TPontoVenda);
+begin
+  if FPontoVenda <> nil then
+    freeandnil(FPontoVenda);
+
+  FPontoVenda := Value;
 end;
 
 procedure TParametros.SetSERVIDORDATABASE(const Value: string);

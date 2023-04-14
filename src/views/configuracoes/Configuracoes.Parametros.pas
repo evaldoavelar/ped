@@ -7,7 +7,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, untFrmBase, Vcl.Mask, Vcl.StdCtrls,
   Vcl.ActnList, Vcl.ComCtrls, Vcl.Buttons, Vcl.ExtCtrls,
-  ACBrPosPrinter, System.TypInfo,
+  ACBrPosPrinter,
   Dao.IDaoEmitente, Dominio.Entidades.TEmitente, Sistema.TParametros, Dao.IDaoParametros,
   Data.Bind.Components, Data.Bind.EngExt, Vcl.Bind.DBEngExt, System.Actions,
   Vcl.ExtDlgs, Sistema.TBancoDeDados;
@@ -80,15 +80,6 @@ type
     tsCaixa: TTabSheet;
     Label19: TLabel;
     edtNumeroDoCaixa: TEdit;
-    Panel2: TPanel;
-    Label21: TLabel;
-    Label22: TLabel;
-    Label23: TLabel;
-    edtBancoDeDados: TEdit;
-    edtSenha: TEdit;
-    edtUsuario: TEdit;
-    Panel3: TPanel;
-    btnTestar: TSpeedButton;
     chkFuncionarComoCliente: TCheckBox;
     procedure edtRazaoSocialChange(Sender: TObject);
     procedure actOkExecute(Sender: TObject);
@@ -172,14 +163,16 @@ begin
   FParametros.Bind('ImpressoraTermica.IMPRIMIR2VIAS', chkImprimir2Vias, 'Checked');
   FParametros.Bind('ImpressoraTermica.IMPRIMIRITENS2VIA', chkImprimirItens2Via, 'Checked');
   FParametros.Bind('VALIDADEORCAMENTO', edtValidadeOrcamento, 'Text');
-  FParametros.Bind('NUMCAIXA', edtNumeroDoCaixa, 'Text');
+
   FParametros.Bind('PESQUISAPRODUTOPOR', rgPesquisaPor, 'ItemIndex');
   FParametros.Bind('INFORMARPARCEIRONAVENDA', chkInformarParceiroNaVenda, 'Checked');
 
-  FParametros.Bind('SERVIDORDATABASE', edtBancoDeDados, 'Text');
-  FParametros.Bind('SERVIDORUSUARIO', edtUsuario, 'Text');
-  FParametros.Bind('SERVIDORSENHAProxy', edtSenha, 'Text');
-  FParametros.Bind('FUNCIONARCOMOCLIENTE', chkFuncionarComoCliente, 'Checked');
+  // FParametros.Bind('SERVIDORDATABASE', edtBancoDeDados, 'Text');
+  // FParametros.Bind('SERVIDORUSUARIO', edtUsuario, 'Text');
+  // FParametros.Bind('SERVIDORSENHAProxy', edtSenha, 'Text');
+  FParametros.PontoVenda.ClearBindings;
+  FParametros.PontoVenda.Bind('NUMCAIXA', edtNumeroDoCaixa, 'Text');
+  FParametros.PontoVenda.Bind('FUNCIONARCOMOCLIENTE', chkFuncionarComoCliente, 'Checked');
 
   try
     if FParametros.LOGOMARCAETIQUETA <> nil then
@@ -332,7 +325,7 @@ begin
     FParametros := DaoParametros.GetParametros;
     if not Assigned(FParametros) then
     begin
-      FParametros := tParametros.Create;
+      FParametros := TParametros.Create;
     end;
 
     Bind;

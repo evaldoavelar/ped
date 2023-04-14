@@ -35,7 +35,7 @@ type
 
 implementation
 
-uses Factory.Dao, Util.Exceptions, Dao.TDaoParcelas, Dominio.Entidades.TParcelas, Utils.ArrayUtil;
+uses Util.Exceptions, Dao.TDaoParcelas, Dominio.Entidades.TParcelas, Utils.ArrayUtil;
 { TClasseBase }
 
 procedure TDAOPedidoPagamento.GravaParcelas(aPagto: TPEDIDOPAGAMENTO);

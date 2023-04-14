@@ -7,7 +7,7 @@ uses
   System.SysUtils, System.Classes,
   Data.DB, FireDAC.Comp.Client,
   FireDAC.Stan.Param,
-  Dominio.Entidades.TEntity;
+  Dominio.Entidades.TEntity, Dominio.Mapeamento.Atributos.Funcoes;
 
 type
 
@@ -22,6 +22,13 @@ type
     function AutoIncremento(tabela, campo: string): Integer;
     procedure EntityToParams(ds: TFDQuery; Entity: TEntity); virtual;
     procedure FieldsToEntity(ds: TDataSet; Entity: TEntity); virtual;
+
+    function RetornaSQLUpdate<T: class>(aNomeTabela: string): string;
+    function RetornaSQLInsert<T: class>(aNomeTabela: string): string;
+    function CampoIsPk<T: class>(pks: TProperties; key: string): Boolean;
+    function RetornaWhere<T: class>(): string;
+    procedure CopiarParametros(aQryRemoto, aQry: TFDQuery);
+    function SetarAutoInc<T: class>(aQry: TFDQuery): string;
   public
 
     constructor Create(Connection: TFDConnection; aKeepConection: Boolean); virtual;
@@ -31,7 +38,7 @@ type
 implementation
 
 uses
-  Util.Exceptions;
+  Util.Exceptions, Utils.Rtti, Dominio.Mapeamento.Atributos;
 
 { TDaoBase }
 
@@ -39,6 +46,185 @@ function TDaoBase.Query: TFDQuery;
 begin
   result := TFDQuery.Create(nil);
   result.Connection := FConnection;
+end;
+
+function TDaoBase.SetarAutoInc<T>(aQry: TFDQuery): string;
+var
+  props: TProperties;
+  prop: TRttiProperty;
+  valor: Integer;
+  tabela: string;
+  TabelaAutoInc: string;
+  campo: string;
+  I: Integer;
+begin
+  // pegar as propriedades anotadas com AutoInc
+  props := TAtributosFuncoes.PropertieAutoInc<T>;
+
+  for I := Low(props) to High(props) do
+  begin
+    TabelaAutoInc := TAtributosFuncoes.tabela<T>();
+    campo := TAtributosFuncoes.campo<T>(props[I]);
+
+    TLog.d('AutoIncremento: TabelaAutoInc: %s Tabela Origem:%s Campo:%s', [TabelaAutoInc, tabela, campo]);
+    valor := AutoIncremento(TabelaAutoInc, campo);
+
+    TLog.d('AutoIncremento: valor:%d', [valor]);
+    aQry.fieldbyName('Campo').AsInteger := valor;
+  end;
+end;
+
+procedure TDaoBase.CopiarParametros(aQryRemoto: TFDQuery; aQry: TFDQuery);
+var
+  I: Integer;
+begin
+  for I := 0 to aQryRemoto.FieldCount - 1 do
+  begin
+    aQry.paramByName(aQryRemoto.Fields[I].FieldName).DataType := aQryRemoto.Fields[I].DataType;
+    aQry.paramByName(aQryRemoto.Fields[I].FieldName).Value := aQryRemoto.Fields[I].Value;
+  end;
+end;
+
+function TDaoBase.RetornaSQLInsert<T>(aNomeTabela: string): string;
+var
+  I: Integer;
+  LSql: TStringBuilder;
+  LCampos: TStringBuilder;
+  LValues: TStringBuilder;
+begin
+  LSql := TStringBuilder.Create;
+  LCampos := TStringBuilder.Create;
+  LValues := TStringBuilder.Create;
+
+  I := 0;
+  TRttiUtil.ForEachProperties<T>(
+    procedure(prop: TRttiProperty)
+    var
+      LCampo: string;
+    begin
+
+      if I > 0 then
+      begin
+        LCampos.AppendFormat(', %s ', [LCampo, LCampo]);
+        LValues.AppendFormat(', :%s ', [LCampo, LCampo]);
+      end
+      else
+      begin
+        LCampos.AppendFormat(' %s  ', [LCampo, LCampo]);
+        LValues.AppendFormat(' :%s  ', [LCampo, LCampo]);
+      end;
+
+      inc(I);
+    end);
+
+  LSql.AppendFormat(' insert into %s ', [aNomeTabela]);
+  LSql.AppendFormat(' ( % ) ', [LCampos.ToString]);
+  LSql.AppendFormat(' values ( % ) ', [LValues.ToString]);
+
+  result := LSql.ToString;
+
+  LSql.free;
+  LCampos.free;
+  LValues.free;
+end;
+
+function TDaoBase.RetornaSQLUpdate<T>(aNomeTabela: string): string;
+var
+  I: Integer;
+  LSql: TStringBuilder;
+  pks: TProperties;
+begin
+  LSql := TStringBuilder.Create;
+  LSql.Append(' update ' + aNomeTabela);
+  LSql.Append(' set ');
+
+  pks := TAtributosFuncoes.PropertiePk<T>;
+
+  I := 0;
+  TRttiUtil.ForEachProperties<T>(
+    procedure(prop: TRttiProperty)
+    var
+      LCampo: string;
+      attr: TCustomAttribute;
+    begin
+      LCampo := TAtributosFuncoes.campo<T>(prop);
+      if CampoIsPk<T>(pks, LCampo) then
+        exit;
+
+      attr := TAtributosFuncoes.IndexOfAttribute(prop, IGNOREAttribute);
+      if (attr is IGNOREAttribute) or (LCampo = 'RefCount') then
+        exit;
+
+      if I > 0 then
+        LSql.AppendFormat(', %s = :%s ', [LCampo, LCampo])
+      else
+        LSql.AppendFormat(' %s = :%s ', [LCampo, LCampo]);
+
+      inc(I);
+    end);
+
+  LSql.Append(RetornaWhere<T>());
+
+  result := LSql.ToString;
+  LSql.free;
+
+end;
+
+function TDaoBase.RetornaWhere<T>(): string;
+var
+  I: Integer;
+  LSql: TStringBuilder;
+  pks: TProperties;
+begin
+  LSql := TStringBuilder.Create;
+  LSql.Append(' where ');
+  I := 0;
+  pks := TAtributosFuncoes.PropertiePk<T>;
+
+  TRttiUtil.ForEachProperties<T>(
+    procedure(prop: TRttiProperty)
+    var
+      LCampo: string;
+    begin
+      LCampo := TAtributosFuncoes.campo<T>(prop);
+      if not CampoIsPk<T>(pks, LCampo) then
+        exit;
+
+      if I > 0 then
+        LSql.AppendFormat('and %s = :%s ', [TAtributosFuncoes.campo<T>(prop), TAtributosFuncoes.campo<T>(prop)])
+      else
+        LSql.AppendFormat(' %s = :%s ', [TAtributosFuncoes.campo<T>(prop), TAtributosFuncoes.campo<T>(prop)]);
+
+      inc(I);
+    end);
+
+  result := LSql.ToString;
+  LSql.free;
+end;
+
+function TDaoBase.CampoIsPk<T>(pks: TProperties; key: string): Boolean;
+var
+  prop: TRttiProperty;
+  campo: string;
+begin
+  try
+    result := false;
+    // pecorrer as primary keys do objeto
+    for prop in pks do
+    begin
+      // pegar o nome do campo
+      campo := TAtributosFuncoes.campo<T>(prop);
+
+      // se o campo for igual
+      if key.ToUpper = campo.ToUpper then
+      begin
+        result := true;
+      end;
+    end;
+  except
+    on E: Exception do
+      raise Exception.Create('TDaoBase.CampoIsPk<T>: ' + E.Message);
+  end;
 end;
 
 function TDaoBase.AutoIncremento(tabela, campo: string): Integer;
@@ -67,10 +253,10 @@ begin
         TLog.d(qry);
         qry.Open;
 
-        if qry.IsEmpty or qry.FieldByName('PROX').IsNull then
+        if qry.IsEmpty or qry.fieldbyName('PROX').IsNull then
           inResult := 1
         else
-          inResult := qry.FieldByName('PROX').AsInteger + 1;
+          inResult := qry.fieldbyName('PROX').AsInteger + 1;
 
         qry.Close;
         qry.SQL.Clear;
@@ -82,18 +268,18 @@ begin
       end
       else
       begin
-        if qry.FieldByName('VALOR').IsNull or
-          (qry.FieldByName('VALOR').AsFloat = 0) then
+        if qry.fieldbyName('VALOR').IsNull or
+          (qry.fieldbyName('VALOR').AsFloat = 0) then
         begin
           qry.Close;
           qry.SQL.Clear;
           qry.SQL.Add('SELECT MAX(' + campo + ') PROX FROM ' + tabela);
           TLog.d(qry);
           qry.Open;
-          inResult := qry.FieldByName('PROX').AsInteger + 1;
+          inResult := qry.fieldbyName('PROX').AsInteger + 1;
         end
         else
-          inResult := qry.FieldByName('VALOR').AsInteger + 1;
+          inResult := qry.fieldbyName('VALOR').AsInteger + 1;
 
         qry.Close;
         qry.SQL.Clear;
@@ -112,8 +298,8 @@ begin
   except
     on E: Exception do
     begin
-      TLog.d(E.message);
-      raise TDaoException.Create('Falha ao gerar ID: ' + E.message);
+      TLog.d(E.Message);
+      raise TDaoException.Create('Falha ao gerar ID: ' + E.Message);
     end;
   end;
 end;
@@ -131,7 +317,7 @@ end;
 
 destructor TDaoBase.destroy;
 begin
-  //TLog.d('>>> Entrando em  TDaoBase.destroy ');
+  // TLog.d('>>> Entrando em  TDaoBase.destroy ');
 
   if FKeepConection = false then
     if Assigned(FConnection) then
@@ -142,7 +328,7 @@ begin
       TLog.d('<<< Saindo de TDaoBase.destroy ');
     end;
   inherited;
- // TLog.d('<<< Saindo de TDaoBase.destroy ');
+  // TLog.d('<<< Saindo de TDaoBase.destroy ');
 end;
 
 procedure TDaoBase.EntityToParams(ds: TFDQuery; Entity: TEntity);
@@ -156,10 +342,7 @@ var
 begin
   context := TRttiContext.Create;
   rType := context.GetType(Entity.ClassInfo);
-  // for field in rType.GetFields do
-  // ;//do something here
-  // for method in rType.GetMethods do
-  // ;//do something here
+
   for prop in rType.GetProperties do
   begin
 
@@ -180,55 +363,6 @@ begin
         Param.AsCurrency := prop.GetValue(Entity).AsCurrency
       else
         Param.Value := prop.GetValue(Entity).AsVariant;
-
-      // Param.Value := prop.GetValue(Entity).AsVariant;
-
-      // case prop.PropertyType.TypeKind of
-      // tkUnknown:
-      // ds.Params.ParamByName(prop.Name).Value := prop.GetValue(Entity).AsVariant;
-      // tkInteger:
-      // ds.Params.ParamByName(prop.Name).AsInteger := prop.GetValue(Entity).AsInteger;
-      // tkChar:
-      // ds.Params.ParamByName(prop.Name).AsString := prop.GetValue(Entity).AsString;
-      // tkEnumeration:
-      // ds.Params.ParamByName(prop.Name).Value := prop.GetValue(Entity).AsVariant;
-      // tkFloat:
-      // ds.Params.ParamByName(prop.Name).AsFloat := prop.GetValue(Entity).AsVariant;
-      // tkString:
-      // prop.SetValue(Entity, TValue.From(''));
-      // tkSet:
-      // raise Exception.Create('Tipo Não Suportado');
-      // tkClass:
-      // raise Exception.Create('Tipo Não Suportado');
-      // tkMethod:
-      // raise Exception.Create('Tipo Não Suportado');
-      // tkWChar:
-      // ds.Params.ParamByName(prop.Name).AsString := prop.GetValue(Entity).AsString;
-      // tkLString:
-      // ds.Params.ParamByName(prop.Name).AsString := prop.GetValue(Entity).AsString;
-      // tkWString:
-      // ds.Params.ParamByName(prop.Name).AsString := prop.GetValue(Entity).AsString;
-      // tkVariant:
-      // ds.Params.ParamByName(prop.Name).Value := prop.GetValue(Entity).AsVariant;
-      // tkArray:
-      // raise Exception.Create('Tipo Não Suportado');
-      // tkRecord:
-      // raise Exception.Create('Tipo Não Suportado');
-      // tkInterface:
-      // raise Exception.Create('Tipo Não Suportado');
-      // tkInt64:
-      // ds.Params.ParamByName(prop.Name).AsInteger := prop.GetValue(Entity).AsInt64;
-      // tkDynArray:
-      // raise Exception.Create('Tipo Não Suportado');
-      // tkUString:
-      // ds.Params.ParamByName(prop.Name).AsString := prop.GetValue(Entity).AsString;
-      // tkClassRef:
-      // raise Exception.Create('Tipo Não Suportado');
-      // tkPointer:
-      // raise Exception.Create('Tipo Não Suportado');
-      // tkProcedure:
-      // raise Exception.Create('Tipo Não Suportado');
-      // end;
     end;
 
   end;
@@ -252,7 +386,7 @@ begin
     if prop.IsWritable then
     begin
       Field := ds.Fields.FindField(prop.Name);
-      if (Field <> nil) then
+      if ((Field <> nil ) and (not Field.IsNull)) then
       begin
         if (CompareText('string', prop.PropertyType.Name)) = 0 then
           prop.SetValue(Entity, Field.AsString)
@@ -268,6 +402,8 @@ begin
           prop.SetValue(Entity, Field.AsCurrency)
         else if (CompareText('Integer', prop.PropertyType.Name)) = 0 then
           prop.SetValue(Entity, Field.AsInteger)
+        else if (CompareText('Double', prop.PropertyType.Name)) = 0 then
+          prop.SetValue(Entity, Field.AsFloat)
         else if (prop.PropertyType.TypeKind = TTypeKind.tkClass) then
           Continue
         else

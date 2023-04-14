@@ -15,7 +15,7 @@ uses
   Vcl.Imaging.jpeg, Util.VclFuncoes, Dao.IDaoParcelas, Orcamento.Criar, Vcl.StdCtrls,
   Pedido.InformaParceiro, Dominio.Entidades.TParceiro, parceiro.InformaPagto,
   Vcl.Buttons, Vcl.Imaging.pngimage, Pedido.Venda.IPart, Vcl.WinXCtrls, Pedido.Venda.Part.Item,
-  Pedido.Venda.Part.ItemCancelamento, Pedido.Venda.Part.LogoItens, VCLTee.TeCanvas,
+  Pedido.Venda.Part.ItemCancelamento, Pedido.Venda.Part.LogoItens,
   Vcl.AutoComplete, Dominio.Entidades.Pedido.Pagamentos.Pagamento,
   IFactory.Dao, Sistema.TParametros;
 
@@ -275,9 +275,9 @@ var
 implementation
 
 uses
-  Util.Funcoes, Pedido.Parcelamento, Pedido.SelecionaCliente, Util.Exceptions,
+  Util.Funcoes, Pedido.SelecionaCliente, Util.Exceptions,
   Consulta.Produto, Pedido.CancelarItem, Filtro.Pedidos, Dominio.Entidades.TFormaPagto.Tipo,
-  Pedido.Observacao, Dao.IDaoEmitente, Dominio.Entidades.TEmitente, Relatorio.TRPedido,
+  Pedido.Observacao, Dominio.Entidades.TEmitente, Relatorio.TRPedido,
   Pedido.Pagamento, Pedido.Venda.Part.Pagamento, Sistema.TLog,
   Factory.Entidades, IFactory.Entidades;
 
@@ -358,7 +358,10 @@ procedure TFrmPedidoVenda.AbrePedido;
 begin
   TLog.d('>>> Entrando em  TFrmPedidoVenda.AbrePedido ');
   try
-    if FParametros.NUMCAIXA = '' then
+    FFactory.Conexao.Close;
+    FFactory.Conexao.Open;
+
+    if FParametros.PontoVenda.NUMCAIXA = '' then
       raise TValidacaoException.Create('O número do caixa não foi informado!');
 
     Pedido := TFactoryEntidades.new.Pedido;
@@ -376,7 +379,7 @@ begin
     Pedido.Cliente := TFactoryEntidades.new.Cliente();
     Pedido.Cliente.CODIGO := '000000';
     Pedido.Cliente.NOME := 'Consumidor';
-    Pedido.NUMCAIXA := FParametros.NUMCAIXA;
+    Pedido.NUMCAIXA := FParametros.PontoVenda.NUMCAIXA;
 
     DaoPedido.AbrePedido(Pedido);
 
@@ -1576,6 +1579,9 @@ begin
     lblEmitente.Caption := 'VENDEDOR: ' + TFactoryEntidades.new.VendedorLogado.NOME
   else
     lblEmitente.Caption := '';
+
+  lblEmitente.Caption := TFactoryEntidades.Parametros.PontoVenda.NUMCAIXA + ' - ' + lblEmitente.Caption;
+
   TLog.d('<<< Saindo de TFrmPedidoVenda.FormShow ');
 end;
 

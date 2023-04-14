@@ -20,6 +20,7 @@ type
     FPODECANCELARORCAMENTO: Boolean;
     FPODEACESSARCADASTROVENDEDOR: Boolean;
     FPODEACESSARPARAMETROS: Boolean;
+    FDATAALTERACAO: TDateTime;
 
     function getCODIGO: string;
     procedure setCODIGO(const Value: string);
@@ -35,6 +36,7 @@ type
     procedure setPODECANCELARORCAMENTO(const Value: Boolean);
     function getPODEACESSARPARAMETROS: Boolean;
     procedure setPODEACESSARPARAMETROS(const Value: Boolean);
+    procedure SetDATAALTERACAO(const Value: TDateTime);
   published
 
     [campo('CODIGO', tpVARCHAR, 10, 0, True)]
@@ -67,6 +69,9 @@ type
 
     [campo('PODEACESSARPARAMETROS', tpSMALLINT, 0, 0, True, '1')]
     property PODEACESSARPARAMETROS: Boolean read getPODEACESSARPARAMETROS write setPODEACESSARPARAMETROS;
+
+    [campo('DATAALTERACAO', tpTIMESTAMP)]
+    property DATAALTERACAO: TDateTime read FDATAALTERACAO write SetDATAALTERACAO;
   public
     constructor create();
     class function CreateVendedor(pCodigo, pNome: string; pCOMISSAOV, pCOMISSAOP: currency): TVendedor;
@@ -133,6 +138,11 @@ begin
     FCODIGO := Value;
     Notify('CODIGO');
   end;
+end;
+
+procedure TVendedor.SetDATAALTERACAO(const Value: TDateTime);
+begin
+  FDATAALTERACAO := Value;
 end;
 
 procedure TVendedor.setPODEACESSARCADASTROVENDEDOR(const Value: Boolean);

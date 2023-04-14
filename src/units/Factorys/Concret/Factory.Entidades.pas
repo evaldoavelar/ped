@@ -47,7 +47,7 @@ type
 implementation
 
 uses
-  System.SysUtils, Factory.Dao;
+  System.SysUtils;
 
 { TFactoryEntidades }
 

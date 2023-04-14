@@ -3,23 +3,23 @@ unit Factory.Dao;
 interface
 
 uses SysUtils,
-  Classes, Math, DateUtils, ACBrPosPrinter, FireDAC.Stan.Def, FireDAC.Stan.Async,
+  Classes, Math, FireDAC.Stan.Def, FireDAC.Stan.Async,
   FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.DApt,
-  Data.DB, FireDAC.Comp.Client, FireDAC.Phys.FBDef, FireDAC.Phys, FireDAC.Phys.IBBase,
-  FireDAC.Phys.FB, FireDAC.UI.Intf, FireDAC.VCLUI.Wait, FireDAC.Comp.UI,
-  Dominio.Entidades.TPedido, Dominio.Entidades.TVendedor, Dominio.Entidades.TCliente,
-  Dominio.Entidades.TItemPedido, Dominio.Entidades.TProduto, Dominio.Entidades.TParcelas, Dominio.Entidades.TFormaPagto,
+  Data.DB, FireDAC.Comp.Client, FireDAC.Phys.FBDef, FireDAC.Phys,
+  FireDAC.Phys.FB, FireDAC.UI.Intf, FireDAC.VCLUI.Wait,
+
   Dao.TDaoPedido, Dao.IDaoPedido, Dao.IDaoVendedor, Dao.TDaoVendedor, Dao.IDaoProdutos, Dao.TDaoProdutos, Dao.TDaoCliente, Dao.IDaoCliente, Dao.IDaoFormaPagto, Dao.TDaoFormaPagto,
-  Dao.TDaoParcelas, Dao.IDaoParcelas, Dominio.Entidades.TFornecedor, Dao.IDaoFornecedor, Dao.TDaoFornecedor,
+  Dao.TDaoParcelas, Dao.IDaoParcelas, Dao.IDaoFornecedor, Dao.TDaoFornecedor,
   Dao.IDaoEmitente, Dao.TDaoEmitente, Dominio.Entidades.TEmitente,
-  Sistema.TParametros, Dao.IDaoParametros, Dao.TDaoParametros, Dao.IDAOPedidoPeriodo,
-  Dao.TDaoPedidoPeriodo, Dominio.Entidades.TOrcamento, Dao.IDaoOrcamento, Dao.TDaoOrcamento, FireDAC.Comp.Script, Dao.IDaoParceiro, Dao.TDaoParceiro,
-  Dominio.Entidades.TParceiro, Dao.IDaoParceiro.FormaPagto, Dao.TDaoParceiro.FormaPagto, Dominio.Entidades.TParceiro.FormaPagto, Dominio.Entidades.TParceiroVenda,
+  Dao.IDaoParametros, Dao.TDaoParametros, Dao.IDAOPedidoPeriodo,
+  Dao.TDaoPedidoPeriodo, Dao.IDaoOrcamento, Dao.TDaoOrcamento, FireDAC.Comp.Script, Dao.IDaoParceiro, Dao.TDaoParceiro,
+  Dao.IDaoParceiro.FormaPagto, Dao.TDaoParceiro.FormaPagto,
   Dao.IDaoParceiroVenda, Dao.TDaoEstoqueProduto,
   Dao.IDoParceiroVenda.Pagamentos, Dao.TDaoParceiroVenda.Pagamentos, Dao.TDaoParceiroVenda,
   Dao.TDAOPedidoPagamento, Dao.IDAOPedidoPagamento, Dao.IDAOTSangriaSuprimento,
   Dao.IDaoEstoqueProduto, Dao.IDaoFiltroEstoque, IFactory.Dao,
-  Dao.IDaoParametrosBancoDeDados, Sistema.TBancoDeDados, Dao.TParametrosBancoDeDados;
+  Dao.IDaoParametrosBancoDeDados, Sistema.TBancoDeDados, Dao.TParametrosBancoDeDados,
+  Dao.IDaoImportacao, Dao.IDaoPontoVenda;
 
 type
 
@@ -57,10 +57,12 @@ type
     function DaoEstoqueProduto(): IDaoEstoqueProduto;
     function DaoFiltroEstoque(): IDaoEstoqueFiltro;
     function DaoParametrosBancoDeDados: IDaoParametrosBancoDeDados;
+    function DaoImportacao: IDaoImportacao;
+    function DaoPontoVenda: IDaoPontoVenda;
 
     property DadosEmitente: TEmitente read getDadosEmitente;
 
-    function Conexao(aBancoDeDados: TParametrosBancoDeDados = nil): TFDConnection;
+    function Conexao(aBancoDeDados: TParametrosBancoDeDados = nil; aAutoReconnect: Boolean = true): TFDConnection;
     function Query(): TFDQuery;
     procedure Close();
   public
@@ -74,7 +76,8 @@ implementation
 
 { TFactory }
 
-uses Util.Funcoes, Dao.TSangriaSuprimento, Dao.TDaoEstoqueFiltro, Sistema.TLog;
+uses Util.Funcoes, Dao.TSangriaSuprimento, Dao.TDaoEstoqueFiltro, Sistema.TLog,
+  Dao.TImportacao, Dao.TDaoPontoVenda, FireDAC.Phys.IBBase;
 
 procedure TFactory.Close;
 begin
@@ -88,11 +91,11 @@ begin
   TLog.d('<<< Saindo de TFactory.Close ');
 end;
 
-function TFactory.Conexao(aBancoDeDados: TParametrosBancoDeDados = nil): TFDConnection;
+function TFactory.Conexao(aBancoDeDados: TParametrosBancoDeDados = nil; aAutoReconnect: Boolean = true): TFDConnection;
 var
   oParams: TFDPhysFBConnectionDefParams;
 begin
- // TLog.d('>>> Entrando em  TFactory.Conexao FKeepConection: %s ', [FKeepConection.ToString(true)]);
+  // TLog.d('>>> Entrando em  TFactory.Conexao FKeepConection: %s ', [FKeepConection.ToString(true)]);
   if (FConnection = nil) then
   begin
     // if not SysUtils.DirectoryExists(GetPathDB()) then
@@ -107,14 +110,19 @@ begin
     FConnection.Params.UserName := aBancoDeDados.Usuario;
     FConnection.Params.Password := aBancoDeDados.SenhaProxy;
     FConnection.Params.Database := aBancoDeDados.Database;
+    FConnection.Params.Add('ConnectTimeout=15');
     // FConnection.Params.Add( 'CharacterSet=ISO8859_1');
     FConnection.FetchOptions.Mode := fmAll;
-    FConnection.ResourceOptions.AutoConnect := true;
+    // FConnection.ResourceOptions.AutoConnect := true;
+    FConnection.ResourceOptions.AutoReconnect := aAutoReconnect;
+    FConnection.ResourceOptions.CmdExecTimeout := 10000;
+
+    FConnection.ResourceOptions.SilentMode := true;
     FConnection.Open();
   end;
 
   result := FConnection;
- // TLog.d('<<< Saindo de TFactory.Conexao ');
+  // TLog.d('<<< Saindo de TFactory.Conexao ');
 end;
 
 constructor TFactory.Create(aConnection: TFDConnection = nil; aKeepConection: Boolean = false);
@@ -134,10 +142,10 @@ end;
 
 function TFactory.Query: TFDQuery;
 begin
- // TLog.d('>>> Entrando em  TFactory.Query ');
+  // TLog.d('>>> Entrando em  TFactory.Query ');
   result := TFDQuery.Create(nil);
   result.Connection := Conexao;
- // TLog.d('<<< Saindo de TFactory.Query ');
+  // TLog.d('<<< Saindo de TFactory.Query ');
 
 end;
 
@@ -193,6 +201,13 @@ begin
   TLog.d('<<< Saindo de TFactory.DaoFornecedor ');
 end;
 
+function TFactory.DaoImportacao: IDaoImportacao;
+begin
+  TLog.d('>>> Entrando em  TFactory.DaoImportacao ');
+  result := TDaoImportacao.Create(Conexao(), FKeepConection);
+  TLog.d('<<< Saindo de TFactory.DaoImportacao ');
+end;
+
 function TFactory.DaoOrcamento: IDaoOrcamento;
 begin
   TLog.d('>>> Entrando em  TFactory.DaoOrcamento ');
@@ -203,7 +218,7 @@ end;
 function TFactory.DaoParametros: IDaoParametros;
 begin
   TLog.d('>>> Entrando em  TFactory.DaoParametros ');
-  result := TDaoParametros.Create(Conexao(), FKeepConection);
+  result := TDaoParametros.Create(Conexao(), FKeepConection, DaoPontoVenda);
   TLog.d('<<< Saindo de TFactory.DaoParametros ');
 end;
 
@@ -270,10 +285,16 @@ begin
   TLog.d('<<< Saindo de TFactory.DaoPedidoPeriodo ');
 end;
 
+function TFactory.DaoPontoVenda: IDaoPontoVenda;
+begin
+  result := TDaoPontoVenda.Create(TUtil.DiretorioApp + 'config.ini');
+
+end;
+
 function TFactory.DaoProduto: IDaoProdutos;
 begin
   TLog.d('>>> Entrando em  TFactory.DaoProduto ');
-  result := TDaoProduto.Create(Conexao(), FKeepConection);
+  result := TDaoProduto.Create(Conexao(), FKeepConection, DaoFornecedor);
   TLog.d('<<< Saindo de TFactory.DaoProduto ');
 end;
 

@@ -3,7 +3,7 @@ unit Dao.TSangriaSuprimento;
 interface
 
 uses System.Generics.Collections,
-  System.SysUtils, System.Classes, Factory.Dao,
+  System.SysUtils, System.Classes,
   FireDAC.Stan.Error,
   Data.DB, FireDAC.Comp.Client, Dao.IDAOTSangriaSuprimento,
   Dao.TDaoBase, Sistema.TLog, Dominio.Entidades.TSangriaSuprimento;
@@ -54,6 +54,7 @@ begin
         + '             CODVEN, '
         + '             VALOR, '
         + '             FORMA, '
+        + '             DATAALTERACAO, '
         + '             HORA, '
         + '             DATA ) '
         + 'VALUES      (:id, '
@@ -62,6 +63,7 @@ begin
         + '             :CODVEN, '
         + '             :VALOR, '
         + '             :FORMA, '
+        + '             :DATAALTERACAO, '
         + '             :HORA, '
         + '             :DATA )';
 

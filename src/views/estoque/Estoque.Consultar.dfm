@@ -2,7 +2,6 @@ inherited ViewEstoqueMovimentacoes: TViewEstoqueMovimentacoes
   Caption = 'Movimenta'#231#245'es'
   ClientHeight = 524
   ClientWidth = 922
-  OnDestroy = FormDestroy
   OnResize = FormResize
   OnShow = FormShow
   ExplicitWidth = 938

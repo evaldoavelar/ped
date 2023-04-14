@@ -12,12 +12,12 @@ uses
   Data.DB,
   Graphics, System.Rtti,
   frxClass,
-  frxExportPDF,
+
   frxBarcode,
   frxGaugeView,
   frxTableObject,
   Sistema.TParametros,
-  Dominio.Entidades.TEmitente, Impressao.Etiquetas;
+  Impressao.Etiquetas;
 
 type
 

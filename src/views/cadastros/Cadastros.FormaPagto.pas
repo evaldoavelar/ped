@@ -8,7 +8,7 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Dominio.Entidades.CondicaoPagto,
   Vcl.StdCtrls, Vcl.ComCtrls, Dominio.Entidades.TFormaPagto.Tipo, Dominio.Entidades.TEntity, System.Generics.Collections,
   Dao.IDaoFormaPagto, Dominio.Entidades.TFormaPagto, JvExMask, JvToolEdit, JvBaseEdits, JvComponentBase, JvEnterTab,
-  Vcl.Mask, System.Actions, Vcl.ActnList, Vcl.WinXCtrls, Vcl.Buttons, Helper.Currency,
+  System.Actions, Vcl.ActnList, Vcl.Buttons, Helper.Currency,
   Vcl.ExtCtrls, Cadastros.Base, Vcl.Imaging.jpeg, Vcl.Imaging.pngimage,
   Vcl.AutoComplete;
 
@@ -87,7 +87,7 @@ implementation
 {$R *.dfm}
 
 
-uses Factory.Dao, Consulta.FormaPagto, Utils.Rtti, Pedido.Venda.Part.CondicaoPagamento,
+uses Consulta.FormaPagto, Utils.Rtti, Pedido.Venda.Part.CondicaoPagamento,
   Sistema.TLog, Factory.Entidades;
 
 { TfrmCadastroFormaPagto }
@@ -119,6 +119,7 @@ end;
 procedure TfrmCadastroFormaPagto.AtualizarEntity;
 begin
   inherited;
+  FFormaPagto.DATAALTERACAO := now;
   DaoFormaPagto.AtualizaFormaPagtos(FFormaPagto);
   edtPesquisa.Text := FFormaPagto.DESCRICAO;
 end;
@@ -353,6 +354,7 @@ begin
   TLog.d('>>> Entrando em  TfrmCadastroFormaPagto.IncluirEntity ');
   inherited;
   FFormaPagto.ID := DaoFormaPagto.GeraID;
+  FFormaPagto.DATAALTERACAO := now;
   DaoFormaPagto.IncluiPagto(FFormaPagto);
   edtPesquisa.Text := FFormaPagto.DESCRICAO;
   TLog.d('<<< Saindo de TfrmCadastroFormaPagto.IncluirEntity ');
@@ -370,7 +372,7 @@ begin
       FFormaPagto := nil;
     end;
 
-    Self.FFormaPagto := TFactoryEntidades.new.FormaPagto;
+    Self.FFormaPagto := TFactoryEntidades.New.FormaPagto;
     Bind;
     try
       edtDescricao.SetFocus;

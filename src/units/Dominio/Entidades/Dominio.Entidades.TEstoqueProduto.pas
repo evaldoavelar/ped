@@ -21,6 +21,7 @@ type
     FTIPO: string;
     FDATA: TDate;
     FNOTAFISCAL: string;
+    FDATAALTERACAO: TDateTime;
     procedure SetCODIGOPRD(const Value: string);
     procedure SetDATA(const Value: TDate);
     procedure SetDESCRICAO(const Value: string);
@@ -32,6 +33,7 @@ type
     procedure SetTIPO(const Value: string);
     procedure SetUSUARIOCRIACAO(const Value: string);
     procedure SetNOTAFISCAL(const Value: string);
+    procedure SetDATAALTERACAO(const Value: TDateTime);
 
   public
     [AutoInc('AUTOINC')]
@@ -70,6 +72,9 @@ type
     [Campo('USUARIOCRIACAO', tpVarchar, 15)]
     property USUARIOCRIACAO: string read FUSUARIOCRIACAO write SetUSUARIOCRIACAO;
 
+    [Campo('DATAALTERACAO', tpTIMESTAMP)]
+    property DATAALTERACAO: TDateTime read FDATAALTERACAO write SetDATAALTERACAO;
+
   public
     constructor create; override;
   end;
@@ -92,6 +97,11 @@ end;
 procedure TEstoqueProduto.SetDATA(const Value: TDate);
 begin
   FDATA := Value;
+end;
+
+procedure TEstoqueProduto.SetDATAALTERACAO(const Value: TDateTime);
+begin
+  FDATAALTERACAO := Value;
 end;
 
 procedure TEstoqueProduto.SetDESCRICAO(const Value: string);

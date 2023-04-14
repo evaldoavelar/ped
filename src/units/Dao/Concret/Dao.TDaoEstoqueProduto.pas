@@ -27,7 +27,7 @@ type
 implementation
 
 uses
-  Util.Exceptions, Factory.Dao;
+  Util.Exceptions;
 
 { TDaoEstoqueProduto }
 
@@ -87,6 +87,7 @@ begin
         + '             STATUS, '
         + '             DATA, '
         + '             CODIGOPRD, '
+        + '             DATAALTERACAO, '
         + '             USUARIOCRIACAO '
         + '              ) '
         + 'VALUES      (:id, '
@@ -99,6 +100,7 @@ begin
         + '             :STATUS, '
         + '             :DATA, '
         + '             :CODIGOPRD, '
+        + '             :DATAALTERACAO, '
         + '             :USUARIOCRIACAO '
         + '              )';
 

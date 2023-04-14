@@ -3,7 +3,6 @@ inherited FrmConfiguracoes: TFrmConfiguracoes
   Caption = 'Configura'#231#245'es'
   ClientHeight = 403
   ClientWidth = 796
-  OnDestroy = FormDestroy
   OnShow = FormShow
   ExplicitWidth = 802
   ExplicitHeight = 432
@@ -788,13 +787,6 @@ inherited FrmConfiguracoes: TFrmConfiguracoes
     object tsCaixa: TTabSheet
       Caption = 'Caixa'
       ImageIndex = 4
-      ExplicitLeft = 5
-      ExplicitTop = 23
-      ExplicitWidth = 0
-      ExplicitHeight = 0
-      DesignSize = (
-        788
-        334)
       object Label19: TLabel
         Left = 11
         Top = 24
@@ -809,8 +801,8 @@ inherited FrmConfiguracoes: TFrmConfiguracoes
         ParentFont = False
       end
       object edtNumeroDoCaixa: TEdit
-        Left = 21
-        Top = 48
+        Left = 22
+        Top = 47
         Width = 271
         Height = 24
         CharCase = ecUpperCase
@@ -825,169 +817,20 @@ inherited FrmConfiguracoes: TFrmConfiguracoes
         TabOrder = 0
         OnChange = edtRazaoSocialChange
       end
-      object Panel2: TPanel
-        Left = 18
-        Top = 102
-        Width = 738
-        Height = 202
-        Anchors = [akLeft, akTop, akRight, akBottom]
-        BevelOuter = bvNone
-        Color = clWhite
-        ParentBackground = False
+      object chkFuncionarComoCliente: TCheckBox
+        Left = 13
+        Top = 90
+        Width = 313
+        Height = 17
+        Caption = 'Funcionar Como Cliente'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = 10639360
+        Font.Height = -11
+        Font.Name = 'Tahoma'
+        Font.Style = []
+        ParentFont = False
         TabOrder = 1
-        DesignSize = (
-          738
-          202)
-        object Label21: TLabel
-          Left = 56
-          Top = 47
-          Width = 37
-          Height = 16
-          Caption = 'Banco'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = 10639360
-          Font.Height = -13
-          Font.Name = 'Lato'
-          Font.Style = []
-          ParentFont = False
-        end
-        object Label22: TLabel
-          Left = 50
-          Top = 74
-          Width = 44
-          Height = 16
-          Caption = 'Usu'#225'rio'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = 10639360
-          Font.Height = -13
-          Font.Name = 'Lato'
-          Font.Style = []
-          ParentFont = False
-        end
-        object Label23: TLabel
-          Left = 56
-          Top = 99
-          Width = 37
-          Height = 16
-          Caption = 'Senha'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = 10639360
-          Font.Height = -13
-          Font.Name = 'Lato'
-          Font.Style = []
-          ParentFont = False
-        end
-        object edtBancoDeDados: TEdit
-          Left = 112
-          Top = 45
-          Width = 560
-          Height = 21
-          Anchors = [akLeft, akTop, akRight]
-          BevelInner = bvNone
-          BevelKind = bkFlat
-          BevelOuter = bvNone
-          BorderStyle = bsNone
-          Color = 15524818
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = 11757312
-          Font.Height = -11
-          Font.Name = 'Tahoma'
-          Font.Style = []
-          ParentFont = False
-          TabOrder = 0
-          OnChange = edtRazaoSocialChange
-        end
-        object edtSenha: TEdit
-          Left = 112
-          Top = 97
-          Width = 562
-          Height = 21
-          Anchors = [akLeft, akTop, akRight]
-          BevelInner = bvNone
-          BevelKind = bkFlat
-          BevelOuter = bvNone
-          BorderStyle = bsNone
-          Color = 15524818
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = 11757312
-          Font.Height = -11
-          Font.Name = 'Tahoma'
-          Font.Style = []
-          ParentFont = False
-          PasswordChar = '*'
-          TabOrder = 2
-          OnChange = edtRazaoSocialChange
-        end
-        object edtUsuario: TEdit
-          Left = 112
-          Top = 72
-          Width = 561
-          Height = 21
-          Anchors = [akLeft, akTop, akRight]
-          BevelInner = bvNone
-          BevelKind = bkFlat
-          BevelOuter = bvNone
-          BorderStyle = bsNone
-          Color = 15524818
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = 11757312
-          Font.Height = -11
-          Font.Name = 'Tahoma'
-          Font.Style = []
-          ParentFont = False
-          TabOrder = 1
-          OnChange = edtRazaoSocialChange
-        end
-        object Panel3: TPanel
-          Left = 605
-          Top = 141
-          Width = 67
-          Height = 29
-          Anchors = [akTop, akRight]
-          BevelOuter = bvNone
-          Color = 14342874
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clBlack
-          Font.Height = -13
-          Font.Name = 'Tahoma'
-          Font.Style = []
-          ParentBackground = False
-          ParentFont = False
-          TabOrder = 3
-          object btnTestar: TSpeedButton
-            Left = 0
-            Top = 0
-            Width = 67
-            Height = 29
-            Align = alClient
-            Caption = 'TESTAR'
-            Flat = True
-            Font.Charset = DEFAULT_CHARSET
-            Font.Color = 10639360
-            Font.Height = -11
-            Font.Name = 'Tahoma'
-            Font.Style = [fsBold]
-            ParentFont = False
-            OnClick = btnTestarClick
-            ExplicitLeft = -13
-            ExplicitTop = -15
-          end
-        end
-        object chkFuncionarComoCliente: TCheckBox
-          Left = 25
-          Top = 8
-          Width = 313
-          Height = 17
-          Caption = 'Funcionar Como Cliente'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = 10639360
-          Font.Height = -11
-          Font.Name = 'Tahoma'
-          Font.Style = []
-          ParentFont = False
-          TabOrder = 4
-          OnClick = chkVenderClienteBloqueadoClick
-        end
+        OnClick = chkVenderClienteBloqueadoClick
       end
     end
   end

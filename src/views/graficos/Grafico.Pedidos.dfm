@@ -32,10 +32,6 @@ inherited frmGraficoPedidos: TfrmGraficoPedidos
       TabOrder = 0
       object ts1: TTabSheet
         Caption = 'Gr'#225'fico 1'
-        ExplicitLeft = -84
-        ExplicitTop = -36
-        ExplicitWidth = 281
-        ExplicitHeight = 165
         object ChartVendasPeriodo: TChart
           Left = 0
           Top = 30
@@ -51,9 +47,6 @@ inherited frmGraficoPedidos: TfrmGraficoPedidos
           Align = alClient
           BevelOuter = bvNone
           TabOrder = 1
-          ExplicitTop = -126
-          ExplicitWidth = 281
-          ExplicitHeight = 291
           DefaultCanvas = 'TGDIPlusCanvas'
           PrintMargins = (
             15
@@ -79,8 +72,6 @@ inherited frmGraficoPedidos: TfrmGraficoPedidos
           Align = alTop
           BevelOuter = bvNone
           TabOrder = 0
-          ExplicitLeft = 16
-          ExplicitTop = 304
           object chkPontos: TCheckBox
             Left = 24
             Top = 3

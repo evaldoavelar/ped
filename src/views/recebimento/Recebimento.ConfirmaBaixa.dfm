@@ -3,10 +3,9 @@ inherited frmConfirmaBaixa: TfrmConfirmaBaixa
   Caption = 'Confirma Baixa'
   ClientHeight = 298
   ClientWidth = 335
-  OnCreate = FormCreate
   OnShow = FormShow
   ExplicitWidth = 341
-  ExplicitHeight = 323
+  ExplicitHeight = 327
   PixelsPerInch = 96
   TextHeight = 13
   object Panel1: TPanel

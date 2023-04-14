@@ -8,7 +8,7 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Cadastros.Base, Vcl.StdCtrls,
   Vcl.ComCtrls, Dominio.Entidades.TEntity, System.Generics.Collections,
   Dao.IDaoFornecedor, Dominio.Entidades.TFornecedor, Vcl.Mask, JvComponentBase, JvEnterTab,
-  System.Actions, Vcl.ActnList, Vcl.WinXCtrls, Vcl.Buttons, Vcl.ExtCtrls, Vcl.Imaging.jpeg,
+  System.Actions, Vcl.ActnList, Vcl.Buttons, Vcl.ExtCtrls, Vcl.Imaging.jpeg,
   Vcl.AutoComplete;
 
 type
@@ -82,7 +82,7 @@ implementation
 {$R *.dfm}
 
 
-uses Factory.Dao, Consulta.Fornecedor, Sistema.TLog, Factory.Entidades;
+uses Consulta.Fornecedor, Sistema.TLog, Factory.Entidades;
 
 procedure TfrmCadastroFornecedor.Excluir;
 begin

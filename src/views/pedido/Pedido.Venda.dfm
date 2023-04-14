@@ -49,7 +49,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
       Margins.Right = 0
       Margins.Bottom = 0
       ParentCustomHint = False
-      ActivePage = tsProduto
+      ActivePage = tsGeral
       Align = alClient
       BiDiMode = bdRightToLeftReadingOnly
       DoubleBuffered = False
@@ -68,10 +68,6 @@ object FrmPedidoVenda: TFrmPedidoVenda
       TabOrder = 1
       object tsGeral: TTabSheet
         Caption = 'tsGeral'
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object Image3: TImage
           Left = 0
           Top = 0
@@ -3341,6 +3337,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
             29633B3FF014E6580F9CF88379FA392709C3FCDFE9EE5ADF5182AB9F735AC389
             456878FF0092C4543FEDCA0C715AD462A8C731A83419C901A0BACF6C3950D78F
             F798D32FDF30A636043C5E73B8546FC6527FFFD9}
+          Stretch = True
           ExplicitLeft = 136
           ExplicitTop = 200
           ExplicitWidth = 105
@@ -3353,10 +3350,6 @@ object FrmPedidoVenda: TFrmPedidoVenda
         Margins.Bottom = 0
         Caption = 'tsPagamento'
         ImageIndex = 1
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object Label2: TLabel
           Left = 15
           Top = 168

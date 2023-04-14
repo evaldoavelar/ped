@@ -7,7 +7,7 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, untFrmBase, Vcl.StdCtrls, Vcl.Buttons,
   Vcl.Imaging.pngimage, Vcl.Imaging.jpeg, Vcl.ExtCtrls, Dominio.Entidades.CondicaoPagto,
   Dominio.Entidades.TPedido, System.Actions, Vcl.ActnList, Dominio.Entidades.TFormaPagto,
-  System.Generics.Collections, Factory.Dao,
+  System.Generics.Collections,
   Dominio.Entidades.Pedido.Pagamentos.Pagamento;
 
 type
@@ -92,7 +92,7 @@ implementation
 
 uses
   Helper.Currency,
-  Helpers.HelperString,
+
   Util.Funcoes,
   Pedido.Venda.Part.Pagamento,
   Pedido.Pagamento.Imagem,   Sistema.TLog,

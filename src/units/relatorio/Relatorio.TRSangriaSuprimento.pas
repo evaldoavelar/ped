@@ -4,7 +4,7 @@ interface
 
 uses
   ACBrUtil, System.SysUtils,
-  System.Generics.Collections, Dominio.Entidades.TSangriaSuprimento.Tipo,
+  Dominio.Entidades.TSangriaSuprimento.Tipo,
   Relatorio.TRBase, Data.DB, Dominio.Entidades.TSangriaSuprimento,
   Dominio.Entidades.TEmitente, Dominio.Entidades.TVendedor;
 

@@ -5,8 +5,8 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Dominio.Entidades.TEntity, System.Generics.Collections,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Cadastros.Base, JvComponentBase, JvEnterTab, System.Actions, Vcl.ActnList, Vcl.StdCtrls, Vcl.WinXCtrls, Vcl.Buttons, Vcl.ComCtrls,
-  Vcl.ExtCtrls, Factory.Dao, Dao.IDaoParceiro, Dominio.Entidades.TParceiro, Consulta.Parceiro,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Cadastros.Base, JvComponentBase, JvEnterTab, System.Actions, Vcl.ActnList, Vcl.StdCtrls, Vcl.Buttons, Vcl.ComCtrls,
+  Vcl.ExtCtrls, Dao.IDaoParceiro, Dominio.Entidades.TParceiro, Consulta.Parceiro,
   System.Bindings.Helper, Vcl.Imaging.jpeg, Vcl.AutoComplete;
 
 type

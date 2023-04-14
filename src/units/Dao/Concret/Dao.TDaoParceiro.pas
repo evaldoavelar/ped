@@ -34,7 +34,7 @@ type
 implementation
 
 uses
-  Util.Exceptions, Factory.Dao;
+  Util.Exceptions;
 
 { TDaoParceiro }
 
@@ -87,6 +87,7 @@ begin
         + 'update Parceiro '
         + '  set'
         + '     NOME = :NOME, '
+        + '     DATAALTERACAO = :DATAALTERACAO, '
         + '     INATIVO = :INATIVO '
         + 'where       '
         + '     CODIGO = :CODIGO ';
@@ -239,10 +240,12 @@ begin
       qry.SQL.Text := ''
         + 'INSERT INTO  Parceiro '
         + '            (CODIGO, '
+        + '             DATAALTERACAO,  '
         + '             NOME,  '
         + '             INATIVO) '
         + 'VALUES      (:CODIGO, '
         + '             :NOME,'
+        + '             :DATAALTERACAO,'
         + '             :INATIVO)';
 
       ValidaParceiro(Parceiro);
@@ -404,7 +407,7 @@ begin
   try
 
     EntityToParams(ds, Parceiro);
-    // ds.Params.ParamByName('PODEACESSARCADASTROParceiro').AsBoolean := Parceiro.PODEACESSARCADASTROParceiro;
+
   except
     on E: Exception do
     begin

@@ -4,13 +4,13 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, untFrmBase, Vcl.StdCtrls, Vcl.Buttons, Vcl.Mask,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, untFrmBase, Vcl.StdCtrls, Vcl.Buttons,
   JvExMask, JvToolEdit, JvBaseEdits, Vcl.ExtCtrls, Dominio.Entidades.TParceiro.FormaPagto,
-  Dao.IDaoParceiro.FormaPagto, Factory.Dao, System.Bindings.Helper,
-  Consulta.parceiro.FormaPagto, System.Generics.Collections,
+  Dao.IDaoParceiro.FormaPagto, Factory.Dao,
+  System.Generics.Collections,
   Dominio.Entidades.TParceiro, Dao.IDaoParceiro, JvComponentBase, JvEnterTab, parceiro.FramePagamento,
   Dominio.Entidades.TParceiroVenda, Dominio.Entidades.TParceiroVenda.Pagamentos, System.Actions, Vcl.ActnList,
-  IFactory.Dao;
+  IFactory.Dao, Vcl.Mask;
 
 type
   TFrmParceiroInfoPagto = class(TfrmBase)

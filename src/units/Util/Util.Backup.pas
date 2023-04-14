@@ -4,7 +4,7 @@ interface
 
 uses
   FireDAC.Stan.Def, FireDAC.Phys.IBWrapper, FireDAC.Stan.Intf, FireDAC.Phys,
-  FireDAC.Phys.IBBase, FireDAC.Phys.FBDef, FireDAC.Phys.FB;
+  FireDAC.Phys.FB;
 
   type
 

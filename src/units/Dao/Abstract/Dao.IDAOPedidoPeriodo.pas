@@ -2,7 +2,7 @@ unit Dao.IDAOPedidoPeriodo;
 
 interface
 
-uses System.Generics.Collections,Helper.TPedidoPeriodo;
+uses Helper.TPedidoPeriodo;
 
  type
 

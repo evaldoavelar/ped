@@ -6,9 +6,9 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
   System.Generics.Collections,
   System.Classes, Vcl.Graphics, System.DateUtils,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, untFrmBase, VclTee.TeeGDIPlus, VclTee.TeEngine, VclTee.Series, Vcl.ExtCtrls, VclTee.TeeProcs, VclTee.Chart,
-  Vcl.StdCtrls, Vcl.Mask, JvExMask, JvToolEdit, Vcl.Imaging.pngimage,
-  System.Threading, Vcl.ComCtrls;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, untFrmBase, VclTee.TeEngine, VclTee.Series, Vcl.ExtCtrls, VclTee.TeeProcs, VclTee.Chart,
+  Vcl.StdCtrls, JvExMask, JvToolEdit, Vcl.Imaging.pngimage,
+  System.Threading, Vcl.ComCtrls, VclTee.TeeGDIPlus, Vcl.Mask;
 
 type
   TfrmGraficoPedidos = class(TfrmBase)
@@ -52,7 +52,7 @@ implementation
 {$R *.dfm}
 
 
-uses Dao.IDAOPedidoPeriodo, Helper.TPedidoPeriodo, Factory.Dao, Util.Funcoes;
+uses Dao.IDAOPedidoPeriodo, Helper.TPedidoPeriodo, Util.Funcoes;
 
 procedure TfrmGraficoPedidos.Bind;
 var

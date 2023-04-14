@@ -3,14 +3,14 @@ unit Etiquetas.Modelo3x2;
 interface
 
 uses
-  System.Bindings.Helper, Dominio.Entidades.TProduto, System.Generics.Collections,
+  Dominio.Entidades.TProduto, System.Generics.Collections,
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, untFrmBase, Vcl.Mask, Vcl.StdCtrls,
-  Vcl.ActnList, Vcl.ComCtrls, Vcl.Buttons, Vcl.ExtCtrls, Utils.Rtti, Util.Funcoes,
-  ACBrPosPrinter, System.TypInfo, Dao.IDaoProdutos, Impressao.Etiquetas,
-  Dao.IDaoEmitente, Dominio.Entidades.TEmitente, Sistema.TParametros, Dao.IDaoParametros,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, untFrmBase, Vcl.StdCtrls,
+  Vcl.ActnList, Vcl.ComCtrls, Vcl.Buttons, Vcl.ExtCtrls, Util.Funcoes,
+  System.TypInfo, Dao.IDaoProdutos, Impressao.Etiquetas,
+  Dominio.Entidades.TEmitente, Sistema.TParametros,
   Data.Bind.Components, Data.Bind.EngExt, Vcl.Bind.DBEngExt, System.Actions,
-  Vcl.ExtDlgs, Vcl.Imaging.pngimage, JvExMask, JvToolEdit, Vcl.AutoComplete,
+  Vcl.Imaging.pngimage, JvExMask, JvToolEdit, Vcl.AutoComplete,
   frxClass;
 
 type
@@ -241,7 +241,7 @@ var
 
 implementation
 
-uses Factory.Dao, Vcl.Printers, System.StrUtils,
+uses Vcl.Printers,
   Consulta.Produto, Relatorio.FREtiquetas.Modelo3x2, Utils.ArrayUtil,
   Factory.Entidades;
 

@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, untFrmBase,
-  Dominio.Entidades.TParceiro, Dao.IDaoParceiro, Dominio.Entidades.TParceiroVenda,
+  Dominio.Entidades.TParceiroVenda,
   Dominio.Entidades.TParceiroVenda.Pagamentos, parceiro.FramePagamento, Vcl.StdCtrls, Vcl.Buttons, Vcl.ExtCtrls, Vcl.Imaging.jpeg;
 
 type

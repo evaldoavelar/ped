@@ -5,9 +5,10 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Consulta.Base, Data.DB, Vcl.DBGrids, JvExDBGrids, JvDBGrid, JvDBUltimGrid,
-  Vcl.StdCtrls, JvExControls, JvNavigationPane,
-  Factory.Dao, Dao.IDaoVendedor, Dominio.Entidades.TVendedor, System.Actions,
-  Vcl.ActnList, Vcl.Grids, Vcl.Buttons, Vcl.Imaging.jpeg, Vcl.ExtCtrls;
+  JvExControls, JvNavigationPane,
+  Dao.IDaoVendedor, Dominio.Entidades.TVendedor, System.Actions,
+  Vcl.ActnList, Vcl.Buttons, Vcl.Imaging.jpeg, Vcl.ExtCtrls, Vcl.StdCtrls,
+  Vcl.Grids;
 
 type
   TfrmConsultaVendedor = class(TfrmConsultaBase)

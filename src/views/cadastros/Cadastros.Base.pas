@@ -6,7 +6,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
   System.TypInfo, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, untFrmBase, Vcl.ExtCtrls, System.Actions,
-  Vcl.ActnList, Vcl.StdCtrls, Vcl.WinXCtrls, Vcl.Buttons, Vcl.ComCtrls,
+  Vcl.ActnList, Vcl.StdCtrls, Vcl.Buttons, Vcl.ComCtrls,
   JvComponentBase, JvEnterTab, Util.VclFuncoes, Vcl.Imaging.jpeg, Pedido.Venda.IPart,
   Vcl.AutoComplete, Dominio.Entidades.TEntity, System.Generics.Collections;
 
@@ -101,7 +101,7 @@ implementation
 {$R *.dfm}
 
 
-uses Util.Funcoes, Sistema.TLog;
+uses Sistema.TLog;
 
 procedure TfrmCadastroBase.ExibePart(aPart: IPart; aParent: TWinControl; aParams: array of TObject);
 begin

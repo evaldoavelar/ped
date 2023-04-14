@@ -43,6 +43,7 @@ type
       VencimentoPrimeiraParcela: TDate);
     function RetornaVencimentoParcela(data: TDate; dias: integer): TDate;
   public
+    [AutoInc('AUTOINC')]
     [PrimaryKey('PKPEDIDOPAGAMENTOS', 'SEQ,IDPEDIDO')]
     [campo('SEQ', tpINTEGER, 0, 0, True)]
     property SEQ: integer read FSEQ write SetSEQ;
@@ -54,6 +55,7 @@ type
     property CONDICAO: string read FCONDICAO write SetCONDICAO;
     [campo('IDCONDICAO', tpINTEGER, 0, 0, True)]
     property IDCONDICAO: integer read FIDCONDICAO write SetIDCONDICAO;
+    [IGNORE(true)]
     [campo('TIPO', tpINTEGER, 0, 0, True)]
     property TIPOPROXY: string read getTIPOPROXY;
     property TipoPagamento: TTipoPagto read getTipoPagamento write SetTipoPagamento;

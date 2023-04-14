@@ -37,7 +37,7 @@ implementation
 
 { TDaoParceiroFormaPagto }
 
-uses Factory.Dao, Util.Exceptions;
+uses Util.Exceptions;
 
 procedure TDaoParceiroFormaPagto.ExcluirParceiroFormaPagto(id: Integer);
 var
@@ -88,6 +88,7 @@ begin
         + 'update PARCEIROFORMAPAGTO '
         + '  set'
         + '     DESCRICAO = :DESCRICAO, '
+        + '     DATAALTERACAO = :DATAALTERACAO, '
         + '     COMISSAOPERCENTUAL = :COMISSAOPERCENTUAL '
         + 'where       '
         + '     id = :id ';
@@ -203,9 +204,11 @@ begin
         + 'INSERT INTO ParceiroFormaPagto '
         + '            (id, '
         + '             DESCRICAO, '
+        + '             DATAALTERACAO, '
         + '            COMISSAOPERCENTUAL) '
         + 'VALUES      (:id, '
         + '             :DESCRICAO, '
+        + '             :DATAALTERACAO, '
         + '            :COMISSAOPERCENTUAL )';
 
       ValidaForma(ParceiroFormaPagtos);

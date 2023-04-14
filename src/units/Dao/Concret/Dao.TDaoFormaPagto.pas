@@ -38,7 +38,7 @@ implementation
 
 { TDaoFormaPagto }
 
-uses Factory.Dao, Util.Exceptions, Dominio.Entidades.CondicaoPagto;
+uses Util.Exceptions, Dominio.Entidades.CondicaoPagto;
 
 constructor TDaoFormaPagto.Create(Connection: TFDConnection; aKeepConection: Boolean);
 begin
@@ -100,6 +100,7 @@ begin
         + 'update FORMAPAGTO '
         + '  set'
         + '     DESCRICAO = :DESCRICAO, '
+        + '     DATAALTERACAO = :DATAALTERACAO, '
         + '     TIPO = :TIPO '
         + 'where       '
         + '     id = :id ';
@@ -233,10 +234,12 @@ begin
         + '            (id, '
         + '             DESCRICAO, '
         + '             QUANTASVEZES, '
+        + '             DATAALTERACAO, '
         + '            TIPO ) '
         + 'VALUES      (:id, '
         + '             :DESCRICAO, '
         + '             :QUANTASVEZES, '
+        + '             :DATAALTERACAO, '
         + '            :TIPO )';
 
       ValidaForma(FormaPagtos);
@@ -448,16 +451,6 @@ procedure TDaoFormaPagto.ObjectToParams(ds: TFDQuery; FormaPagtos: TFormaPagto);
 begin
   try
     EntityToParams(ds, FormaPagtos);
-
-    // if ds.Params.FindParam('ID') <> nil then
-    // ds.Params.ParamByName('ID').AsInteger := FormaPagtos.id;
-    // if ds.Params.FindParam('DESCRICAO') <> nil then
-    // ds.Params.ParamByName('DESCRICAO').AsString := FormaPagtos.DESCRICAO;
-    // if ds.Params.FindParam('QUANTASVEZES') <> nil then
-    // ds.Params.ParamByName('QUANTASVEZES').AsInteger := FormaPagtos.QUANTASVEZES;
-    // if ds.Params.FindParam('JUROS') <> nil then
-    // ds.Params.ParamByName('JUROS').AsCurrency := FormaPagtos.JUROS;
-
   except
     on E: Exception do
     begin
@@ -472,12 +465,6 @@ begin
   try
     Result := TFormaPagto.Create();
     FieldsToEntity(ds, Result);
-
-    // Result.id := ds.FieldByName('ID').AsInteger;
-    // Result.DESCRICAO := ds.FieldByName('DESCRICAO').AsString;
-    // Result.QUANTASVEZES := ds.FieldByName('QUANTASVEZES').AsInteger;
-    // Result.JUROS := ds.FieldByName('JUROS').AsCurrency;
-
   except
     on E: Exception do
     begin

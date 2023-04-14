@@ -4,7 +4,7 @@ inherited FrmPagtoDetalhes: TFrmPagtoDetalhes
   ClientHeight = 470
   ClientWidth = 547
   ExplicitWidth = 553
-  ExplicitHeight = 498
+  ExplicitHeight = 499
   PixelsPerInch = 96
   TextHeight = 13
   object Panel1: TPanel
@@ -15,8 +15,6 @@ inherited FrmPagtoDetalhes: TFrmPagtoDetalhes
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 0
-    ExplicitTop = 55
-    ExplicitHeight = 372
     object Panel6: TPanel
       Left = 0
       Top = 253
@@ -29,7 +27,6 @@ inherited FrmPagtoDetalhes: TFrmPagtoDetalhes
       Color = 10639360
       ParentBackground = False
       TabOrder = 0
-      ExplicitTop = 261
       object Label14: TLabel
         AlignWithMargins = True
         Left = 390
@@ -73,7 +70,7 @@ inherited FrmPagtoDetalhes: TFrmPagtoDetalhes
         AlignWithMargins = True
         Left = 288
         Top = 13
-        Width = 128
+        Width = 125
         Height = 17
         Margins.Left = 25
         Margins.Top = 0
@@ -94,7 +91,7 @@ inherited FrmPagtoDetalhes: TFrmPagtoDetalhes
         AlignWithMargins = True
         Left = 288
         Top = 72
-        Width = 94
+        Width = 93
         Height = 13
         Margins.Left = 25
         Margins.Top = 0
@@ -163,7 +160,6 @@ inherited FrmPagtoDetalhes: TFrmPagtoDetalhes
       Color = 15066597
       ParentColor = False
       TabOrder = 1
-      ExplicitHeight = 261
       object Panel8: TPanel
         AlignWithMargins = True
         Left = 3
@@ -260,7 +256,7 @@ inherited FrmPagtoDetalhes: TFrmPagtoDetalhes
             Font.Style = [fsBold]
             ParentFont = False
             WordWrap = True
-            ExplicitWidth = 64
+            ExplicitWidth = 63
           end
         end
       end

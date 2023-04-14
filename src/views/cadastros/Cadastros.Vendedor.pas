@@ -8,8 +8,8 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Cadastros.Base,
   Vcl.StdCtrls, Vcl.ComCtrls, Dominio.Entidades.TEntity, System.Generics.Collections,
   Dao.IDaoVendedor, Dominio.Entidades.TVendedor, JvExMask, JvToolEdit, JvBaseEdits, JvComponentBase, JvEnterTab,
-  Vcl.Mask, System.Actions, Vcl.ActnList, Vcl.WinXCtrls, Vcl.Buttons,
-  Vcl.ExtCtrls, Vcl.Imaging.jpeg, Vcl.AutoComplete;
+  System.Actions, Vcl.ActnList, Vcl.Buttons,
+  Vcl.ExtCtrls, Vcl.Imaging.jpeg, Vcl.AutoComplete, Vcl.Mask;
 
 type
   TfrmCadastroVendedor = class(TfrmCadastroBase)
@@ -58,7 +58,7 @@ implementation
 {$R *.dfm}
 
 
-uses Factory.Dao, Consulta.Vendedor, Sistema.TLog, Factory.Entidades;
+uses Consulta.Vendedor, Sistema.TLog, Factory.Entidades;
 
 procedure TfrmCadastroVendedor.Excluir;
 begin

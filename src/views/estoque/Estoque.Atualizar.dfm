@@ -2,7 +2,6 @@ inherited FrmEstoqueAtualizar: TFrmEstoqueAtualizar
   Caption = 'Estoque'
   ClientHeight = 432
   ClientWidth = 760
-  OnDestroy = FormDestroy
   OnShow = FormShow
   ExplicitWidth = 776
   ExplicitHeight = 471

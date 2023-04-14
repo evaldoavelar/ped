@@ -7,7 +7,7 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, untFrmBase, Vcl.StdCtrls, Vcl.Buttons,
   Vcl.ExtCtrls, System.Actions, Vcl.ActnList,
   System.Generics.Collections, Dominio.Entidades.TParceiro,
-  Factory.Dao, Vcl.Imaging.pngimage;
+  Vcl.Imaging.pngimage;
 
 type
   TFrmPedidoInformaParceiroVenda = class(TfrmBase)

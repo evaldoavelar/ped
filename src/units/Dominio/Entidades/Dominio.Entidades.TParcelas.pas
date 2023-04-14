@@ -22,8 +22,10 @@ type
     FNOME: string;
     FVendedorRecebimento: TVendedor;
     FIDPAGTO: INTEGER;
+    FDATAALTERACAO: TDateTime;
     procedure SetVendedorRecebimento(const Value: TVendedor);
     procedure SetIDPAGTO(const Value: INTEGER);
+    procedure SetDATAALTERACAO(const Value: TDateTime);
 
   published
     [ForeignKeyAttribute('FK_PARCELAS_PAGTO', 'SEQPAGTO,IDPEDIDO', 'PEDIDOPAGAMENTO', 'SEQ,IDPEDIDO', Cascade, None)]
@@ -52,6 +54,9 @@ type
 
     [campo('CODVENRECEBIMENTO', tpVARCHAR, 10)]
     property VendedorRecebimento: TVendedor read FVendedorRecebimento write SetVendedorRecebimento;
+
+    [campo('DATAALTERACAO', tpTIMESTAMP)]
+    property DATAALTERACAO: TDateTime read FDATAALTERACAO write SetDATAALTERACAO;
 
   public
     constructor Create();
@@ -87,6 +92,11 @@ begin
   result.VENCIMENTO := pVENCIMENTO;
   result.CODCLIENTE := pCLIENTE;
   result.SEQPAGTO := pSEQ;
+end;
+
+procedure TParcelas.SetDATAALTERACAO(const Value: TDateTime);
+begin
+  FDATAALTERACAO := Value;
 end;
 
 procedure TParcelas.SetIDPAGTO(const Value: INTEGER);

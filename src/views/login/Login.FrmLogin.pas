@@ -40,14 +40,18 @@ type
     procedure edtCodigoExit(Sender: TObject);
     procedure actSairExecute(Sender: TObject);
     procedure btnBancoDeDadosClick(Sender: TObject);
+    procedure FormShow(Sender: TObject);
   private
     FVendedor: TVendedor;
     daoVendedor: IDaoVendedor;
+    FConfigurarDataBase: boolean;
     function getVendedor: TVendedor;
     procedure setVendedor(const Value: TVendedor);
+    procedure ConfiguraBancoDeDados;
     { Private declarations }
   public
     { Public declarations }
+    property ConfigurarDataBase: boolean read FConfigurarDataBase write FConfigurarDataBase;
     property Vendedor: TVendedor read getVendedor;
     procedure Login;
   end;
@@ -60,7 +64,7 @@ implementation
 {$R *.dfm}
 
 
-uses Factory.Dao, Configuracoes.Database;
+uses Configuracoes.Database, Sistema.TLog;
 
 procedure TfrmLogin.actLoginExecute(Sender: TObject);
 
@@ -77,6 +81,21 @@ begin
 end;
 
 procedure TfrmLogin.btnBancoDeDadosClick(Sender: TObject);
+begin
+  TLog.d('>>> Entrando em  TfrmLogin.btnBancoDeDadosClick ');
+  try
+    ConfiguraBancoDeDados;
+  except
+    on E: Exception do
+    begin
+      TLog.d(E.message);
+      MessageDlg(E.message, mtError, [mbOK], 0);
+    end;
+  end;
+  TLog.d('<<< Saindo de TfrmLogin.btnBancoDeDadosClick ');
+end;
+
+procedure TfrmLogin.ConfiguraBancoDeDados;
 var
   FrmConfiguracoesDatabase: TFrmConfiguracoesDatabase;
 begin
@@ -118,8 +137,26 @@ end;
 
 procedure TfrmLogin.FormCreate(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TfrmLogin.FormCreate ');
+  ActiveControl := nil;
   inherited;
-  daoVendedor := FFactory.daoVendedor;
+
+  TLog.d('<<< Saindo de TfrmLogin.FormCreate ');
+end;
+
+procedure TfrmLogin.FormShow(Sender: TObject);
+begin
+  inherited;
+  if not FConfigurarDataBase then
+  begin
+    daoVendedor := FFactory.daoVendedor;
+    try
+      edtCodigo.SetFocus;
+    except
+      on E: Exception do
+    end;
+
+  end;
 end;
 
 function TfrmLogin.getVendedor: TVendedor;
@@ -129,6 +166,7 @@ end;
 
 procedure TfrmLogin.Login;
 begin
+  TLog.d('>>> Entrando em  TfrmLogin.Login ');
   try
 
     if not Assigned(FVendedor) then
@@ -148,9 +186,11 @@ begin
   except
     on E: Exception do
     begin
-      MessageDlg(E.Message, mtError, [mbOK], 0);
+      TLog.d(E.message);
+      MessageDlg(E.message, mtError, [mbOK], 0);
     end;
   end;
+  TLog.d('<<< Saindo de TfrmLogin.Login ');
 end;
 
 procedure TfrmLogin.setVendedor(const Value: TVendedor);

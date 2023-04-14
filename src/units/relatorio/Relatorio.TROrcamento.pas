@@ -3,11 +3,11 @@ unit Relatorio.TROrcamento;
 interface
 
 uses
-  ACBrUtil, ACBrValidador, System.SysUtils, System.Generics.Collections,
+  ACBrUtil, System.SysUtils, System.Generics.Collections,
   Relatorio.TRBase,
   Dominio.Entidades.TOrcamento, Dominio.Entidades.TEmitente,
-  Dominio.Entidades.TParcelas,
-  Dominio.Entidades.TCliente, Dominio.Entidades.TItemOrcamento;
+
+  Dominio.Entidades.TItemOrcamento;
 
 type
 
@@ -27,7 +27,7 @@ implementation
 
 { TROrcamento }
 
-uses Util.Funcoes;
+
 
 procedure TROrcamento.ImprimeCupom(Emitente: TEmitente; Orcamento: TOrcamento);
 begin

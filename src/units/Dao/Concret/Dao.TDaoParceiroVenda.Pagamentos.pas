@@ -28,7 +28,7 @@ type
 
 implementation
 
-uses Factory.Dao, Util.Exceptions;
+uses Util.Exceptions;
 
 { TDaoParceiroVendaPagto }
 

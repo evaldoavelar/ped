@@ -2,7 +2,7 @@ object FrmPrincipal: TFrmPrincipal
   Left = 0
   Top = 0
   Caption = 'PED'
-  ClientHeight = 586
+  ClientHeight = 659
   ClientWidth = 908
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -12,30 +12,28 @@ object FrmPrincipal: TFrmPrincipal
   Font.Style = []
   KeyPreview = True
   Menu = mmPrincipal
-  OldCreateOrder = False
   Position = poScreenCenter
   OnActivate = FormActivate
   OnCreate = FormCreate
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 13
   object pnlContainer: TPanel
     Left = 0
     Top = 0
     Width = 908
-    Height = 586
+    Height = 659
     Align = alClient
     BevelOuter = bvNone
     ParentBackground = False
     TabOrder = 0
     DesignSize = (
       908
-      586)
+      659)
     object img1: TImage
-      Left = 50
+      Left = 205
       Top = 49
-      Width = 858
-      Height = 537
+      Width = 703
+      Height = 610
       Align = alClient
       Picture.Data = {
         0A544A504547496D61676533720600FFD8FFE000104A46494600010101012C01
@@ -13250,7 +13248,7 @@ object FrmPrincipal: TFrmPrincipal
     end
     object Image5: TImage
       Left = 0
-      Top = 499
+      Top = 572
       Width = 905
       Height = 87
       Anchors = [akLeft, akRight, akBottom]
@@ -13478,7 +13476,7 @@ object FrmPrincipal: TFrmPrincipal
     end
     object lblVencendo: TLabel
       Left = 564
-      Top = 518
+      Top = 591
       Width = 246
       Height = 13
       Cursor = crHandPoint
@@ -13497,10 +13495,11 @@ object FrmPrincipal: TFrmPrincipal
       OnClick = lblVencendoClick
       OnMouseMove = lblVencimentoMouseMove
       OnMouseLeave = lblVencimentoMouseLeave
+      ExplicitTop = 518
     end
     object lblVencimento: TLabel
       Left = 577
-      Top = 537
+      Top = 610
       Width = 241
       Height = 13
       Cursor = crHandPoint
@@ -13519,10 +13518,11 @@ object FrmPrincipal: TFrmPrincipal
       OnClick = lblVencimentoClick
       OnMouseMove = lblVencimentoMouseMove
       OnMouseLeave = lblVencimentoMouseLeave
+      ExplicitTop = 537
     end
     object lblBackup: TLabel
       Left = 733
-      Top = 556
+      Top = 629
       Width = 95
       Height = 13
       Cursor = crHandPoint
@@ -13537,10 +13537,11 @@ object FrmPrincipal: TFrmPrincipal
       ParentFont = False
       Transparent = True
       Visible = False
+      ExplicitTop = 556
     end
     object Image4: TImage
       Left = 816
-      Top = 505
+      Top = 578
       Width = 86
       Height = 81
       Anchors = [akRight, akBottom]
@@ -13741,6 +13742,29 @@ object FrmPrincipal: TFrmPrincipal
         634AA503429A0245101062A8ECE72D4C64DE93529180E9392DF6BA88B6AC886A
         1230E54EC49B9EA437413506183DB1A407A686921E981A4A7A606A28E981A9A1
         A407A686921E981A4AFF05BEDA6DED0285A0A90000000049454E44AE426082}
+      ExplicitTop = 505
+    end
+    object lblNotify: TLabel
+      Left = 653
+      Top = 64
+      Width = 246
+      Height = 13
+      Cursor = crHandPoint
+      Alignment = taRightJustify
+      Anchors = [akRight, akBottom]
+      AutoSize = False
+      Caption = 'Produtos'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = 4338980
+      Font.Height = -11
+      Font.Name = 'Segoe UI'
+      Font.Style = [fsBold]
+      ParentFont = False
+      Transparent = True
+      Visible = False
+      OnClick = lblVencendoClick
+      OnMouseMove = lblVencimentoMouseMove
+      OnMouseLeave = lblVencimentoMouseLeave
     end
     object pnlLicenca: TPanel
       Left = 88
@@ -13750,7 +13774,7 @@ object FrmPrincipal: TFrmPrincipal
       BevelOuter = bvNone
       Color = 2963905
       ParentBackground = False
-      TabOrder = 0
+      TabOrder = 6
       Visible = False
       OnClick = actInformaSerialExecute
       object lblLicenca: TLabel
@@ -13781,7 +13805,7 @@ object FrmPrincipal: TFrmPrincipal
       BevelOuter = bvNone
       Color = 16513014
       ParentBackground = False
-      TabOrder = 1
+      TabOrder = 0
       object pnlToolBarLeft: TPanel
         Left = 0
         Top = 0
@@ -14275,7 +14299,7 @@ object FrmPrincipal: TFrmPrincipal
           ParentFont = False
           Visible = False
         end
-        object Label1: TLabel
+        object lblCaixa: TLabel
           Left = 537
           Top = 11
           Width = 114
@@ -14302,23 +14326,22 @@ object FrmPrincipal: TFrmPrincipal
     object svMenuLateralEsquerdo: TSplitView
       Left = 0
       Top = 49
-      Width = 50
-      Height = 537
+      Width = 205
+      Height = 610
       CloseStyle = svcCompact
       Color = 10639360
-      Opened = False
       OpenedWidth = 205
       Placement = svpLeft
       TabOrder = 2
       OnClick = svMenuLateralEsquerdoClick
       DesignSize = (
-        50
-        537)
+        205
+        610)
       object catMenuItems: TCategoryButtons
-        Left = -3
+        Left = -1
         Top = -19
-        Width = 48
-        Height = 502
+        Width = 203
+        Height = 556
         Cursor = crHandPoint
         Anchors = [akLeft, akTop, akRight]
         BorderStyle = bsNone
@@ -14383,8 +14406,8 @@ object FrmPrincipal: TFrmPrincipal
       end
       object CategoryButtons5: TCategoryButtons
         Left = -22
-        Top = 626
-        Width = 70
+        Top = 699
+        Width = 225
         Height = 48
         Cursor = crHandPoint
         Anchors = [akLeft, akRight, akBottom]
@@ -14410,12 +14433,12 @@ object FrmPrincipal: TFrmPrincipal
         HotButtonColor = 1919766
         RegularButtonColor = clNone
         SelectedButtonColor = clNone
-        TabOrder = 1
+        TabOrder = 2
       end
       object CategoryButtons6: TCategoryButtons
         Left = -22
-        Top = 489
-        Width = 70
+        Top = 562
+        Width = 225
         Height = 48
         Cursor = crHandPoint
         Anchors = [akLeft, akRight, akBottom]
@@ -14442,24 +14465,25 @@ object FrmPrincipal: TFrmPrincipal
         Images = ilIconsMenu
         RegularButtonColor = clNone
         SelectedButtonColor = clNone
-        TabOrder = 2
+        TabOrder = 1
       end
     end
     object svSubMenu: TSplitView
       Left = 0
       Top = 49
-      Width = 350
-      Height = 537
+      Width = 0
+      Height = 610
       Color = 9785856
       DisplayMode = svmOverlay
+      Opened = False
       OpenedWidth = 350
       Placement = svpLeft
-      TabOrder = 3
+      TabOrder = 1
       object pgcMenu: TPageControl
         Left = 0
         Top = 0
-        Width = 350
-        Height = 537
+        Width = 0
+        Height = 610
         ActivePage = tsEtiquetas
         Align = alClient
         Style = tsButtons
@@ -14467,8 +14491,8 @@ object FrmPrincipal: TFrmPrincipal
         object tsCadastro: TTabSheet
           Caption = 'tsCadastro'
           DesignSize = (
-            342
-            506)
+            0
+            579)
           object catbtnCadastros: TCategoryButtons
             Left = 2
             Top = -25
@@ -14525,8 +14549,8 @@ object FrmPrincipal: TFrmPrincipal
           Caption = 'tsRelatorios'
           ImageIndex = 1
           DesignSize = (
-            342
-            506)
+            0
+            579)
           object CategoryButtons4: TCategoryButtons
             Left = 1
             Top = -21
@@ -14585,8 +14609,8 @@ object FrmPrincipal: TFrmPrincipal
           Caption = 'tsVenda'
           ImageIndex = 2
           DesignSize = (
-            342
-            506)
+            0
+            579)
           object CategoryButtons2: TCategoryButtons
             Left = 3
             Top = -24
@@ -14644,8 +14668,8 @@ object FrmPrincipal: TFrmPrincipal
           Caption = 'tsConfiguracoes'
           ImageIndex = 3
           DesignSize = (
-            342
-            506)
+            0
+            579)
           object CategoryButtons3: TCategoryButtons
             Left = -6
             Top = -21
@@ -14687,8 +14711,8 @@ object FrmPrincipal: TFrmPrincipal
           Caption = 'tsCaixa'
           ImageIndex = 4
           DesignSize = (
-            342
-            506)
+            0
+            579)
           object CategoryButtons1: TCategoryButtons
             Left = 1
             Top = -25
@@ -14731,8 +14755,8 @@ object FrmPrincipal: TFrmPrincipal
           Caption = 'tsEstoque'
           ImageIndex = 5
           DesignSize = (
-            342
-            506)
+            0
+            579)
           object CategoryButtons7: TCategoryButtons
             Left = -4
             Top = -33
@@ -14775,8 +14799,8 @@ object FrmPrincipal: TFrmPrincipal
           Caption = 'tsEtiquetas'
           ImageIndex = 6
           DesignSize = (
-            342
-            506)
+            0
+            579)
           object CategoryButtons8: TCategoryButtons
             Left = 0
             Top = -21
@@ -14820,7 +14844,7 @@ object FrmPrincipal: TFrmPrincipal
       Left = 908
       Top = 49
       Width = 0
-      Height = 537
+      Height = 610
       Color = 15329769
       DisplayMode = svmOverlay
       Opened = False
@@ -14832,13 +14856,13 @@ object FrmPrincipal: TFrmPrincipal
         Left = 3
         Top = 76
         Width = 0
-        Height = 458
+        Height = 531
         Align = alClient
         BevelOuter = bvNone
         Padding.Left = 20
         ParentBackground = False
         ParentColor = True
-        TabOrder = 0
+        TabOrder = 1
       end
       object Panel1: TPanel
         Left = 0
@@ -14847,7 +14871,7 @@ object FrmPrincipal: TFrmPrincipal
         Height = 73
         Align = alTop
         BevelOuter = bvNone
-        TabOrder = 1
+        TabOrder = 0
         object Label35: TLabel
           AlignWithMargins = True
           Left = 20
@@ -15253,15 +15277,16 @@ object FrmPrincipal: TFrmPrincipal
       ImageIndex = 61
       OnExecute = actEtiquetasModelo4x2Execute
     end
+    object actImportar: TAction
+      Category = 'Menu'
+      Caption = 'Importar Cadastros'
+      ImageIndex = 20
+      OnExecute = actImportarExecute
+    end
   end
   object FDIBBackup: TFDIBBackup
-    DriverLink = FDPhysFBDriverLink1
     Left = 208
     Top = 232
-  end
-  object FDPhysFBDriverLink1: TFDPhysFBDriverLink
-    Left = 256
-    Top = 168
   end
   object ilIconsMenu: TImageList
     ColorDepth = cd32Bit
@@ -23737,5 +23762,9 @@ object FrmPrincipal: TFrmPrincipal
     object mniSair: TMenuItem
       Action = actSair
     end
+  end
+  object FDPhysFBDriverLink1: TFDPhysFBDriverLink
+    Left = 448
+    Top = 344
   end
 end

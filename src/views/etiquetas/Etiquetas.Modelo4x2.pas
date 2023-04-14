@@ -92,7 +92,7 @@ var
 
 implementation
 
-uses Factory.Dao, Vcl.Printers, System.StrUtils,
+uses Vcl.Printers,
   Consulta.Produto, Relatorio.FREtiquetas.Modelo4x2, Utils.ArrayUtil,
   Util.Funcoes, Factory.Entidades;
 

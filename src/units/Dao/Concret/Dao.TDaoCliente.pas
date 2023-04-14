@@ -33,7 +33,7 @@ type
 implementation
 
 uses
-  Util.Exceptions, Factory.Dao, Util.Funcoes, Sistema.TLog;
+  Util.Exceptions, Util.Funcoes, Sistema.TLog;
 
 { TDaoVendedor }
 
@@ -86,6 +86,7 @@ begin
         + '       local = :LOCAL, '
         + '       profissao = :PROFISSAO, '
         + '       conjuge = :CONJUGE, '
+        + '       DATAALTERACAO = :DATAALTERACAO, '
         + '       bloqueado = :BLOQUEADO '
         + 'WHERE  codigo = :CODIGO';
 
@@ -320,6 +321,7 @@ begin
         + '             local, '
         + '             profissao, '
         + '             conjuge, '
+        + '             DATAALTERACAO, '
         + '             bloqueado) '
         + 'VALUES      (:CODIGO, '
         + '             :NOME, '
@@ -359,6 +361,7 @@ begin
         + '             :LOCAL, '
         + '             :PROFISSAO, '
         + '             :CONJUGE, '
+        + '             :DATAALTERACAO, '
         + '             :BLOQUEADO);';
 
       ValidaCliente(Cliente);

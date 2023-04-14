@@ -7,7 +7,7 @@ uses
   Relatorio.TRBase,
   Dominio.Entidades.TPedido, Dominio.Entidades.TEmitente, Dominio.Entidades.Pedido.Pagamentos.Pagamento,
   Dominio.Entidades.TItemPedido, Dominio.Entidades.TParcelas,
-  Dominio.Entidades.TCliente, Pedido.Pagamento;
+  Dominio.Entidades.TCliente;
 
 type
 

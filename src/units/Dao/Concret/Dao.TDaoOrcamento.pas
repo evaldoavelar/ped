@@ -8,7 +8,7 @@ uses
   Data.DB, FireDAC.Comp.Client, Dao.IDaoOrcamento,
   Dao.TDaoBase, Sistema.TLog,
   Dominio.Entidades.TItemOrcamento, Dominio.Entidades.TOrcamento, Util.Exceptions,
-  Util.Funcoes, Dao.TDaoItemOrcamento, Dao.TDaoVendedor;
+  Dao.TDaoItemOrcamento, Dao.TDaoVendedor;
 
 type
 
@@ -37,7 +37,7 @@ type
 
 implementation
 
-uses Factory.Dao;
+
 { TDaoOrcamento }
 
 procedure TDaoOrcamento.AtualizaStatus(Orcamento: TOrcamento);
@@ -98,6 +98,7 @@ begin
       + '       cliente = :CLIENTE, '
       + '       telefone = :TELEFONE, '
       + '       HORAOrcamento = :HORAOrcamento, '
+      + '       DATAALTERACAO = :DATAALTERACAO, '
       + '       STATUS = :STATUS '
       + 'WHERE  id = :id';
 
@@ -145,7 +146,9 @@ begin
       + '       DATAVENCIMENTO = :DATAVENCIMENTO, '
       + '       OBSERVACAO =:OBSERVACAO,'
       + '       cliente = :cliente, '
+      + '       DATAALTERACAO = :DATAALTERACAO, '
       + '       TELEFONE = :TELEFONE '
+
       + 'WHERE  id = :id';
 
     ObjectToParams(qry, Orcamento);
@@ -337,6 +340,7 @@ begin
       + '             codven, '
       + '             cliente, '
       + '             TELEFONE, '
+      + '             DATAALTERACAO, '
       + '             horaOrcamento) '
       + 'VALUES      ( :ID, '
       + '              :NUMERO, '
@@ -349,6 +353,7 @@ begin
       + '              :CODVEN, '
       + '              :CLIENTE, '
       + '              :TELEFONE,'
+      + '              :DATAALTERACAO,'
       + '              :HORAOrcamento)';
 
     ObjectToParams(qry, Orcamento);
@@ -399,7 +404,8 @@ begin
       ds.Params.ParamByName('VOLUME').AsFloat := Orcamento.Volume;
     if ds.Params.FindParam('DATAVENCIMENTO') <> nil then
       ds.Params.ParamByName('DATAVENCIMENTO').AsDate := Orcamento.DATAVENCIMENTO;
-
+    if ds.Params.FindParam('DATAALTERACAO') <> nil then
+      ds.Params.ParamByName('DATAALTERACAO').AsDate := Orcamento.DATAALTERACAO;
   except
     on E: Exception do
     begin
@@ -437,6 +443,7 @@ begin
     Result.AssignedItens(DaoItensOrcamento.GeTItemsOrcamento(Result.id));
     // Result.Volume := ds.FieldByName('STATUS').AsFloat;
     Result.DATAVENCIMENTO := ds.FieldByName('DATAVENCIMENTO').AsDateTime;
+    Result.DATAALTERACAO := ds.FieldByName('DATAALTERACAO').AsDateTime;
 
     FreeAndNil(DaoVendedor);
     FreeAndNil(DaoItensOrcamento);

@@ -26,7 +26,7 @@ implementation
 
 { TDaoEmitente }
 
-uses Factory.Dao, Util.Exceptions;
+uses Util.Exceptions;
 
 procedure TDaoEmitente.AtualizaEmitente(Emitente: TEmitente);
 var
@@ -53,6 +53,7 @@ begin
         + '       im = :IM, '
         + '       telefone = :TELEFONE, '
         + '       fax = :FAX, '
+        + '       DATAALTERACAO = :DATAALTERACAO, '
         + '       email = :EMAIL';
 
       ObjectToParams(qry, Emitente);
@@ -158,6 +159,7 @@ begin
         + '             im, '
         + '             telefone, '
         + '             fax, '
+        + '             DATAALTERACAO, '
         + '             email) '
         + 'VALUES      ( :RAZAO_SOCIAL, '
         + '              :FANTASIA, '
@@ -174,6 +176,7 @@ begin
         + '              :IM, '
         + '              :TELEFONE, '
         + '              :FAX, '
+        + '              :DATAALTERACAO, '
         + '              :EMAIL )';
 
       ObjectToParams(qry, Emitente);
@@ -198,39 +201,6 @@ procedure TDaoEmitente.ObjectToParams(ds: TFDQuery; Emitente: TEmitente);
 begin
   try
     EntityToParams(ds, Emitente);
-
-    // if ds.Params.FindParam('RAZAO_SOCIAL') <> nil then
-    // ds.Params.ParamByName('RAZAO_SOCIAL').AsString := Emitente.RAZAO_SOCIAL;
-    // if ds.Params.FindParam('FANTASIA') <> nil then
-    // ds.Params.ParamByName('FANTASIA').AsString := Emitente.FANTASIA;
-    // if ds.Params.FindParam('RESPONSAVEL') <> nil then
-    // ds.Params.ParamByName('RESPONSAVEL').AsString := Emitente.RESPONSAVEL;
-    // if ds.Params.FindParam('ENDERECO') <> nil then
-    // ds.Params.ParamByName('ENDERECO').AsString := Emitente.ENDERECO;
-    // if ds.Params.FindParam('COMPLEMENTO') <> nil then
-    // ds.Params.ParamByName('COMPLEMENTO').AsString := Emitente.COMPLEMENTO;
-    // if ds.Params.FindParam('NUM') <> nil then
-    // ds.Params.ParamByName('NUM').AsString := Emitente.NUM;
-    // if ds.Params.FindParam('BAIRRO') <> nil then
-    // ds.Params.ParamByName('BAIRRO').AsString := Emitente.BAIRRO;
-    // if ds.Params.FindParam('CIDADE') <> nil then
-    // ds.Params.ParamByName('CIDADE').AsString := Emitente.CIDADE;
-    // if ds.Params.FindParam('UF') <> nil then
-    // ds.Params.ParamByName('UF').AsString := Emitente.UF;
-    // if ds.Params.FindParam('CEP') <> nil then
-    // ds.Params.ParamByName('CEP').AsString := Emitente.CEP;
-    // if ds.Params.FindParam('CNPJ') <> nil then
-    // ds.Params.ParamByName('CNPJ').AsString := Emitente.CNPJ;
-    // if ds.Params.FindParam('IE') <> nil then
-    // ds.Params.ParamByName('IE').AsString := Emitente.IE;
-    // if ds.Params.FindParam('IM') <> nil then
-    // ds.Params.ParamByName('IM').AsString := Emitente.IM;
-    // if ds.Params.FindParam('TELEFONE') <> nil then
-    // ds.Params.ParamByName('TELEFONE').AsString := Emitente.TELEFONE;
-    // if ds.Params.FindParam('FAX') <> nil then
-    // ds.Params.ParamByName('FAX').AsString := Emitente.FAX;
-    // if ds.Params.FindParam('EMAIL') <> nil then
-    // ds.Params.ParamByName('EMAIL').AsString := Emitente.EMAIL;
   except
     on E: Exception do
     begin
@@ -245,23 +215,6 @@ begin
   try
     Result := TEmitente.Create();
     FieldsToEntity(ds, Result);
-
-    // Result.RAZAO_SOCIAL := ds.FieldByName('RAZAO_SOCIAL').AsString;
-    // Result.FANTASIA := ds.FieldByName('FANTASIA').AsString;
-    // Result.RESPONSAVEL := ds.FieldByName('RESPONSAVEL').AsString;
-    // Result.ENDERECO := ds.FieldByName('ENDERECO').AsString;
-    // Result.COMPLEMENTO := ds.FieldByName('COMPLEMENTO').AsString;
-    // Result.NUM := ds.FieldByName('NUM').AsString;
-    // Result.BAIRRO := ds.FieldByName('BAIRRO').AsString;
-    // Result.CIDADE := ds.FieldByName('CIDADE').AsString;
-    // Result.UF := ds.FieldByName('UF').AsString;
-    // Result.CEP := ds.FieldByName('CEP').AsString;
-    // Result.CNPJ := ds.FieldByName('CNPJ').AsString;
-    // Result.IE := ds.FieldByName('IE').AsString;
-    // Result.IM := ds.FieldByName('IM').AsString;
-    // Result.TELEFONE := ds.FieldByName('TELEFONE').AsString;
-    // Result.FAX := ds.FieldByName('FAX').AsString;
-    // Result.EMAIL := ds.FieldByName('EMAIL').AsString;
   except
     on E: Exception do
     begin

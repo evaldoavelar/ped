@@ -200,7 +200,20 @@ uses
   IFactory.Dao in 'units\Factorys\Abstract\IFactory.Dao.pas',
   IFactory.Entidades in 'units\Factorys\Abstract\IFactory.Entidades.pas',
   Factory.Entidades in 'units\Factorys\Concret\Factory.Entidades.pas',
-  Sistema.Constantes in 'units\Sistema\Sistema.Constantes.pas';
+  Sistema.Constantes in 'units\Sistema\Sistema.Constantes.pas',
+  Facades.Abstract.Importar in 'units\Facades\Abstract\Facades.Abstract.Importar.pas',
+  Facades.Abstract.Exportar in 'units\Facades\Abstract\Facades.Abstract.Exportar.pas',
+  Facade.Concret.Importar in 'units\Facades\Concret\Facade.Concret.Importar.pas',
+  Facade.Concret.Exportar in 'units\Facades\Concret\Facade.Concret.Exportar.pas',
+  Dominio.Entidades.TImportacao in 'units\Dominio\Entidades\Dominio.Entidades.TImportacao.pas',
+  Dao.TImportacao in 'units\Dao\Concret\Dao.TImportacao.pas',
+  Dao.IDaoImportacao in 'units\Dao\Abstract\Dao.IDaoImportacao.pas',
+  Dominio.Mapeamento.Atributos.Funcoes in 'units\Dominio\Mapeamento\Dominio.Mapeamento.Atributos.Funcoes.pas',
+  Facades.Abstract.Observer in 'units\Facades\Abstract\Facades.Abstract.Observer.pas',
+  Facades.Abstract.Observable in 'units\Facades\Abstract\Facades.Abstract.Observable.pas',
+  Sistema.Parametros.PontoVenda in 'units\Sistema\Sistema.Parametros.PontoVenda.pas',
+  Dao.IDaoPontoVenda in 'units\Dao\Abstract\Dao.IDaoPontoVenda.pas',
+  Dao.TDaoPontoVenda in 'units\Dao\Concret\Dao.TDaoPontoVenda.pas';
 
 {$R *.res}
 
@@ -211,11 +224,11 @@ var
 begin
 
   Mutex := CreateMutex(nil, True, 'PED');
-  if (Mutex = 0) or (GetLastError = ERROR_ALREADY_EXISTS) then
-  begin
-    MessageDlg('Você não pode executar outra cópia do aplicativo', mtInformation, [mbOK], 0);
-  end
-  else
+//  if (Mutex = 0) or (GetLastError = ERROR_ALREADY_EXISTS) then
+//  begin
+//    MessageDlg('Você não pode executar outra cópia do aplicativo', mtInformation, [mbOK], 0);
+//  end
+ // else
   begin
     Application.Initialize;
     Application.MainFormOnTaskbar := True;

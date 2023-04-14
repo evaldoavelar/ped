@@ -5,8 +5,8 @@ interface
 uses
   System.Generics.Collections,
   System.SysUtils, System.Classes, Data.DB,
-  Dao.TDaoBase, Sistema.TLog,
-  Dominio.Entidades.TParceiro.FormaPagto, Dominio.Entidades.TParceiroVenda;
+  Sistema.TLog,
+  Dominio.Entidades.TParceiroVenda;
 
 type
 

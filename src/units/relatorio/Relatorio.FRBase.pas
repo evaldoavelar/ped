@@ -3,8 +3,8 @@ unit Relatorio.FRBase;
 interface
 
 uses
-  SysUtils, Classes, Forms, DB, DBClient, Graphics,
-  frxClass, frxExportPDF, frxDBSet, frxBarcode;
+  SysUtils, Classes, Forms, DB, Graphics,
+  frxClass, frxExportPDF, frxBarcode;
 
 type
 

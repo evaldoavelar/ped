@@ -5,9 +5,9 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Cadastros.Base, JvComponentBase, JvEnterTab,
-  System.Actions, Vcl.ActnList, Vcl.StdCtrls, Vcl.WinXCtrls, Vcl.Buttons,
+  System.Actions, Vcl.ActnList, Vcl.StdCtrls, Vcl.Buttons,
   Vcl.ComCtrls, Vcl.ExtCtrls, Dominio.Entidades.TParceiro.FormaPagto, System.Generics.Collections,
-  Dao.IDaoParceiro.FormaPagto, Factory.Dao, Vcl.Mask, JvExMask, JvToolEdit, JvBaseEdits,
+  Dao.IDaoParceiro.FormaPagto, JvExMask, JvToolEdit, JvBaseEdits,
   System.Bindings.Helper, Consulta.Parceiro.FormaPagto, Vcl.Imaging.jpeg,
   Vcl.AutoComplete, Dominio.Entidades.TEntity;
 

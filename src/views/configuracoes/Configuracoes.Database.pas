@@ -43,7 +43,7 @@ var
 implementation
 
 uses
-  System.Bindings.Helper, Factory.Dao, Sistema.TLog;
+  System.Bindings.Helper, Factory.Dao, Sistema.TLog, Factory.Entidades;
 
 {$R *.dfm}
 
@@ -91,6 +91,12 @@ begin
   fFactory
     .DaoParametrosBancoDeDados
     .Salvar(FBancoDeDados);
+
+  TFactoryEntidades.SetParametros(
+    fFactory
+    .DaoParametros
+    .GetParametros
+    );
   close;
   TLog.d('<<< Saindo de TFrmConfiguracoesDatabase.btnOkClick ');
 end;

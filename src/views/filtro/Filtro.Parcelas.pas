@@ -4,10 +4,10 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, System.Threading, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Data.DB, Vcl.ExtCtrls, Vcl.Mask, JvExMask, JvToolEdit, System.Actions, Vcl.ActnList, Vcl.Grids,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Data.DB, Vcl.ExtCtrls, JvExMask, JvToolEdit, System.Actions, Vcl.ActnList, Vcl.Grids,
   Vcl.DBGrids, JvExDBGrids, JvDBGrid, JvDBUltimGrid, Vcl.StdCtrls, Vcl.Buttons, JvExControls, JvNavigationPane,
-  Dao.IDaoParcelas, Vcl.Imaging.pngimage, Filtro.Base, Consulta.Base,
-  Vcl.Imaging.jpeg;
+  Dao.IDaoParcelas, Vcl.Imaging.pngimage, Filtro.Base,
+  Vcl.Imaging.jpeg, Vcl.Mask;
 
 type
   TfrmFiltroParcelas = class(TfrmFiltroBase)
@@ -63,7 +63,7 @@ var
 
 implementation
 
-uses Relatorio.TRParcelas, Factory.Dao, Dominio.Entidades.TPedido, Recebimento.DetalhesPedido, Dao.IDaoPedido, Recebimento.ConfirmaBaixa,
+uses Relatorio.TRParcelas, Dominio.Entidades.TPedido, Recebimento.DetalhesPedido,
   Recebimento.Recebe, Sistema.TLog, Factory.Entidades;
 
 procedure TfrmFiltroParcelas.actDetalhesExecute(Sender: TObject);

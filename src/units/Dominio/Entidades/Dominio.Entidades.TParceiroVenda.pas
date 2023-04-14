@@ -30,6 +30,7 @@ type
     FSTATUS: string;
     FVendedorCancelamento: TVendedor;
     FDATACANCELAMENTO: TDate;
+    FDATAALTERACAO: TDateTime;
     procedure SetCOMISSAOP(const Value: currency);
     procedure SetDATA(const Value: TDate);
     procedure SetID(const Value: Integer);
@@ -44,8 +45,9 @@ type
     procedure SetSTATUS(const Value: string);
     procedure SetDATACANCELAMENTO(const Value: TDate);
     procedure SetVendedorCancelamento(const Value: TVendedor);
+    procedure SetDATAALTERACAO(const Value: TDateTime);
   public
-
+    [AutoInc('AUTOINC')]
     [campo('ID', tpINTEGER, 0, 0, True)]
     [PrimaryKey('PKPARCEIROVENDA', 'ID')]
     property ID: Integer read FID write SetID;
@@ -81,9 +83,11 @@ type
     [campo('CODVENCANCELAMENTO', tpVARCHAR, 10)]
     property VendedorCancelamento: TVendedor read FVendedorCancelamento write SetVendedorCancelamento;
 
-
     [campo('DATACANCELAMENTO', tpDATE)]
     property DATACANCELAMENTO: TDate read FDATACANCELAMENTO write SetDATACANCELAMENTO;
+
+    [campo('DATAALTERACAO', tpTIMESTAMP)]
+    property DATAALTERACAO: TDateTime read FDATAALTERACAO write SetDATAALTERACAO;
 
     property OnAddParceiro: TOnAddParceiro read FOnAddParceiro write FOnAddParceiro;
     property OnAddPgamento: TOnAddPgamento read FOnAddPgamento write FOnAddPgamento;
@@ -252,6 +256,11 @@ end;
 procedure TParceiroVenda.SetDATA(const Value: TDate);
 begin
   FDATA := Value;
+end;
+
+procedure TParceiroVenda.SetDATAALTERACAO(const Value: TDateTime);
+begin
+  FDATAALTERACAO := Value;
 end;
 
 procedure TParceiroVenda.SetDATACANCELAMENTO(const Value: TDate);

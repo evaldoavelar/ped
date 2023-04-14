@@ -4,9 +4,10 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Consulta.Base, Data.DB, System.Actions, Vcl.ActnList, Vcl.Grids, Vcl.DBGrids, JvExDBGrids, JvDBGrid, JvDBUltimGrid, Vcl.StdCtrls,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Consulta.Base, Data.DB, System.Actions, Vcl.ActnList, Vcl.DBGrids, JvExDBGrids, JvDBGrid, JvDBUltimGrid,
   Vcl.Buttons, JvExControls,
-  JvNavigationPane, Dao.IDaoParceiro.FormaPagto, Dominio.Entidades.TParceiro.FormaPagto, Vcl.Imaging.jpeg, Vcl.ExtCtrls;
+  JvNavigationPane, Dao.IDaoParceiro.FormaPagto, Dominio.Entidades.TParceiro.FormaPagto, Vcl.Imaging.jpeg, Vcl.ExtCtrls,
+  Vcl.StdCtrls, Vcl.Grids;
 
 type
   TFrmConsultaFormaPagtoParceiro = class(TfrmConsultaBase)
@@ -34,7 +35,7 @@ implementation
 {$R *.dfm}
 
 
-uses Factory.Dao, Sistema.TLog;
+uses Sistema.TLog;
 
 procedure TFrmConsultaFormaPagtoParceiro.FormCreate(Sender: TObject);
 begin

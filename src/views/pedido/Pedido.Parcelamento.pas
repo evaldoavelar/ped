@@ -8,7 +8,7 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, untFrmBase, Vcl.StdCtrls, Vcl.Mask, JvExMask, JvToolEdit, JvBaseEdits, Vcl.ExtCtrls, Vcl.Buttons,
   JvExStdCtrls, JvEdit, JvValidateEdit, JvMaskEdit, JvCheckedMaskEdit, JvDatePickerEdit, Vcl.ActnList,
   Dao.IDaoFormaPagto,
-  Dominio.Entidades.TPedido, Dominio.Entidades.TParcelas, Dominio.Entidades.TFormaPagto, Factory.Dao,
+  Dominio.Entidades.TPedido, Dominio.Entidades.TParcelas, Dominio.Entidades.TFormaPagto,
   System.Actions, Vcl.Imaging.jpeg, Util.VclFuncoes, Vcl.Imaging.pngimage,
   Dominio.Entidades.Pedido.Pagamentos.Pagamento;
 

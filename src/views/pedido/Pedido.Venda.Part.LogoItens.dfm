@@ -1,20 +1,23 @@
 object PedidoVendaPartLogoItens: TPedidoVendaPartLogoItens
   Left = 0
   Top = 0
-  Width = 440
-  Height = 416
+  Width = 888
+  Height = 722
+  Align = alClient
   Color = 15790320
   ParentBackground = False
   ParentColor = False
   TabOrder = 0
+  ExplicitWidth = 440
+  ExplicitHeight = 416
   object Image1: TImage
     AlignWithMargins = True
     Left = 3
     Top = 30
-    Width = 434
-    Height = 283
+    Width = 882
+    Height = 689
     Margins.Top = 30
-    Align = alTop
+    Align = alClient
     Center = True
     Picture.Data = {
       0954506E67496D61676589504E470D0A1A0A0000000D49484452000001800000
@@ -798,5 +801,6 @@ object PedidoVendaPartLogoItens: TPedidoVendaPartLogoItens
       82E05044000441101C8A08802008824311011004417028FF0F2D5DE45835D66B
       060000000049454E44AE426082}
     ExplicitWidth = 730
+    ExplicitHeight = 283
   end
 end

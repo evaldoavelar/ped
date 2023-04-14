@@ -75,7 +75,7 @@ implementation
 {$R *.dfm}
 
 
-uses Helper.TBindGrid, Util.Funcoes, Consulta.Cliente, Factory.Dao, Sistema.TLog,
+uses Helper.TBindGrid, Consulta.Cliente, Factory.Dao, Sistema.TLog,
   Recebimento.ConfirmaBaixa, Recebimento.DetalhesPedido, Dominio.Entidades.TPedido,
   Factory.Entidades;
 

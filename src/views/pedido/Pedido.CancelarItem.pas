@@ -41,7 +41,7 @@ implementation
 {$R *.dfm}
 
 
-uses Util.Funcoes;
+
 
 procedure TFrmCancelarItem.actCancelarExecute(Sender: TObject);
 begin

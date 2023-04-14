@@ -8,8 +8,8 @@ uses
   JvExMask, JvToolEdit, Vcl.ExtCtrls, System.Actions, Vcl.ActnList, Vcl.Grids,
   Vcl.DBGrids, JvExDBGrids, JvDBGrid, JvDBUltimGrid, Vcl.StdCtrls, Vcl.Buttons,
   JvExControls, JvNavigationPane, Filtro.Base, System.Generics.Collections,
-  Dao.IDaoPedido, Vcl.Mask, Vcl.Imaging.pngimage, Vcl.Imaging.jpeg,
-  Consulta.Base, Dominio.Entidades.TParcelas;
+  Dao.IDaoPedido, Vcl.Imaging.pngimage, Vcl.Imaging.jpeg,
+  Dominio.Entidades.TParcelas, Vcl.Mask;
 
 type
   TfrmFiltroPedidos = class(TfrmFiltroBase)
@@ -63,7 +63,7 @@ implementation
 {$R *.dfm}
 
 
-uses Factory.Dao, Util.Funcoes, Recebimento.DetalhesPedido, Dominio.Entidades.TPedido, Relatorio.TRPedido,
+uses Recebimento.DetalhesPedido, Dominio.Entidades.TPedido, Relatorio.TRPedido,
   Sistema.TLog, Factory.Entidades;
 
 procedure TfrmFiltroPedidos.Pesquisar;

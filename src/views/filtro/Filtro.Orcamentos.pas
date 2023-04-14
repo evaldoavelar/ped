@@ -5,12 +5,12 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Filtro.Base, Data.DB, System.Actions, Vcl.ActnList, JvExControls, JvNavigationPane, Vcl.Grids, Vcl.DBGrids, JvExDBGrids, JvDBGrid,
-  JvDBUltimGrid, Vcl.Mask, System.DateUtils, System.Types,
+  JvDBUltimGrid, System.DateUtils, System.Types,
   JvExMask, JvToolEdit, Vcl.StdCtrls, Vcl.Buttons, Vcl.Imaging.pngimage, Vcl.Imaging.jpeg, Vcl.ExtCtrls,
   Relatorio.TROrcamento, Orcamento.Criar,
-  Dao.IDaoOrcamento, Dao.TDaoItemOrcamento,
-  Dao.TDaoOrcamento, Dominio.Entidades.TItemOrcamento,
-  Dominio.Entidades.TOrcamento, Helper.TItemOrcamento, Factory.Dao;
+  Dao.IDaoOrcamento,
+
+  Dominio.Entidades.TOrcamento, Vcl.Mask;
 
 type
   TfrmFiltroOrcamentos = class(TfrmFiltroBase)

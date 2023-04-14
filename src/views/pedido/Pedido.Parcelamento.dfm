@@ -4,8 +4,6 @@ inherited FrmParcelamento: TFrmParcelamento
   ClientHeight = 501
   ClientWidth = 642
   OnClose = FormClose
-  OnCreate = FormCreate
-  OnDestroy = FormDestroy
   OnShow = FormShow
   ExplicitWidth = 648
   ExplicitHeight = 530

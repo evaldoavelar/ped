@@ -2,7 +2,6 @@ inherited FrmEtiquetasModelo4x2: TFrmEtiquetasModelo4x2
   Caption = 'Etiquetas Modelo 4x2'
   ClientHeight = 389
   ClientWidth = 499
-  OnDestroy = FormDestroy
   ExplicitWidth = 515
   ExplicitHeight = 428
   PixelsPerInch = 96
@@ -420,7 +419,7 @@ inherited FrmEtiquetasModelo4x2: TFrmEtiquetasModelo4x2
           AlignWithMargins = True
           Left = 3
           Top = 90
-          Width = 63
+          Width = 251
           Height = 16
           Margins.Top = 1
           Align = alTop
@@ -436,6 +435,7 @@ inherited FrmEtiquetasModelo4x2: TFrmEtiquetasModelo4x2
           ParentFont = False
           Transparent = True
           Layout = tlCenter
+          ExplicitWidth = 63
         end
         object lblDescricao1: TLabel
           AlignWithMargins = True
@@ -824,9 +824,9 @@ inherited FrmEtiquetasModelo4x2: TFrmEtiquetasModelo4x2
         TabOrder = 0
         object lblCidade1: TLabel
           AlignWithMargins = True
-          Left = 242
+          Left = 3
           Top = 29
-          Width = 107
+          Width = 346
           Height = 13
           Align = alTop
           Alignment = taRightJustify
@@ -841,12 +841,14 @@ inherited FrmEtiquetasModelo4x2: TFrmEtiquetasModelo4x2
           ParentFont = False
           Transparent = True
           Layout = tlCenter
+          ExplicitLeft = 242
+          ExplicitWidth = 107
         end
         object lblRua1: TLabel
           AlignWithMargins = True
-          Left = 215
+          Left = 1
           Top = 10
-          Width = 136
+          Width = 350
           Height = 13
           Margins.Left = 1
           Margins.Top = 10
@@ -864,6 +866,8 @@ inherited FrmEtiquetasModelo4x2: TFrmEtiquetasModelo4x2
           ParentFont = False
           Transparent = True
           Layout = tlCenter
+          ExplicitLeft = 215
+          ExplicitWidth = 136
         end
       end
     end
@@ -1023,7 +1027,7 @@ inherited FrmEtiquetasModelo4x2: TFrmEtiquetasModelo4x2
         Left = 3
         Top = 3
         Width = 36
-        Height = 13
+        Height = 29
         Align = alLeft
         Caption = 'C'#243'pias:'
         Color = clWhite
@@ -1036,6 +1040,7 @@ inherited FrmEtiquetasModelo4x2: TFrmEtiquetasModelo4x2
         ParentFont = False
         Transparent = True
         Layout = tlCenter
+        ExplicitHeight = 13
       end
       object edtNumCopias: TEdit
         AlignWithMargins = True

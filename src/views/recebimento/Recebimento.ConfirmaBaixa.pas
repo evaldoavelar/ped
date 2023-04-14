@@ -7,7 +7,8 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, untFrmBase, Vcl.StdCtrls, Vcl.Buttons,
   Vcl.ExtCtrls,
-  Dominio.Entidades.TParcelas, JvExMask, JvToolEdit, Vcl.Mask, JvBaseEdits, Util.VclFuncoes;
+  Dominio.Entidades.TParcelas, JvExMask, JvToolEdit, JvBaseEdits, Util.VclFuncoes,
+  Vcl.Mask;
 
 type
   TfrmConfirmaBaixa = class(TfrmBase)
@@ -43,7 +44,7 @@ implementation
 {$R *.dfm}
 
 
-uses Util.Funcoes;
+
 
 procedure TfrmConfirmaBaixa.Bind;
 begin

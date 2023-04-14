@@ -6,8 +6,9 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Consulta.Base, Data.DB,
   System.Actions, Vcl.ActnList, Vcl.Grids, Vcl.DBGrids, JvExDBGrids, JvDBGrid,
-  JvDBUltimGrid, Vcl.StdCtrls, Vcl.Buttons, JvExControls, JvNavigationPane,
-  Dao.IDaoCliente, Dominio.Entidades.TCliente, Vcl.Imaging.jpeg, Vcl.ExtCtrls;
+  JvDBUltimGrid, Vcl.Buttons, JvExControls, JvNavigationPane,
+  Dao.IDaoCliente, Dominio.Entidades.TCliente, Vcl.Imaging.jpeg, Vcl.ExtCtrls,
+  Vcl.StdCtrls;
 
 type
   TfrmConsultaCliente = class(TfrmConsultaBase)

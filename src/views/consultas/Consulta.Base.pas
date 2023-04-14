@@ -7,7 +7,7 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, untFrmBase, Data.DB, Vcl.Grids,
   Vcl.DBGrids, JvExDBGrids, JvDBGrid, JvDBUltimGrid, Vcl.StdCtrls, Vcl.Buttons,
   JvExControls, JvNavigationPane, System.Actions, Vcl.ActnList, Util.VclFuncoes, Vcl.Imaging.jpeg, Vcl.ExtCtrls,
-  IFactory.Dao, Sistema.TParametros;
+  Sistema.TParametros;
 
 type
   TfrmConsultaBase = class(TfrmBase)
@@ -56,7 +56,7 @@ implementation
 {$R *.dfm}
 
 
-uses Util.Funcoes, Sistema.TLog, Factory.Dao, Factory.Entidades;
+uses Sistema.TLog, Factory.Dao, Factory.Entidades;
 
 procedure TfrmConsultaBase.Selecionar;
 begin

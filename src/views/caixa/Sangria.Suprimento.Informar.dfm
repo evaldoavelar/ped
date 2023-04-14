@@ -3,7 +3,6 @@ inherited FrmSangria: TFrmSangria
   Caption = 'Sangria'
   ClientHeight = 355
   ClientWidth = 300
-  OnDestroy = FormDestroy
   ExplicitWidth = 306
   ExplicitHeight = 384
   PixelsPerInch = 96

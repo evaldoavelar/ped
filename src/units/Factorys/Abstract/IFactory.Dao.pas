@@ -10,8 +10,8 @@ uses
   Dao.IDaoProdutos, Dao.IDAOCliente, Dao.IDaoParcelas, Dao.IDaoPedido,
   Dao.IDaoOrcamento, Dao.IDaoVendedor, Dao.IDaoParametros,
   Dao.IDAOPedidoPagamento, Dao.IDAOTSangriaSuprimento, Dao.IDaoFiltroEstoque,
-  Dominio.Entidades.TEmitente, Sistema.TParametros, FireDAC.Comp.Client,
-  Sistema.TBancoDeDados;
+  Dominio.Entidades.TEmitente, FireDAC.Comp.Client,
+  Sistema.TBancoDeDados, Dao.IDaoImportacao;
 
 type
 
@@ -36,13 +36,14 @@ type
     function DaoEstoqueProduto(): IDaoEstoqueProduto;
     function DaoFiltroEstoque(): IDaoEstoqueFiltro;
     function DaoParametrosBancoDeDados: IDaoParametrosBancoDeDados;
+    function DaoImportacao: IDaoImportacao;
 
     function getDadosEmitente: TEmitente;
     property DadosEmitente: TEmitente read getDadosEmitente;
 
 
     function Query(): TFDQuery;
-    function Conexao(aBancoDeDados: TParametrosBancoDeDados = nil): TFDConnection;
+    function Conexao(aBancoDeDados: TParametrosBancoDeDados = nil; aAutoReconnect: Boolean = true): TFDConnection;
     procedure Close();
 
   end;

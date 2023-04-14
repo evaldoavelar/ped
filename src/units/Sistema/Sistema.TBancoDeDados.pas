@@ -5,10 +5,9 @@ interface
 uses
   system.SysUtils, Vcl.ExtCtrls,
   Dominio.Entidades.TEntity,
-  Sistema.TFormaPesquisa,
-  Impressao.Parametros.Impressora.Termica,
-  Dominio.Mapeamento.Atributos, Util.TCript,
-  Dominio.Mapeamento.Tipos;
+
+
+  Util.TCript;
 
 type
 

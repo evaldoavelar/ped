@@ -8,7 +8,7 @@ uses
   Relatorio.TRBase,
   Data.DB,
   Dominio.Entidades.TEmitente,
-  Dominio.Entidades.TVendedor, Dominio.Entidades.TParceiro, Factory.Dao;
+  Dominio.Entidades.TVendedor, Dominio.Entidades.TParceiro;
 
 type
 

@@ -6,9 +6,6 @@ uses
   Dominio.Entidades.TEntity, Dominio.Mapeamento.Tipos,
   Dominio.Mapeamento.Atributos;
 
-
-
-
 type
 
   [Tabela('CONDICAODEPAGTO')]
@@ -19,11 +16,13 @@ type
     FDESCRICAO: string;
     FID: integer;
     FIDPAGTO: integer;
+    FDATAALTERACAO: TDateTime;
     procedure SetACRESCIMO(const Value: Double);
     procedure SetDESCRICAO(const Value: string);
     procedure SetID(const Value: integer);
     procedure SetIDPAGTO(const Value: integer);
     procedure SetQUANTASVEZES(const Value: integer);
+    procedure SetDATAALTERACAO(const Value: TDateTime);
   public
     [AutoInc('AUTOINC')]
     [PrimaryKey('PK_CONDICAODEPAGTO', 'ID')]
@@ -39,6 +38,9 @@ type
     [Campo('ACRESCIMO', tpNUMERIC, 15, 4, True, '0')]
     property ACRESCIMO: Double read FACRESCIMO write SetACRESCIMO;
 
+    [Campo('DATAALTERACAO', tpTIMESTAMP)]
+    property DATAALTERACAO: TDateTime read FDATAALTERACAO write SetDATAALTERACAO;
+
     function CalculaValorDoAcrescimo(aValorPagamento: currency): currency;
     function CalculaAcrescimo(aValorPagamento: currency): currency;
   end;
@@ -46,7 +48,7 @@ type
 implementation
 
 uses
-   Helper.Currency;
+  Helper.currency;
 
 { TCONDICAODEPAGTO }
 
@@ -66,6 +68,11 @@ end;
 procedure TCONDICAODEPAGTO.SetACRESCIMO(const Value: Double);
 begin
   FACRESCIMO := Value;
+end;
+
+procedure TCONDICAODEPAGTO.SetDATAALTERACAO(const Value: TDateTime);
+begin
+  FDATAALTERACAO := Value;
 end;
 
 procedure TCONDICAODEPAGTO.SetDESCRICAO(const Value: string);

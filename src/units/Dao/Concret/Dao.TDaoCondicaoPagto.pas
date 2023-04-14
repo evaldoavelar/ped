@@ -28,7 +28,7 @@ type
 
 implementation
 
-uses Factory.Dao, Util.Exceptions;
+uses Util.Exceptions;
 { TClasseBase }
 
 procedure TDaoCondicaoPagto.Atualiza(aCondicaoPagto: TCONDICAODEPAGTO);
@@ -44,6 +44,7 @@ begin
         + '  set'
         + '     DESCRICAO = :DESCRICAO, '
         + '     ACRESCIMO = :ACRESCIMO, '
+        + '     DATAALTERACAO = :DATAALTERACAO, '
         + '     QUANTASVEZES = :QUANTASVEZES   '
         + 'where       '
         + '     id = :id ';
@@ -199,11 +200,13 @@ begin
         + '             IDPAGTO, '
         + '             DESCRICAO, '
         + '             ACRESCIMO, '
+        + '             DATAALTERACAO, '
         + '             QUANTASVEZES ) '
         + 'VALUES      (:id, '
         + '             :IDPAGTO, '
         + '             :DESCRICAO, '
         + '             :ACRESCIMO, '
+        + '             :DATAALTERACAO, '
         + '             :QUANTASVEZES )';
 
       ValidaCondicao(aCondicaoPagto);

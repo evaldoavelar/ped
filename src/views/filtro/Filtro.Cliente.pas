@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, System.Generics.Collections,
-  Dominio.Entidades.TCliente, Factory.Dao, Dao.IDAOCliente, untFrmBase, Vcl.Buttons, Vcl.StdCtrls, Vcl.Imaging.jpeg, Vcl.ExtCtrls, System.Actions, Vcl.ActnList,
+  Dominio.Entidades.TCliente, Factory.Dao, untFrmBase, Vcl.Buttons, Vcl.StdCtrls, Vcl.Imaging.jpeg, Vcl.ExtCtrls, System.Actions, Vcl.ActnList,
   Consulta.Cliente, IFactory.Dao;
 
 type

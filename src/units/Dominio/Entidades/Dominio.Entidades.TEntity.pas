@@ -3,7 +3,7 @@ unit Dominio.Entidades.TEntity;
 interface
 
 uses System.Classes, System.Rtti, System.Generics.Collections, System.SysUtils,
-  System.Bindings.Expression, System.Bindings.Helper,
+  System.Bindings.Expression, System.Bindings.Helper, Dominio.Mapeamento.Atributos,
   Dominio.Entidades.Observe, Dominio.IEntidade, Dominio.Entidades.Observable;
 
 type
@@ -28,6 +28,7 @@ type
     procedure Notify(const APropertyName: string = '');
 
   public
+    [ignore(true)]
     property StatusBD: TStatusBD read FStatusBD write SetStatusBD;
 
     procedure Bind(const AProperty: string; const ABindToObject: TObject;
@@ -50,6 +51,7 @@ type
   end;
 
 implementation
+
 
 { TEntity }
 

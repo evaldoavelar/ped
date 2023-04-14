@@ -6,10 +6,10 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Threading, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Filtro.Base, Data.DB, System.Actions,
   Vcl.ActnList, JvExControls, JvNavigationPane, Vcl.Grids, Vcl.DBGrids, JvExDBGrids, JvDBGrid,
-  JvDBUltimGrid, Vcl.Mask,
+  JvDBUltimGrid,
   JvExMask, JvToolEdit, Vcl.StdCtrls, Vcl.Buttons, Vcl.Imaging.pngimage,
-  Vcl.Imaging.jpeg, Vcl.ExtCtrls, Dao.TDaoParceiroVenda, Dominio.Entidades.TParceiroVenda,
-  Factory.Dao, parceiro.PagtoDetalhes;
+  Vcl.Imaging.jpeg, Vcl.ExtCtrls, Dominio.Entidades.TParceiroVenda,
+  parceiro.PagtoDetalhes, Vcl.Mask;
 
 type
   TfrmFiltroVendasParceiro = class(TfrmFiltroBase)

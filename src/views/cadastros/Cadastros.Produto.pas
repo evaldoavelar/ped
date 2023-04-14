@@ -8,8 +8,9 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Cadastros.Base, Vcl.ComCtrls,
   Vcl.StdCtrls, Vcl.Buttons,
   Dao.IDaoProdutos, Dominio.Entidades.TProduto, JvToolEdit, JvExMask, JvBaseEdits, JvComponentBase, JvEnterTab,
-  Vcl.Mask, System.Actions, Vcl.ActnList, Vcl.WinXCtrls, Vcl.ExtCtrls, Vcl.Imaging.jpeg,
-  Vcl.AutoComplete, Dominio.Entidades.TEntity, System.Generics.Collections;
+  System.Actions, Vcl.ActnList, Vcl.ExtCtrls, Vcl.Imaging.jpeg,
+  Vcl.AutoComplete, Dominio.Entidades.TEntity, System.Generics.Collections,
+  Vcl.Mask;
 
 type
   TfrmCadastroProduto = class(TfrmCadastroBase)
@@ -92,7 +93,7 @@ implementation
 {$R *.dfm}
 
 
-uses Factory.Dao, Consulta.Produto, Consulta.Fornecedor, Sistema.TLog,
+uses Consulta.Produto, Consulta.Fornecedor, Sistema.TLog,
   Factory.Entidades;
 
 procedure TfrmCadastroProduto.Excluir;

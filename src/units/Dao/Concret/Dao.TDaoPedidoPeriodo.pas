@@ -22,7 +22,7 @@ implementation
 
 { TDaoPedidoPeriodo }
 
-uses Util.Exceptions, Factory.Dao;
+uses Util.Exceptions;
 
 function TDaoPedidoPeriodo.GetTotaisBrutoPedido(DataInicio, DataFim: TDate): TListaPeriodoPedido;
 var

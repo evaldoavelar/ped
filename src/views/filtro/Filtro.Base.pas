@@ -8,8 +8,7 @@ uses
   Vcl.ActnList, JvExControls, JvNavigationPane, Vcl.Grids, Vcl.DBGrids,
   JvExDBGrids, JvDBGrid, JvDBUltimGrid, Vcl.Mask, JvExMask, JvToolEdit,
   Vcl.StdCtrls, Vcl.Buttons, Vcl.Imaging.pngimage, Vcl.Imaging.jpeg,
-  Vcl.ExtCtrls, Util.VclFuncoes, Sistema.TParametros,
-  IFactory.Dao;
+  Vcl.ExtCtrls, Util.VclFuncoes, Sistema.TParametros;
 
 type
   TfrmFiltroBase = class(TfrmBase)
@@ -58,7 +57,7 @@ var
 implementation
 
 uses
-  Util.Funcoes, Factory.Dao, Sistema.TLog, Factory.Entidades;
+  Factory.Dao, Sistema.TLog, Factory.Entidades;
 
 {$R *.dfm}
 
@@ -89,9 +88,11 @@ end;
 
 procedure TfrmFiltroBase.FormCreate(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TfrmFiltroBase.FormCreate ');
   inherited;
   FFactory := TFactory.new(nil, True);
-  FParametros := TFactoryEntidades.Parametros;
+  FParametros := FFactory.DaoParametros.GetParametros;
+  TLog.d('<<< Saindo de TfrmFiltroBase.FormCreate ');
 end;
 
 procedure TfrmFiltroBase.FormDestroy(Sender: TObject);

@@ -25,8 +25,6 @@ object frmSplash: TfrmSplash
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 0
-    ExplicitWidth = 454
-    ExplicitHeight = 238
     object img1: TImage
       Left = 0
       Top = 0

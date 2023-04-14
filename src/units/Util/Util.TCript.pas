@@ -2,8 +2,8 @@ unit Util.TCript;
 
 interface
 
-uses System.Classes, System.MaskUtils, System.SysUtils,
-  System.DateUtils, DCPrc4, DCPbase64, DCPsha1;
+uses System.Classes, System.SysUtils,
+  DCPrc4, DCPsha1;
 
 type
 

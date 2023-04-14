@@ -32,7 +32,7 @@ type
 implementation
 
 uses
-  Util.Exceptions, Factory.Dao;
+  Util.Exceptions;
 
 { TDaoVendedor }
 
@@ -92,6 +92,7 @@ begin
         + '     PODERECEBERPARCELA = :PODERECEBERPARCELA, '
         + '     PODECANCELARPEDIDO = :PODECANCELARPEDIDO, '
         + '     PODECANCELARORCAMENTO = :PODECANCELARORCAMENTO, '
+        + '     DATAALTERACAO = :DATAALTERACAO, '
         + '     PODEACESSARPARAMETROS = :PODEACESSARPARAMETROS '
         + 'where       '
         + '     CODIGO = :CODIGO ';
@@ -219,6 +220,7 @@ begin
         + '             PODECANCELARPEDIDO, '
         + '             PODECANCELARORCAMENTO, '
         + '             PODEACESSARPARAMETROS, '
+        + '             DATAALTERACAO, '
         + '             COMISSAOP, '
         + '             COMISSAOV ) '
         + 'VALUES      (:CODIGO, '
@@ -229,6 +231,7 @@ begin
         + '             :PODECANCELARPEDIDO, '
         + '             :PODECANCELARORCAMENTO, '
         + '             :PODEACESSARPARAMETROS, '
+        + '             :DATAALTERACAO, '
         + '             :COMISSAOP, '
         + '             :COMISSAOV )';
 
@@ -354,22 +357,6 @@ begin
   try
 
     EntityToParams(ds, vendedor);
-    // if ds.Params.FindParam('CODIGO') <> nil then
-    // ds.Params.ParamByName('CODIGO').AsString := vendedor.codigo;
-    // if ds.Params.FindParam('NOME') <> nil then
-    // ds.Params.ParamByName('NOME').AsString := vendedor.nome;
-    // if ds.Params.FindParam('COMISSAOV') <> nil then
-    // ds.Params.ParamByName('COMISSAOV').AsCurrency := vendedor.COMISSAOV;
-    // if ds.Params.FindParam('COMISSAOP') <> nil then
-    // ds.Params.ParamByName('COMISSAOP').AsCurrency := vendedor.COMISSAOP;
-    // if ds.Params.FindParam('SENHA') <> nil then
-    // ds.Params.ParamByName('SENHA').AsString := vendedor.SENHA;
-    // if ds.Params.FindParam('PODERECEBERPARCELA') <> nil then
-    // ds.Params.ParamByName('PODERECEBERPARCELA').AsBoolean := vendedor.PODERECEBERPARCELA;
-    // if ds.Params.FindParam('PODECANCELARPEDIDO') <> nil then
-    // ds.Params.ParamByName('PODECANCELARPEDIDO').AsBoolean := vendedor.PODECANCELARPEDIDO;
-    // if ds.Params.FindParam('PODEACESSARCADASTROVENDEDOR') <> nil then
-    // ds.Params.ParamByName('PODEACESSARCADASTROVENDEDOR').AsBoolean := vendedor.PODEACESSARCADASTROVENDEDOR;
   except
     on E: Exception do
     begin
@@ -384,15 +371,6 @@ begin
   try
     Result := TVendedor.Create();
     FieldsToEntity(ds, Result);
-
-    // Result.codigo := ds.FieldByName('CODIGO').AsString;
-    // Result.nome := ds.FieldByName('NOME').AsString;
-    // Result.SENHA := ds.FieldByName('SENHA').AsString;
-    // Result.COMISSAOV := ds.FieldByName('COMISSAOV').AsCurrency;
-    // Result.COMISSAOP := ds.FieldByName('COMISSAOP').AsCurrency;
-    // Result.PODERECEBERPARCELA := ds.FieldByName('PODERECEBERPARCELA').AsInteger = 1;
-    // Result.PODECANCELARPEDIDO := ds.FieldByName('PODECANCELARPEDIDO').AsInteger = 1;
-    // Result.PODEACESSARCADASTROVENDEDOR := ds.FieldByName('PODEACESSARCADASTROVENDEDOR').AsInteger = 1;
   except
     on E: Exception do
     begin

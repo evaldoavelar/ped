@@ -8,7 +8,7 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Cadastros.Base, Vcl.StdCtrls, Vcl.ComCtrls,
   Vcl.Mask, JvExMask, JvToolEdit, Dominio.Entidades.TEntity, System.Generics.Collections,
   Dao.IDaoCliente, Dominio.Entidades.TCliente, JvComponentBase, JvEnterTab,
-  System.Actions, Vcl.ActnList, Vcl.WinXCtrls, Vcl.Buttons, Vcl.ExtCtrls,
+  System.Actions, Vcl.ActnList, Vcl.Buttons, Vcl.ExtCtrls,
   JvBaseEdits, Vcl.DBCtrls, Data.DB, Vcl.Imaging.jpeg, Vcl.AutoComplete;
 
 type
@@ -118,7 +118,7 @@ end;
 procedure TfrmCadastroCliente.AtualizarEntity;
 begin
   inherited;
-  Self.FCliente.CADASTRO := now;
+  FCliente.DATAALTERACAO := now;
   FDaoCliente.AtualizaCliente(FCliente);
   edtPesquisa.Text := FCliente.Nome;
 end;
@@ -271,6 +271,7 @@ begin
   inherited;
   Self.FCliente.CADASTRO := now;
   FCliente.CODIGO := FDaoCliente.GeraID;
+  FCliente.DATAALTERACAO := now;
   FDaoCliente.IncluiCliente(FCliente);
   edtPesquisa.Text := FCliente.Nome;
 end;

@@ -6,7 +6,7 @@ uses
   ACBrUtil, System.SysUtils,
   System.Generics.Collections,
   Relatorio.TRBase, Data.DB,
-  Dominio.Entidades.TParcelas,
+
   Dominio.Entidades.TEmitente,
   Dominio.Entidades.TVendedor,
   Helper.TProdutoVenda;

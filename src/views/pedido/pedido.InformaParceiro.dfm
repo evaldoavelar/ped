@@ -18,8 +18,6 @@ inherited FrmPedidoInformaParceiroVenda: TFrmPedidoInformaParceiroVenda
     Padding.Top = 10
     Padding.Right = 30
     TabOrder = 0
-    ExplicitWidth = 246
-    ExplicitHeight = 97
     object lblParceiro: TLabel
       AlignWithMargins = True
       Left = 41
@@ -343,8 +341,6 @@ inherited FrmPedidoInformaParceiroVenda: TFrmPedidoInformaParceiroVenda
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 1
-    ExplicitTop = 100
-    ExplicitWidth = 240
     object btnOk: TBitBtn
       Left = 161
       Top = 3

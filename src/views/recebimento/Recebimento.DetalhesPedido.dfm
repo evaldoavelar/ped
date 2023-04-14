@@ -3,7 +3,6 @@ inherited frmDetalhesPedido: TfrmDetalhesPedido
   Caption = 'Detalhes Pedido'
   ClientHeight = 456
   ClientWidth = 706
-  OnCreate = FormCreate
   OnShow = FormShow
   ExplicitWidth = 712
   PixelsPerInch = 96
@@ -1356,10 +1355,6 @@ inherited frmDetalhesPedido: TfrmDetalhesPedido
     object ts1: TTabSheet
       Caption = 'Comprovante'
       ImageIndex = 4
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Panel8: TPanel
         Left = 0
         Top = 352

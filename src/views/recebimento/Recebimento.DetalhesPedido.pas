@@ -9,11 +9,12 @@ uses
   Vcl.ExtCtrls, Vcl.ComCtrls,
   Dominio.Entidades.TEntity, Dominio.Entidades.TPedido,
   Dominio.Entidades.TItemPedido, Dominio.Entidades.TParcelas,
-  Factory.Dao, Dao.IDaoPedido,
-  Vcl.Mask, JvExMask, JvToolEdit,
+  Dao.IDaoPedido,
+  JvExMask, JvToolEdit,
   JvBaseEdits, JvExStdCtrls, JvTextListBox,
   System.Actions, Vcl.ActnList, Vcl.Grids, Vcl.ExtDlgs, Vcl.Imaging.jpeg,
-  Vcl.Imaging.pngimage, Util.VclFuncoes, Dominio.Entidades.Pedido.Pagamentos.Pagamento;
+  Vcl.Imaging.pngimage, Util.VclFuncoes, Dominio.Entidades.Pedido.Pagamentos.Pagamento,
+  Vcl.Mask;
 
 type
   TfrmDetalhesPedido = class(TfrmBase)
@@ -136,7 +137,7 @@ implementation
 {$R *.dfm}
 
 
-uses Util.Funcoes, Helper.TBindGrid, Sistema.TLog;
+uses Helper.TBindGrid, Sistema.TLog;
 
 procedure TfrmDetalhesPedido.actAnexarComprovanteExecute(Sender: TObject);
 begin

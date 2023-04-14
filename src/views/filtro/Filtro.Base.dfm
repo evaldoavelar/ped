@@ -2,7 +2,6 @@ inherited frmFiltroBase: TfrmFiltroBase
   Caption = 'Filtro'
   ClientHeight = 655
   ClientWidth = 856
-  OnDestroy = FormDestroy
   OnShow = FormShow
   ExplicitWidth = 872
   ExplicitHeight = 694

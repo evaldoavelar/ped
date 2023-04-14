@@ -6,9 +6,9 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Consulta.Base, Data.DB,
   Vcl.DBGrids, JvExDBGrids, JvDBGrid,
-  JvDBUltimGrid, Vcl.StdCtrls,
-  Dao.IDaoProdutos, Dominio.Entidades.TProduto, System.Actions, Vcl.ActnList, Vcl.Grids,
-  Vcl.Buttons, Vcl.Imaging.jpeg, Vcl.ExtCtrls;
+  JvDBUltimGrid,
+  Dao.IDaoProdutos, Dominio.Entidades.TProduto, System.Actions, Vcl.ActnList,
+  Vcl.Buttons, Vcl.Imaging.jpeg, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.Grids;
 
 type
   TFrmConsultaProdutos = class(TfrmConsultaBase)
@@ -34,7 +34,7 @@ implementation
 {$R *.dfm}
 
 
-uses Factory.Dao, Sistema.TLog;
+uses Sistema.TLog;
 
 { TProdutos }
 

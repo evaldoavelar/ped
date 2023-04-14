@@ -6,6 +6,7 @@ inherited frmLogin: TfrmLogin
   ClientWidth = 766
   Color = 10574592
   Position = poScreenCenter
+  OnShow = FormShow
   ExplicitWidth = 768
   ExplicitHeight = 426
   PixelsPerInch = 96
@@ -43,7 +44,6 @@ inherited frmLogin: TfrmLogin
       Font.Style = [fsBold]
       ParentFont = False
       Layout = tlCenter
-      ExplicitLeft = 13
       ExplicitHeight = 62
     end
     object Panel7: TPanel

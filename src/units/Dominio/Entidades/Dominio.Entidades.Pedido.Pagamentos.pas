@@ -5,7 +5,7 @@ interface
 uses
   Dominio.Entidades.Pedido.Pagamentos.Pagamento, System.Generics.Collections,
    Dominio.Entidades.TFormaPagto.Tipo,
-  Dominio.Entidades.TEntity, Dominio.Entidades.Observable, Dominio.Entidades.Observe;
+  Dominio.Entidades.TEntity;
 
 type
 

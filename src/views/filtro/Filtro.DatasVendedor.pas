@@ -5,8 +5,8 @@ interface
 uses
   System.Generics.Collections,
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Filtro.Datas, System.Actions, Vcl.ActnList, Vcl.StdCtrls, Vcl.Buttons, Vcl.Mask, JvExMask, JvToolEdit, Vcl.Imaging.jpeg, Vcl.ExtCtrls,
-  Dominio.Entidades.TVendedor, Factory.Dao, Util.Exceptions;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Filtro.Datas, System.Actions, Vcl.ActnList, Vcl.StdCtrls, Vcl.Buttons, JvExMask, JvToolEdit, Vcl.Imaging.jpeg, Vcl.ExtCtrls,
+  Dominio.Entidades.TVendedor, Factory.Dao, Util.Exceptions, Vcl.Mask;
 
 type
   TfrmFiltroDataVendedor = class(TfrmFiltroDatas)

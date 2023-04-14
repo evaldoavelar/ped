@@ -5,8 +5,9 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes,
   Vcl.Controls, Vcl.Forms, Consulta.Base, Data.DB, Vcl.DBGrids,
-  Vcl.StdCtrls,
-  Dao.IDaoFormaPagto, Dominio.Entidades.TFormaPagto, System.Actions, Vcl.ActnList, Vcl.Buttons, Vcl.Imaging.jpeg, Vcl.ExtCtrls, Vcl.Grids, JvExDBGrids, JvDBGrid, JvDBUltimGrid;
+
+  Dao.IDaoFormaPagto, Dominio.Entidades.TFormaPagto, System.Actions, Vcl.ActnList, Vcl.Buttons, Vcl.Imaging.jpeg, Vcl.ExtCtrls, JvExDBGrids, JvDBGrid, JvDBUltimGrid,
+  Vcl.StdCtrls, Vcl.Grids;
 
 type
   TfrmConsultaFormaPagto = class(TfrmConsultaBase)
@@ -32,7 +33,7 @@ implementation
 {$R *.dfm}
 
 
-uses Factory.Dao, Sistema.TLog;
+uses Sistema.TLog;
 
 procedure TfrmConsultaFormaPagto.FormCreate(Sender: TObject);
 begin

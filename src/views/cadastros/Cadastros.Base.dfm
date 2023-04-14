@@ -3,8 +3,6 @@ inherited frmCadastroBase: TfrmCadastroBase
   Caption = 'frmCadastro'
   ClientHeight = 531
   ClientWidth = 674
-  OnCreate = FormCreate
-  OnDestroy = FormDestroy
   OnShow = FormShow
   ExplicitWidth = 680
   ExplicitHeight = 560

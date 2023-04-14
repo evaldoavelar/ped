@@ -8,9 +8,10 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, untFrmBase, Data.Bind.Controls,
   Data.Bind.GenData, Data.Bind.EngExt, Vcl.Bind.DBEngExt, System.Rtti,
   System.Bindings.Outputs, Vcl.Bind.Editors, Data.Bind.Components,
-  System.ImageList, Vcl.ImgList, Data.Bind.ObjectScope, Vcl.Buttons,
+  Data.Bind.ObjectScope, Vcl.Buttons,
   Vcl.Bind.Navigator, Vcl.Imaging.pngimage, Vcl.ExtCtrls, Vcl.Mask,
-  Vcl.StdCtrls, Vcl.AutoComplete, Vcl.ComCtrls, System.Generics.Collections, Dominio.Entidades.TProduto;
+  Vcl.StdCtrls, Vcl.AutoComplete, Vcl.ComCtrls, System.Generics.Collections, Dominio.Entidades.TProduto,
+  System.ImageList, Vcl.ImgList;
 
 type
   TViewEstoqueMovimentacoes = class(TfrmBase)
@@ -80,7 +81,7 @@ var
 implementation
 
 uses
-  Factory.Dao, Dao.IDaoEstoqueProduto, Dao.IDaoFiltroEstoque, Util.Thread, Sistema.TLog;
+  Dao.IDaoEstoqueProduto, Dao.IDaoFiltroEstoque, Util.Thread, Sistema.TLog;
 
 {$R *.dfm}
 

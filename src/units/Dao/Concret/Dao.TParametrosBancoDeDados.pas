@@ -6,8 +6,7 @@ uses
   System.IniFiles,
   Dao.IDaoParametrosBancoDeDados,
   System.SysUtils,
-  Sistema.TBancoDeDados,
-  System.IOUtils;
+  Sistema.TBancoDeDados;
 
 type
   TDaoParametrosBancoDeDados = class(TInterfacedObject, IDaoParametrosBancoDeDados)
@@ -28,7 +27,7 @@ type
 implementation
 
 uses
-  pcnConversao, blcksock;
+  blcksock;
 
 { TClasseBase }
 
@@ -69,6 +68,7 @@ end;
 constructor TDaoParametrosBancoDeDados.Create(aArquivo: AnsiString);
 begin
   FArquivo := aArquivo;
+  FNomeConfiguracao := 'BancoDeDados'
 end;
 
 destructor TDaoParametrosBancoDeDados.Destroy;

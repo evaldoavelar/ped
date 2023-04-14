@@ -6,10 +6,10 @@ uses
   System.Generics.Collections, System.SysUtils, System.Classes,
   Vcl.Graphics, Vcl.ExtCtrls, Vcl.Imaging.jpeg,
   Data.DB,
-  Dao.TDaoBase, Sistema.TLog,
+  Sistema.TLog,
   Dominio.Entidades.TItemPedido,
   Dominio.Entidades.TPedido,
-  Dominio.Entidades.TParcelas,
+
   Dominio.Entidades.Pedido.Pagamentos,
   Helper.TProdutoVenda;
 

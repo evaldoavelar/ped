@@ -7,8 +7,8 @@ uses
   Vcl.Graphics, Vcl.ExtCtrls, Vcl.Imaging.jpeg,
   Data.DB, FireDAC.Comp.Client, Dao.IDaoPedido,
   Dao.TDaoBase, Sistema.TLog,
-  Dominio.Entidades.TItemPedido, Dominio.Entidades.TPedido, Dominio.Entidades.TParcelas,
-  Helper.TProdutoVenda, Dao.IDaoParceiro, Dao.TDaoParceiro, Dao.TDaoParceiroVenda,
+  Dominio.Entidades.TItemPedido, Dominio.Entidades.TPedido,
+  Helper.TProdutoVenda, Dao.TDaoParceiro,
   Dominio.Entidades.Pedido.Pagamentos.Pagamento,
   Dominio.Entidades.Pedido.Pagamentos;
 
@@ -45,7 +45,7 @@ type
 implementation
 
 uses
-  Util.Exceptions, Dao.TDaoItemPedido, Dao.TDaoParcelas, Dao.TDaoVendedor, Dao.TDaoCliente, Factory.Dao, Dao.TDaoFormaPagto, Dao.TDAOPedidoPagamento,
+  Util.Exceptions, Dao.TDaoItemPedido, Dao.TDaoParcelas, Dao.TDaoVendedor, Dao.TDaoCliente, Factory.Dao, Dao.TDAOPedidoPagamento,
   Dominio.Entidades.TEstoqueProduto, Utils.ArrayUtil, IFactory.Dao;
 
 { TDaoPedido }

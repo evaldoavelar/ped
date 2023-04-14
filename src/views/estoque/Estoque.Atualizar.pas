@@ -8,7 +8,7 @@ uses
   System.Actions, Vcl.ActnList, Vcl.Imaging.pngimage, Vcl.ExtCtrls,
   Vcl.AutoComplete, Vcl.ComCtrls, Dominio.Entidades.TEstoqueProduto,
   Dominio.Entidades.TProduto, Estoque.Parts.Atualizar,
-  System.Generics.Collections, Dao.IDaoProdutos, Dao.IDaoEstoqueProduto;
+  System.Generics.Collections;
 
 type
   TFrmEstoqueAtualizar = class(TfrmBase)
@@ -114,7 +114,7 @@ implementation
 
 uses
   Utils.Rtti,
-  Helpers.HelperString, Util.Thread, Factory.Dao, Util.Funcoes, Sistema.TLog, Factory.Entidades;
+  Helpers.HelperString, Util.Thread, Util.Funcoes, Sistema.TLog, Factory.Entidades;
 
 {$R *.dfm}
 
