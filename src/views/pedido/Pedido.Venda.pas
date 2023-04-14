@@ -208,6 +208,8 @@ type
     procedure cbbProduto1KeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure cbbProduto1CloseUp(Sender: TObject);
     procedure actMinimizarExecute(Sender: TObject);
+    procedure medtQuantidadeKeyUp(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
 
   private
 
@@ -654,7 +656,7 @@ begin
   if Key = #13 then
   begin
     try
-      if cbbProduto.ItemIndex <> -1 then
+      if (cbbProduto.ItemIndex <> -1) and (trim(cbbProduto.Text) <> EmptyStr) then
       begin
         Produto := nil;
 
@@ -1045,12 +1047,13 @@ begin
   lblTotalItens.Caption := '0';
   FblEmVEnda := false;
   NSeqItem := 1;
+  cbbProduto.ItemIndex := -1;
+  cbbProduto.Text := '';
   if Assigned(Pedido) then
   begin
     // Pedido.Pagamentos.removeObserver(Pedido);
     FreeAndNil(Pedido);
   end;
-  cbbProduto.Text := '';
 
   case FForma of
     FLeitor:
@@ -1195,6 +1198,17 @@ begin
       end;
     end;
     Key := #0;
+  end;
+end;
+
+procedure TFrmPedidoVenda.medtQuantidadeKeyUp(Sender: TObject; var Key: Word;
+Shift: TShiftState);
+begin
+  case Key of
+    VK_INSERT:
+      begin
+        PesquisaProduto;
+      end;
   end;
 end;
 
@@ -1440,6 +1454,12 @@ var
 begin
   TLog.d('>>> Entrando em  TFrmPedidoVenda.VendeItemPorCodigo ');
   try
+    if aCodigo.isEmpty then
+    begin
+      TLog.d('Sem códifgo do produto - saindo');
+      exit;
+    end;
+
     Produto := nil;
 
     // codigo
@@ -1558,7 +1578,7 @@ begin
       FDescricao:
         medtQuantidade.SetFocus;
     end;
-
+    cbbProduto.ItemIndex := -1;
   except
     on ex: Exception do
   end;

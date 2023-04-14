@@ -6,7 +6,6 @@ inherited FrmCadastroOrcamento: TFrmCadastroOrcamento
   OnShow = FormShow
   ExplicitWidth = 890
   ExplicitHeight = 645
-  PixelsPerInch = 96
   TextHeight = 13
   object pgc1: TPageControl
     Left = 0
@@ -15,7 +14,7 @@ inherited FrmCadastroOrcamento: TFrmCadastroOrcamento
     Height = 415
     ActivePage = tsItens
     Align = alClient
-    TabOrder = 0
+    TabOrder = 1
     object tsItens: TTabSheet
       Caption = 'Itens'
       object strGridProdutos: TStringGrid
@@ -147,15 +146,21 @@ inherited FrmCadastroOrcamento: TFrmCadastroOrcamento
           24
           24
           24)
+        ColAligments = (
+          1
+          1
+          0
+          0
+          0
+          1
+          0
+          0
+          0)
       end
     end
     object tsObservacao: TTabSheet
       Caption = 'Observa'#231#227'o'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label8: TLabel
         Left = 16
         Top = 23
@@ -200,7 +205,7 @@ inherited FrmCadastroOrcamento: TFrmCadastroOrcamento
     Font.Name = 'Tahoma'
     Font.Style = []
     ParentFont = False
-    TabOrder = 1
+    TabOrder = 0
     object Image1: TImage
       Left = 0
       Top = 0
@@ -960,7 +965,7 @@ inherited FrmCadastroOrcamento: TFrmCadastroOrcamento
       Font.Name = 'Tahoma'
       Font.Style = []
       ParentFont = False
-      TabOrder = 3
+      TabOrder = 8
       OnKeyPress = edtDescontoKeyPress
       OnKeyUp = edtDescontoKeyUp
     end
@@ -991,7 +996,7 @@ inherited FrmCadastroOrcamento: TFrmCadastroOrcamento
       Font.Name = 'Tahoma'
       Font.Style = []
       ParentFont = False
-      TabOrder = 5
+      TabOrder = 7
       OnKeyPress = edtQuantidadeKeyPress
       OnKeyUp = edtQuantidadeKeyUp
     end
@@ -1008,7 +1013,7 @@ inherited FrmCadastroOrcamento: TFrmCadastroOrcamento
       ParentFont = False
       ReadOnly = True
       ShowNullDate = False
-      TabOrder = 6
+      TabOrder = 3
       OnKeyPress = edtValidadeKeyPress
     end
     object cbbProduto: TComboBox
@@ -1025,7 +1030,7 @@ inherited FrmCadastroOrcamento: TFrmCadastroOrcamento
       Font.Style = []
       ParentFont = False
       Sorted = True
-      TabOrder = 7
+      TabOrder = 5
       StyleElements = [seFont, seClient]
       OnEnter = cbbProdutoEnter
       OnKeyPress = cbbProdutoKeyPress
@@ -1046,7 +1051,7 @@ inherited FrmCadastroOrcamento: TFrmCadastroOrcamento
       Font.Style = []
       ParentFont = False
       ReadOnly = True
-      TabOrder = 8
+      TabOrder = 6
       OnKeyPress = edtQuantidadeKeyPress
     end
     object edtTotal: TEdit
@@ -1297,7 +1302,7 @@ inherited FrmCadastroOrcamento: TFrmCadastroOrcamento
       Font.Name = 'Tahoma'
       Font.Style = [fsBold]
       ParentFont = False
-      TabOrder = 2
+      TabOrder = 3
     end
     object pnl1: TPanel
       Left = 83
@@ -1321,7 +1326,7 @@ inherited FrmCadastroOrcamento: TFrmCadastroOrcamento
       Font.Name = 'Tahoma'
       Font.Style = [fsBold]
       ParentFont = False
-      TabOrder = 3
+      TabOrder = 2
     end
     object btnNovo1: TBitBtn
       Left = 16

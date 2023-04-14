@@ -1308,11 +1308,6 @@ begin
   TLog.d('<<< Saindo de TFrmPrincipal.actVerVencimentoExecute ');
 end;
 
-
-
-
-
-
 procedure TFrmPrincipal.Backup(arquivo: string; force: Boolean = false);
 var
   LBancoDeDados: TParametrosBancoDeDados;
@@ -1877,8 +1872,11 @@ begin
       lblVencimento.Visible := false;
   except
     on E: Exception do
+    begin
+      TLog.d(E.Message);
       raise Exception.Create('Falha ao verificar parcelas em vencimento: ' +
         E.Message);
+    end;
   end;
   TLog.d('<<< Saindo de TFrmPrincipal.VerificaParcelasVencendo ');
 end;

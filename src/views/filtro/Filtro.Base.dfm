@@ -5,7 +5,6 @@ inherited frmFiltroBase: TfrmFiltroBase
   OnShow = FormShow
   ExplicitWidth = 872
   ExplicitHeight = 694
-  PixelsPerInch = 96
   TextHeight = 13
   object splEsquerda: TSplitter
     Left = 153

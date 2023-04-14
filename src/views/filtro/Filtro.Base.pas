@@ -100,8 +100,8 @@ begin
   TLog.d('>>> Entrando em  TfrmFiltroBase.FormDestroy ');
   inherited;
   LiberaDataSource;
-  if Assigned(FParametros) then
-    FreeAndNil(FParametros);
+//  if Assigned(FParametros) then
+//    FreeAndNil(FParametros);
   FFactory.close;
   TLog.d('<<< Saindo de TfrmFiltroBase.FormDestroy ');
 end;

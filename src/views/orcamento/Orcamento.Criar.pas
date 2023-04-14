@@ -895,8 +895,8 @@ begin
   if Assigned(Orcamento) then
     FreeAndNil(Orcamento);
 
-  if Assigned(FParametros) then
-    FreeAndNil(FParametros);
+//  if Assigned(FParametros) then
+//    FreeAndNil(FParametros);
   FFactory.Close;
   inherited;
   TLog.d('<<< Saindo de TFrmCadastroOrcamento.FormDestroy ');

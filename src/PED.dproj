@@ -457,7 +457,8 @@
         <DCCReference Include="units\Facades\Abstract\Facades.Abstract.Observable.pas"/>
         <DCCReference Include="units\Sistema\Sistema.Parametros.PontoVenda.pas"/>
         <DCCReference Include="units\Dao\Abstract\Dao.IDaoPontoVenda.pas"/>
-        <DCCReference Include="units\Dao\Concret\Dao.TDaoPontoVenda.pas"/>        
+        <DCCReference Include="units\Dao\Concret\Dao.TDaoPontoVenda.pas"/>
+        <DCCReference Include="modules\autocomplete\src\Vcl.AutoComplete.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
@@ -493,6 +494,12 @@
                 <DeployFile LocalName="..\imagens\cesta.jpg" Configuration="Release" Class="ProjectFile"/>
                 <DeployFile LocalName="LasPDV_Icon.ico" Configuration="Release" Class="ProjectFile"/>
                 <DeployFile LocalName="Win32\Debug\PED.exe" Configuration="Debug" Class="ProjectOutput"/>
+                <DeployFile LocalName="Win32\Debug\PED.exe" Configuration="Debug" Class="ProjectOutput">
+                    <Platform Name="Win32">
+                        <RemoteName>PED.exe</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
                 <DeployFile LocalName="Win32\Release\PED.exe" Configuration="Release" Class="ProjectOutput"/>
                 <DeployClass Name="AdditionalDebugSymbols">
                     <Platform Name="iOSSimulator">

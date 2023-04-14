@@ -10,14 +10,12 @@ object FrmPedidoVenda: TFrmPedidoVenda
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
-  OldCreateOrder = False
   Position = poMainFormCenter
   WindowState = wsMaximized
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 13
   object pnlEsquerda: TPanel
     Left = 0
@@ -28,7 +26,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
     BevelOuter = bvNone
     Color = 15790320
     ParentBackground = False
-    TabOrder = 0
+    TabOrder = 1
     object pnlLegenda: TPanel
       Left = 23
       Top = 366
@@ -37,7 +35,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
       BevelOuter = bvNone
       Color = 15790320
       ParentBackground = False
-      TabOrder = 0
+      TabOrder = 1
     end
     object pgcEsquerdo: TPageControl
       Left = 0
@@ -49,7 +47,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
       Margins.Right = 0
       Margins.Bottom = 0
       ParentCustomHint = False
-      ActivePage = tsGeral
+      ActivePage = tsProduto
       Align = alClient
       BiDiMode = bdRightToLeftReadingOnly
       DoubleBuffered = False
@@ -65,7 +63,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
       ParentShowHint = False
       ShowHint = False
       Style = tsFlatButtons
-      TabOrder = 1
+      TabOrder = 0
       object tsGeral: TTabSheet
         Caption = 'tsGeral'
         object Image3: TImage
@@ -3467,7 +3465,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
           Font.Style = []
           ParentBackground = False
           ParentFont = False
-          TabOrder = 2
+          TabOrder = 3
           DesignSize = (
             305
             84)
@@ -3603,7 +3601,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
           Color = 15066597
           Padding.Top = 10
           ParentColor = False
-          TabOrder = 3
+          TabOrder = 2
         end
       end
       object tsProduto: TTabSheet
@@ -3616,7 +3614,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
           Height = 548
           Align = alClient
           BevelOuter = bvNone
-          Color = 15790320
+          Color = 15066597
           ParentBackground = False
           TabOrder = 0
           object Image6: TImage
@@ -6737,7 +6735,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
             BevelOuter = bvNone
             Color = 10640128
             ParentBackground = False
-            TabOrder = 3
+            TabOrder = 4
             DesignSize = (
               305
               48)
@@ -9731,7 +9729,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
             Color = 500714
             ParentBackground = False
             ShowCaption = False
-            TabOrder = 4
+            TabOrder = 5
           end
           object Panel22: TPanel
             Left = 0
@@ -9742,7 +9740,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
             BevelOuter = bvNone
             Color = 11711154
             ParentBackground = False
-            TabOrder = 5
+            TabOrder = 6
             DesignSize = (
               305
               59)
@@ -9863,7 +9861,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
             Color = 11711154
             ParentBackground = False
             ShowCaption = False
-            TabOrder = 6
+            TabOrder = 3
           end
         end
       end
@@ -9883,7 +9881,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
     BevelOuter = bvNone
     Color = 15790320
     ParentBackground = False
-    TabOrder = 1
+    TabOrder = 3
     object Panel6: TPanel
       Left = 0
       Top = 510
@@ -9895,7 +9893,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
       Color = 10640128
       ParentBackground = False
       ShowCaption = False
-      TabOrder = 0
+      TabOrder = 4
       DesignSize = (
         621
         59)
@@ -10074,7 +10072,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
       Color = 10640128
       ParentBackground = False
       ShowCaption = False
-      TabOrder = 2
+      TabOrder = 0
       object Panel4: TPanel
         AlignWithMargins = True
         Left = 10
@@ -10157,6 +10155,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
           Text = '1'
           OnExit = medtQuantidadeExit
           OnKeyPress = medtQuantidadeKeyPress
+          OnKeyUp = medtQuantidadeKeyUp
         end
       end
       object Panel3: TPanel
@@ -10237,7 +10236,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
       BorderStyle = bsNone
       Color = 15790320
       ParentColor = False
-      TabOrder = 3
+      TabOrder = 2
       object Panel24: TPanel
         AlignWithMargins = True
         Left = 3
@@ -10963,7 +10962,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
       Color = 500714
       ParentBackground = False
       ShowCaption = False
-      TabOrder = 4
+      TabOrder = 3
     end
   end
   object pnlTopo: TPanel
@@ -10982,7 +10981,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
     Color = 10640128
     ParentBackground = False
     ShowCaption = False
-    TabOrder = 2
+    TabOrder = 0
     object lblStatusVenda: TLabel
       AlignWithMargins = True
       Left = 568
@@ -11300,7 +11299,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
     Color = 16316664
     ParentBackground = False
     ShowCaption = False
-    TabOrder = 3
+    TabOrder = 4
     object lblEmitente: TLabel
       Left = 152
       Top = 7
@@ -11614,7 +11613,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
     Color = 15790320
     OpenedWidth = 50
     Placement = svpRight
-    TabOrder = 4
+    TabOrder = 2
     object pnl4: TPanel
       AlignWithMargins = True
       Left = 3
