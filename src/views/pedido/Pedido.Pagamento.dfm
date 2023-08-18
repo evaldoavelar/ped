@@ -3,9 +3,8 @@ inherited FrmPagamento: TFrmPagamento
   ClientHeight = 501
   ClientWidth = 884
   OnShow = FormShow
-  ExplicitWidth = 900
-  ExplicitHeight = 540
-  PixelsPerInch = 96
+  ExplicitWidth = 892
+  ExplicitHeight = 528
   TextHeight = 13
   object pnl2: TPanel
     Left = 0

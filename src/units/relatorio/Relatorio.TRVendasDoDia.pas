@@ -30,7 +30,7 @@ implementation
 procedure TRVendasDoDia.Imprime(DataInicio, DataFim: TDate; vendedor: TVendedor; Emitente: TEmitente; Totalizadores: TList < TPair < string, string >> );
 begin
   Self.Cabecalho(Emitente);
-  Self.Descricao('TOTALIZADORES', DataInicio, DataFim, vendedor,nil);
+  Self.Descricao('TOTALIZADORES', DataInicio, DataFim, vendedor, nil);
   Self.Totalizadores(Totalizadores);
   // Self.Assinatura(vendedor, Emitente);
   Self.SobePapel;
@@ -41,7 +41,7 @@ end;
 procedure TRVendasDoDia.Imprime(Emissor: TVendedor; DataInicio, DataFim: TDate; vendedor: TVendedor; Emitente: TEmitente; Totalizadores: TList < TPair < string, string >> );
 begin
   Self.Cabecalho(Emitente);
-  Self.Descricao('TOTALIZADORES POR VENDEDOR', DataInicio, DataFim,Emissor, vendedor);
+  Self.Descricao('TOTALIZADORES POR VENDEDOR', DataInicio, DataFim, Emissor, vendedor);
   Self.Totalizadores(Totalizadores);
   Self.Assinatura(vendedor, Emitente);
   Self.SobePapel;
@@ -51,7 +51,7 @@ end;
 
 procedure TRVendasDoDia.Descricao(Titulo: string; DataInicio, DataFim: TDate; Emissor: TVendedor; vendedor: TVendedor);
 var
-  LinhaCmd: string;
+    LinhaCmd: string;
 begin
 
   LinhaCmd := escAlignCenter + esc20Cpi + escBoldOn + Titulo + escBoldOff;
@@ -59,8 +59,8 @@ begin
 
   if Assigned(vendedor) then
   begin
-    Buffer.Add(esc20Cpi + PadSpace('Vendedor: ' + vendedor.CODIGO + '  ' +
-      vendedor.NOME, Self.ColunasFonteCondensada, '|'));
+    Buffer.Add(esc20Cpi + escBoldOn + PadSpace('Vendedor: ' + vendedor.CODIGO + '  ' +
+      vendedor.NOME, Self.ColunasFonteCondensada, '|') + escBoldOff);
   end;
 
   LinhaCmd := escAlignLeft + esc20Cpi +
@@ -83,7 +83,7 @@ end;
 
 procedure TRVendasDoDia.Totalizadores(Totalizadores: TList < TPair < string, string >> );
 var
-  item: TPair<string, string>;
+    item: TPair<string, string>;
 begin
   for item in Totalizadores do
   begin
@@ -93,7 +93,7 @@ end;
 
 procedure TRVendasDoDia.Assinatura(vendedor: TVendedor; Emitente: TEmitente);
 var
-  LinhaCmd: string;
+    LinhaCmd: string;
 begin
   Buffer.Add(escNewLine);
 
@@ -101,12 +101,10 @@ begin
     '_____________________________________________________';
   Buffer.Add(LinhaCmd);
 
-  LinhaCmd := escAlignCenter + esc20Cpi + escBoldOn +
-    'ASSINATURA DO VENDEDOR';
+  LinhaCmd := escAlignCenter + esc20Cpi + escBoldOn + 'ASSINATURA VENDEDOR';
   Buffer.Add(LinhaCmd);
 
-  LinhaCmd := escAlignCenter + esc20Cpi + escBoldOff + Emitente.CIDADE + ', ' +
-    FormatDateTime('dddd d mmmm yyyy', now);
+  LinhaCmd := escAlignCenter + esc20Cpi + escBoldOff + Emitente.CIDADE + ', ' + FormatDateTime('dddd d mmmm yyyy', now);
   Buffer.Add(LinhaCmd);
 end;
 

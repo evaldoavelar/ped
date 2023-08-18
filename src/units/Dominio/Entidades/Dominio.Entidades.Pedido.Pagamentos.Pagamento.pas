@@ -24,6 +24,7 @@ type
     Fparcelas: TObjectList<TParcelas>;
     FIDCONDICAO: integer;
     FQUANTASVEZES: integer;
+    FTROCO: Currency;
     procedure SetACRESCIMO(const Value: Currency);
     procedure SetCONDICAO(const Value: string);
     procedure SetDESCRICAO(const Value: string);
@@ -38,6 +39,7 @@ type
     procedure SetTipoPagamento(const Value: TTipoPagto);
     procedure SetIDCONDICAO(const Value: integer);
     procedure SetQUANTASVEZES(const Value: integer);
+    procedure SetTROCO(const Value: Currency);
   public
     procedure ParcelarPedido(aCodigoCliente: string; NumParcelas: integer;
       VencimentoPrimeiraParcela: TDate);
@@ -66,6 +68,8 @@ type
     property ACRESCIMO: Currency read FACRESCIMO write SetACRESCIMO;
     [campo('VALOR', tpNUMERIC, 15, 4, True, '0')]
     property Valor: Currency read FVALOR write SetVALOR;
+    [campo('TROCO', tpNUMERIC, 15, 4, True, '0')]
+    property TROCO: Currency read FTROCO write SetTROCO;
     [campo('QUANTASVEZES', tpINTEGER)]
     property QUANTASVEZES: integer read FQUANTASVEZES write SetQUANTASVEZES;
 
@@ -238,6 +242,11 @@ end;
 procedure TPEDIDOPAGAMENTO.SetTipoPagamento(const Value: TTipoPagto);
 begin
   FTipo := Ord(Value);
+end;
+
+procedure TPEDIDOPAGAMENTO.SetTROCO(const Value: Currency);
+begin
+  FTROCO := Value;
 end;
 
 procedure TPEDIDOPAGAMENTO.SetVALOR(const Value: Currency);

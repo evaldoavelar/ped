@@ -52,7 +52,7 @@ uses
 
 function TDaoPedido.ProdutosVendidos(dataInicio, dataFim: TDate): TList<TProdutoVenda>;
 var
-  qry: TFDQuery;
+    qry: TFDQuery;
 
 begin
   result := TList<TProdutoVenda>.Create;
@@ -110,7 +110,7 @@ end;
 
 procedure TDaoPedido.AdicionaComprovante(Pedido: TPedido);
 var
-  qry: TFDQuery;
+    qry: TFDQuery;
 begin
 
   qry := Self.Query();
@@ -140,7 +140,7 @@ end;
 
 procedure TDaoPedido.AtualizaPedido(Pedido: TPedido);
 var
-  qry: TFDQuery;
+    qry: TFDQuery;
 begin
 
   qry := Self.Query();
@@ -188,7 +188,7 @@ end;
 
 procedure TDaoPedido.ExcluiItem(Item: TItemPedido);
 var
-  DaoItemPedido: TDaoItemPedido;
+    DaoItemPedido: TDaoItemPedido;
 begin
   DaoItemPedido := TDaoItemPedido.Create(Self.FConnection, true);
   DaoItemPedido.ExcluiItemPedido(Item.SEQ, Item.IDPEDIDO);
@@ -198,7 +198,7 @@ end;
 
 procedure TDaoPedido.FinalizaPedido(Pedido: TPedido);
 var
-  qry: TFDQuery;
+    qry: TFDQuery;
 begin
 
   Valida(Pedido);
@@ -245,9 +245,9 @@ end;
 
 function TDaoPedido.AtualizarEstoque(Pedido: TPedido): Integer;
 var
-  LFactory: IFactoryDao;
+    LFactory: IFactoryDao;
 BEGIN
-  LFactory := TFactory.new(FConnection,true);
+  LFactory := TFactory.new(FConnection, true);
 
   for var ProdutoServicoOS in Pedido.itens do
   begin
@@ -302,7 +302,7 @@ end;
 
 function TDaoPedido.getPedido(id: Integer): TPedido;
 var
-  qry: TFDQuery;
+    qry: TFDQuery;
 begin
 
   qry := Self.Query();
@@ -338,7 +338,7 @@ end;
 
 procedure TDaoPedido.GravaPgamento(Pagamentos: TPAGAMENTOS);
 var
-  DaoFormaPagto: TDAOPedidoPagamento;
+    DaoFormaPagto: TDAOPedidoPagamento;
   pagto: TPEDIDOPAGAMENTO;
 begin
   DaoFormaPagto := TDAOPedidoPagamento.Create(Self.FConnection, true);
@@ -357,7 +357,7 @@ end;
 
 function TDaoPedido.Listar(campo, valor: string): TDataSet;
 var
-  qry: TFDQuery;
+    qry: TFDQuery;
 begin
 
   qry := Self.Query();
@@ -392,7 +392,7 @@ end;
 
 function TDaoPedido.Listar(dataInicio, dataFim: TDate): TDataSet;
 var
-  qry: TFDQuery;
+    qry: TFDQuery;
 begin
 
   qry := Self.Query();
@@ -429,7 +429,7 @@ end;
 function TDaoPedido.Listar(campo, valor: string; dataInicio,
   dataFim: TDate): TDataSet;
 var
-  qry: TFDQuery;
+    qry: TFDQuery;
 begin
 
   qry := Self.Query();
@@ -470,7 +470,7 @@ end;
 
 procedure TDaoPedido.AbrePedido(Pedido: TPedido);
 var
-  qry: TFDQuery;
+    qry: TFDQuery;
 begin
   Valida(Pedido);
 
@@ -599,7 +599,7 @@ end;
 
 Procedure LoadBitmapFromBlob(Bitmap: TBitmap; Blob: TBlobField);
 var
-  ms, ms2: TMemoryStream;
+    ms, ms2: TMemoryStream;
 begin
   ms := TMemoryStream.Create;
   try
@@ -613,7 +613,7 @@ end;
 
 function TDaoPedido.ParamsToObject(ds: TFDQuery): TPedido;
 var
-  DaoVendedor: TDaoVendedor;
+    DaoVendedor: TDaoVendedor;
   DaoParceiro: TDaoParceiro;
   DaoCliente: TDaoCliente;
   DaoPagamentos: TDAOPedidoPagamento;
@@ -695,7 +695,8 @@ end;
 
 function TDaoPedido.Totais(dataInicio, dataFim: TDate; CodVen: string): TList<TPair<string, string>>;
 var
-  qry: TFDQuery;
+    qry: TFDQuery; saidas: TArray<string>;
+  sinal: string;
 begin
 
   qry := Self.Query();
@@ -726,7 +727,7 @@ begin
         + 'UNION ALL '
 
         + 'SELECT ''Total Líquido''     Titulo, '
-        + '       Sum(p.valorbruto) AS Total '
+        + '       Sum(p.valorbruto) -  Sum(p.VALORDESC) AS Total '
         + 'FROM   pedido p '
         + 'WHERE  p.status = ''F'' '
         + '       AND p.datapedido >= :dataInicio '
@@ -747,7 +748,7 @@ begin
         + 'UNION ALL '
 
         + 'SELECT descricao Titulo, '
-        + '       Sum(valor) AS Total '
+        + '       Sum(pg.valor - pg.troco) AS Total  '
         + 'FROM   pedidopagamento pg, '
         + '       pedido p '
         + 'WHERE  p.status = ''F'' '
@@ -801,20 +802,49 @@ begin
       TLog.d(qry);
       qry.Open;
 
+      TArrayUtil<string>.Append(saidas, 'Troco');
+      TArrayUtil<string>.Append(saidas, 'Sangria');
+      TArrayUtil<string>.Append(saidas, 'Descontos');
+
       while not qry.Eof do
       begin
-        result.Add(TPair<string, string>.Create(qry.FieldByName('Titulo').AsString, FormatCurr('R$ 0.,00', qry.FieldByName('Total').AsCurrency)));
+        if TArrayUtil<string>.Indexof(saidas, qry.FieldByName('Titulo').AsString.Trim) > -1 then
+          sinal := '-'
+        else
+          sinal := '';
+
+        result.Add(TPair<string, string>.Create(qry.FieldByName('Titulo').AsString, sinal + FormatCurr('R$ 0.,00', qry.FieldByName('Total').AsCurrency)));
         qry.Next;
       end;
 
       qry.SQL.Text := ''
-        + 'SELECT ''Numero de Cancelamentos'' AS Titulo, '
+        + 'SELECT ''Numero de Vendas Concluídas'' AS Titulo, '
+        + '       count(p.id)  AS Total '
+        + 'FROM   pedido p '
+        + 'WHERE  p.status = ''F'' '
+        + '       AND p.datapedido >= :dataInicio '
+        + '       AND p.datapedido <= :dataFim '
+        + '       AND p.codven = :codven '
+
+        + 'UNION ALL '
+
+        + 'SELECT ''Numero de Vendas Canceladas'' AS Titulo, '
         + '       count(p.id)  AS Total '
         + 'FROM   pedido p '
         + 'WHERE  p.status = ''C'' '
         + '       AND p.datapedido >= :dataInicio '
         + '       AND p.datapedido <= :dataFim '
-        + '       and p.codven = :CODVENCANCELAMENTO '
+        + '       AND p.codven = :codven '
+
+        + 'UNION ALL '
+
+        + 'SELECT ''Numero de Vendas Não Finalizadas'' AS Titulo, '
+        + '       count(p.id)  AS Total '
+        + 'FROM   pedido p '
+        + 'WHERE  p.status = ''A'' '
+        + '       AND p.datapedido >= :dataInicio '
+        + '       AND p.datapedido <= :dataFim '
+        + '       AND p.codven = :codven '
 
         + 'UNION ALL '
 
@@ -856,7 +886,7 @@ end;
 
 function TDaoPedido.Totais(dataInicio, dataFim: TDate): TList<TPair<string, string>>;
 var
-  qry: TFDQuery;
+    qry: TFDQuery;
   saidas: TArray<string>;
   sinal: string;
 begin
@@ -887,7 +917,7 @@ begin
         + 'UNION ALL '
 
         + 'SELECT ''Total Líquido''     Titulo, '
-        + '       Sum(p.valorliquido) AS Total '
+        + '       Sum(p.valorbruto) - Sum(p.VALORDESC) AS Total '
         + 'FROM   pedido p '
         + 'WHERE  p.status = ''F'' '
         + '       AND p.datapedido >= :dataInicio '
@@ -896,7 +926,7 @@ begin
         + 'UNION ALL '
 
         + 'SELECT descricao Titulo, '
-        + '       Sum(valor) AS Total '
+        + '       Sum(pg.valor - pg.troco) AS Total  '
         + 'FROM   pedidopagamento pg, '
         + '       pedido p '
         + 'WHERE  p.status = ''F'' '
@@ -964,7 +994,7 @@ begin
       result.Add(TPair<string, string>.Create('', ''));
 
       qry.SQL.Text := ''
-        + 'SELECT ''Numero de Pedidos Concluídos'' AS Titulo, '
+        + 'SELECT ''Numero de Vendas Concluídos'' AS Titulo, '
         + '       count(p.id)  AS Total '
         + 'FROM   pedido p '
         + 'WHERE  p.status = ''F'' '
@@ -973,7 +1003,7 @@ begin
 
         + 'UNION ALL '
 
-        + 'SELECT ''Numero de Cancelamentos'' AS Titulo, '
+        + 'SELECT ''Numero de Vendas Canceladas'' AS Titulo, '
         + '       count(p.id)  AS Total '
         + 'FROM   pedido p '
         + 'WHERE  p.status = ''C'' '
@@ -982,7 +1012,7 @@ begin
 
         + 'UNION ALL '
 
-        + 'SELECT ''Numero de Pedidos Não Finalizados'' AS Titulo, '
+        + 'SELECT ''Numero de Vendas Não Finalizadas'' AS Titulo, '
         + '       count(p.id)  AS Total '
         + 'FROM   pedido p '
         + 'WHERE  p.status = ''A'' '
@@ -1038,7 +1068,7 @@ end;
 
 procedure TDaoPedido.VendeItem(Item: TItemPedido);
 var
-  DaoItemPedido: TDaoItemPedido;
+    DaoItemPedido: TDaoItemPedido;
 begin
   DaoItemPedido := TDaoItemPedido.Create(Self.FConnection, true);
   DaoItemPedido.IncluiItemPedido(Item);
@@ -1047,7 +1077,7 @@ end;
 
 function TDaoPedido.TotaisParceiro(dataInicio, dataFim: TDate; CodParceiro: string): TList<TPair<string, Currency>>;
 var
-  qry: TFDQuery;
+    qry: TFDQuery;
 begin
 
   qry := Self.Query();

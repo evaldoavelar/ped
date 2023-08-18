@@ -14850,7 +14850,7 @@ object FrmPrincipal: TFrmPrincipal
       Opened = False
       OpenedWidth = 250
       Placement = svpRight
-      TabOrder = 4
+      TabOrder = 3
       object pnlAtalhos: TPanel
         AlignWithMargins = True
         Left = 3

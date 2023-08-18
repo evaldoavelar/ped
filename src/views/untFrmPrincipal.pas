@@ -265,7 +265,7 @@ type
   end;
 
 var
-  FrmPrincipal: TFrmPrincipal;
+    FrmPrincipal: TFrmPrincipal;
 
 implementation
 
@@ -290,7 +290,7 @@ uses
 
 procedure TFrmPrincipal.ImportarTabelas;
 var
-  LFacadeImportar: IFacadeImportar;
+    LFacadeImportar: IFacadeImportar;
 begin
   TLog.IniciaCache;
   try
@@ -313,7 +313,7 @@ end;
 
 procedure TFrmPrincipal.InciaLog(habilitar: Boolean);
 var
-  diretoriolog: string;
+    diretoriolog: string;
 begin
   diretoriolog := TUtil.DiretorioApp + '\Log\';
 
@@ -356,7 +356,7 @@ end;
 
 procedure TFrmPrincipal.actBackupExecute(Sender: TObject);
 var
-  arquivo: string;
+    arquivo: string;
 begin
   TLog.d('>>> Entrando em  TFrmPrincipal.actBackupExecute ');
   try
@@ -825,7 +825,7 @@ end;
 
 procedure TFrmPrincipal.InformarSerial();
 var
-  Licenca: TLicenca;
+    Licenca: TLicenca;
   arquivo: tstringlist;
 begin
   TLog.d('>>> Entrando em  TFrmPrincipal.InformarSerial ');
@@ -952,7 +952,7 @@ end;
 
 procedure TFrmPrincipal.actRelatorioParcelasClienteExecute(Sender: TObject);
 var
-  impressao: TRParcelasCliente;
+    impressao: TRParcelasCliente;
   Cliente: TCliente;
   parcelasVencidas: TObjectList<TParcelas>;
   parcelasVencendo: TObjectList<TParcelas>;
@@ -1008,7 +1008,7 @@ end;
 
 procedure TFrmPrincipal.actRelatorioProdutosVendidosExecute(Sender: TObject);
 var
-  impressao: TRProdutosVendidos;
+    impressao: TRProdutosVendidos;
   DataIncio, DataFim: TDate;
   ProdutosVenda: TList<TProdutoVenda>;
   LFactory: IFactoryDao;
@@ -1059,7 +1059,7 @@ end;
 
 procedure TFrmPrincipal.actRelatorioVencendoExecute(Sender: TObject);
 var
-  Parcelas: TObjectList<TParcelas>;
+    Parcelas: TObjectList<TParcelas>;
 begin
   TLog.d('>>> Entrando em  TFrmPrincipal.actRelatorioVencendoExecute ');
   frmFiltroVencimento := TfrmFiltroVencimento.Create(self);
@@ -1090,7 +1090,7 @@ end;
 
 procedure TFrmPrincipal.actRelatorioVencidasExecute(Sender: TObject);
 var
-  Parcelas: TObjectList<TParcelas>;
+    Parcelas: TObjectList<TParcelas>;
 begin
   TLog.d('>>> Entrando em  TFrmPrincipal.actRelatorioVencidasExecute ');
   try
@@ -1111,7 +1111,7 @@ end;
 
 procedure TFrmPrincipal.actRelatorioVendasDoDiaExecute(Sender: TObject);
 var
-  impressao: TRVendasDoDia;
+    impressao: TRVendasDoDia;
   DataIncio, DataFim: TDate;
 
   LFactory: IFactoryDao;
@@ -1186,7 +1186,7 @@ end;
 
 procedure TFrmPrincipal.actVendasDoDiaPorVendedorExecute(Sender: TObject);
 var
-  impressao: TRVendasDoDia;
+    impressao: TRVendasDoDia;
   DataIncio, DataFim: TDate;
   Vendedor: TVendedor;
   LFactory: IFactoryDao;
@@ -1213,9 +1213,14 @@ begin
 
     impressao := TRVendasDoDia.Create(TFactoryEntidades.Parametros.ImpressoraTermica);
 
-    impressao.Imprime(Vendedor, DataIncio, DataFim, TFactoryEntidades.new.VendedorLogado,
-      LFactory.DadosEmitente, LFactory.DaoPedido.Totais(DataIncio, DataFim,
-      Vendedor.CODIGO));
+    impressao.Imprime(
+      Vendedor,
+      DataIncio,
+      DataFim,
+      TFactoryEntidades.new.VendedorLogado,
+      LFactory.DadosEmitente,
+      LFactory.DaoPedido.Totais(DataIncio, DataFim, Vendedor.CODIGO)
+      );
 
     FreeAndNil(impressao);
     LFactory.Close;
@@ -1231,7 +1236,7 @@ end;
 
 procedure TFrmPrincipal.actVendasPorParceiroExecute(Sender: TObject);
 var
-  impressao: TRVendasPorParceiro;
+    impressao: TRVendasPorParceiro;
   DataIncio, DataFim: TDate;
 
   LFactory: IFactoryDao;
@@ -1290,7 +1295,7 @@ end;
 
 procedure TFrmPrincipal.actVerVencimentoExecute(Sender: TObject);
 var
-  Licenca: TLicenca;
+    Licenca: TLicenca;
 begin
   TLog.d('>>> Entrando em  TFrmPrincipal.actVerVencimentoExecute ');
   Licenca := TLicenca.Create;
@@ -1310,7 +1315,7 @@ end;
 
 procedure TFrmPrincipal.Backup(arquivo: string; force: Boolean = false);
 var
-  LBancoDeDados: TParametrosBancoDeDados;
+    LBancoDeDados: TParametrosBancoDeDados;
 begin
   TLog.d('>>> Entrando em  TFrmPrincipal.Backup ');
   try
@@ -1350,7 +1355,7 @@ end;
 
 function TFrmPrincipal.CheckLicenca: Boolean;
 var
-  Licenca: TLicenca;
+    Licenca: TLicenca;
   CNPJ: string;
   LFactory: IFactoryDao;
   LEmitente: TEmitente;
@@ -1428,7 +1433,7 @@ end;
 
 function TFrmPrincipal.RetornaNomeArquivoBackup(): string;
 var
-  diretorio: string;
+    diretorio: string;
 begin
   TLog.d('>>> Entrando em  TFrmPrincipal.RetornaNomeArquivoBackup ');
   diretorio := TUtil.DiretorioApp + 'backup';
@@ -1469,7 +1474,7 @@ end;
 
 procedure TFrmPrincipal.ConfiguraMenuLateral;
 var
-  i: Integer;
+    i: Integer;
 begin
   TLog.d('>>> Entrando em  TFrmPrincipal.ConfiguraMenuLateral ');
 
@@ -1529,7 +1534,7 @@ end;
 
 procedure TFrmPrincipal.ExibeVencendo;
 var
-  Parcelas: TObjectList<TParcelas>;
+    Parcelas: TObjectList<TParcelas>;
 begin
   Parcelas := TFactory.new.DaoParcelas.GetParcelaVencendoObj(Now, IncMonth(Now, 2));
   ListaParcelas('Parcelas Vencendo', Parcelas);
@@ -1539,7 +1544,7 @@ end;
 
 procedure TFrmPrincipal.ExibeVencidos;
 var
-  Parcelas: TObjectList<TParcelas>;
+    Parcelas: TObjectList<TParcelas>;
 begin
   TLog.d('>>> Entrando em  TFrmPrincipal.ExibeVencidos ');
   Parcelas := TFactory.new.DaoParcelas.GetParcelaVencidasObj(Now);
@@ -1554,7 +1559,7 @@ end;
 procedure TFrmPrincipal.ListaParcelas(ACaption: string;
   AParcelas: TObjectList<TParcelas>);
 var
-  Aleft, Atop: Integer;
+    Aleft, Atop: Integer;
 begin
   TLog.d('>>> Entrando em  TFrmPrincipal.ListaParcelas ');
   frmParcelasVencendo := TfrmParcelasVencendo.Create(self);
@@ -1578,7 +1583,7 @@ end;
 
 procedure TFrmPrincipal.FormActivate(Sender: TObject);
 var
-  LVendedorLogado: TVendedor;
+    LVendedorLogado: TVendedor;
   LChamarInicializar: Boolean;
 begin
   TLog.d('>>> Entrando em  TFrmPrincipal.FormActivate ');
@@ -1657,7 +1662,7 @@ end;
 
 procedure TFrmPrincipal.ExibeAtalhos;
 var
-  i: Integer;
+    i: Integer;
 begin
   TLog.d('>>> Entrando em  TFrmPrincipal.ExibeAtalhos ');
   for i := 0 to actPrincipal.ActionCount - 1 do
@@ -1683,7 +1688,7 @@ end;
 
 procedure TFrmPrincipal.MigrateBD;
 var
-  migrate: IDataseMigration;
+    migrate: IDataseMigration;
   Erros: TDictionary<TClass, string>;
   ListaErros: TStringBuilder;
   key: TClass;
@@ -1737,7 +1742,7 @@ end;
 
 procedure TFrmPrincipal.Inicializar;
 var
-  LFactory: IFactoryDao;
+    LFactory: IFactoryDao;
   task: ITask;
 begin
   TLog.d('>>> Entrando em  TFrmPrincipal.Inicializar ');
@@ -1764,7 +1769,7 @@ begin
     task := TTask.Create(
       procedure()
       var
-        arquivo: string;
+          arquivo: string;
       begin
         try
           arquivo := RetornaNomeArquivoBackup();
@@ -1787,7 +1792,7 @@ end;
 
 procedure TFrmPrincipal.Image3Click(Sender: TObject);
 var
-  Z: TPoint;
+    Z: TPoint;
 begin
   TLog.d('>>> Entrando em  TFrmPrincipal.Image3Click ');
   Z.X := 0;
@@ -1840,7 +1845,7 @@ end;
 
 procedure TFrmPrincipal.VerificaParcelasVencendo;
 var
-  vencendo: Integer;
+    vencendo: Integer;
   vencidas: Integer;
   LDaoParcelas: IDaoParcelas;
 
@@ -1883,7 +1888,7 @@ end;
 
 procedure TFrmPrincipal.WMGetMinmaxInfo(var Msg: TWMGetMinmaxInfo);
 var
-  R: TRect;
+    R: TRect;
 begin
   inherited;
 

@@ -83,10 +83,10 @@ type
   end;
 
 const
-  corDestaque = $00ECE3D2;
+    corDestaque = $00ECE3D2;
 
 var
-  FrmPagamento: TFrmPagamento;
+    FrmPagamento: TFrmPagamento;
 
 implementation
 
@@ -95,7 +95,7 @@ uses
 
   Util.Funcoes,
   Pedido.Venda.Part.Pagamento,
-  Pedido.Pagamento.Imagem,   Sistema.TLog,
+  Pedido.Pagamento.Imagem, Sistema.TLog,
   Dominio.Entidades.TFormaPagto.Tipo;
 
 {$R *.dfm}
@@ -229,7 +229,7 @@ end;
 
 procedure TFrmPagamento.AddPagamento;
 VAR
-  valor: Currency;
+    valor: Currency;
 begin
   TLog.d('>>> Entrando em  TFrmPagamento.AddPagamento ');
   try
@@ -263,6 +263,10 @@ begin
     var
     totalCrescimo := condicao.CalculaValorDoAcrescimo(valorCalculoAccrescimo);
 
+    var
+    Troco := (valor - (FPedido.Pagamentos.ValorRestante + totalCrescimo));
+    TUtil.IFF<Currency>(Troco < 0, Troco, 0);
+
     if (valor > (FPedido.Pagamentos.ValorRestante + totalCrescimo))
       and (forma.TipoPagamento <> TTipoPagto.dinheiro) then
       raise Exception.Create('TROCO SOMENTE PERMITIDO PARA PAGAMENTO EM DINHEIRO!');
@@ -280,6 +284,7 @@ begin
     pagto.IDCONDICAO := condicao.ID;
     pagto.condicao := condicao.DESCRICAO;
     pagto.valor := valor;
+    pagto.Troco := Troco;
     pagto.QUANTASVEZES := condicao.QUANTASVEZES;
     pagto.ACRESCIMO := totalCrescimo;
 
@@ -302,7 +307,7 @@ end;
 
 procedure TFrmPagamento.ParcelaPedido(aPagto: TPEDIDOPAGAMENTO);
 var
-  NumParcelas: Integer;
+    NumParcelas: Integer;
   VencimentoPrimeiraParcela: TDate;
 begin
   try
