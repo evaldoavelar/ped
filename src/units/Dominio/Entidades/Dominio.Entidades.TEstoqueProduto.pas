@@ -69,7 +69,7 @@ type
     [Campo('DATA', tpDATE)]
     property DATA: TDate read FDATA write SetDATA;
 
-    [Campo('USUARIOCRIACAO', tpVarchar, 15)]
+    [Campo('USUARIOCRIACAO', tpVarchar, 35)]
     property USUARIOCRIACAO: string read FUSUARIOCRIACAO write SetUSUARIOCRIACAO;
 
     [Campo('DATAALTERACAO', tpTIMESTAMP)]
