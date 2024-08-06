@@ -239,6 +239,7 @@ begin
         + '             CONDICAO, '
         + '             TIPO, '
         + '             QUANTASVEZES, '
+        + '             TROCO, '
         + '             ACRESCIMO, '
         + '             VALOR ) '
         + 'VALUES      (:SEQ, '
@@ -249,6 +250,7 @@ begin
         + '             :CONDICAO, '
         + '             :TIPO, '
         + '             :QUANTASVEZES, '
+        + '             :TROCO, '
         + '             :ACRESCIMO, '
         + '             :VALOR )';
 

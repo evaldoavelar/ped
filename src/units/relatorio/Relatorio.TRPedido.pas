@@ -167,7 +167,7 @@ begin
   for VAR Pagto in Pedido.Pagamentos.FormasDePagamento do
   begin
     Buffer.Add(esc20Cpi + PadSpace(Pagto.DESCRICAO + '|' + FormatFloat('#,###,##0.00',
-      Pagto.Valor), Self.ColunasFonteCondensada, '|'));
+      Pagto.Valor ), Self.ColunasFonteCondensada, '|'));
   end;
 
   Buffer.Add(esc20Cpi + PadSpace('Troco|' + FormatFloat('-#,###,##0.00',
@@ -188,6 +188,9 @@ begin
 
   Buffer.Add(esc20Cpi + PadSpace('Acréscimos|' + FormatFloat('+#,###,##0.00',
     Pedido.VALORACRESCIMO), Self.ColunasFonteCondensada, '|'));
+
+  Buffer.Add(esc20Cpi + PadSpace('Total|' + FormatFloat('#,###,##0.00',
+    Pedido.ValorLiquido), Self.ColunasFonteCondensada, '|'));
 
 end;
 

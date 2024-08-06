@@ -265,7 +265,7 @@ begin
 
     var
     Troco := (valor - (FPedido.Pagamentos.ValorRestante + totalCrescimo));
-    TUtil.IFF<Currency>(Troco < 0, Troco, 0);
+    Troco := TUtil.IFF<Currency>(Troco < 0, Troco, 0);
 
     if (valor > (FPedido.Pagamentos.ValorRestante + totalCrescimo))
       and (forma.TipoPagamento <> TTipoPagto.dinheiro) then

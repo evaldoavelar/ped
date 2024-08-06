@@ -214,6 +214,7 @@ begin
       + '       valordesc = :VALORDESC, '
       + '       VALORENTRADA = :VALORENTRADA, '
       + '       valorliquido = :VALORLIQUIDO, '
+      + '       VALORBRUTO = :VALORBRUTO, '
       + '       OBSERVACAO = :OBSERVACAO, '
       + '       status = :STATUS, '
       + '       CODPARCEIRO = :CODPARCEIRO, '
