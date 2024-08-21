@@ -918,7 +918,7 @@ begin
         + 'UNION ALL '
 
         + 'SELECT ''Total Líquido''     Titulo, '
-        + '       Sum(p.valorbruto) - Sum(p.VALORDESC) AS Total '
+        + '       Sum(p.valorliquido) AS Total '
         + 'FROM   pedido p '
         + 'WHERE  p.status = ''F'' '
         + '       AND p.datapedido >= :dataInicio '
@@ -927,7 +927,7 @@ begin
         + 'UNION ALL '
 
         + 'SELECT descricao Titulo, '
-        + '       Sum(pg.valor - pg.troco) AS Total  '
+        + '       Sum(pg.valor )  AS Total  '
         + 'FROM   pedidopagamento pg, '
         + '       pedido p '
         + 'WHERE  p.status = ''F'' '
