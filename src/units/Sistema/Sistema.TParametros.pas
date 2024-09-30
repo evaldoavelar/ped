@@ -36,6 +36,7 @@ type
 
     FDATAALTERACAO: TDateTime;
     FPontoVenda: TPontoVenda;
+    FEXIBIROBSERVACAO: Boolean;
 
     function getVENDECLIENTEBLOQUEADO: Boolean;
     procedure setVENDECLIENTEBLOQUEADO(const Value: Boolean);
@@ -66,6 +67,7 @@ type
     procedure SetDATAALTERACAO(const Value: TDateTime);
     procedure SetPontoVenda(const Value: TPontoVenda);
     function getPontoVenda: TPontoVenda;
+    procedure SetEXIBIROBSERVACAO(const Value: Boolean);
 
   public
 
@@ -95,6 +97,9 @@ type
 
     [campo('INFORMARPARCEIRONAVENDA', tpINTEGER, 0, 0, True, '1')]
     property INFORMARPARCEIRONAVENDA: Boolean read FINFORMARPARCEIRONAVENDA write SetINFORMARPARCEIRONAVENDA;
+
+    [campo('EXIBIROBSERVACAO', tpINTEGER, 0, 0, True, '1')]
+    property EXIBIROBSERVACAO: Boolean read FEXIBIROBSERVACAO write SetEXIBIROBSERVACAO;
 
     [campo('LOGOMARCAETIQUETA', tpBLOB, 0, 9048)]
     property LOGOMARCAETIQUETA: TImage read FLOGOMARCAETIQUETA write FLOGOMARCAETIQUETA;
@@ -245,6 +250,15 @@ begin
   end;
 end;
 
+procedure TParametros.SetEXIBIROBSERVACAO(const Value: Boolean);
+begin
+  if Value <> FEXIBIROBSERVACAO then
+  begin
+    FEXIBIROBSERVACAO := Value;
+    Notify('EXIBIROBSERVACAO');
+  end;
+end;
+
 procedure TParametros.setImpressora(const Value: TParametrosImpressoraTermica);
 begin
   Self.FImpressora := Value;
@@ -286,7 +300,7 @@ end;
 procedure TParametros.SetPontoVenda(const Value: TPontoVenda);
 begin
   if FPontoVenda <> nil then
-    freeandnil(FPontoVenda);
+    FreeAndNil(FPontoVenda);
 
   FPontoVenda := Value;
 end;

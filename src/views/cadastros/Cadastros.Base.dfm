@@ -4,9 +4,8 @@ inherited frmCadastroBase: TfrmCadastroBase
   ClientHeight = 531
   ClientWidth = 674
   OnShow = FormShow
-  ExplicitWidth = 680
-  ExplicitHeight = 560
-  PixelsPerInch = 96
+  ExplicitWidth = 690
+  ExplicitHeight = 570
   TextHeight = 13
   object pnlContainer: TPanel
     Left = 0

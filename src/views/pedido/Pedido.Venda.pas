@@ -337,7 +337,8 @@ begin
     if FParametros.INFORMARPARCEIRONAVENDA then
       Pedido.AddParceiro(GetParceiroVenda());
 
-    GetObservacao();
+    if FParametros.EXIBIROBSERVACAO then
+      GetObservacao();
 
     Pedido.STATUS := 'F';
     DaoPedido.FinalizaPedido(Pedido);
@@ -975,43 +976,55 @@ var
   i: Integer;
 begin
   TLog.d('>>> Entrando em  TFrmPedidoVenda.FormCreate ');
-  // maximizar sem bordqas
-  SendMessage(Handle, WM_SYSCOMMAND, SC_MAXIMIZE, 0);
-  self.BorderStyle := bsNone;
+  try
 
-  FFactory := TFactory.new(nil, True);
-  FParametros := TFactoryEntidades.Parametros;
+    // maximizar sem bordqas
+    SendMessage(Handle, WM_SYSCOMMAND, SC_MAXIMIZE, 0);
+    self.BorderStyle := bsNone;
 
-  TVclFuncoes.DisableVclStyles(self, 'TLabel');
-  TVclFuncoes.DisableVclStyles(self, 'TEdit');
-  TVclFuncoes.DisableVclStyles(self, 'TMaskEdit');
-  TVclFuncoes.DisableVclStyles(self, 'TRichEdit');
-  lblBarraData.Caption := FormatDateTime('dd/mm/yyyy', now);
-  lblBarraHora.Caption := FormatDateTime('hh:mm', now);
+    FFactory := TFactory.new(nil, True);
+    FParametros := TFactoryEntidades.Parametros;
 
-  DaoPedido := FFactory.DaoPedido();
-  DaoVen := FFactory.DaoVendedor();
-  DaoProduto := FFactory.DaoProduto();
-  DaoCliente := FFactory.DaoCliente();
-  daoParcelas := FFactory.daoParcelas();
+    if FParametros = nil then
+      raise Exception.Create('Parâmetros não configurados');
 
-  CachePesquisa := TStringList.Create;
+    TVclFuncoes.DisableVclStyles(self, 'TLabel');
+    TVclFuncoes.DisableVclStyles(self, 'TEdit');
+    TVclFuncoes.DisableVclStyles(self, 'TMaskEdit');
+    TVclFuncoes.DisableVclStyles(self, 'TRichEdit');
+    lblBarraData.Caption := FormatDateTime('dd/mm/yyyy', now);
+    lblBarraHora.Caption := FormatDateTime('hh:mm', now);
 
-  // remover borda
-  // SetWindowRgn(cbbProduto.Handle, CreateRectRgn(2, 2, cbbProduto.Width - 2, cbbProduto.Height - 2), True);
-  cbbProduto.DropDownWidth := 600;
-  cbbProduto.MaxRowCount := 30;
+    DaoPedido := FFactory.DaoPedido();
+    DaoVen := FFactory.DaoVendedor();
+    DaoProduto := FFactory.DaoProduto();
+    DaoCliente := FFactory.DaoCliente();
+    daoParcelas := FFactory.daoParcelas();
 
-  SetFormaPesquisaProduto(TFormaPesquisa(FParametros.PESQUISAPRODUTOPOR));
+    CachePesquisa := TStringList.Create;
 
-  pgcEsquerdo.Brush.Color := $00F0F0F0;
+    // remover borda
+    // SetWindowRgn(cbbProduto.Handle, CreateRectRgn(2, 2, cbbProduto.Width - 2, cbbProduto.Height - 2), True);
+    cbbProduto.DropDownWidth := 600;
+    cbbProduto.MaxRowCount := 30;
 
-  for i := 0 to Pred(pgcEsquerdo.PageCount) do
-  begin
-    pgcEsquerdo.Pages[i].TabVisible := false;
+    SetFormaPesquisaProduto(TFormaPesquisa(FParametros.PESQUISAPRODUTOPOR));
+
+    pgcEsquerdo.Brush.Color := $00F0F0F0;
+
+    for i := 0 to Pred(pgcEsquerdo.PageCount) do
+    begin
+      pgcEsquerdo.Pages[i].TabVisible := false;
+    end;
+
+    pgcEsquerdo.ActivePage := tsGeral;
+  except
+    on E: Exception do
+    begin
+      TLog.d(E.Message);
+      MessageDlg(E.Message, mtError, [mbOK], 0);
+    end;
   end;
-
-  pgcEsquerdo.ActivePage := tsGeral;
   TLog.d('<<< Saindo de TFrmPedidoVenda.FormCreate ');
 end;
 

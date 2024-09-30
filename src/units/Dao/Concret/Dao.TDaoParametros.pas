@@ -41,6 +41,7 @@ begin
         'UPDATE parametros ' +
         'SET    vendeclientebloqueado = :VENDECLIENTEBLOQUEADO, ' +
         '       atualizaclientenavenda = :ATUALIZACLIENTENAVENDA, ' +
+        '       EXIBIROBSERVACAO = :EXIBIROBSERVACAO, ' +
         '       BLOQUEARCLIENTECOMATRASO = :BLOQUEARCLIENTECOMATRASO, ' +
         '       BACKUPDIARIO = :BACKUPDIARIO, ' +
         '       modeloimpressora = :MODELOIMPRESSORA, ' +
@@ -147,6 +148,7 @@ begin
         '             SERVIDORSENHA, ' +
       // '             NUMCAIXA, ' +
         '             DATAALTERACAO, ' +
+        '             EXIBIROBSERVACAO, ' +
         '             velocidade) ' +
         'VALUES     ( :VENDECLIENTEBLOQUEADO, ' +
         '             :ATUALIZACLIENTENAVENDA, ' +
@@ -166,6 +168,7 @@ begin
         '             :SERVIDORSENHA, ' +
       // '             :NUMCAIXA, ' +
         '             :DATAALTERACAO, ' +
+        '             :EXIBIROBSERVACAO, ' +
         '             :VELOCIDADE )';
 
       ObjectToParams(qry, Parametros);
@@ -195,6 +198,9 @@ begin
 
     if ds.Params.FindParam('ATUALIZACLIENTENAVENDA') <> nil then
       ds.Params.ParamByName('ATUALIZACLIENTENAVENDA').AsBoolean := Parametros.ATUALIZACLIENTENAVENDA;
+
+    if ds.Params.FindParam('EXIBIROBSERVACAO') <> nil then
+      ds.Params.ParamByName('EXIBIROBSERVACAO').AsBoolean := Parametros.EXIBIROBSERVACAO;
 
     if ds.Params.FindParam('BLOQUEARCLIENTECOMATRASO') <> nil then
       ds.Params.ParamByName('BLOQUEARCLIENTECOMATRASO').AsBoolean := Parametros.BLOQUEARCLIENTECOMATRASO;
@@ -261,6 +267,8 @@ begin
     Result.VENDECLIENTEBLOQUEADO := ds.FieldByName('VENDECLIENTEBLOQUEADO').AsInteger = 1;
     Result.BLOQUEARCLIENTECOMATRASO := ds.FieldByName('BLOQUEARCLIENTECOMATRASO').AsInteger = 1;
     Result.ATUALIZACLIENTENAVENDA := ds.FieldByName('ATUALIZACLIENTENAVENDA').AsInteger = 1;
+    Result.EXIBIROBSERVACAO := ds.FieldByName('EXIBIROBSERVACAO').AsInteger = 1;
+    Result.INFORMARPARCEIRONAVENDA := ds.FieldByName('INFORMARPARCEIRONAVENDA').AsInteger = 1;
     Result.VALIDADEORCAMENTO := ds.FieldByName('VALIDADEORCAMENTO').AsInteger;
     Result.PESQUISAPRODUTOPOR := ds.FieldByName('PESQUISAPRODUTOPOR').AsInteger;
     Result.BACKUPDIARIO := ds.FieldByName('BACKUPDIARIO').AsInteger = 1;

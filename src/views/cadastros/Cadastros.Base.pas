@@ -248,8 +248,13 @@ end;
 procedure TfrmCadastroBase.Pesquisar;
 begin
   TLog.d('>>> Entrando em  TfrmCadastroBase.Pesquisar ');
-  state := TState.stEdit;
-  TrataBotoes;
+  try
+    state := TState.stEdit;
+    TrataBotoes;
+  except
+    on E: Exception do
+      TLog.d(E.Message);
+  end;
   TLog.d('<<< Saindo de TfrmCadastroBase.Pesquisar ');
 end;
 
@@ -519,49 +524,55 @@ end;
 procedure TfrmCadastroBase.TrataBotoes;
 begin
   TLog.d('>>> Entrando em  TfrmCadastroBase.TrataBotoes ');
-  case state of
-    stEdit:
-      begin
-        actNovo.Enabled := False;
-        actSalvar.Enabled := True;
-        actCancelar.Enabled := True;
-        actExcluir.Enabled := True;
-        actPesquisar.Enabled := False;
-        edtPesquisa.Enabled := False;
-        actEditar.Enabled := False;
-        HabilitarControle(pgcPrincipal, True);
-      end;
-    StNovo:
-      begin
-        actNovo.Enabled := False;
-        actEditar.Enabled := False;
-        actSalvar.Enabled := True;
-        actExcluir.Enabled := False;
-        actCancelar.Enabled := True;
-        actPesquisar.Enabled := False;
-        edtPesquisa.Enabled := False;
-        HabilitarControle(pgcPrincipal, True);
-      end;
-    stExcluir:
-      begin
+  try
 
-      end;
-    stBrowser:
-      begin
-        actNovo.Enabled := True;
-        actEditar.Enabled := True;
-        actSalvar.Enabled := False;
-        actCancelar.Enabled := False;
-        actExcluir.Enabled := False;
-        actPesquisar.Enabled := True;
-        edtPesquisa.Enabled := True;
-        HabilitarControle(pgcPrincipal, False);
-      end;
+    case state of
+      stEdit:
+        begin
+          actNovo.Enabled := False;
+          actSalvar.Enabled := True;
+          actCancelar.Enabled := True;
+          actExcluir.Enabled := True;
+          actPesquisar.Enabled := False;
+          edtPesquisa.Enabled := False;
+          actEditar.Enabled := False;
+          HabilitarControle(pgcPrincipal, True);
+        end;
+      StNovo:
+        begin
+          actNovo.Enabled := False;
+          actEditar.Enabled := False;
+          actSalvar.Enabled := True;
+          actExcluir.Enabled := False;
+          actCancelar.Enabled := True;
+          actPesquisar.Enabled := False;
+          edtPesquisa.Enabled := False;
+          HabilitarControle(pgcPrincipal, True);
+        end;
+      stExcluir:
+        begin
+
+        end;
+      stBrowser:
+        begin
+          actNovo.Enabled := True;
+          actEditar.Enabled := True;
+          actSalvar.Enabled := False;
+          actCancelar.Enabled := False;
+          actExcluir.Enabled := False;
+          actPesquisar.Enabled := True;
+          edtPesquisa.Enabled := True;
+          HabilitarControle(pgcPrincipal, False);
+        end;
+    end;
+
+    self.Refresh;
+    self.Repaint;
+    Application.ProcessMessages;
+  except
+    on E: Exception do
+      TLog.d(E.Message);
   end;
-
-  self.Refresh;
-  self.Repaint;
-  Application.ProcessMessages;
   TLog.d('<<< Saindo de TfrmCadastroBase.TrataBotoes ');
 end;
 

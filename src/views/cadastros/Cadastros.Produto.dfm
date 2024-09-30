@@ -1,8 +1,7 @@
 inherited frmCadastroProduto: TfrmCadastroProduto
   Caption = 'Cadastro Produto'
   ClientHeight = 572
-  ExplicitHeight = 601
-  PixelsPerInch = 96
+  ExplicitHeight = 611
   TextHeight = 13
   inherited pnlContainer: TPanel
     Height = 474
@@ -617,10 +616,6 @@ inherited frmCadastroProduto: TfrmCadastroProduto
       object ts3: TTabSheet
         Caption = 'Observa'#231#227'o'
         ImageIndex = 2
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object mmoObservacao: TMemo
           Left = 9
           Top = 24

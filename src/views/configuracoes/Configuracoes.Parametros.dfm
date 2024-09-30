@@ -4,9 +4,8 @@ inherited FrmConfiguracoes: TFrmConfiguracoes
   ClientHeight = 403
   ClientWidth = 796
   OnShow = FormShow
-  ExplicitWidth = 802
-  ExplicitHeight = 432
-  PixelsPerInch = 96
+  ExplicitWidth = 812
+  ExplicitHeight = 442
   TextHeight = 13
   object pnl1: TPanel
     Left = 0
@@ -37,15 +36,11 @@ inherited FrmConfiguracoes: TFrmConfiguracoes
     Top = 0
     Width = 796
     Height = 362
-    ActivePage = tsCaixa
+    ActivePage = ts2
     Align = alClient
     TabOrder = 0
     object ts1: TTabSheet
       Caption = 'Empresa'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label1: TLabel
         Left = 13
         Top = 3
@@ -534,13 +529,9 @@ inherited FrmConfiguracoes: TFrmConfiguracoes
     object ts2: TTabSheet
       Caption = 'Par'#226'metros'
       ImageIndex = 1
-      ExplicitLeft = 5
-      ExplicitTop = 23
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object lbl1: TLabel
         Left = 16
-        Top = 211
+        Top = 232
         Width = 155
         Height = 13
         Caption = 'Validade do Or'#231'amento em Dias:'
@@ -589,7 +580,7 @@ inherited FrmConfiguracoes: TFrmConfiguracoes
       end
       object edtValidadeOrcamento: TEdit
         Left = 16
-        Top = 230
+        Top = 251
         Width = 121
         Height = 21
         Color = 15524818
@@ -605,7 +596,7 @@ inherited FrmConfiguracoes: TFrmConfiguracoes
       end
       object rgPesquisaPor: TRadioGroup
         Left = 13
-        Top = 159
+        Top = 180
         Width = 265
         Height = 49
         Caption = 'Pesquisar Produto na Venda  Por:'
@@ -631,19 +622,24 @@ inherited FrmConfiguracoes: TFrmConfiguracoes
         TabOrder = 6
         OnClick = chkVenderClienteBloqueadoClick
       end
+      object chkExibirObservacao: TCheckBox
+        Left = 16
+        Top = 149
+        Width = 217
+        Height = 17
+        Caption = 'Exibir Observa'#231#227'o'
+        TabOrder = 7
+        OnClick = chkVenderClienteBloqueadoClick
+      end
     end
     object tsLogoMarca: TTabSheet
       Caption = 'Logo Marca'
       ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label17: TLabel
         AlignWithMargins = True
         Left = 3
         Top = 3
-        Width = 333
+        Width = 782
         Height = 13
         Align = alTop
         Caption = 'Logo marca para Impress'#227'o em Etiquetas (130 x 43 pixels)'
@@ -653,6 +649,7 @@ inherited FrmConfiguracoes: TFrmConfiguracoes
         Font.Name = 'Tahoma'
         Font.Style = [fsBold]
         ParentFont = False
+        ExplicitWidth = 333
       end
       object imgComprovante: TImage
         AlignWithMargins = True
@@ -691,10 +688,6 @@ inherited FrmConfiguracoes: TFrmConfiguracoes
     object tsImpressora: TTabSheet
       Caption = 'Impressora'
       ImageIndex = 3
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object grp1: TGroupBox
         Left = 9
         Top = 21

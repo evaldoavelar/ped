@@ -81,6 +81,7 @@ type
     Label19: TLabel;
     edtNumeroDoCaixa: TEdit;
     chkFuncionarComoCliente: TCheckBox;
+    chkExibirObservacao: TCheckBox;
     procedure edtRazaoSocialChange(Sender: TObject);
     procedure actOkExecute(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -166,6 +167,7 @@ begin
 
   FParametros.Bind('PESQUISAPRODUTOPOR', rgPesquisaPor, 'ItemIndex');
   FParametros.Bind('INFORMARPARCEIRONAVENDA', chkInformarParceiroNaVenda, 'Checked');
+  FParametros.Bind('EXIBIROBSERVACAO', chkExibirObservacao, 'Checked');
 
   // FParametros.Bind('SERVIDORDATABASE', edtBancoDeDados, 'Text');
   // FParametros.Bind('SERVIDORUSUARIO', edtUsuario, 'Text');
