@@ -459,6 +459,7 @@
         <DCCReference Include="units\Dao\Abstract\Dao.IDaoPontoVenda.pas"/>
         <DCCReference Include="units\Dao\Concret\Dao.TDaoPontoVenda.pas"/>
         <DCCReference Include="modules\autocomplete\src\Vcl.AutoComplete.pas"/>
+        <DCCReference Include="units\relatorio\Relatorio.TRComprovante.CreditoDebito.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

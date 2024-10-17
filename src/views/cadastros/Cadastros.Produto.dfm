@@ -135,6 +135,7 @@ inherited frmCadastroProduto: TfrmCadastroProduto
           Top = 35
           Width = 179
           Height = 24
+          TabStop = False
           CharCase = ecUpperCase
           Color = 15524818
           Enabled = False

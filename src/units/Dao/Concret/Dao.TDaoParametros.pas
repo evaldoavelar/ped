@@ -56,7 +56,7 @@ begin
         '       SERVIDORUSUARIO = :SERVIDORUSUARIO, ' +
         '       SERVIDORSENHA = :SERVIDORSENHA, ' +
       // '       FUNCIONARCOMOCLIENTE = :FUNCIONARCOMOCLIENTE, ' +
-      // '       NUMCAIXA = :NUMCAIXA, ' +
+        '       INFORMARPARCEIRONAVENDA = :INFORMARPARCEIRONAVENDA, ' +
         '       DATAALTERACAO = :DATAALTERACAO, ' +
         '       PESQUISAPRODUTOPOR = :PESQUISAPRODUTOPOR ';
 
@@ -149,6 +149,7 @@ begin
       // '             NUMCAIXA, ' +
         '             DATAALTERACAO, ' +
         '             EXIBIROBSERVACAO, ' +
+        '             INFORMARPARCEIRONAVENDA, ' +
         '             velocidade) ' +
         'VALUES     ( :VENDECLIENTEBLOQUEADO, ' +
         '             :ATUALIZACLIENTENAVENDA, ' +
@@ -169,6 +170,7 @@ begin
       // '             :NUMCAIXA, ' +
         '             :DATAALTERACAO, ' +
         '             :EXIBIROBSERVACAO, ' +
+        '             :INFORMARPARCEIRONAVENDA, ' +
         '             :VELOCIDADE )';
 
       ObjectToParams(qry, Parametros);
@@ -236,8 +238,8 @@ begin
       ds.Params.ParamByName('SERVIDORUSUARIO').AsString := Parametros.SERVIDORUSUARIO;
     if ds.Params.FindParam('SERVIDORSENHA') <> nil then
       ds.Params.ParamByName('SERVIDORSENHA').AsString := Parametros.SERVIDORSENHA;
-    // if ds.Params.FindParam('FUNCIONARCOMOCLIENTE') <> nil then
-    // ds.Params.ParamByName('FUNCIONARCOMOCLIENTE').AsBoolean := Parametros.FUNCIONARCOMOCLIENTE;
+    if ds.Params.FindParam('INFORMARPARCEIRONAVENDA') <> nil then
+      ds.Params.ParamByName('INFORMARPARCEIRONAVENDA').AsBoolean := Parametros.INFORMARPARCEIRONAVENDA;
 
     if ds.Params.FindParam('LOGOMARCAETIQUETA') <> nil then
     begin
@@ -278,7 +280,6 @@ begin
     Result.ImpressoraTermica.IMPRIMIR2VIAS := ds.FieldByName('IMPRIMIR2VIAS').AsInteger = 1;
     Result.ImpressoraTermica.IMPRIMIRITENS2VIA := ds.FieldByName('IMPRIMIRITENS2VIA').AsInteger = 1;
     Result.VERSAOBD := ds.FieldByName('VERSAOBD').AsString;
-    // Result.FUNCIONARCOMOCLIENTE := ds.FieldByName('FUNCIONARCOMOCLIENTE').AsInteger = 1;
     Result.SERVIDORUSUARIO := ds.FieldByName('SERVIDORUSUARIO').AsString;
     Result.SERVIDORDATABASE := ds.FieldByName('SERVIDORDATABASE').AsString;
     Result.SERVIDORSENHA := ds.FieldByName('SERVIDORSENHA').AsString;

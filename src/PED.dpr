@@ -214,7 +214,8 @@ uses
   Sistema.Parametros.PontoVenda in 'units\Sistema\Sistema.Parametros.PontoVenda.pas',
   Dao.IDaoPontoVenda in 'units\Dao\Abstract\Dao.IDaoPontoVenda.pas',
   Dao.TDaoPontoVenda in 'units\Dao\Concret\Dao.TDaoPontoVenda.pas',
-  Vcl.AutoComplete in 'modules\autocomplete\src\Vcl.AutoComplete.pas';
+  Vcl.AutoComplete in 'modules\autocomplete\src\Vcl.AutoComplete.pas',
+  Relatorio.TRComprovante.CreditoDebito in 'units\relatorio\Relatorio.TRComprovante.CreditoDebito.pas';
 
 {$R *.res}
 

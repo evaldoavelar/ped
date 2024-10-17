@@ -277,7 +277,7 @@ var
 implementation
 
 uses
-  Util.Funcoes, Pedido.SelecionaCliente, Util.Exceptions,
+  Util.Funcoes, Pedido.SelecionaCliente, Util.Exceptions, Relatorio.TRComprovante.CreditoDebito,
   Consulta.Produto, Pedido.CancelarItem, Filtro.Pedidos, Dominio.Entidades.TFormaPagto.Tipo,
   Pedido.Observacao, Dominio.Entidades.TEmitente, Relatorio.TRPedido,
   Pedido.Pagamento, Pedido.Venda.Part.Pagamento, Sistema.TLog,
@@ -1549,25 +1549,33 @@ end;
 
 procedure TFrmPedidoVenda.Imprime;
 var
-  Impressora: TRPedido;
+  RelPedido: TRPedido;
+  RelComprovanteDC: TRComprovanteCreditoDebito;
   Emitente: TEmitente;
   ParcelasAtrasadas: TObjectList<TParcelas>;
 begin
   TLog.d('>>> Entrando em  TFrmPedidoVenda.Imprime ');
   try // todo: buscar dos parametros
-    Impressora := TRPedido.Create(FParametros.ImpressoraTermica);
+    RelPedido := TRPedido.Create(FParametros.ImpressoraTermica);
+    RelComprovanteDC := TRComprovanteCreditoDebito.Create(FParametros.ImpressoraTermica);
     ParcelasAtrasadas := FFactory.daoParcelas.GeTParcelasVencidasPorCliente(Pedido.Cliente.CODIGO, now);
     Emitente := FFactory.DadosEmitente;
 
     try
-      Impressora.ImprimeCupom(
+      RelPedido.ImprimeCupom(
         Emitente,
         Pedido,
         ParcelasAtrasadas
         );
     finally
-      FreeAndNil(Impressora);
+      FreeAndNil(RelPedido);
       FreeAndNil(ParcelasAtrasadas);
+    end;
+
+    try
+      RelComprovanteDC.Imprime(FFactory.DadosEmitente, Pedido);
+    finally
+      FreeAndNil(RelComprovanteDC);
     end;
 
   except
