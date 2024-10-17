@@ -926,7 +926,7 @@ begin
 
         + 'UNION ALL '
 
-        + 'SELECT descricao Titulo, '
+        + 'SELECT (descricao || '' ('' || COUNT(pg.IDPEDIDO) || '')'') AS Titulo, '
         + '       Sum(pg.valor )  AS Total  '
         + 'FROM   pedidopagamento pg, '
         + '       pedido p '
