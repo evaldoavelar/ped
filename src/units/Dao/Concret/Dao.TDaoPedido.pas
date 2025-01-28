@@ -52,7 +52,7 @@ uses
 
 function TDaoPedido.ProdutosVendidos(dataInicio, dataFim: TDate): TList<TProdutoVenda>;
 var
-    qry: TFDQuery;
+  qry: TFDQuery;
 
 begin
   result := TList<TProdutoVenda>.Create;
@@ -110,7 +110,7 @@ end;
 
 procedure TDaoPedido.AdicionaComprovante(Pedido: TPedido);
 var
-    qry: TFDQuery;
+  qry: TFDQuery;
 begin
 
   qry := Self.Query();
@@ -140,7 +140,7 @@ end;
 
 procedure TDaoPedido.AtualizaPedido(Pedido: TPedido);
 var
-    qry: TFDQuery;
+  qry: TFDQuery;
 begin
 
   qry := Self.Query();
@@ -177,8 +177,8 @@ begin
       end;
     end;
 
-    if Pedido.STATUS = 'C' then
-      AtualizarEstoque(Pedido);
+   if Pedido.STATUS = 'C' then
+    AtualizarEstoque(Pedido);
 
   finally
     FreeAndNil(qry);
@@ -188,7 +188,7 @@ end;
 
 procedure TDaoPedido.ExcluiItem(Item: TItemPedido);
 var
-    DaoItemPedido: TDaoItemPedido;
+  DaoItemPedido: TDaoItemPedido;
 begin
   DaoItemPedido := TDaoItemPedido.Create(Self.FConnection, true);
   DaoItemPedido.ExcluiItemPedido(Item.SEQ, Item.IDPEDIDO);
@@ -198,7 +198,7 @@ end;
 
 procedure TDaoPedido.FinalizaPedido(Pedido: TPedido);
 var
-    qry: TFDQuery;
+  qry: TFDQuery;
 begin
 
   Valida(Pedido);
@@ -246,7 +246,7 @@ end;
 
 function TDaoPedido.AtualizarEstoque(Pedido: TPedido): Integer;
 var
-    LFactory: IFactoryDao;
+  LFactory: IFactoryDao;
 BEGIN
   LFactory := TFactory.new(FConnection, true);
 
@@ -269,15 +269,15 @@ BEGIN
 
     if Pedido.STATUS = 'C' then
     begin
-      // Flog.d('PRODUTO DELETADO REMOVER ENTRADA DO ESTOQUE %d', [ProdutoServicoOS.DESCRICAO]);
+      TLog.d('PRODUTO DELETADO REMOVER ENTRADA DO ESTOQUE %d', [ProdutoServicoOS.DESCRICAO]);
       LFactory.DaoEstoqueProduto.Delete(ESTOQUE);
-      // Flog.d('DEVOLVER O SALDO');
+      TLog.d('DEVOLVER O SALDO');
       LFactory.DaoProduto.EntradaSaidaEstoque(ESTOQUE.CODIGOPRD, (ESTOQUE.QUANTIDADE), false);
     end
     else
     begin
       LFactory.DaoEstoqueProduto.Inclui(ESTOQUE);
-      // // Flog.d('BAIXAR O ESTOQUE');
+      TLog.d('BAIXAR O ESTOQUE');
       LFactory.DaoProduto.EntradaSaidaEstoque(ESTOQUE.CODIGOPRD, (ESTOQUE.QUANTIDADE * -1), false);
     end;
 
@@ -303,7 +303,7 @@ end;
 
 function TDaoPedido.getPedido(id: Integer): TPedido;
 var
-    qry: TFDQuery;
+  qry: TFDQuery;
 begin
 
   qry := Self.Query();
@@ -339,7 +339,7 @@ end;
 
 procedure TDaoPedido.GravaPgamento(Pagamentos: TPAGAMENTOS);
 var
-    DaoFormaPagto: TDAOPedidoPagamento;
+  DaoFormaPagto: TDAOPedidoPagamento;
   pagto: TPEDIDOPAGAMENTO;
 begin
   DaoFormaPagto := TDAOPedidoPagamento.Create(Self.FConnection, true);
@@ -358,7 +358,7 @@ end;
 
 function TDaoPedido.Listar(campo, valor: string): TDataSet;
 var
-    qry: TFDQuery;
+  qry: TFDQuery;
 begin
 
   qry := Self.Query();
@@ -393,7 +393,7 @@ end;
 
 function TDaoPedido.Listar(dataInicio, dataFim: TDate): TDataSet;
 var
-    qry: TFDQuery;
+  qry: TFDQuery;
 begin
 
   qry := Self.Query();
@@ -430,7 +430,7 @@ end;
 function TDaoPedido.Listar(campo, valor: string; dataInicio,
   dataFim: TDate): TDataSet;
 var
-    qry: TFDQuery;
+  qry: TFDQuery;
 begin
 
   qry := Self.Query();
@@ -471,7 +471,7 @@ end;
 
 procedure TDaoPedido.AbrePedido(Pedido: TPedido);
 var
-    qry: TFDQuery;
+  qry: TFDQuery;
 begin
   Valida(Pedido);
 
@@ -600,7 +600,7 @@ end;
 
 Procedure LoadBitmapFromBlob(Bitmap: TBitmap; Blob: TBlobField);
 var
-    ms, ms2: TMemoryStream;
+  ms, ms2: TMemoryStream;
 begin
   ms := TMemoryStream.Create;
   try
@@ -614,7 +614,7 @@ end;
 
 function TDaoPedido.ParamsToObject(ds: TFDQuery): TPedido;
 var
-    DaoVendedor: TDaoVendedor;
+  DaoVendedor: TDaoVendedor;
   DaoParceiro: TDaoParceiro;
   DaoCliente: TDaoCliente;
   DaoPagamentos: TDAOPedidoPagamento;
@@ -696,7 +696,8 @@ end;
 
 function TDaoPedido.Totais(dataInicio, dataFim: TDate; CodVen: string): TList<TPair<string, string>>;
 var
-    qry: TFDQuery; saidas: TArray<string>;
+  qry: TFDQuery;
+  saidas: TArray<string>;
   sinal: string;
 begin
 
@@ -887,7 +888,7 @@ end;
 
 function TDaoPedido.Totais(dataInicio, dataFim: TDate): TList<TPair<string, string>>;
 var
-    qry: TFDQuery;
+  qry: TFDQuery;
   saidas: TArray<string>;
   sinal: string;
 begin
@@ -1069,7 +1070,7 @@ end;
 
 procedure TDaoPedido.VendeItem(Item: TItemPedido);
 var
-    DaoItemPedido: TDaoItemPedido;
+  DaoItemPedido: TDaoItemPedido;
 begin
   DaoItemPedido := TDaoItemPedido.Create(Self.FConnection, true);
   DaoItemPedido.IncluiItemPedido(Item);
@@ -1078,7 +1079,7 @@ end;
 
 function TDaoPedido.TotaisParceiro(dataInicio, dataFim: TDate; CodParceiro: string): TList<TPair<string, Currency>>;
 var
-    qry: TFDQuery;
+  qry: TFDQuery;
 begin
 
   qry := Self.Query();

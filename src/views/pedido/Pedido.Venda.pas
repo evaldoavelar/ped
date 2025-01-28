@@ -1385,16 +1385,21 @@ begin
 
     if Produto.AVISARESTOQUEBAIXO then
     BEGIN
+      var
+      estoque := (Produto.estoque - self.Quantidade);
       VAR
-      estoqueBaixo := ((Produto.ESTOQUE - self.Quantidade) <= Produto.ESTOQUEMINIMO);
+      estoqueBaixo := (estoque <= Produto.ESTOQUEMINIMO);
 
-      if (Produto.ESTOQUE - self.Quantidade) <= 0 then
+      if estoque <= 0 then
       begin
         if MessageDlg('PRODUTO SEM ESTOQUE!!! VENDER MESMO ASSIM?', mtConfirmation, [mbYes, mbNo], 0) = mrNo then
           Abort;
       end
       else if estoqueBaixo then
-        MessageDlg('PRODUTO COM ESTOQUE BAIXO: ' + Produto.DESCRICAO, mtInformation, [mbOK], 0);
+        MessageDlg('PRODUTO COM ESTOQUE BAIXO: '
+          + FormatFloat('0.000', estoque) + ' '
+          + Produto.UND + ' restantes.',
+          TMsgDlgType.mtWarning, [mbOK], 0);
 
     END;
 
