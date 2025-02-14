@@ -116,6 +116,7 @@ begin
   fFactory := TFactory.new(nil, True);
   FSangriaSuprimento := TSangriaSuprimento.Create;
   FSangriaSuprimento.FORMA := 'Dinheiro';
+  FSangriaSuprimento.HISTORICO := 'Adicionando Troco Para o Caixa.';
 
   FSangriaSuprimento.Bind('FORMA', edtForma, 'Text');
   FSangriaSuprimento.Bind('VALOR', edtValor, 'Value');

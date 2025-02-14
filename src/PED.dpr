@@ -215,7 +215,10 @@ uses
   Dao.IDaoPontoVenda in 'units\Dao\Abstract\Dao.IDaoPontoVenda.pas',
   Dao.TDaoPontoVenda in 'units\Dao\Concret\Dao.TDaoPontoVenda.pas',
   Vcl.AutoComplete in 'modules\autocomplete\src\Vcl.AutoComplete.pas',
-  Relatorio.TRComprovante.CreditoDebito in 'units\relatorio\Relatorio.TRComprovante.CreditoDebito.pas';
+  Relatorio.TRComprovante.CreditoDebito in 'units\relatorio\Relatorio.TRComprovante.CreditoDebito.pas',
+  Dominio.Entidades.Pedido.Parcela.Pagamentos in 'units\Dominio\Entidades\Dominio.Entidades.Pedido.Parcela.Pagamentos.pas',
+  Dao.IDAOParcelaPagamento in 'units\Dao\Abstract\Dao.IDAOParcelaPagamento.pas',
+  Dao.TDAOParcelaPagamento in 'units\Dao\Concret\Dao.TDAOParcelaPagamento.pas';
 
 {$R *.res}
 

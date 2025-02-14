@@ -177,8 +177,8 @@ begin
       end;
     end;
 
-   if Pedido.STATUS = 'C' then
-    AtualizarEstoque(Pedido);
+    if Pedido.STATUS = 'C' then
+      AtualizarEstoque(Pedido);
 
   finally
     FreeAndNil(qry);
@@ -898,6 +898,8 @@ begin
 
   try
     try
+      result.Add(TPair<string, string>.Create('VENDAS NO CAIXA', ''));
+
       qry.SQL.Text := ''
 
         + 'SELECT ''Total Bruto''     Titulo, '
@@ -957,20 +959,7 @@ begin
         + 'FROM   sangriasuprimento '
         + 'WHERE  data >= :dataInicio '
         + '       AND data <= :dataFim '
-        + 'GROUP  BY tipo '
-
-        + 'UNION ALL '
-
-        + 'SELECT ''Total de Parcelas Recebidas''    Titulo, '
-        + '       Sum(pa.valor) AS Total '
-        + 'FROM   parcelas pa, '
-        + '       pedido pe '
-        + 'WHERE  pa.idpedido = pe.id '
-        + '       AND pe.status = ''F'' '
-        + '       AND pa.recebido = ''S'''
-        + '       AND pa.databaixa >= :dataInicio '
-        + '       AND pa.databaixa <= :dataFim '
-        ;
+        + 'GROUP  BY tipo ';
 
       qry.ParamByName('dataInicio').AsDate := dataInicio;
       qry.ParamByName('dataFim').AsDate := dataFim;
@@ -982,6 +971,61 @@ begin
       TArrayUtil<string>.Append(saidas, 'Sangria');
       TArrayUtil<string>.Append(saidas, 'Descontos');
 
+      while not qry.Eof do
+      begin
+        if TArrayUtil<string>.Indexof(saidas, qry.FieldByName('Titulo').AsString.Trim) > -1 then
+          sinal := '-'
+        else
+          sinal := '';
+
+        result.Add(TPair<string, string>.Create(qry.FieldByName('Titulo').AsString, sinal + FormatCurr('R$ 0.,00', qry.FieldByName('Total').AsCurrency)));
+        qry.Next;
+      end;
+
+      result.Add(TPair<string, string>.Create('', ''));
+      result.Add(TPair<string, string>.Create('RECEBIMENTO DE CRÉDIÁRIO', ''));
+      qry.SQL.Text := ''
+        + 'SELECT ''Parcelas Recebidas''    Titulo, '
+        + '       COUNT(pa.valor) AS Total '
+        + 'FROM   parcelas pa, '
+        + '       pedido pe '
+        + 'WHERE  pa.idpedido = pe.id '
+        + '       AND pe.status = ''F'' '
+        + '       AND pa.recebido = ''S'''
+        + '       AND pa.databaixa >= :dataInicio '
+        + '       AND pa.databaixa <= :dataFim ';
+      TLog.d(qry);
+      qry.Open;
+      result.Add(TPair<string, string>.Create('Parcelas Recebidas', qry.FieldByName('Total').AsString));
+
+      qry.SQL.Text := ''
+        + 'SELECT ''Somatório das Parcelas''    Titulo, '
+        + '       Sum(pa.valor) AS Total '
+        + 'FROM   parcelas pa, '
+        + '       pedido pe '
+        + 'WHERE  pa.idpedido = pe.id '
+        + '       AND pe.status = ''F'' '
+        + '       AND pa.recebido = ''S'''
+        + '       AND pa.databaixa >= :dataInicio '
+        + '       AND pa.databaixa <= :dataFim ';
+      TLog.d(qry);
+      qry.Open;
+      result.Add(TPair<string, string>.Create(qry.FieldByName('Titulo').AsString, FormatCurr('R$ 0.,00', qry.FieldByName('Total').AsCurrency)));
+      result.Add(TPair<string, string>.Create('PAGAMENTOS', ''));
+
+      qry.SQL.Text := ''
+        + 'SELECT (descricao || '' ('' || COUNT(pg.IDPEDIDO) || '')'') AS Titulo, '
+        + '       Sum(pg.valor )  AS Total  '
+        + 'FROM   PARCELAPAGAMENTOS pg, '
+        + '       pedido p '
+        + 'WHERE  p.status = ''F'' '
+        + '       AND p.id = pg.idpedido '
+        + '       AND p.datapedido >= :dataInicio '
+        + '       AND p.datapedido <= :dataFim '
+        + 'GROUP  BY descricao, '
+        + '          tipo ';
+      TLog.d(qry);
+      qry.Open;
       while not qry.Eof do
       begin
         if TArrayUtil<string>.Indexof(saidas, qry.FieldByName('Titulo').AsString.Trim) > -1 then
@@ -1020,18 +1064,6 @@ begin
         + 'WHERE  p.status = ''A'' '
         + '       AND p.datapedido >= :dataInicio '
         + '       AND p.datapedido <= :dataFim '
-
-        + 'UNION ALL '
-
-        + 'SELECT ''Numero de Parcelas Recebidas''    Titulo, '
-        + '       count(pa.valor) AS Total '
-        + 'FROM   parcelas pa, '
-        + '       pedido pe '
-        + 'WHERE  pa.idpedido = pe.id '
-        + '       AND pe.status = ''F'' '
-        + '       AND pa.recebido = ''S'''
-        + '       AND pa.databaixa >= :dataInicio '
-        + '       AND pa.databaixa <= :dataFim '
         ;
 
       qry.ParamByName('dataInicio').AsDate := dataInicio;

@@ -7,7 +7,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, untFrmBase,
   Vcl.ExtCtrls, System.Actions, Vcl.ActnList, Vcl.StdCtrls, Vcl.Buttons,
-  Vcl.Grids, Vcl.WinXCtrls,
+  Vcl.Grids, Vcl.WinXCtrls, Types,
   Dominio.Entidades.TParcelas, Dao.IDaoParcelas, Dao.IDaoCliente, Dominio.Entidades.TCliente, Dao.IDaoPedido,
   Vcl.Imaging.jpeg, Util.VclFuncoes, IFactory.Dao;
 
@@ -16,7 +16,6 @@ type
     Panel1: TPanel;
     edtPesquisa: TSearchBox;
     Label1: TLabel;
-    strGridParcelas: TStringGrid;
     Panel2: TPanel;
     BitBtn1: TBitBtn;
     BitBtn2: TBitBtn;
@@ -35,6 +34,8 @@ type
     Image2: TImage;
     BitBtn5: TBitBtn;
     actPedido: TAction;
+    Panel3: TPanel;
+    strGridParcelas: TStringGrid;
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure actPesquisarExecute(Sender: TObject);
@@ -45,8 +46,12 @@ type
     procedure actPedidoExecute(Sender: TObject);
     procedure actEstornaExecute(Sender: TObject);
     procedure actOkExecute(Sender: TObject);
+    procedure strGridParcelasDrawCell(Sender: TObject; ACol, ARow: Integer;
+      Rect: TRect; State: TGridDrawState);
+    procedure CheckBox1Click(Sender: TObject);
   private
     { Private declarations }
+    FCheched: TDictionary<string, boolean>;
     FCliente: TCliente;
     FFactory: IFactoryDao;
     FParcelas: TObjectList<TParcelas>;
@@ -54,13 +59,18 @@ type
     DaoCliente: IDaoCliente;
     DaoPedido: IDaoPedido;
     procedure AbrePedido;
-
     procedure Pesquisa;
     procedure Bind;
     function CriaButton(item: TParcelas): TButton;
     procedure ConfirmaRerecebimento;
     function GetStatusFitltro: string;
     procedure EstornaParcela;
+    function GetItemSelect: TParcelas;
+    function GetParcelaKey(aParcela: TParcelas): string;
+    procedure AddCheckBoxes;
+    procedure clean_previus_buffer;
+    procedure set_checkbox_alignment;
+    function GetParcela(aParcelaKey: string): TParcelas;
 
   public
     { Public declarations }
@@ -77,7 +87,7 @@ implementation
 
 uses Helper.TBindGrid, Consulta.Cliente, Factory.Dao, Sistema.TLog,
   Recebimento.ConfirmaBaixa, Recebimento.DetalhesPedido, Dominio.Entidades.TPedido,
-  Factory.Entidades;
+  Factory.Entidades, System.Math;
 
 procedure TfrmRecebimento.AbrePedido;
 var
@@ -150,12 +160,32 @@ begin
   TLog.d('<<< Saindo de TfrmRecebimento.actPesquisarExecute ');
 end;
 
+function TfrmRecebimento.GetParcela(aParcelaKey: string): TParcelas;
+begin
+  for var item in FParcelas do
+    if GetParcelaKey(item) = aParcelaKey then
+      exit(item);
+end;
+
+function TfrmRecebimento.GetParcelaKey(aParcela: TParcelas): string;
+begin
+  result := aParcela.IDPEDIDO.ToString + aParcela.NUMPARCELA.ToString;
+end;
+
 procedure TfrmRecebimento.Bind;
 var
   total: Currency;
 begin
   TLog.d('>>> Entrando em  TfrmRecebimento.Bind ');
+  FCheched.Clear;
+
+  for var parcela in FParcelas do
+  begin
+    FCheched.Add(GetParcelaKey(parcela), false);
+  end;
+  clean_previus_buffer;
   TBindGrid.BindParcelas(strGridParcelas, FParcelas);
+  AddCheckBoxes;
   edtPesquisa.Text := self.FCliente.CODIGO;
   lblCliente.Caption := self.FCliente.Nome;
 
@@ -164,40 +194,134 @@ begin
   TLog.d('<<< Saindo de TfrmRecebimento.Bind ');
 end;
 
+procedure TfrmRecebimento.CheckBox1Click(Sender: TObject);
+begin
+  try
+    inherited;
+    var
+    parcela := TParcelas(strGridParcelas.Objects[0, TCheckBox(Sender).Tag]);
+
+    if parcela.RECEBIDO = 'S' then
+    begin
+      TCheckBox(Sender).Checked := false;
+      FCheched[GetParcelaKey(parcela)] := false;
+    end;
+
+    FCheched[GetParcelaKey(parcela)] := TCheckBox(Sender).Checked;
+  except
+    on e: Exception do
+    begin
+      TLog.d(e.message);
+      MessageDlg(e.message, mtError, [mbOK], 0);
+      edtPesquisa.SetFocus;
+    end;
+  end;
+end;
+
+procedure TfrmRecebimento.AddCheckBoxes;
+var
+  i: Integer;
+  NewCheckBox: TCheckBox;
+begin
+  clean_previus_buffer; // don't forget to clean the non usefull created controls...
+
+  for i := 1 to strGridParcelas.RowCount do
+  begin
+
+    NewCheckBox := TCheckBox.Create(Application);
+    NewCheckBox.Width := 0;
+    NewCheckBox.Visible := false;
+    NewCheckBox.Caption := '';
+    NewCheckBox.ParentColor := true;
+    NewCheckBox.Tag := i;
+    NewCheckBox.OnClick := CheckBox1Click;
+    NewCheckBox.Parent := Panel3;
+
+    strGridParcelas.Objects[1, i] := NewCheckBox;
+    strGridParcelas.RowCount := i;
+  end;
+  set_checkbox_alignment; // now lets align the new control in the cell boundary...
+end;
+
+Procedure TfrmRecebimento.clean_previus_buffer;
+var
+  NewCheckBox: TCheckBox;
+  i: Integer;
+begin
+  for i := 1 to strGridParcelas.RowCount do
+  begin
+    NewCheckBox := (strGridParcelas.Objects[1, i] as TCheckBox);
+    if NewCheckBox <> nil then // the object must exist to delete it...
+    begin
+      NewCheckBox.Visible := false;
+      strGridParcelas.Objects[1, i] := nil;
+    end;
+  end;
+end;
+
+Procedure TfrmRecebimento.set_checkbox_alignment;
+var
+  NewCheckBox: TCheckBox;
+  Rect: TRect;
+  i: Integer;
+begin
+  for i := 1 to strGridParcelas.RowCount do
+  begin
+    NewCheckBox := (strGridParcelas.Objects[1, i] as TCheckBox);
+    if NewCheckBox <> nil then
+    begin
+      Rect := strGridParcelas.CellRect(0, i); // here, we get the cell rect for our contol...
+      NewCheckBox.Left := strGridParcelas.Left + Rect.Left + 2;
+      NewCheckBox.Top := strGridParcelas.Top + Rect.Top + 2;
+      NewCheckBox.Width := Rect.Right - Rect.Left;
+      NewCheckBox.Height := Rect.Bottom - Rect.Top;
+      NewCheckBox.Visible := true;
+    end;
+  end;
+end;
+
+procedure TfrmRecebimento.strGridParcelasDrawCell(Sender: TObject; ACol,
+  ARow: Integer; Rect: TRect; State: TGridDrawState);
+begin
+  inherited;
+  if not(gdFixed in State) then
+    set_checkbox_alignment;
+end;
+
 procedure TfrmRecebimento.ConfirmaRerecebimento;
 var
   item: TParcelas;
 begin
   TLog.d('>>> Entrando em  TfrmRecebimento.ConfirmaRerecebimento ');
   try
-    if Assigned(strGridParcelas.Objects[0, strGridParcelas.row]) then
-    begin
-      item := TParcelas(strGridParcelas.Objects[0, strGridParcelas.row]);
 
-      if item.RECEBIDO = 'S' then
-        raise Exception.Create('Recebimento já Confirmado');
+    frmConfirmaBaixa := TfrmConfirmaBaixa.Create(self);
+    try
+      var
+      VendedorRecebimento := FFactory.DaoVendedor.GetVendedor(TFactoryEntidades.new.VendedorLogado.CODIGO);
 
-      frmConfirmaBaixa := TfrmConfirmaBaixa.Create(self);
-      try
-        item.DATABAIXA := now;
-        item.VendedorRecebimento := FFactory.DaoVendedor.GetVendedor(TFactoryEntidades.new.VendedorLogado.CODIGO);
-        frmConfirmaBaixa.Parcela := item;
-
-        if frmConfirmaBaixa.ShowModal = mrYes then
+      for var key in FCheched.Keys do
+      begin
+        if FCheched[key] then
         begin
-          item.RECEBIDO := 'S';
+          var
+          parcela := GetParcela(key);
+          parcela.VendedorRecebimento := VendedorRecebimento;
+          parcela.DATABAIXA := now;
 
-          DaoParcelas.BaixaParcelas(item);
-
-          strGridParcelas.Cells[4, strGridParcelas.row] := 'Sim';
-          strGridParcelas.Cells[5, strGridParcelas.row] := dateToStr(item.DATABAIXA);
-
-          MessageDlg('Recebimento confirmado', mtInformation, [mbOK], 0);
+          frmConfirmaBaixa.ParcelaPagamento.Parcelas.Add(parcela);
         end;
-      finally
-        frmConfirmaBaixa.Free;
       end;
+
+      if frmConfirmaBaixa.ParcelaPagamento.Parcelas.Count = 0 then
+        raise Exception.Create('Nenhuma parcela selecionada.');
+
+      frmConfirmaBaixa.ShowModal;
+      getCliente;
+    finally
+      frmConfirmaBaixa.Free;
     end;
+
   except
     on e: Exception do
     begin
@@ -211,18 +335,18 @@ end;
 
 function TfrmRecebimento.CriaButton(item: TParcelas): TButton;
 var
-  button: TButton;
+  Button: TButton;
 begin
   TLog.d('>>> Entrando em  TfrmRecebimento.CriaButton ');
-  button := TButton.Create(self); // creates an instance of TButton
+  Button := TButton.Create(self); // creates an instance of TButton
   // sets the coordinates of the button, where the button should appear on the form
-  button.Top := strGridParcelas.Height + 10;
-  button.Left := 10;
-  button.Visible := true;
+  Button.Top := strGridParcelas.Height + 10;
+  Button.Left := 10;
+  Button.Visible := true;
   // sets the parent of the button
-  button.Parent := self;
+  Button.Parent := self;
 
-  button.Caption := 'cell[0,0]';
+  Button.Caption := 'cell[0,0]';
   // associate the new button with the first cell of the grid
   TLog.d('<<< Saindo de TfrmRecebimento.CriaButton ');
 end;
@@ -248,7 +372,7 @@ begin
 
       frmConfirmaBaixa := TfrmConfirmaBaixa.Create(self);
       try
-        frmConfirmaBaixa.Parcela := item;
+        frmConfirmaBaixa.ParcelaPagamento.Parcelas.Add(item);
 
         frmConfirmaBaixa.lblConfirma.Caption := 'Confirma o estorno da parcela?';
         if frmConfirmaBaixa.ShowModal = mrYes then
@@ -285,6 +409,7 @@ begin
   DaoParcelas := FFactory.DaoParcelas;
   DaoCliente := FFactory.DaoCliente;
   DaoPedido := FFactory.DaoPedido;
+  FCheched := TDictionary<string, boolean>.Create;
   TLog.d('<<< Saindo de TfrmRecebimento.FormCreate ');
 end;
 
@@ -343,11 +468,11 @@ function TfrmRecebimento.GetStatusFitltro: string;
 begin
   case rgFiltro.ItemIndex of
     0:
-      Result := 'N';
+      result := 'N';
     1:
-      Result := 'S'
+      result := 'S'
   else
-    Result := '';
+    result := '';
   end;
 end;
 
@@ -394,6 +519,11 @@ begin
   actEstorna.Enabled := rgFiltro.ItemIndex = 1;
   actConfirmaRecebimento.Enabled := (rgFiltro.ItemIndex = 0);
   TLog.d('<<< Saindo de TfrmRecebimento.rgFiltroClick ');
+end;
+
+function TfrmRecebimento.GetItemSelect: TParcelas;
+begin
+  result := TParcelas(strGridParcelas.Objects[0, strGridParcelas.row]);
 end;
 
 end.

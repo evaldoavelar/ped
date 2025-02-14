@@ -3,9 +3,8 @@ inherited FrmSangria: TFrmSangria
   Caption = 'Sangria'
   ClientHeight = 355
   ClientWidth = 300
-  ExplicitWidth = 306
-  ExplicitHeight = 384
-  PixelsPerInch = 96
+  ExplicitWidth = 316
+  ExplicitHeight = 394
   TextHeight = 13
   object Label1: TLabel
     Left = 16

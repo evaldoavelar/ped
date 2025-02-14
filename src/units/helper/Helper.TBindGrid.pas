@@ -3,7 +3,7 @@ unit Helper.TBindGrid;
 interface
 
 uses
-  System.Generics.Collections, System.SysUtils,
+  System.Generics.Collections, System.SysUtils, Vcl.StdCtrls,
   Dominio.Entidades.Pedido.Pagamentos.Pagamento,
   Dominio.Entidades.TItemPedido, Dominio.Entidades.TParcelas,
   Vcl.Grids;
@@ -106,8 +106,8 @@ end;
 
 class procedure TBindGrid.BindParcelas(grid: TStringGrid; items: TObjectList<TParcelas>);
 const
-  Titulos: array [0 .. 5] of string = ('Pedido', 'Parcela', 'Valor', 'Vencimento', 'Recebido', 'Data da Baixa');
-  ColWidth: array [0 .. 5] of Integer = (110, 170, 110, 110, 110, 110);
+  Titulos: array [0 .. 6] of string = ('Sel.', 'Pedido', 'Parcela', 'Valor', 'Vencimento', 'Recebido', 'Data da Baixa');
+  ColWidth: array [0 .. 6] of Integer = (30, 110, 170, 110, 110, 110, 110);
 var
   i, row: Integer;
   item: TParcelas;
@@ -124,20 +124,19 @@ begin
   for item in items do
   begin
     row := row + 1;
-
-    grid.Cells[0, row] := Format('%.*d', [6, item.IDPEDIDO]);
-    grid.Cells[1, row] := IntToStr(item.NUMPARCELA) + 'ª Parcela';
-    grid.Cells[2, row] := FormatCurr('R$ ###,##0.00', item.Valor);
-    grid.Cells[3, row] := DateToStr(item.VENCIMENTO);
+    grid.Cells[1, row] := Format('%.*d', [6, item.IDPEDIDO]);
+    grid.Cells[2, row] := IntToStr(item.NUMPARCELA) + 'ª Parcela';
+    grid.Cells[3, row] := FormatCurr('R$ ###,##0.00', item.Valor);
+    grid.Cells[4, row] := DateToStr(item.VENCIMENTO);
     if item.RECEBIDO = 'S' then
     begin
-      grid.Cells[4, row] := 'Sim';
-      grid.Cells[5, row] := DateToStr(item.DATABAIXA);
+      grid.Cells[5, row] := 'Sim';
+      grid.Cells[6, row] := DateToStr(item.DATABAIXA);
     end
     else
     begin
-      grid.Cells[4, row] := 'Não';
-      grid.Cells[5, row] := '-';
+      grid.Cells[5, row] := 'Não';
+      grid.Cells[6, row] := '-';
     end;
 
     grid.Objects[0, row] := (item);

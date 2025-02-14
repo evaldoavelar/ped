@@ -10,7 +10,7 @@ uses
   Dao.IDaoProdutos, Dao.IDAOCliente, Dao.IDaoParcelas, Dao.IDaoPedido,
   Dao.IDaoOrcamento, Dao.IDaoVendedor, Dao.IDaoParametros,
   Dao.IDAOPedidoPagamento, Dao.IDAOTSangriaSuprimento, Dao.IDaoFiltroEstoque,
-  Dominio.Entidades.TEmitente, FireDAC.Comp.Client,
+  Dominio.Entidades.TEmitente, FireDAC.Comp.Client, Dao.IDAOParcelaPagamento,
   Sistema.TBancoDeDados, Dao.IDaoImportacao;
 
 type
@@ -37,6 +37,8 @@ type
     function DaoFiltroEstoque(): IDaoEstoqueFiltro;
     function DaoParametrosBancoDeDados: IDaoParametrosBancoDeDados;
     function DaoImportacao: IDaoImportacao;
+    function DAOParcelaPagamento: IDAOParcelaPagamento;
+
 
     function getDadosEmitente: TEmitente;
     property DadosEmitente: TEmitente read getDadosEmitente;

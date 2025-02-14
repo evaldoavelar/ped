@@ -46,7 +46,8 @@ type
     function GetParcelaVencendoObj(dataInicial, dataFinal: TDate): TObjectList<TParcelas>;
 
     function GeTParcelas(campo: string; valor: string): TDataSet; overload;
-
+  public
+    class function New(Connection: TFDConnection; aKeepConection: Boolean): IDaoParcelas;
   end;
 
 implementation
@@ -881,6 +882,12 @@ begin
 
 end;
 
+class function TDaoParcelas.New(Connection: TFDConnection;
+  aKeepConection: Boolean): IDaoParcelas;
+begin
+  Result := TDaoParcelas.Create(Connection, aKeepConection);
+end;
+
 procedure TDaoParcelas.ObjectToParams(ds: TFDQuery; Parcelas: TParcelas);
 begin
   try
@@ -929,7 +936,7 @@ begin
 
     if not(ds.FieldByName('CODVENRECEBIMENTO').IsNull) then
       Result.VendedorRecebimento := TFactory
-        .new(FConnection, true)
+        .New(FConnection, true)
         .DaoVendedor
         .GetVendedor(ds.FieldByName('CODVENRECEBIMENTO').AsString);
 

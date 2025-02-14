@@ -17,8 +17,8 @@ uses SysUtils,
   Dao.IDaoParceiroVenda, Dao.TDaoEstoqueProduto,
   Dao.IDoParceiroVenda.Pagamentos, Dao.TDaoParceiroVenda.Pagamentos, Dao.TDaoParceiroVenda,
   Dao.TDAOPedidoPagamento, Dao.IDAOPedidoPagamento, Dao.IDAOTSangriaSuprimento,
-  Dao.IDaoEstoqueProduto, Dao.IDaoFiltroEstoque, IFactory.Dao,
-  Dao.IDaoParametrosBancoDeDados, Sistema.TBancoDeDados, Dao.TParametrosBancoDeDados,
+  Dao.IDaoEstoqueProduto, Dao.IDaoFiltroEstoque, IFactory.Dao, Dao.IDAOParcelaPagamento,
+  Dao.IDaoParametrosBancoDeDados, Sistema.TBancoDeDados, Dao.TParametrosBancoDeDados, Dao.TDAOParcelaPagamento,
   Dao.IDaoImportacao, Dao.IDaoPontoVenda;
 
 type
@@ -59,6 +59,7 @@ type
     function DaoParametrosBancoDeDados: IDaoParametrosBancoDeDados;
     function DaoImportacao: IDaoImportacao;
     function DaoPontoVenda: IDaoPontoVenda;
+    function DAOParcelaPagamento: IDAOParcelaPagamento;
 
     property DadosEmitente: TEmitente read getDadosEmitente;
 
@@ -257,6 +258,13 @@ begin
   TLog.d('<<< Saindo de TFactory.DaoParceiroVendaPagto ');
 end;
 
+function TFactory.DAOParcelaPagamento: IDAOParcelaPagamento;
+begin
+  TLog.d('>>> Entrando em  TFactory.DAOParcelaPagamento ');
+  result := TDAOParcelaPagamento.Create(Conexao(), FKeepConection);
+  TLog.d('<<< Saindo de TFactory.DAOParcelaPagamento ');
+end;
+
 function TFactory.DaoParcelas: IDaoParcelas;
 begin
   TLog.d('>>> Entrando em  TFactory.DaoParcelas ');
@@ -288,7 +296,6 @@ end;
 function TFactory.DaoPontoVenda: IDaoPontoVenda;
 begin
   result := TDaoPontoVenda.Create(TUtil.DiretorioApp + 'config.ini');
-
 end;
 
 function TFactory.DaoProduto: IDaoProdutos;

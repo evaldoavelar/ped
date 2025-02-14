@@ -814,7 +814,25 @@ begin
   pgcEsquerdo.ActivePage := tsPagamento;
   FrmPagamento := TFrmPagamento.Create(self);
   try
-    FrmPagamento.Pedido := Pedido;
+    FrmPagamento.Pagamentos := Pedido.Pagamentos;
+    FrmPagamento.OnGetValorLiquido := function(): currency
+      begin
+        result := Pedido.ValorLiquido
+      end;
+    FrmPagamento.OnValorBruto := function(): currency
+      begin
+        result := Pedido.ValorBruto
+      end;
+    FrmPagamento.Cliente := Pedido.Cliente;
+    FrmPagamento.OnGetValorDesc := function(): currency
+      begin
+        result := Pedido.VALORDESC
+      end;
+    FrmPagamento.OnSetDesconto := procedure(aTipo: TTipoDesconto; aValor: currency)
+      begin
+        Pedido.setDescontos(aTipo, aValor)
+      end;
+    FrmPagamento.IDPedido := Pedido.ID;
     FrmPagamento.ShowModal;
 
     if Pedido.Pagamentos.FormasDePagamento.Count = 0 then
@@ -1422,7 +1440,7 @@ begin
         Item.UND := Produto.UND;
         Item.qtd := self.Quantidade;
         Item.VALOR_UNITA := Produto.PRECO_VENDA;
-        Item.IDPEDIDO := Pedido.ID;
+        Item.IDPedido := Pedido.ID;
       except
         on E: Exception do
           raise Exception.Create('Falha ao montar Item: ' + E.Message);
@@ -1514,7 +1532,7 @@ begin
         Item.UND := Produto.UND;
         Item.qtd := self.Quantidade;
         Item.VALOR_UNITA := Produto.PRECO_VENDA;
-        Item.IDPEDIDO := Pedido.ID;
+        Item.IDPedido := Pedido.ID;
       except
         on E: Exception do
           raise Exception.Create('Falha ao montar Item: ' + E.Message);

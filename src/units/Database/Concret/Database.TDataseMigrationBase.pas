@@ -55,7 +55,7 @@ uses
   Impressao.Parametros.Impressora.Termica,
   Dominio.Entidades.TEmitente, Dominio.Entidades.TFornecedor, Dominio.Entidades.TFormaPagto, Dominio.Entidades.TProduto, Dominio.Entidades.CondicaoPagto,
   Dominio.Entidades.Pedido.Pagamentos.Pagamento, Dominio.Entidades.TSangriaSuprimento, Dominio.Entidades.TEstoqueProduto, Sistema.TLog,
-  Factory.Entidades, Dominio.Entidades.TImportacao;
+  Factory.Entidades, Dominio.Entidades.TImportacao, Dominio.Entidades.Pedido.Parcela.Pagamentos;
 
 function TDataseMigrationBase.getScript(Entity: TClass): TStringList;
 var
@@ -88,7 +88,7 @@ end;
 
 procedure TDataseMigrationBase.Migrate;
 const
-  Objetos: array [0 .. 23] of TClass = (
+  Objetos: array [0 .. 25] of TClass = (
     TAUTOINC,
     TEmitente,
     TCliente,
@@ -112,7 +112,9 @@ const
     TParceiroVendaPagto,
     TSangriaSuprimento,
     TEstoqueProduto,
-    TImportacao
+    TImportacao,
+    TPedidoParcelaPagamento,
+    TRelacParcelaPagamento
     );
 var
   scripts: TStringList;
