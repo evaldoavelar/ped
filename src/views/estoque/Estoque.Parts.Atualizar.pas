@@ -143,8 +143,7 @@ begin
   lblDescricao.Caption := FProduto.DESCRICAO;
   Self.pnlCodigoPrd.Caption := FProduto.CODIGOPRD;
   pnlNumero.Caption := FProduto.id.ToString;
-  Self.lblPreco.Caption := FloatToStrF(FProduto.QUANTIDADE, ffNumber, 9, 3) + // '  ' + FProduto.UND +
-    '  UNIDADE(S)   ';
+  Self.lblPreco.Caption := FloatToStrF(FProduto.QUANTIDADE, ffNumber, 9, 3) ;
 
   if FProduto.StatusBD = TEstoqueProduto.TStatusBD.stDeletado then
     MarcaExcluido(Self);

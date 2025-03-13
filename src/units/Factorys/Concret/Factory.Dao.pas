@@ -19,7 +19,7 @@ uses SysUtils,
   Dao.TDAOPedidoPagamento, Dao.IDAOPedidoPagamento, Dao.IDAOTSangriaSuprimento,
   Dao.IDaoEstoqueProduto, Dao.IDaoFiltroEstoque, IFactory.Dao, Dao.IDAOParcelaPagamento,
   Dao.IDaoParametrosBancoDeDados, Sistema.TBancoDeDados, Dao.TParametrosBancoDeDados, Dao.TDAOParcelaPagamento,
-  Dao.IDaoImportacao, Dao.IDaoPontoVenda;
+  Dao.IDaoImportacao, Dao.IDaoPontoVenda, Dao.TDaoControleCaixa, Dao.IDAOControleCaixa;
 
 type
 
@@ -60,6 +60,7 @@ type
     function DaoImportacao: IDaoImportacao;
     function DaoPontoVenda: IDaoPontoVenda;
     function DAOParcelaPagamento: IDAOParcelaPagamento;
+    function DAOControleCaixa: IDAOControleCaixa;
 
     property DadosEmitente: TEmitente read getDadosEmitente;
 
@@ -139,6 +140,13 @@ begin
   TLog.d('>>> Entrando em  TFactory.DaoCliente ');
   result := TDaoCliente.Create(Conexao(), FKeepConection);
   TLog.d('<<< Saindo de TFactory.DaoCliente ');
+end;
+
+function TFactory.DAOControleCaixa: IDAOControleCaixa;
+begin
+  TLog.d('>>> Entrando em  TFactory.DAOControleCaixa ');
+  result := TDAOControleCaixa.Create(Conexao(), FKeepConection);
+  TLog.d('<<< Saindo de TFactory.DAOControleCaixa ');
 end;
 
 function TFactory.Query: TFDQuery;

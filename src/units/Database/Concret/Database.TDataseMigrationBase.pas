@@ -52,7 +52,7 @@ uses
   Dominio.Entidades.TPedido,
   Dominio.Entidades.TItemPedido,
   Dominio.Entidades.TParcelas,
-  Impressao.Parametros.Impressora.Termica,
+  Impressao.Parametros.Impressora.Termica, Dominio.Entidades.TControleCaixa,
   Dominio.Entidades.TEmitente, Dominio.Entidades.TFornecedor, Dominio.Entidades.TFormaPagto, Dominio.Entidades.TProduto, Dominio.Entidades.CondicaoPagto,
   Dominio.Entidades.Pedido.Pagamentos.Pagamento, Dominio.Entidades.TSangriaSuprimento, Dominio.Entidades.TEstoqueProduto, Sistema.TLog,
   Factory.Entidades, Dominio.Entidades.TImportacao, Dominio.Entidades.Pedido.Parcela.Pagamentos;
@@ -88,7 +88,7 @@ end;
 
 procedure TDataseMigrationBase.Migrate;
 const
-  Objetos: array [0 .. 25] of TClass = (
+  Objetos: array [0 .. 26] of TClass = (
     TAUTOINC,
     TEmitente,
     TCliente,
@@ -114,7 +114,8 @@ const
     TEstoqueProduto,
     TImportacao,
     TPedidoParcelaPagamento,
-    TRelacParcelaPagamento
+    TRelacParcelaPagamento,
+    TControleCaixa
     );
 var
   scripts: TStringList;

@@ -25,6 +25,7 @@ type
     FIDCONDICAO: integer;
     FQUANTASVEZES: integer;
     FTROCO: Currency;
+    FDATAALTERACAO: TDateTime;
     procedure SetACRESCIMO(const Value: Currency);
     procedure SetCONDICAO(const Value: string);
     procedure SetDESCRICAO(const Value: string);
@@ -57,7 +58,7 @@ type
     property CONDICAO: string read FCONDICAO write SetCONDICAO;
     [campo('IDCONDICAO', tpINTEGER, 0, 0, True)]
     property IDCONDICAO: integer read FIDCONDICAO write SetIDCONDICAO;
-    [IGNORE(true)]
+    [IGNORE(True)]
     [campo('TIPO', tpINTEGER, 0, 0, True)]
     property TIPOPROXY: string read getTIPOPROXY;
     property TipoPagamento: TTipoPagto read getTipoPagamento write SetTipoPagamento;
@@ -72,6 +73,8 @@ type
     property TROCO: Currency read FTROCO write SetTROCO;
     [campo('QUANTASVEZES', tpINTEGER)]
     property QUANTASVEZES: integer read FQUANTASVEZES write SetQUANTASVEZES;
+    [campo('DATAALTERACAO', tpTIMESTAMP)]
+    property DATAALTERACAO: TDateTime read FDATAALTERACAO write FDATAALTERACAO;
 
     property Parcelas: TObjectList<TParcelas> read Fparcelas write Setparcelas;
 
@@ -169,6 +172,7 @@ begin
   inherited;
   Self.Fparcelas := TObjectList<TParcelas>.create;
   Self.Fparcelas.OwnsObjects := True;
+  DATAALTERACAO := now;
 end;
 
 destructor TPEDIDOPAGAMENTO.destroy;

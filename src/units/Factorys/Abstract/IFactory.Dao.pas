@@ -11,7 +11,7 @@ uses
   Dao.IDaoOrcamento, Dao.IDaoVendedor, Dao.IDaoParametros,
   Dao.IDAOPedidoPagamento, Dao.IDAOTSangriaSuprimento, Dao.IDaoFiltroEstoque,
   Dominio.Entidades.TEmitente, FireDAC.Comp.Client, Dao.IDAOParcelaPagamento,
-  Sistema.TBancoDeDados, Dao.IDaoImportacao;
+  Sistema.TBancoDeDados, Dao.IDaoImportacao, Dao.IDAOControleCaixa;
 
 type
 
@@ -38,11 +38,10 @@ type
     function DaoParametrosBancoDeDados: IDaoParametrosBancoDeDados;
     function DaoImportacao: IDaoImportacao;
     function DAOParcelaPagamento: IDAOParcelaPagamento;
-
+    function DAOControleCaixa: IDAOControleCaixa;
 
     function getDadosEmitente: TEmitente;
     property DadosEmitente: TEmitente read getDadosEmitente;
-
 
     function Query(): TFDQuery;
     function Conexao(aBancoDeDados: TParametrosBancoDeDados = nil; aAutoReconnect: Boolean = true): TFDConnection;

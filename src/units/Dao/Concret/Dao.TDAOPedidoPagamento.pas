@@ -240,6 +240,7 @@ begin
         + '             TIPO, '
         + '             QUANTASVEZES, '
         + '             TROCO, '
+        + '             DATAALTERACAO, '
         + '             ACRESCIMO, '
         + '             VALOR ) '
         + 'VALUES      (:SEQ, '
@@ -251,6 +252,7 @@ begin
         + '             :TIPO, '
         + '             :QUANTASVEZES, '
         + '             :TROCO, '
+        + '             :DATAALTERACAO, '
         + '             :ACRESCIMO, '
         + '             :VALOR )';
 

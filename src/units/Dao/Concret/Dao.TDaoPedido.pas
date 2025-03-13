@@ -21,6 +21,7 @@ type
     function ParamsToObject(ds: TFDQuery): TPedido;
     procedure Valida(Pedido: TPedido);
     function AtualizarEstoque(Pedido: TPedido): Integer;
+    function IncluirTotais(aQry: TFDQuery; aLista: TList<TPair<string, string>>; aFormatar: boolean): Currency;
 
   public
     procedure AbrePedido(Pedido: TPedido);
@@ -35,18 +36,19 @@ type
     function Listar(campo, valor: string; dataInicio, dataFim: TDate): TDataSet; overload;
     function Listar(campo, valor: string): TDataSet; overload;
     function Listar(dataInicio, dataFim: TDate): TDataSet; overload;
-    function Totais(dataInicio, dataFim: TDate): TList<TPair<string, string>>; overload;
-    function Totais(dataInicio, dataFim: TDate; CodVen: string): TList<TPair<string, string>>; overload;
+    function Totais(dataInicio, dataFim: TDatetime; aHoraInicio, aHoraFim: TTime): TList<TPair<string, string>>; overload;
+    function Totais(dataInicio, dataFim: TDatetime; CodVen: string): TList<TPair<string, string>>; overload;
     // function Totais(dataInicio, dataFim: TDate; CodVen: string): TList<TPair<string, string>>; overload;
     function ProdutosVendidos(dataInicio, dataFim: TDate): TList<TProdutoVenda>;
     function TotaisParceiro(dataInicio, dataFim: TDate; CodParceiro: string): TList<TPair<string, Currency>>;
+    function TotalCaixa(dataInicio: TDatetime): Currency;
   end;
 
 implementation
 
 uses
   Util.Exceptions, Dao.TDaoItemPedido, Dao.TDaoParcelas, Dao.TDaoVendedor, Dao.TDaoCliente, Factory.Dao, Dao.TDAOPedidoPagamento,
-  Dominio.Entidades.TEstoqueProduto, Utils.ArrayUtil, IFactory.Dao;
+  Dominio.Entidades.TEstoqueProduto, Utils.ArrayUtil, IFactory.Dao, System.DateUtils;
 
 { TDaoPedido }
 
@@ -694,7 +696,7 @@ begin
   end;
 end;
 
-function TDaoPedido.Totais(dataInicio, dataFim: TDate; CodVen: string): TList<TPair<string, string>>;
+function TDaoPedido.Totais(dataInicio, dataFim: TDatetime; CodVen: string): TList<TPair<string, string>>;
 var
   qry: TFDQuery;
   saidas: TArray<string>;
@@ -773,19 +775,6 @@ begin
 
         + 'UNION ALL '
 
-        + 'SELECT CASE '
-        + '         WHEN tipo = 1 THEN ''Sangria'' '
-        + '         WHEN tipo = 2 THEN ''Suprimento'' '
-        + '       END        Titulo, '
-        + '       Sum(valor) AS Total '
-        + 'FROM   sangriasuprimento '
-        + 'WHERE  data >= :dataInicio '
-        + '       AND data <= :dataFim '
-        + '       AND codven = :codven '
-        + 'GROUP  BY tipo '
-
-        + 'UNION ALL '
-
         + 'SELECT ''Total Parcelas Recebidas''    Titulo, '
         + '       sum(pa.valor) AS Total '
         + 'FROM   parcelas pa, '
@@ -797,8 +786,8 @@ begin
         + '       AND pa.databaixa <= :dataFim '
         + '       and pa.CODVENRECEBIMENTO = :codven ';
 
-      qry.ParamByName('dataInicio').AsDate := dataInicio;
-      qry.ParamByName('dataFim').AsDate := dataFim;
+      qry.ParamByName('dataInicio').AsDateTime := dataInicio;
+      qry.ParamByName('dataFim').AsDateTime := dataFim;
       qry.ParamByName('codven').AsString := CodVen;
 
       TLog.d(qry);
@@ -861,8 +850,8 @@ begin
         + '       AND pa.databaixa <= :dataFim '
         + '       and pa.CODVENRECEBIMENTO = :codven ';
 
-      qry.ParamByName('dataInicio').AsDate := dataInicio;
-      qry.ParamByName('dataFim').AsDate := dataFim;
+      qry.ParamByName('dataInicio').AsDateTime := dataInicio;
+      qry.ParamByName('dataFim').AsDateTime := dataFim;
       qry.ParamByName('codven').AsString := CodVen;
 
       TLog.d(qry);
@@ -886,11 +875,9 @@ begin
 
 end;
 
-function TDaoPedido.Totais(dataInicio, dataFim: TDate): TList<TPair<string, string>>;
+function TDaoPedido.Totais(dataInicio, dataFim: TDatetime; aHoraInicio, aHoraFim: TTime): TList<TPair<string, string>>;
 var
   qry: TFDQuery;
-  saidas: TArray<string>;
-  sinal: string;
 begin
 
   qry := Self.Query();
@@ -906,8 +893,8 @@ begin
         + '       Sum(p.valorbruto) AS Total '
         + 'FROM   pedido p '
         + 'WHERE  p.status = ''F'' '
-        + '       AND p.datapedido >= :dataInicio '
-        + '       AND p.datapedido <= :dataFim '
+        + '       AND (p.datapedido >= :dataInicio   AND p.horapedido >= :horainicio) '
+        + '       AND (p.datapedido <= :dataFim AND p.horapedido <= :horafim) '
 
         + 'UNION ALL '
 
@@ -915,8 +902,8 @@ begin
         + '       Sum(p.VALORDESC)  AS Total '
         + 'FROM   pedido p '
         + 'WHERE  p.status = ''F'' '
-        + '       AND p.datapedido >= :dataInicio '
-        + '       AND p.datapedido <= :dataFim '
+        + '       AND (p.datapedido >= :dataInicio   AND p.horapedido >= :horainicio) '
+        + '       AND (p.datapedido <= :dataFim AND p.horapedido <= :horafim) '
 
         + 'UNION ALL '
 
@@ -924,8 +911,8 @@ begin
         + '       Sum(p.valorliquido) AS Total '
         + 'FROM   pedido p '
         + 'WHERE  p.status = ''F'' '
-        + '       AND p.datapedido >= :dataInicio '
-        + '       AND p.datapedido <= :dataFim '
+        + '       AND (p.datapedido >= :dataInicio   AND p.horapedido >= :horainicio) '
+        + '       AND (p.datapedido <= :dataFim AND p.horapedido <= :horafim) '
 
         + 'UNION ALL '
 
@@ -935,52 +922,20 @@ begin
         + '       pedido p '
         + 'WHERE  p.status = ''F'' '
         + '       AND p.id = pg.idpedido '
-        + '       AND p.datapedido >= :dataInicio '
-        + '       AND p.datapedido <= :dataFim '
+        + '       AND (p.datapedido >= :dataInicio   AND p.horapedido >= :horainicio) '
+        + '       AND (p.datapedido <= :dataFim AND p.horapedido <= :horafim) '
         + 'GROUP  BY descricao, '
-        + '          tipo '
+        + '          tipo ';
 
-        + 'UNION ALL '
-
-        + 'SELECT ''Troco'' Titulo, '
-        + '       Sum(p.troco)  AS Total '
-        + 'FROM   pedido p '
-        + 'WHERE  p.status = ''F'' '
-        + '       AND p.datapedido >= :dataInicio '
-        + '       AND p.datapedido <= :dataFim '
-
-        + 'UNION ALL '
-
-        + 'SELECT CASE '
-        + '         WHEN tipo = 1 THEN ''Sangria'' '
-        + '         WHEN tipo = 2 THEN ''Suprimento'' '
-        + '       END        Titulo, '
-        + '       Sum(valor) AS Total '
-        + 'FROM   sangriasuprimento '
-        + 'WHERE  data >= :dataInicio '
-        + '       AND data <= :dataFim '
-        + 'GROUP  BY tipo ';
-
-      qry.ParamByName('dataInicio').AsDate := dataInicio;
-      qry.ParamByName('dataFim').AsDate := dataFim;
+      qry.ParamByName('dataInicio').AsDateTime := dataInicio;
+      qry.ParamByName('dataFim').AsDateTime := dataFim;
+      qry.ParamByName('horainicio').AsTime := aHoraInicio;
+      qry.ParamByName('horafim').AsTime := aHoraFim;
 
       TLog.d(qry);
       qry.Open;
 
-      TArrayUtil<string>.Append(saidas, 'Troco');
-      TArrayUtil<string>.Append(saidas, 'Sangria');
-      TArrayUtil<string>.Append(saidas, 'Descontos');
-
-      while not qry.Eof do
-      begin
-        if TArrayUtil<string>.Indexof(saidas, qry.FieldByName('Titulo').AsString.Trim) > -1 then
-          sinal := '-'
-        else
-          sinal := '';
-
-        result.Add(TPair<string, string>.Create(qry.FieldByName('Titulo').AsString, sinal + FormatCurr('R$ 0.,00', qry.FieldByName('Total').AsCurrency)));
-        qry.Next;
-      end;
+      IncluirTotais(qry, result, true);
 
       result.Add(TPair<string, string>.Create('', ''));
       result.Add(TPair<string, string>.Create('RECEBIMENTO DE CRÉDIÁRIO', ''));
@@ -994,6 +949,8 @@ begin
         + '       AND pa.recebido = ''S'''
         + '       AND pa.databaixa >= :dataInicio '
         + '       AND pa.databaixa <= :dataFim ';
+      qry.ParamByName('dataInicio').AsDateTime := dataInicio;
+      qry.ParamByName('dataFim').AsDateTime := dataFim;
       TLog.d(qry);
       qry.Open;
       result.Add(TPair<string, string>.Create('Parcelas Recebidas', qry.FieldByName('Total').AsString));
@@ -1008,10 +965,11 @@ begin
         + '       AND pa.recebido = ''S'''
         + '       AND pa.databaixa >= :dataInicio '
         + '       AND pa.databaixa <= :dataFim ';
+      qry.ParamByName('dataInicio').AsDateTime := dataInicio;
+      qry.ParamByName('dataFim').AsDateTime := dataFim;
       TLog.d(qry);
       qry.Open;
       result.Add(TPair<string, string>.Create(qry.FieldByName('Titulo').AsString, FormatCurr('R$ 0.,00', qry.FieldByName('Total').AsCurrency)));
-      result.Add(TPair<string, string>.Create('PAGAMENTOS', ''));
 
       qry.SQL.Text := ''
         + 'SELECT (descricao || '' ('' || COUNT(pg.IDPEDIDO) || '')'') AS Titulo, '
@@ -1020,32 +978,129 @@ begin
         + '       pedido p '
         + 'WHERE  p.status = ''F'' '
         + '       AND p.id = pg.idpedido '
-        + '       AND p.datapedido >= :dataInicio '
-        + '       AND p.datapedido <= :dataFim '
+        + '       AND (p.datapedido >= :dataInicio   AND p.horapedido >= :horainicio) '
+        + '       AND (p.datapedido <= :dataFim AND p.horapedido <= :horafim) '
         + 'GROUP  BY descricao, '
         + '          tipo ';
+      qry.ParamByName('dataInicio').AsDateTime := dataInicio;
+      qry.ParamByName('dataFim').AsDateTime := dataFim;
+      qry.ParamByName('horainicio').AsTime := aHoraInicio;
+      qry.ParamByName('horafim').AsTime := aHoraFim;
       TLog.d(qry);
       qry.Open;
-      while not qry.Eof do
-      begin
-        if TArrayUtil<string>.Indexof(saidas, qry.FieldByName('Titulo').AsString.Trim) > -1 then
-          sinal := '-'
-        else
-          sinal := '';
 
-        result.Add(TPair<string, string>.Create(qry.FieldByName('Titulo').AsString, sinal + FormatCurr('R$ 0.,00', qry.FieldByName('Total').AsCurrency)));
-        qry.Next;
+      if (not qry.IsEmpty) then
+      begin
+        result.Add(TPair<string, string>.Create('PAGAMENTOS', ''));
+        IncluirTotais(qry, result, true);
       end;
 
       result.Add(TPair<string, string>.Create('', ''));
+      result.Add(TPair<string, string>.Create('ENTRADAS NO CAIXA', ''));
+      qry.Close;
 
+      qry.SQL.Text := ''
+        + 'SELECT ''ABERTURA DE CAIXA'' AS titulo, '
+        + '       valorabertura  AS Total '
+        + 'FROM   controlecaixa '
+        + 'WHERE  id = '
+        + '       ( '
+        + '                SELECT   first 1 id '
+        + '                FROM     controlecaixa '
+        + '                ORDER BY datafechamento DESC )'
+
+        + 'UNION ALL '
+
+        + 'SELECT descricao || '' ('' || sum(Contagem) || '')'' AS Titulo,  SUM(Total) AS Total '
+        + 'FROM ( '
+        + '    SELECT descricao AS descricao, '
+        + '           SUM(pg.valor) AS Total  , '
+        + '           COUNT(*) AS Contagem '
+        + '    FROM pedidopagamento pg, '
+        + '         pedido p '
+        + '    WHERE p.status = ''F'' '
+        + '         AND p.id = pg.idpedido '
+        + '         AND pg.TIPO <> 5 '
+        + '         AND pg.DATAALTERACAO >= :dataInicio '
+        + '         AND pg.DATAALTERACAO <= :dataFim '
+        + '    GROUP BY descricao, tipo '
+
+        + '    UNION ALL '
+
+        + '    SELECT descricao AS descricao, '
+        + '           SUM(pg.valor) AS Total  , '
+        + '           COUNT(*) AS Contagem '
+        + '    FROM PARCELAPAGAMENTOS pg, '
+        + '         pedido p '
+        + '    WHERE p.status = ''F'' '
+        + '         AND p.id = pg.idpedido '
+        + '         AND pg.DATAALTERACAO >= :dataInicio '
+        + '         AND pg.DATAALTERACAO <= :dataFim '
+        + '    GROUP BY descricao, tipo '
+        + ') AS ResultadoCombinado '
+        + 'GROUP BY descricao '
+
+        + 'UNION ALL '
+
+        + 'SELECT ''Suprimento'' as  Titulo, '
+        + '       Sum(valor) AS Total '
+        + 'FROM   sangriasuprimento '
+        + 'WHERE  data >= :dataInicio '
+        + '       AND data <= :dataFim '
+        + '       AND tipo = 2 '
+        + 'GROUP  BY tipo ';
+      qry.ParamByName('dataInicio').AsDateTime := dataInicio;
+      qry.ParamByName('dataFim').AsDateTime := dataFim;
+      TLog.d(qry);
+      qry.Open;
+
+      var
+      entradas := IncluirTotais(qry, result, true);
+      result.Add(TPair<string, string>.Create('TOTAL', FormatCurr('R$ 0.,00', entradas)));
+
+      result.Add(TPair<string, string>.Create('', ''));
+      result.Add(TPair<string, string>.Create('SAÍDAS DO CAIXA', ''));
+      qry.SQL.Text := ''
+
+        + 'SELECT ''Troco'' Titulo, '
+        + '       Sum(p.troco) AS Total '
+        + 'FROM   pedido p '
+        + 'WHERE  p.status = ''F'' '
+        + '       AND (p.datapedido >= :dataInicio   AND p.horapedido >= :horainicio) '
+        + '       AND (p.datapedido <= :dataFim AND p.horapedido <= :horafim) '
+
+        + 'UNION ALL '
+
+        + 'SELECT ''Sangria'' as  Titulo, '
+        + '       Sum(valor) AS Total '
+        + 'FROM   sangriasuprimento '
+        + 'WHERE  data >= :dataInicio '
+        + '       AND data <= :dataFim '
+        + '       AND tipo = 1 '
+        + 'GROUP  BY tipo ';
+
+      qry.ParamByName('dataInicio').AsDateTime := dataInicio;
+      qry.ParamByName('dataFim').AsDateTime := dataFim;
+      qry.ParamByName('horainicio').AsTime := aHoraInicio;
+      qry.ParamByName('horafim').AsTime := aHoraFim;
+      TLog.d(qry);
+      qry.Open;
+
+      var
+      saidas := IncluirTotais(qry, result, true);
+      result.Add(TPair<string, string>.Create('TOTAL', FormatCurr('R$ 0.,00', saidas)));
+
+      result.Add(TPair<string, string>.Create('', ''));
+      result.Add(TPair<string, string>.Create('TOTAL EM CAIXA (ENTRADA - SAÍDAS):', FormatCurr('R$ 0.,00', entradas + saidas)));
+
+      result.Add(TPair<string, string>.Create('', ''));
       qry.SQL.Text := ''
         + 'SELECT ''Numero de Vendas Concluídos'' AS Titulo, '
         + '       count(p.id)  AS Total '
         + 'FROM   pedido p '
         + 'WHERE  p.status = ''F'' '
-        + '       AND p.datapedido >= :dataInicio '
-        + '       AND p.datapedido <= :dataFim '
+        + '       AND (p.datapedido >= :dataInicio   AND p.horapedido >= :horainicio) '
+        + '       AND (p.datapedido <= :dataFim AND p.horapedido <= :horafim) '
 
         + 'UNION ALL '
 
@@ -1053,8 +1108,8 @@ begin
         + '       count(p.id)  AS Total '
         + 'FROM   pedido p '
         + 'WHERE  p.status = ''C'' '
-        + '       AND p.datapedido >= :dataInicio '
-        + '       AND p.datapedido <= :dataFim '
+        + '       AND (p.datapedido >= :dataInicio   AND p.horapedido >= :horainicio) '
+        + '       AND (p.datapedido <= :dataFim AND p.horapedido <= :horafim) '
 
         + 'UNION ALL '
 
@@ -1062,21 +1117,18 @@ begin
         + '       count(p.id)  AS Total '
         + 'FROM   pedido p '
         + 'WHERE  p.status = ''A'' '
-        + '       AND p.datapedido >= :dataInicio '
-        + '       AND p.datapedido <= :dataFim '
-        ;
+        + '       AND (p.datapedido >= :dataInicio   AND p.horapedido >= :horainicio) '
+        + '       AND (p.datapedido <= :dataFim AND p.horapedido <= :horafim) ';
 
-      qry.ParamByName('dataInicio').AsDate := dataInicio;
-      qry.ParamByName('dataFim').AsDate := dataFim;
+      qry.ParamByName('dataInicio').AsDateTime := dataInicio;
+      qry.ParamByName('dataFim').AsDateTime := dataFim;
+      qry.ParamByName('horainicio').AsTime := aHoraInicio;
+      qry.ParamByName('horafim').AsTime := aHoraFim;
 
       TLog.d(qry);
       qry.Open;
 
-      while not qry.Eof do
-      begin
-        result.Add(TPair<string, string>.Create(qry.FieldByName('Titulo').AsString, qry.FieldByName('Total').AsString));
-        qry.Next;
-      end;
+      IncluirTotais(qry, result, false);
     finally
       FreeAndNil(qry);
     end;
@@ -1086,6 +1138,40 @@ begin
       TLog.d(E.message);
       raise TDaoException.Create('Falha ao calcular Totais: ' + E.message);
     end;
+  end;
+
+end;
+
+function TDaoPedido.IncluirTotais(aQry: TFDQuery; aLista: TList<TPair<string, string>>; aFormatar: boolean): Currency;
+var
+  saidas: TArray<string>;
+  sinal: string;
+begin
+  TArrayUtil<string>.Append(saidas, 'Troco');
+  TArrayUtil<string>.Append(saidas, 'Sangria');
+  TArrayUtil<string>.Append(saidas, 'Descontos');
+
+  aQry.First;
+  result := 0;
+
+  while not aQry.Eof do
+  begin
+    if TArrayUtil<string>.Indexof(saidas, aQry.FieldByName('Titulo').AsString.Trim) > -1 then
+    begin
+      sinal := '-';
+      result := result - aQry.FieldByName('Total').AsCurrency;
+    end
+    else
+    begin
+      sinal := '';
+      result := result + aQry.FieldByName('Total').AsCurrency;
+    end;
+    if aFormatar then
+      aLista.Add(TPair<string, string>.Create(aQry.FieldByName('Titulo').AsString, sinal + FormatCurr('R$ 0.,00', aQry.FieldByName('Total').AsCurrency)))
+    else
+      aLista.Add(TPair<string, string>.Create(aQry.FieldByName('Titulo').AsString, sinal + aQry.FieldByName('Total').AsString));
+
+    aQry.Next;
   end;
 
 end;
@@ -1153,6 +1239,50 @@ begin
     end;
   end;
 
+end;
+
+function TDaoPedido.TotalCaixa(dataInicio: TDatetime): Currency;
+var
+  qry: TFDQuery;
+begin
+  try
+    try
+      qry := Self.Query();
+      qry.SQL.Text := ''
+        + 'SELECT Sum(total) AS Total '
+        + 'FROM   (SELECT Sum(pg.valor) AS Total '
+        + '        FROM   pedidopagamento pg, '
+        + '               pedido p '
+        + '        WHERE  p.status = ''F'' '
+        + '               AND p.id = pg.idpedido '
+        + '               AND pg.tipo <> 5 ' // não incluir crediário
+        + '               AND p.datapedido >= :dataInicio '
+        + '               AND p.horapedido >= :HORAPEDIDO '
+        + '        UNION ALL '
+        + '        SELECT Sum(pg.valor) AS Total '
+        + '        FROM   parcelapagamentos pg, '
+        + '               pedido p '
+        + '        WHERE  p.status = ''F'' '
+        + '               AND p.id = pg.idpedido '
+        + '               AND p.datapedido >= :dataInicio '
+        + '               AND p.horapedido >= :HORAPEDIDO)';
+
+      qry.ParamByName('dataInicio').AsDate := dataInicio;
+      qry.ParamByName('HORAPEDIDO').AsTime := timeof(dataInicio);
+      TLog.d(qry);
+      qry.Open();
+
+      result := qry.FieldByName('total').AsCurrency;
+    finally
+      FreeAndNil(qry);
+    end;
+  except
+    on E: Exception do
+    begin
+      TLog.d(E.message);
+      raise TDaoException.Create('Falha ao calcular Total caixa: ' + E.message);
+    end;
+  end;
 end;
 
 end.

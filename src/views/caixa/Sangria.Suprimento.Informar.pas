@@ -63,6 +63,7 @@ begin
     inherited;
     FSangriaSuprimento.DATA := now;
     FSangriaSuprimento.HORA := now;
+    FSangriaSuprimento.DATAALTERACAO := now;
 
     fFactory
       .DAOTSangriaSuprimento

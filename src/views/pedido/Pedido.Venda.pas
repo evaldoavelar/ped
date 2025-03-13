@@ -1245,7 +1245,13 @@ end;
 
 function TFrmPedidoVenda.MontaDescricaoPesquisaProduto(const Item: TProduto): string;
 begin
-  result := Item.DESCRICAO + ' - ' + Item.CODIGO + ' - ' + FormatCurr(' R$ 0.,00', Item.PRECO_VENDA);
+  // result := Item.DESCRICAO + ' - ' + Item.CODIGO + ' - ' + FormatCurr(' R$ 0.,00', Item.PRECO_VENDA);
+
+  result := Format('%s - %s - %s', [
+    Item.DESCRICAO
+    , Item.CODIGO
+    , FormatCurr(' R$ 0.,00', Item.PRECO_VENDA)
+    ]);
 end;
 
 procedure TFrmPedidoVenda.OnExcluiItem(Item: TItemPedido);
@@ -1404,18 +1410,18 @@ begin
     if Produto.AVISARESTOQUEBAIXO then
     BEGIN
       var
-      estoque := (Produto.estoque - self.Quantidade);
+      Estoque := (Produto.Estoque - self.Quantidade);
       VAR
-      estoqueBaixo := (estoque <= Produto.ESTOQUEMINIMO);
+      estoqueBaixo := (Estoque <= Produto.ESTOQUEMINIMO);
 
-      if estoque <= 0 then
+      if Estoque <= 0 then
       begin
         if MessageDlg('PRODUTO SEM ESTOQUE!!! VENDER MESMO ASSIM?', mtConfirmation, [mbYes, mbNo], 0) = mrNo then
           Abort;
       end
       else if estoqueBaixo then
         MessageDlg('PRODUTO COM ESTOQUE BAIXO: '
-          + FormatFloat('0.000', estoque) + ' '
+          + FormatFloat('0.000', Estoque) + ' '
           + Produto.UND + ' restantes.',
           TMsgDlgType.mtWarning, [mbOK], 0);
 
@@ -1438,7 +1444,7 @@ begin
         Item.CODPRODUTO := Produto.CODIGO;
         Item.DESCRICAO := Produto.DESCRICAO;
         Item.UND := Produto.UND;
-        Item.qtd := self.Quantidade;
+        Item.qtd := TUtil.Truncar(self.Quantidade, 4);
         Item.VALOR_UNITA := Produto.PRECO_VENDA;
         Item.IDPedido := Pedido.ID;
       except

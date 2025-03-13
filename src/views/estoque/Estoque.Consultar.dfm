@@ -6,7 +6,6 @@ inherited ViewEstoqueMovimentacoes: TViewEstoqueMovimentacoes
   OnShow = FormShow
   ExplicitWidth = 938
   ExplicitHeight = 563
-  PixelsPerInch = 96
   TextHeight = 13
   object Panel3: TPanel
     AlignWithMargins = True
@@ -278,7 +277,7 @@ inherited ViewEstoqueMovimentacoes: TViewEstoqueMovimentacoes
       AlignWithMargins = True
       Left = 14
       Top = 3
-      Width = 58
+      Width = 57
       Height = 28
       Margins.Left = 14
       Align = alLeft

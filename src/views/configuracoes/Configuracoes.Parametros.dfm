@@ -36,7 +36,7 @@ inherited FrmConfiguracoes: TFrmConfiguracoes
     Top = 0
     Width = 796
     Height = 362
-    ActivePage = ts2
+    ActivePage = tsCaixa
     Align = alClient
     TabOrder = 0
     object ts1: TTabSheet

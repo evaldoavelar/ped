@@ -86,8 +86,8 @@
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
         <BT_BuildType>Debug</BT_BuildType>
-        <VerInfo_Build>6</VerInfo_Build>
-        <VerInfo_Keys>CompanyName=Desenvolvido por Evaldo Avelar Marques;FileDescription=Sistema de Parcelas;FileVersion=1.0.1.6;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductVersion=1.0.0.0;Comments=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName)</VerInfo_Keys>
+        <VerInfo_Build>8</VerInfo_Build>
+        <VerInfo_Keys>CompanyName=Desenvolvido por Evaldo Avelar Marques;FileDescription=Sistema de Parcelas;FileVersion=1.0.1.8;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductVersion=1.0.0.0;Comments=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName)</VerInfo_Keys>
         <Icon_MainIcon>PED_Icon.ico</Icon_MainIcon>
         <VerInfo_Debug>true</VerInfo_Debug>
         <VerInfo_PreRelease>true</VerInfo_PreRelease>
@@ -463,6 +463,18 @@
         <DCCReference Include="units\Dominio\Entidades\Dominio.Entidades.Pedido.Parcela.Pagamentos.pas"/>
         <DCCReference Include="units\Dao\Abstract\Dao.IDAOParcelaPagamento.pas"/>
         <DCCReference Include="units\Dao\Concret\Dao.TDAOParcelaPagamento.pas"/>
+        <DCCReference Include="views\caixa\Caixa.Abertura.pas">
+            <Form>frmCaixaAbertura</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="units\Dominio\Entidades\Dominio.Entidades.TControleCaixa.pas"/>
+        <DCCReference Include="units\Dao\Abstract\Dao.IDAOControleCaixa.pas"/>
+        <DCCReference Include="units\Dao\Concret\Dao.TDaoControleCaixa.pas"/>
+        <DCCReference Include="views\caixa\Caixa.Fechamento.pas">
+            <Form>frmCaixaFechamento</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="units\relatorio\Relatorio.TRCaixa.Abertura.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

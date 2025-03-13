@@ -171,6 +171,10 @@ type
     lblNotify: TLabel;
     actImportar: TAction;
     FDPhysFBDriverLink1: TFDPhysFBDriverLink;
+    actAbrirCaixa: TAction;
+    actFecharCaixa: TAction;
+    lblCaixaStatus: TLabel;
+    Image1: TImage;
     procedure actPedidoVendaExecute(Sender: TObject);
     procedure imgNFCEDblClick(Sender: TObject);
     procedure actSairExecute(Sender: TObject);
@@ -231,6 +235,8 @@ type
     procedure actEtiquetasExecute(Sender: TObject);
     procedure actEtiquetasModelo4x2Execute(Sender: TObject);
     procedure actImportarExecute(Sender: TObject);
+    procedure actAbrirCaixaExecute(Sender: TObject);
+    procedure actFecharCaixaExecute(Sender: TObject);
   private
     { Private declarations }
 
@@ -259,6 +265,8 @@ type
     procedure Inicializar;
     procedure ImportarTabelas;
     procedure FacadeUpdate(const aValue: string);
+    function ChecaCaixaAberto: Boolean;
+    procedure SetarStatusCaixa;
   public
     { Public declarations }
 
@@ -275,7 +283,7 @@ uses
   Cadastros.Vendedor, Cadastros.Produto, Cadastros.Fornecedor,
   Configuracoes.Parametros, Splash.Form,
   Dominio.Entidades.TEmitente, Recebimento.ListaParcelas, Sistema.TParametros,
-  Login.FrmLogin,
+  Login.FrmLogin, Caixa.Abertura, Caixa.Fechamento,
   Filtro.Vencimento, Filtro.Parcelas,
   Database.IDataseMigration, Database.TDataseMigrationBase, Filtro.Pedidos,
   Grafico.Pedidos,
@@ -335,6 +343,77 @@ begin
   TLog.d('<<< Saindo de TFrmPrincipal.actAbreMenuExecute ');
 end;
 
+procedure TFrmPrincipal.actFecharCaixaExecute(Sender: TObject);
+begin
+  TLog.d('>>> Entrando em  TFrmPrincipal.actFecharCaixaExecute ');
+  try
+
+    if not ChecaCaixaAberto then
+    begin
+      raise Exception.Create('Caixa não está aberto.');
+    end;
+    try
+      frmCaixaFechamento := TfrmCaixaFechamento.Create(self);
+      frmCaixaFechamento.showmodal;
+    finally
+      frmCaixaFechamento.free;
+    end;
+    SetarStatusCaixa;
+  except
+    on E: Exception do
+    begin
+      TLog.d(E.Message);
+      MessageDlg(E.Message, mtError, [mbOK], 0);
+    end;
+  end;
+
+  TLog.d('<<< Saindo de TFrmPrincipal.actFecharCaixaExecute ');
+end;
+
+function TFrmPrincipal.ChecaCaixaAberto: Boolean;
+begin
+  result := false;
+  var
+  LControleCaixa := TFactory.new(nil, true)
+    .DAOControleCaixa
+    .CaixaAberto(TFactoryEntidades.Parametros.PontoVenda.NUMCAIXA);
+
+  if LControleCaixa <> nil then
+  begin
+    FreeAndNil(LControleCaixa);
+    exit(true);
+  end;
+
+end;
+
+procedure TFrmPrincipal.actAbrirCaixaExecute(Sender: TObject);
+begin
+  TLog.d('>>> Entrando em  TFrmPrincipal.actAbrirCaixaExecute ');
+  try
+
+    TLog.d('Checando controle caixa');
+
+    if ChecaCaixaAberto() then
+      raise Exception.Create('Caixa Anterior não foi fechado.');
+
+    try
+      frmCaixaAbertura := TfrmCaixaAbertura.Create(self);
+      frmCaixaAbertura.showmodal;
+    finally
+      frmCaixaAbertura.free;
+    end;
+
+    SetarStatusCaixa;
+  except
+    on E: Exception do
+    begin
+      TLog.d(E.Message);
+      MessageDlg(E.Message, mtError, [mbOK], 0);
+    end;
+  end;
+  TLog.d('<<< Saindo de TFrmPrincipal.actAbrirCaixaExecute ');
+end;
+
 procedure TFrmPrincipal.actAjudaExecute(Sender: TObject);
 begin
   TLog.d('>>> Entrando em  TFrmPrincipal.actAjudaExecute ');
@@ -382,7 +461,7 @@ begin
       TFrmCadastroFormaPagtoParceiro.Create(self);
     try
 
-      FrmCadastroFormaPagtoParceiro.ShowModal;
+      FrmCadastroFormaPagtoParceiro.showmodal;
     finally
       FreeAndNil(FrmCadastroFormaPagtoParceiro);
     end;
@@ -403,7 +482,7 @@ begin
     frmCadastroParceiro := TfrmCadastroParceiro.Create(self);
     try
 
-      frmCadastroParceiro.ShowModal;
+      frmCadastroParceiro.showmodal;
     finally
       FreeAndNil(frmCadastroParceiro);
     end;
@@ -433,7 +512,7 @@ begin
     frmCadastroCliente := TfrmCadastroCliente.Create(self);
     try
 
-      frmCadastroCliente.ShowModal;
+      frmCadastroCliente.showmodal;
     finally
       FreeAndNil(frmCadastroCliente);
     end;
@@ -453,7 +532,7 @@ begin
   try
     frmCadastroFormaPagto := TfrmCadastroFormaPagto.Create(self);
     try
-      frmCadastroFormaPagto.ShowModal;
+      frmCadastroFormaPagto.showmodal;
     finally
       FreeAndNil(frmCadastroFormaPagto);
     end;
@@ -473,7 +552,7 @@ begin
   try
     frmCadastroFornecedor := TfrmCadastroFornecedor.Create(self);
     try
-      frmCadastroFornecedor.ShowModal;
+      frmCadastroFornecedor.showmodal;
     finally
       FreeAndNil(frmCadastroFornecedor);
     end;
@@ -493,7 +572,7 @@ begin
   try
     frmCadastroProduto := TfrmCadastroProduto.Create(self);
     try
-      frmCadastroProduto.ShowModal;
+      frmCadastroProduto.showmodal;
     finally
       FreeAndNil(frmCadastroProduto);
     end;
@@ -517,7 +596,7 @@ begin
 
     frmCadastroVendedor := TfrmCadastroVendedor.Create(self);
     try
-      frmCadastroVendedor.ShowModal;
+      frmCadastroVendedor.showmodal;
     finally
       FreeAndNil(frmCadastroVendedor);
     end;
@@ -546,7 +625,7 @@ begin
   try
     FrmConfiguracoes := TFrmConfiguracoes.Create(self);
     try
-      FrmConfiguracoes.ShowModal;
+      FrmConfiguracoes.showmodal;
 
       TFactoryEntidades.setParametros(TFactory.new.DaoParametros.GetParametros);
     finally
@@ -576,7 +655,7 @@ begin
   try
     frmFiltroOrcamentos := TfrmFiltroOrcamentos.Create(self);
     try
-      frmFiltroOrcamentos.ShowModal;
+      frmFiltroOrcamentos.showmodal;
     finally
       FreeAndNil(frmFiltroOrcamentos);
     end;
@@ -596,7 +675,7 @@ begin
   try
     frmFiltroPedidos := TfrmFiltroPedidos.Create(self);
     try
-      frmFiltroPedidos.ShowModal;
+      frmFiltroPedidos.showmodal;
     finally
       FreeAndNil(frmFiltroPedidos);
     end;
@@ -615,9 +694,9 @@ begin
   TLog.d('>>> Entrando em  TFrmPrincipal.actConsultarEstoqueExecute ');
   ViewEstoqueMovimentacoes := TViewEstoqueMovimentacoes.Create(self);
   try
-    ViewEstoqueMovimentacoes.ShowModal;
+    ViewEstoqueMovimentacoes.showmodal;
   finally
-    ViewEstoqueMovimentacoes.Free;
+    ViewEstoqueMovimentacoes.free;
   end;
   TLog.d('<<< Saindo de TFrmPrincipal.actConsultarEstoqueExecute ');
 end;
@@ -636,9 +715,9 @@ begin
   try
     FrmEstoqueAtualizar := TFrmEstoqueAtualizar.Create(self);
     try
-      FrmEstoqueAtualizar.ShowModal;
+      FrmEstoqueAtualizar.showmodal;
     finally
-      FrmEstoqueAtualizar.Free;
+      FrmEstoqueAtualizar.free;
     end;
   except
     on E: Exception do
@@ -664,7 +743,7 @@ begin
   try
     FrmEtiquetasModelo3x2 := TFrmEtiquetasModelo3x2.Create(self);
     try
-      FrmEtiquetasModelo3x2.ShowModal;
+      FrmEtiquetasModelo3x2.showmodal;
     finally
       FreeAndNil(FrmEtiquetasModelo3x2);
     end;
@@ -685,7 +764,7 @@ begin
   try
     FrmEtiquetasModelo4x2 := TFrmEtiquetasModelo4x2.Create(self);
     try
-      FrmEtiquetasModelo4x2.ShowModal;
+      FrmEtiquetasModelo4x2.showmodal;
     finally
       FreeAndNil(FrmEtiquetasModelo4x2);
     end;
@@ -711,7 +790,7 @@ begin
   try
     frmGraficoPedidos := TfrmGraficoPedidos.Create(self);
     try
-      frmGraficoPedidos.ShowModal;
+      frmGraficoPedidos.showmodal;
     finally
       FreeAndNil(frmGraficoPedidos);
     end;
@@ -754,7 +833,7 @@ begin
     FechaSubMenu;
     FrmParceiroInfoPagto := TFrmParceiroInfoPagto.Create(nil);
     try
-      FrmParceiroInfoPagto.ShowModal;
+      FrmParceiroInfoPagto.showmodal;
     finally
       FreeAndNil(FrmParceiroInfoPagto);
     end;
@@ -774,14 +853,14 @@ begin
   try
     FrmLogin := TfrmLogin.Create(self);
     try
-      if FrmLogin.ShowModal = mrAbort then
+      if FrmLogin.showmodal = mrAbort then
         abort;
 
       TFactoryEntidades.new.VendedorLogado := FrmLogin.Vendedor;
 
       DefineLabelVendedor();
     finally
-      FrmLogin.Free;
+      FrmLogin.free;
     end;
   except
     on E: EAbort do
@@ -809,7 +888,7 @@ begin
     FechaSubMenu;
     FrmCadastroOrcamento := TFrmCadastroOrcamento.Create(nil);
     try
-      FrmCadastroOrcamento.ShowModal;
+      FrmCadastroOrcamento.showmodal;
     finally
       FreeAndNil(FrmCadastroOrcamento);
     end;
@@ -831,14 +910,14 @@ begin
   TLog.d('>>> Entrando em  TFrmPrincipal.InformarSerial ');
   FrmInformaSerial := TFrmInformaSerial.Create(self);
   try
-    if FrmInformaSerial.ShowModal = mrOk then
+    if FrmInformaSerial.showmodal = mrOk then
     begin
       arquivo := tstringlist.Create;
       arquivo.Text := FrmInformaSerial.edtSerial1.Text + '-' +
         FrmInformaSerial.edtSerial2.Text + '-' +
         FrmInformaSerial.edtSerial3.Text;
       arquivo.SaveToFile(RetornaNomeArquivoLicenca());
-      arquivo.Free;
+      arquivo.free;
 
       Licenca := TLicenca.Create;
       try
@@ -847,12 +926,12 @@ begin
           raise Exception.Create('O serial não é válido!');
         CheckLicenca;
       finally
-        Licenca.Free;
+        Licenca.free;
       end;
 
     end;
   finally
-    FrmInformaSerial.Free;
+    FrmInformaSerial.free;
   end;
   TLog.d('<<< Saindo de TFrmPrincipal.InformarSerial ');
 end;
@@ -870,7 +949,7 @@ begin
   try
     frmFiltroParcelas := TfrmFiltroParcelas.Create(self);
     try
-      frmFiltroParcelas.ShowModal;
+      frmFiltroParcelas.showmodal;
       VerificaParcelasVencendo;
     finally
       FreeAndNil(frmFiltroParcelas);
@@ -890,13 +969,17 @@ begin
   TLog.d('>>> Entrando em  TFrmPrincipal.actPedidoVendaExecute ');
   try
     FechaSubMenu;
+
+    if not ChecaCaixaAberto() then
+      raise Exception.Create('O Caixa não foi aberto!');
+
     if CheckLicenca() then
     begin
       try
 
         FrmPedidoVenda := TFrmPedidoVenda.Create(self);
         try
-          FrmPedidoVenda.ShowModal;
+          FrmPedidoVenda.showmodal;
           VerificaParcelasVencendo;
         finally
           FreeAndNil(FrmPedidoVenda);
@@ -935,7 +1018,7 @@ begin
 
     frmRecebimento := TfrmRecebimento.Create(self);
     try
-      frmRecebimento.ShowModal;
+      frmRecebimento.showmodal;
       VerificaParcelasVencendo;
     finally
       FreeAndNil(frmRecebimento);
@@ -963,13 +1046,13 @@ begin
 
     frmFiltroCliente := TfrmFiltroCliente.Create(self);
     try
-      frmFiltroCliente.ShowModal;
+      frmFiltroCliente.showmodal;
       if not Assigned(frmFiltroCliente.Cliente) then
         abort;
 
       Cliente := frmFiltroCliente.Cliente;
     finally
-      frmFiltroCliente.Free;
+      frmFiltroCliente.free;
       frmFiltroCliente := nil;
     end;
 
@@ -1018,13 +1101,13 @@ begin
 
     frmFiltroDatas := TfrmFiltroDatas.Create(self);
     try
-      if frmFiltroDatas.ShowModal <> mrOk then
+      if frmFiltroDatas.showmodal <> mrOk then
         exit;
 
       DataIncio := frmFiltroDatas.edtDataIncio.Date;
       DataFim := frmFiltroDatas.edtDataFim.Date;
     finally
-      frmFiltroDatas.Free;
+      frmFiltroDatas.free;
     end;
 
     LFactory := TFactory.new(nil, true);
@@ -1065,7 +1148,7 @@ begin
   frmFiltroVencimento := TfrmFiltroVencimento.Create(self);
   try
     try
-      if frmFiltroVencimento.ShowModal = mrOk then
+      if frmFiltroVencimento.showmodal = mrOk then
       begin
         Parcelas := TFactory.new.DaoParcelas.GetParcelaVencendoObj
           (frmFiltroVencimento.edtDataIncio.Date,
@@ -1112,7 +1195,7 @@ end;
 procedure TFrmPrincipal.actRelatorioVendasDoDiaExecute(Sender: TObject);
 var
   impressao: TRVendasDoDia;
-  DataIncio, DataFim: TDate;
+  DataIncio, DataFim: TDatetime;
 
   LFactory: IFactoryDao;
 begin
@@ -1121,13 +1204,19 @@ begin
 
     frmFiltroDatas := TfrmFiltroDatas.Create(self);
     try
-      if frmFiltroDatas.ShowModal <> mrOk then
+      if frmFiltroDatas.showmodal <> mrOk then
         exit;
 
-      DataIncio := frmFiltroDatas.edtDataIncio.Date;
-      DataFim := frmFiltroDatas.edtDataFim.Date;
+      DataIncio := Now;
+      DataFim := Now;
+
+      ReplaceDate(DataIncio, frmFiltroDatas.edtDataIncio.Date);
+      ReplaceTime(DataIncio, EncodeTime(0, 0, 0, 0));
+
+      ReplaceDate(DataFim, frmFiltroDatas.edtDataFim.Date);
+      ReplaceTime(DataFim, EncodeTime(23, 59, 59, 0));
     finally
-      frmFiltroDatas.Free;
+      frmFiltroDatas.free;
     end;
     LFactory := TFactory.new(nil, true);
 
@@ -1137,7 +1226,7 @@ begin
       DataFim,
       TFactoryEntidades.new.VendedorLogado,
       LFactory.DadosEmitente,
-      LFactory.DaoPedido.Totais(DataIncio, DataFim));
+      LFactory.DaoPedido.Totais(DataIncio, DataFim, EncodeTime(0, 0, 0, 0), EncodeTime(23, 59, 59, 0)));
 
     FreeAndNil(impressao);
     LFactory.Close;
@@ -1164,9 +1253,9 @@ begin
   FrmSangria := TFrmSangria.Create(self);
   try
     FrmSangria.setTipo(TSangriaSuprimentoTipo.Sangria);
-    FrmSangria.ShowModal;
+    FrmSangria.showmodal;
   finally
-    FrmSangria.Free;
+    FrmSangria.free;
   end;
   TLog.d('<<< Saindo de TFrmPrincipal.actSangriaExecute ');
 end;
@@ -1177,9 +1266,9 @@ begin
   FrmSangria := TFrmSangria.Create(self);
   try
     FrmSangria.setTipo(TSangriaSuprimentoTipo.Suprimento);
-    FrmSangria.ShowModal;
+    FrmSangria.showmodal;
   finally
-    FrmSangria.Free;
+    FrmSangria.free;
   end;
   TLog.d('<<< Saindo de TFrmPrincipal.actSuprimentoExecute ');
 end;
@@ -1187,7 +1276,7 @@ end;
 procedure TFrmPrincipal.actVendasDoDiaPorVendedorExecute(Sender: TObject);
 var
   impressao: TRVendasDoDia;
-  DataIncio, DataFim: TDate;
+  DataIncio, DataFim: TDatetime;
   Vendedor: TVendedor;
   LFactory: IFactoryDao;
 begin
@@ -1196,14 +1285,20 @@ begin
 
     frmFiltroDataVendedor := TfrmFiltroDataVendedor.Create(self);
     try
-      if frmFiltroDataVendedor.ShowModal <> mrOk then
+      if frmFiltroDataVendedor.showmodal <> mrOk then
         exit;
 
-      DataIncio := frmFiltroDataVendedor.edtDataIncio.Date;
-      DataFim := frmFiltroDataVendedor.edtDataFim.Date;
+      DataIncio := Now;
+      DataFim := Now;
+
+      ReplaceDate(DataIncio, frmFiltroDataVendedor.edtDataIncio.Date);
+      ReplaceTime(DataIncio, EncodeTime(0, 0, 0, 0));
+
+      ReplaceDate(DataFim, frmFiltroDataVendedor.edtDataFim.Date);
+      ReplaceTime(DataFim, EncodeTime(23, 59, 59, 0));
       Vendedor := frmFiltroDataVendedor.Vendedor;
     finally
-      frmFiltroDataVendedor.Free;
+      frmFiltroDataVendedor.free;
     end;
 
     if not Assigned(Vendedor) then
@@ -1246,20 +1341,19 @@ begin
 
     frmFiltroDatas := TfrmFiltroDatas.Create(self);
     try
-      if frmFiltroDatas.ShowModal <> mrOk then
+      if frmFiltroDatas.showmodal <> mrOk then
         exit;
 
       DataIncio := frmFiltroDatas.edtDataIncio.Date;
       DataFim := frmFiltroDatas.edtDataFim.Date;
     finally
-      frmFiltroDatas.Free;
+      frmFiltroDatas.free;
     end;
     LFactory := TFactory.new(nil, true);
 
     impressao := TRVendasPorParceiro.Create(TFactoryEntidades.Parametros.ImpressoraTermica);
 
-    impressao.Imprime(TFactoryEntidades.new.VendedorLogado, DataIncio, DataFim,
-      LFactory.DadosEmitente);
+    impressao.Imprime(TFactoryEntidades.new.VendedorLogado, DataIncio, DataFim, LFactory.DadosEmitente);
 
     FreeAndNil(impressao);
     LFactory.Close;
@@ -1279,7 +1373,7 @@ begin
   try
     frmFiltroVendasParceiro := TfrmFiltroVendasParceiro.Create(nil);
     try
-      frmFiltroVendasParceiro.ShowModal;
+      frmFiltroVendasParceiro.showmodal;
     finally
       FreeAndNil(frmFiltroVendasParceiro);
     end;
@@ -1308,7 +1402,7 @@ begin
     else
       raise Exception.Create('O sistema não possui uma licença válida');
   finally
-    Licenca.Free;
+    Licenca.free;
   end;
   TLog.d('<<< Saindo de TFrmPrincipal.actVerVencimentoExecute ');
 end;
@@ -1449,6 +1543,33 @@ begin
   result := TUtil.DiretorioApp + 'licenca.evd';
 end;
 
+procedure TFrmPrincipal.SetarStatusCaixa;
+begin
+  TLog.d('>>> Entrando em  TFrmPrincipal.SetarStatusCaixa ');
+  try
+    lblCaixaStatus.Visible := true;
+    if ChecaCaixaAberto then
+    begin
+      lblCaixaStatus.Caption := 'CAIXA ABERTO';
+      lblCaixaStatus.Font.Color := $00A25800;
+    end
+    ELSE
+    begin
+      lblCaixaStatus.Caption := 'CAIXA FECHADO';
+      lblCaixaStatus.Font.Color := $002D39C1;
+    end;
+  except
+    on E: Exception do
+    begin
+      lblCaixaStatus.Caption := 'ERRO';
+      TLog.d(E.Message);
+      MessageDlg(E.Message, mtError, [mbOK], 0);
+    end;
+  end;
+
+  TLog.d('<<< Saindo de TFrmPrincipal.SetarStatusCaixa ');
+end;
+
 procedure TFrmPrincipal.svMenuLateralEsquerdoClick(Sender: TObject);
 begin
   FechaSubMenu;
@@ -1574,7 +1695,7 @@ begin
     frmParcelasVencendo.SetTop(Atop);
     frmParcelasVencendo.SetLef(Aleft);
     frmParcelasVencendo.Caption := ACaption;
-    frmParcelasVencendo.ShowModal;
+    frmParcelasVencendo.showmodal;
   finally
     FreeAndNil(frmParcelasVencendo);
   end;
@@ -1606,14 +1727,14 @@ begin
     FrmLogin := TfrmLogin.Create(self);
     try
       FrmLogin.ConfigurarDataBase := FConfigurarDataBase;
-      if FrmLogin.ShowModal = mrAbort then
+      if FrmLogin.showmodal = mrAbort then
         Halt(0);
 
       TFactoryEntidades.new.VendedorLogado := FrmLogin.Vendedor;
       // if LChamarInicializar then
       Inicializar;
     finally
-      FrmLogin.Free;
+      FrmLogin.free;
     end;
   end
   else
@@ -1711,7 +1832,7 @@ begin
 
     MessageDlg(ListaErros.ToString, mtError, [mbOK], 0);
     ListaErros.Clear;
-    ListaErros.Free;
+    ListaErros.free;
   end;
 
   if Assigned(Erros) then
@@ -1731,7 +1852,7 @@ begin
 
     frmSplash := TfrmSplash.Create(self);
     try
-      frmSplash.ShowModal;
+      frmSplash.showmodal;
       FConfigurarDataBase := frmSplash.ConfigurarDataBase;
     finally
       FreeAndNil(frmSplash);
@@ -1758,6 +1879,7 @@ begin
   LFactory.Close;
 
   VerificaParcelasVencendo;
+  SetarStatusCaixa;
 
   // if TFactoryEntidades.Parametros.FUNCIONARCOMOCLIENTE then
   // begin

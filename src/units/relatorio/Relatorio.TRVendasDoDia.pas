@@ -65,9 +65,9 @@ begin
 
   LinhaCmd := escAlignLeft + esc20Cpi +
     'Período: '
-    + FormatDateTime('dd/mm/yyyy', DataInicio)
+    + FormatDateTime('dd/mm/yyyy hh:mm:ss', DataInicio)
     + ' até '
-    + FormatDateTime('dd/mm/yyyy', DataFim);
+    + FormatDateTime('dd/mm/yyyy hh:mm:ss', DataFim);
   Buffer.Add(LinhaCmd);
 
   LinhaCmd := escAlignLeft + esc20Cpi +

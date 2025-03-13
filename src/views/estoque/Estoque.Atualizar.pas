@@ -418,10 +418,11 @@ function TFrmEstoqueAtualizar.MontaDescricaoPesquisaProduto(const aItem: TProdut
 begin
   //TLog.d('>>> Entrando em  TFrmEstoqueAtualizar.MontaDescricaoPesquisaProduto ');
 
-  result := Format('%s %s %s', [
+  result := Format('%s %s %s (Estoque: %s)', [
     aItem.DESCRICAO.RemoveAcentos
     , aItem.CODIGO
     , FormatCurr(' R$ 0.,00', aItem.PRECO_VENDA)
+    ,aItem.Estoque.ToString
     ]);
 
  // TLog.d('<<< Saindo de TFrmEstoqueAtualizar.MontaDescricaoPesquisaProduto ');
@@ -486,6 +487,7 @@ begin
     try
 
       qtd := StrToFloat(edtQuantidade.Text);
+      qtd := TUtil.Truncar(qtd,4);
     except
       on E: Exception do
         raise Exception.Create('VALOR INVÁLIDO PARA QUANTIDADE!!!!');

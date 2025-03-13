@@ -218,7 +218,13 @@ uses
   Relatorio.TRComprovante.CreditoDebito in 'units\relatorio\Relatorio.TRComprovante.CreditoDebito.pas',
   Dominio.Entidades.Pedido.Parcela.Pagamentos in 'units\Dominio\Entidades\Dominio.Entidades.Pedido.Parcela.Pagamentos.pas',
   Dao.IDAOParcelaPagamento in 'units\Dao\Abstract\Dao.IDAOParcelaPagamento.pas',
-  Dao.TDAOParcelaPagamento in 'units\Dao\Concret\Dao.TDAOParcelaPagamento.pas';
+  Dao.TDAOParcelaPagamento in 'units\Dao\Concret\Dao.TDAOParcelaPagamento.pas',
+  Caixa.Abertura in 'views\caixa\Caixa.Abertura.pas' {frmCaixaAbertura},
+  Dominio.Entidades.TControleCaixa in 'units\Dominio\Entidades\Dominio.Entidades.TControleCaixa.pas',
+  Dao.IDAOControleCaixa in 'units\Dao\Abstract\Dao.IDAOControleCaixa.pas',
+  Dao.TDaoControleCaixa in 'units\Dao\Concret\Dao.TDaoControleCaixa.pas',
+  Caixa.Fechamento in 'views\caixa\Caixa.Fechamento.pas' {frmCaixaFechamento},
+  Relatorio.TRCaixa.Abertura in 'units\relatorio\Relatorio.TRCaixa.Abertura.pas';
 
 {$R *.res}
 

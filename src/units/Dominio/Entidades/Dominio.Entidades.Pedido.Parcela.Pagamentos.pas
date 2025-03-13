@@ -46,6 +46,7 @@ type
     FIDPEDIDO: integer;
     FTipo: integer;
     FIDPAGTO: integer;
+    FDATAALTERACAO: TDateTime;
   public
     [AutoInc('AUTOINC')]
     [PrimaryKey('PKPEDIDOPAGAMENTOS', 'SEQ,IDPEDIDO')]
@@ -71,6 +72,8 @@ type
     property TROCO: Currency read FTROCO write FTROCO;
     [campo('QUANTASVEZES', tpINTEGER)]
     property QUANTASVEZES: integer read FQUANTASVEZES write FQUANTASVEZES;
+    [campo('DATAALTERACAO', tpTIMESTAMP)]
+    property DATAALTERACAO: TDateTime read FDATAALTERACAO write FDATAALTERACAO;
   end;
 
   TParcelaPagamentos = class

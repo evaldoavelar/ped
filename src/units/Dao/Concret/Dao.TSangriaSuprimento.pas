@@ -16,6 +16,7 @@ type
     procedure Inclui(aObj: TSangriaSuprimento);
     procedure Valida(aObj: TSangriaSuprimento);
     function ListaObject(aData: TDate): TObjectList<TSangriaSuprimento>;
+    function TotalSangriaSuprimento(aTipo: Integer; dataInicio: TDate): Currency;
   private
     function GeraID: Integer;
   public
@@ -130,7 +131,39 @@ end;
 class function TDaoSangriaSuprimento.New(
   Connection: TFDConnection; aKeepConection: Boolean): IDAOTSangriaSuprimento;
 begin
-  Result := TDaoSangriaSuprimento.Create(Connection,aKeepConection);
+  Result := TDaoSangriaSuprimento.Create(Connection, aKeepConection);
+end;
+
+function TDaoSangriaSuprimento.TotalSangriaSuprimento(aTipo: Integer; dataInicio: TDate): Currency;
+var
+  qry: TFDQuery;
+begin
+  try
+    try
+      qry := Self.Query();
+      qry.SQL.Text := ''
+        + 'SELECT  Sum(valor) AS Total '
+        + 'FROM   SANGRIASUPRIMENTO '
+        + 'WHERE DATAALTERACAO >= :dataInicio '
+        + '      and tipo = :tipo';
+
+      qry.ParamByName('tipo').AsInteger := aTipo;
+      qry.ParamByName('dataInicio').AsDate := dataInicio;
+      TLog.d(qry);
+      qry.Open();
+
+      Result := qry.FieldByName('total').AsCurrency;
+    finally
+      FreeAndNil(qry);
+    end;
+  except
+    on E: Exception do
+    begin
+      TLog.d(E.message);
+      raise TDaoException.Create('Falha ao calcular Total caixa: ' + E.message);
+    end;
+  end;
+
 end;
 
 procedure TDaoSangriaSuprimento.Valida(aObj: TSangriaSuprimento);

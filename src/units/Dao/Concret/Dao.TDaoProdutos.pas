@@ -60,9 +60,9 @@ begin
       if aAutoCommit then
         FConnection.StartTransaction;
 
-      qry.SQL.Append('update PRODUTO ');
-      qry.SQL.Append('set  ESTOQUE = ESTOQUE + :QUANTIDADE  ');
-      qry.SQL.Append('WHERE  CODIGO = :CODIGO ');
+      qry.SQL.Append('UPDATE PRODUTO ');
+      qry.SQL.Append('SET ESTOQUE = (ESTOQUE + :QUANTIDADE) ');
+      qry.SQL.Append('WHERE CODIGO = :CODIGO ');
 
       qry.ParamByName('CODIGO').AsString := aCODIGO;
       qry.ParamByName('QUANTIDADE').AsFloat := aQuantidade;

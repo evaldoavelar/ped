@@ -107,10 +107,10 @@ inherited FrmSangria: TFrmSangria
     OnChange = edtFormaChange
   end
   object btnOk: TBitBtn
-    Left = 78
-    Top = 306
-    Width = 89
-    Height = 25
+    Left = 16
+    Top = 307
+    Width = 103
+    Height = 32
     Anchors = [akTop, akRight]
     Caption = 'OK'
     Default = True
@@ -125,10 +125,10 @@ inherited FrmSangria: TFrmSangria
     OnClick = btnOkClick
   end
   object btnCancelar: TBitBtn
-    Left = 192
+    Left = 160
     Top = 307
-    Width = 89
-    Height = 25
+    Width = 121
+    Height = 32
     Anchors = [akTop, akRight]
     Caption = 'Cancelar'
     Font.Charset = DEFAULT_CHARSET
