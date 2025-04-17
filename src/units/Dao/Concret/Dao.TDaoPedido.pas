@@ -41,7 +41,8 @@ type
     // function Totais(dataInicio, dataFim: TDate; CodVen: string): TList<TPair<string, string>>; overload;
     function ProdutosVendidos(dataInicio, dataFim: TDate): TList<TProdutoVenda>;
     function TotaisParceiro(dataInicio, dataFim: TDate; CodParceiro: string): TList<TPair<string, Currency>>;
-    function TotalCaixa(dataInicio: TDatetime): Currency;
+    function TotalCaixa(dataInicio: TDatetime; dataFim: TDatetime): Currency;
+    function TotalTroco(dataInicio, dataFim: TDatetime): Currency;
   end;
 
 implementation
@@ -222,6 +223,7 @@ begin
       + '       CODPARCEIRO = :CODPARCEIRO, '
       + '       NOMEPARCEIRO = :NOMEPARCEIRO, '
       + '       TROCO = :TROCO, '
+      + '       DATAHORA = :DATAHORA, '
       + '       VALORACRESCIMO = :VALORACRESCIMO, '
       + '       codcliente = :codcliente '
       + 'WHERE  id = :id';
@@ -486,6 +488,7 @@ begin
       + '             numero, '
       + '             NUMCAIXA, '
       + '             datapedido, '
+      + '             DATAHORA, '
       + '             OBSERVACAO, '
       + '             valorbruto, '
       + '             valordesc, '
@@ -502,6 +505,7 @@ begin
       + '              :NUMERO, '
       + '              :NUMCAIXA, '
       + '              :DATAPEDIDO, '
+      + '              :DATAHORA, '
       + '              :OBSERVACAO, '
       + '              :VALORBRUTO, '
       + '              :VALORDESC, '
@@ -575,6 +579,9 @@ begin
     if (ds.Params.FindParam('DATACANCELAMENTO') <> nil) and (Pedido.DATACANCELAMENTO <> 0) then
       ds.Params.ParamByName('DATACANCELAMENTO').AsDate := Pedido.DATAPEDIDO;
 
+    if (ds.Params.FindParam('DATAHORA') <> nil) and (Pedido.DATAHORA <> 0) then
+      ds.Params.ParamByName('DATAHORA').AsDateTime := Pedido.DATAHORA;
+
     if ds.Params.FindParam('CODCLIENTE') <> nil then
       ds.Params.ParamByName('CODCLIENTE').AsString := Pedido.Cliente.CODIGO;
     if ds.Params.FindParam('HORAPEDIDO') <> nil then
@@ -639,6 +646,7 @@ begin
     result.NUMERO := ds.FieldByName('NUMERO').AsString;
     result.NUMCAIXA := ds.FieldByName('NUMCAIXA').AsString;
     result.DATAPEDIDO := ds.FieldByName('DATAPEDIDO').AsDateTime;
+    result.DATAHORA := ds.FieldByName('DATAHORA').AsDateTime;
     result.OBSERVACAO := ds.FieldByName('OBSERVACAO').AsString;
     // Result.VALORBRUTO := ds.FieldByName('VALORBRUTO').AsCurrency;
     result.VALORDESC := ds.FieldByName('VALORDESC').AsCurrency;
@@ -893,17 +901,16 @@ begin
         + '       Sum(p.valorbruto) AS Total '
         + 'FROM   pedido p '
         + 'WHERE  p.status = ''F'' '
-        + '       AND (p.datapedido >= :dataInicio   AND p.horapedido >= :horainicio) '
-        + '       AND (p.datapedido <= :dataFim AND p.horapedido <= :horafim) '
-
+        + '       AND p.DATAHORA >= :dataInicio '
+        + '       AND p.DATAHORA <= :dataFim '
         + 'UNION ALL '
 
         + 'SELECT ''Descontos'' Titulo, '
         + '       Sum(p.VALORDESC)  AS Total '
         + 'FROM   pedido p '
         + 'WHERE  p.status = ''F'' '
-        + '       AND (p.datapedido >= :dataInicio   AND p.horapedido >= :horainicio) '
-        + '       AND (p.datapedido <= :dataFim AND p.horapedido <= :horafim) '
+        + '       AND p.DATAHORA >= :dataInicio '
+        + '       AND p.DATAHORA <= :dataFim '
 
         + 'UNION ALL '
 
@@ -911,8 +918,8 @@ begin
         + '       Sum(p.valorliquido) AS Total '
         + 'FROM   pedido p '
         + 'WHERE  p.status = ''F'' '
-        + '       AND (p.datapedido >= :dataInicio   AND p.horapedido >= :horainicio) '
-        + '       AND (p.datapedido <= :dataFim AND p.horapedido <= :horafim) '
+        + '       AND p.DATAHORA >= :dataInicio '
+        + '       AND p.DATAHORA <= :dataFim '
 
         + 'UNION ALL '
 
@@ -922,15 +929,13 @@ begin
         + '       pedido p '
         + 'WHERE  p.status = ''F'' '
         + '       AND p.id = pg.idpedido '
-        + '       AND (p.datapedido >= :dataInicio   AND p.horapedido >= :horainicio) '
-        + '       AND (p.datapedido <= :dataFim AND p.horapedido <= :horafim) '
+        + '       AND p.DATAHORA >= :dataInicio '
+        + '       AND p.DATAHORA <= :dataFim '
         + 'GROUP  BY descricao, '
         + '          tipo ';
 
       qry.ParamByName('dataInicio').AsDateTime := dataInicio;
       qry.ParamByName('dataFim').AsDateTime := dataFim;
-      qry.ParamByName('horainicio').AsTime := aHoraInicio;
-      qry.ParamByName('horafim').AsTime := aHoraFim;
 
       TLog.d(qry);
       qry.Open;
@@ -1001,13 +1006,12 @@ begin
 
       qry.SQL.Text := ''
         + 'SELECT ''ABERTURA DE CAIXA'' AS titulo, '
-        + '       valorabertura  AS Total '
+        + '       Sum(valorabertura)  AS total '
         + 'FROM   controlecaixa '
-        + 'WHERE  id = '
-        + '       ( '
-        + '                SELECT   first 1 id '
-        + '                FROM     controlecaixa '
-        + '                ORDER BY datafechamento DESC )'
+        + 'WHERE  (datafechamento <= :dataFim '
+        + '		AND DATAABERTURA  >= :dataInicio) '
+        + '		OR( DATAABERTURA  <= :dataFim and '
+        + '		datafechamento IS NULL)' // pegar as que estao abertas
 
         + 'UNION ALL '
 
@@ -1042,11 +1046,11 @@ begin
 
         + 'UNION ALL '
 
-        + 'SELECT ''Suprimento'' as  Titulo, '
-        + '       Sum(valor) AS Total '
+        + 'SELECT ''Suprimento'' AS Titulo, '
+        + '       COALESCE(Sum(valor), 0) AS Total '
         + 'FROM   sangriasuprimento '
-        + 'WHERE  data >= :dataInicio '
-        + '       AND data <= :dataFim '
+        + 'WHERE  dataalteracao >= :dataInicio '
+        + '       AND dataalteracao <= :dataFim '
         + '       AND tipo = 2 '
         + 'GROUP  BY tipo ';
       qry.ParamByName('dataInicio').AsDateTime := dataInicio;
@@ -1063,26 +1067,24 @@ begin
       qry.SQL.Text := ''
 
         + 'SELECT ''Troco'' Titulo, '
-        + '       Sum(p.troco) AS Total '
+        + '       COALESCE(Sum(p.troco), 0) AS Total '
         + 'FROM   pedido p '
         + 'WHERE  p.status = ''F'' '
-        + '       AND (p.datapedido >= :dataInicio   AND p.horapedido >= :horainicio) '
-        + '       AND (p.datapedido <= :dataFim AND p.horapedido <= :horafim) '
+        + '       AND p.DATAHORA >= :dataInicio '
+        + '       AND p.DATAHORA <= :dataFim '
 
         + 'UNION ALL '
 
         + 'SELECT ''Sangria'' as  Titulo, '
-        + '       Sum(valor) AS Total '
+        + '       COALESCE(Sum(valor), 0) AS Total '
         + 'FROM   sangriasuprimento '
-        + 'WHERE  data >= :dataInicio '
-        + '       AND data <= :dataFim '
+        + 'WHERE  DATAALTERACAO >= :dataInicio '
+        + '       AND DATAALTERACAO <= :dataFim '
         + '       AND tipo = 1 '
         + 'GROUP  BY tipo ';
 
       qry.ParamByName('dataInicio').AsDateTime := dataInicio;
       qry.ParamByName('dataFim').AsDateTime := dataFim;
-      qry.ParamByName('horainicio').AsTime := aHoraInicio;
-      qry.ParamByName('horafim').AsTime := aHoraFim;
       TLog.d(qry);
       qry.Open;
 
@@ -1099,8 +1101,8 @@ begin
         + '       count(p.id)  AS Total '
         + 'FROM   pedido p '
         + 'WHERE  p.status = ''F'' '
-        + '       AND (p.datapedido >= :dataInicio   AND p.horapedido >= :horainicio) '
-        + '       AND (p.datapedido <= :dataFim AND p.horapedido <= :horafim) '
+        + '       AND p.DATAHORA >= :dataInicio '
+        + '       AND p.DATAHORA <= :dataFim '
 
         + 'UNION ALL '
 
@@ -1108,8 +1110,8 @@ begin
         + '       count(p.id)  AS Total '
         + 'FROM   pedido p '
         + 'WHERE  p.status = ''C'' '
-        + '       AND (p.datapedido >= :dataInicio   AND p.horapedido >= :horainicio) '
-        + '       AND (p.datapedido <= :dataFim AND p.horapedido <= :horafim) '
+        + '       AND p.DATAHORA >= :dataInicio '
+        + '       AND p.DATAHORA <= :dataFim '
 
         + 'UNION ALL '
 
@@ -1117,13 +1119,11 @@ begin
         + '       count(p.id)  AS Total '
         + 'FROM   pedido p '
         + 'WHERE  p.status = ''A'' '
-        + '       AND (p.datapedido >= :dataInicio   AND p.horapedido >= :horainicio) '
-        + '       AND (p.datapedido <= :dataFim AND p.horapedido <= :horafim) ';
+        + '       AND p.DATAHORA >= :dataInicio '
+        + '       AND p.DATAHORA <= :dataFim ';
 
       qry.ParamByName('dataInicio').AsDateTime := dataInicio;
       qry.ParamByName('dataFim').AsDateTime := dataFim;
-      qry.ParamByName('horainicio').AsTime := aHoraInicio;
-      qry.ParamByName('horafim').AsTime := aHoraFim;
 
       TLog.d(qry);
       qry.Open;
@@ -1215,7 +1215,7 @@ begin
         + '       AND p.datapedido <= :dataFim '
         + '       and p.CODPARCEIRO = :CODPARCEIRO ';
 
-      qry.ParamByName('dataInicio').AsDate := dataInicio;
+      qry.ParamByName('dataInicio').AsDateTime := dataInicio;
       qry.ParamByName('dataFim').AsDate := dataFim;
       qry.ParamByName('CODPARCEIRO').AsString := CodParceiro;
 
@@ -1241,7 +1241,7 @@ begin
 
 end;
 
-function TDaoPedido.TotalCaixa(dataInicio: TDatetime): Currency;
+function TDaoPedido.TotalCaixa(dataInicio: TDatetime; dataFim: TDatetime): Currency;
 var
   qry: TFDQuery;
 begin
@@ -1250,25 +1250,67 @@ begin
       qry := Self.Query();
       qry.SQL.Text := ''
         + 'SELECT Sum(total) AS Total '
-        + 'FROM   (SELECT Sum(pg.valor) AS Total '
+        + 'FROM   (SELECT Sum(pg.valor ) AS Total '
         + '        FROM   pedidopagamento pg, '
         + '               pedido p '
         + '        WHERE  p.status = ''F'' '
         + '               AND p.id = pg.idpedido '
         + '               AND pg.tipo <> 5 ' // não incluir crediário
-        + '               AND p.datapedido >= :dataInicio '
-        + '               AND p.horapedido >= :HORAPEDIDO '
+        + '               AND p.DATAHORA between :dataInicio AND  :dataFim '
         + '        UNION ALL '
         + '        SELECT Sum(pg.valor) AS Total '
         + '        FROM   parcelapagamentos pg, '
         + '               pedido p '
         + '        WHERE  p.status = ''F'' '
         + '               AND p.id = pg.idpedido '
-        + '               AND p.datapedido >= :dataInicio '
-        + '               AND p.horapedido >= :HORAPEDIDO)';
+        + '               AND p.DATAHORA between :dataInicio AND  :dataFim )';
 
-      qry.ParamByName('dataInicio').AsDate := dataInicio;
-      qry.ParamByName('HORAPEDIDO').AsTime := timeof(dataInicio);
+      qry.ParamByName('dataInicio').AsDateTime := dataInicio;
+      qry.ParamByName('dataFim').AsDateTime := dataFim;
+      TLog.d(qry);
+      qry.Open();
+
+      result := qry.FieldByName('total').AsCurrency;
+    finally
+      FreeAndNil(qry);
+    end;
+  except
+    on E: Exception do
+    begin
+      TLog.d(E.message);
+      raise TDaoException.Create('Falha ao calcular Total caixa: ' + E.message);
+    end;
+  end;
+end;
+
+function TDaoPedido.TotalTroco(dataInicio, dataFim: TDatetime): Currency;
+var
+  qry: TFDQuery;
+begin
+  try
+    try
+      qry := Self.Query();
+      qry.SQL.Text := ''
+        + 'SELECT Sum(total) AS Total '
+        + 'FROM   (SELECT Sum(pg.troco ) AS Total '
+        + '        FROM   pedidopagamento pg, '
+        + '               pedido p '
+        + '        WHERE  p.status = ''F'' '
+        + '               AND p.id = pg.idpedido '
+        + '               AND pg.tipo <> 5 ' // não incluir crediário
+        + '               AND p.DATAHORA >= :dataInicio '
+        + '               AND p.DATAHORA <= :dataFim '
+        + '        UNION ALL '
+        + '        SELECT Sum(pg.troco) AS Total '
+        + '        FROM   parcelapagamentos pg, '
+        + '               pedido p '
+        + '        WHERE  p.status = ''F'' '
+        + '               AND p.id = pg.idpedido '
+        + '               AND p.DATAHORA >= :dataInicio '
+        + '               AND p.DATAHORA <= :dataFim )';
+
+      qry.ParamByName('dataInicio').AsDateTime := dataInicio;
+      qry.ParamByName('dataFim').AsDateTime := dataFim;
       TLog.d(qry);
       qry.Open();
 

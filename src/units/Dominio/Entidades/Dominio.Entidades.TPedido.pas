@@ -56,6 +56,7 @@ type
     FOnEstoqueBaixo: TOnEstoqueBaixo;
     FNUMCAIXA: string;
     FDATAALTERACAO: TDateTime;
+    FDATAHORA: TDateTime;
 
     function GetValorBruto: currency;
     function getValorLiquido: currency;
@@ -103,6 +104,8 @@ type
     property NUMCAIXA: string read FNUMCAIXA write FNUMCAIXA;
     [campo('DATAPEDIDO', tpDATE)]
     property DATAPEDIDO: TDateTime read FDATAPEDIDO write FDATAPEDIDO;
+     [campo('DATAHORA', tpDATE)]
+    property DATAHORA: TDateTime read FDATAHORA write FDATAHORA;
     [campo('HORAPEDIDO', tpTIME)]
     property HORAPEDIDO: TTime read FHORAPEDIDO write FHORAPEDIDO;
     [campo('OBSERVACAO', tpVARCHAR, 1000)]

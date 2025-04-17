@@ -16,7 +16,7 @@ type
     procedure Inclui(aObj: TSangriaSuprimento);
     procedure Valida(aObj: TSangriaSuprimento);
     function ListaObject(aData: TDate): TObjectList<TSangriaSuprimento>;
-    function TotalSangriaSuprimento(aTipo: Integer; dataInicio: TDate): Currency;
+    function TotalSangriaSuprimento(aTipo: Integer; dataInicio: TDatetime): Currency;
   private
     function GeraID: Integer;
   public
@@ -134,7 +134,7 @@ begin
   Result := TDaoSangriaSuprimento.Create(Connection, aKeepConection);
 end;
 
-function TDaoSangriaSuprimento.TotalSangriaSuprimento(aTipo: Integer; dataInicio: TDate): Currency;
+function TDaoSangriaSuprimento.TotalSangriaSuprimento(aTipo: Integer; dataInicio: TDatetime): Currency;
 var
   qry: TFDQuery;
 begin
@@ -148,7 +148,7 @@ begin
         + '      and tipo = :tipo';
 
       qry.ParamByName('tipo').AsInteger := aTipo;
-      qry.ParamByName('dataInicio').AsDate := dataInicio;
+      qry.ParamByName('dataInicio').AsDateTime := dataInicio;
       TLog.d(qry);
       qry.Open();
 

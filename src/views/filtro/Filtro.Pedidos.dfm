@@ -2,9 +2,9 @@ inherited frmFiltroPedidos: TfrmFiltroPedidos
   Caption = 'Filtro Pedidos'
   ClientHeight = 672
   ClientWidth = 1089
+  WindowState = wsMaximized
   ExplicitWidth = 1105
   ExplicitHeight = 711
-  PixelsPerInch = 96
   TextHeight = 13
   inherited splEsquerda: TSplitter
     Height = 602
@@ -412,9 +412,17 @@ inherited frmFiltroPedidos: TfrmFiltroPedidos
       Height = 21
       Hint = 'Selecione o campo para totalizar'
       Style = csDropDownList
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clBlack
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ItemIndex = 0
+      ParentFont = False
       ParentShowHint = False
       ShowHint = True
       TabOrder = 0
+      Text = 'Valor L'#237'quido'
       OnChange = cbbCampoSomarChange
       Items.Strings = (
         'Valor L'#237'quido'

@@ -377,6 +377,7 @@ begin
     Pedido.NUMERO := Format('%.6d', [Pedido.ID]);
     Pedido.DATAPEDIDO := Date();
     Pedido.HORAPEDIDO := Time();
+    pedido.DATAHORA := now;
     Pedido.STATUS := 'A';
     Pedido.Vendedor := DaoVen.GetVendedor(TFactoryEntidades.new.VendedorLogado.CODIGO);
     Pedido.Cliente := TFactoryEntidades.new.Cliente();
@@ -1188,9 +1189,16 @@ begin
   TLog.d('>>> Entrando em  TFrmPedidoVenda.ValidaQuantidade ');
   if medtQuantidade.Text <> '' then
   begin
+    try
+      Quant := StrToFloat(medtQuantidade.Text);
+    except
+      on E: Exception do
+        raise Exception.Create('Quantidade Inválida!');
+    end;
+
     Quant := StrToFloat(medtQuantidade.Text);
-    StrToFloat(medtQuantidade.Text);
-    if StrToFloat(medtQuantidade.Text) <= 0 then
+
+    if Quant <= 0 then
     begin
       raise Exception.Create('A quantidade deve ser superior a 0 (Zero).');
     end;
@@ -1203,6 +1211,7 @@ begin
   begin
     raise Exception.Create('A quantidade não pode ser nula.');
   end;
+
   TLog.d('<<< Saindo de TFrmPedidoVenda.ValidaQuantidade ');
 end;
 

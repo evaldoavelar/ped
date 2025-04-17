@@ -33,7 +33,8 @@ type
     function Totais(dataInicio, dataFim: TDateTime; CodVen: string): TList<TPair<string, string>>; overload;
     function TotaisParceiro(dataInicio, dataFim: TDate; CodParceiro: string): TList<TPair<string, Currency>>;
     function ProdutosVendidos(dataInicio, dataFim: TDate): TList<TProdutoVenda>;
-    function TotalCaixa(dataInicio: TDateTime): Currency;
+    function TotalCaixa(dataInicio: TDateTime; dataFim : TDateTime): Currency;
+    function TotalTroco(dataInicio, dataFim: TDateTime): Currency;
   end;
 
 implementation

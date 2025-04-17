@@ -21,10 +21,16 @@ type
     Label1: TLabel;
     Label2: TLabel;
     edtSaldoAnteior: TJvCalcEdit;
-    edtTotalDeCaixa: TJvCalcEdit;
-    edtSangria: TJvCalcEdit;
+    edtPagamentos: TJvCalcEdit;
+    edtSuprimento: TJvCalcEdit;
     Image1: TImage;
     lbl2: TLabel;
+    edtSangria: TJvCalcEdit;
+    Label4: TLabel;
+    edtTrocos: TJvCalcEdit;
+    Label5: TLabel;
+    edtTotalDeCaixa: TJvCalcEdit;
+    Label6: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -34,6 +40,8 @@ type
     FParametros: TParametros;
     FFactory: IFactoryDao;
     FCaixaAberto: TControleCaixa;
+    FEmProcessamento: boolean;
+    procedure CalculaTotalCaixa;
   public
     { Public declarations }
   end;
@@ -46,7 +54,8 @@ implementation
 {$R *.dfm}
 
 
-uses Sistema.TLog, Factory.Dao, Utils.ArrayUtil, Relatorio.TRVendasDoDia, system.DateUtils;
+uses Sistema.TLog, Factory.Dao, Utils.ArrayUtil, Relatorio.TRVendasDoDia,
+  System.Threading, System.DateUtils;
 
 procedure TfrmCaixaFechamento.btnAbrirCaixaClick(Sender: TObject);
 begin
@@ -60,11 +69,9 @@ begin
     if MessageDlg('Deseja Fechar o Caixa Agora?', mtConfirmation, [mbYes, mbNo], 0) = mrNo then
       exit;
 
-    var
-    LcontroleCaixa := TControleCaixa.Create;
-    LcontroleCaixa.DataFechamento := now;
-    LcontroleCaixa.ValorFechamento := edtTotalDeCaixa.Value;
-    FFactory.DAOControleCaixa.FecharCaixa(LcontroleCaixa);
+    FCaixaAberto.DataFechamento := now;
+    FCaixaAberto.ValorFechamento := edtTotalDeCaixa.Value;
+    FFactory.DAOControleCaixa.FecharCaixa(FCaixaAberto);
 
     var
     LFactory := TFactory.new(nil, true);
@@ -76,25 +83,24 @@ begin
     var
     totais := LFactory.DaoPedido.totais(
       FCaixaAberto.DataAbertura,
-      LcontroleCaixa.DataFechamento,
+      FCaixaAberto.DataFechamento,
       TimeOf(FCaixaAberto.DataAbertura),
-      TimeOf(LcontroleCaixa.DataFechamento));
+      TimeOf(FCaixaAberto.DataFechamento));
 
     totais.Insert(0, TPair<string, string>.Create('Valor Abertura Caixa', FormatCurr('R$ ###,##0.00', FCaixaAberto.ValorAbertura)));
-    totais.Insert(1, TPair<string, string>.Create('Valor Fechamento Caixa', FormatCurr('R$ ###,##0.00', LcontroleCaixa.ValorFechamento)));
+    totais.Insert(1, TPair<string, string>.Create('Valor Fechamento Caixa', FormatCurr('R$ ###,##0.00', FCaixaAberto.ValorFechamento)));
     totais.Insert(2, TPair<string, string>.Create(' ', ''));
 
     impressao.Imprime(
       vendedor,
       FCaixaAberto.DataAbertura,
-      LcontroleCaixa.DataFechamento,
+      FCaixaAberto.DataFechamento,
       vendedor,
       LFactory.DadosEmitente,
       totais
       );
 
     FreeAndNil(impressao);
-    FreeAndNil(LcontroleCaixa);
     LFactory.Close;
 
     Close;
@@ -126,7 +132,14 @@ begin
   TLog.d('<<< Saindo de TfrmCaixaFechamento.FormDestroy ');
 end;
 
+procedure TfrmCaixaFechamento.CalculaTotalCaixa();
+begin
+  edtTotalDeCaixa.Value := edtSaldoAnteior.Value + edtPagamentos.Value + edtSuprimento.Value - edtTrocos.Value - edtSangria.Value;
+end;
+
 procedure TfrmCaixaFechamento.FormShow(Sender: TObject);
+var
+  tasks: array of ITask;
 begin
   TLog.d('>>> Entrando em  TfrmCaixaFechamento.FormShow ');
   inherited;
@@ -134,12 +147,94 @@ begin
   try
     FParametros := FFactory.DaoParametros.GetParametros;
     FCaixaAberto := FFactory.DAOControleCaixa.CaixaAberto(FParametros.PontoVenda.NUMCAIXA);
+    FEmProcessamento := true;
 
     if FCaixaAberto <> nil then
     begin
+      Setlength(tasks, 4);
+
+      tasks[0] := TTask.Create(
+        procedure()
+        begin
+          try
+
+            var
+            LTotal := TFactory.new().DaoPedido.TotalCaixa(FCaixaAberto.DataAbertura, now);
+
+            TThread.Queue(nil,
+              procedure
+              begin
+                edtPagamentos.Value := LTotal;
+                CalculaTotalCaixa();
+              end);
+          except
+            on E: Exception do
+              TLog.d(E.message);
+          end;
+        end);
+      tasks[0].Start;
+
+      tasks[1] := TTask.Create(
+        procedure()
+        begin
+          try
+            var
+            LTotal := TFactory.new().DaoPedido.TotalTroco(FCaixaAberto.DataAbertura, now);
+
+            TThread.Queue(nil,
+              procedure
+              begin
+                edtTrocos.Value := LTotal;
+                CalculaTotalCaixa();
+              end);
+          except
+            on E: Exception do
+              TLog.d(E.message);
+          end;
+        end);
+      tasks[1].Start;
+
+      tasks[2] := TTask.Create(
+        procedure()
+        begin
+          try
+            var
+            LTotal := TFactory.new().DAOTSangriaSuprimento.TotalSangriaSuprimento(1, FCaixaAberto.DataAbertura);
+
+            TThread.Queue(nil,
+              procedure
+              begin
+                edtSangria.Value := LTotal;
+                CalculaTotalCaixa();
+              end);
+          except
+            on E: Exception do
+              TLog.d(E.message);
+          end;
+        end);
+      tasks[2].Start;
+
+      tasks[3] := TTask.Create(
+        procedure()
+        begin
+          try
+            var
+            LTotal := TFactory.new().DAOTSangriaSuprimento.TotalSangriaSuprimento(2, FCaixaAberto.DataAbertura);
+
+            TThread.Queue(nil,
+              procedure
+              begin
+                edtSuprimento.Value := LTotal;
+                CalculaTotalCaixa();
+              end);
+          except
+            on E: Exception do
+              TLog.d(E.message);
+          end;
+        end);
+      tasks[3].Start;
+
       edtSaldoAnteior.Value := FCaixaAberto.ValorAbertura;
-      edtTotalDeCaixa.Value := FFactory.DaoPedido.TotalCaixa(FCaixaAberto.DataAbertura);
-      edtSangria.Value := FFactory.DAOTSangriaSuprimento.TotalSangriaSuprimento(1, FCaixaAberto.DataAbertura);
     end;
   except
     on E: Exception do

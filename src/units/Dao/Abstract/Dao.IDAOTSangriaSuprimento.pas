@@ -12,7 +12,7 @@ type
     procedure Inclui(aObj: TSangriaSuprimento);
     procedure Valida(aObj: TSangriaSuprimento);
     function ListaObject(aData: TDate): TObjectList<TSangriaSuprimento>;
-    function TotalSangriaSuprimento(aTipo: integer; dataInicio: TDate): Currency;
+    function TotalSangriaSuprimento(aTipo: integer; dataInicio: TDatetime): Currency;
   end;
 
 implementation

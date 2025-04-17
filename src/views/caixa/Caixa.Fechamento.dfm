@@ -2,15 +2,15 @@ inherited frmCaixaFechamento: TfrmCaixaFechamento
   BorderStyle = bsDialog
   Caption = 'Caixa'
   ClientHeight = 206
-  ClientWidth = 370
+  ClientWidth = 685
   OnShow = FormShow
-  ExplicitWidth = 386
+  ExplicitWidth = 701
   ExplicitHeight = 245
   TextHeight = 13
   object jvPnl1: TJvNavPanelHeader
     Left = 0
     Top = 0
-    Width = 370
+    Width = 685
     Height = 59
     Align = alTop
     Font.Charset = DEFAULT_CHARSET
@@ -22,6 +22,7 @@ inherited frmCaixaFechamento: TfrmCaixaFechamento
     ColorFrom = 2963905
     ColorTo = 2963905
     ImageIndex = 0
+    ExplicitWidth = 600
     object Image1: TImage
       AlignWithMargins = True
       Left = 0
@@ -77,8 +78,8 @@ inherited frmCaixaFechamento: TfrmCaixaFechamento
       AlignWithMargins = True
       Left = 88
       Top = 3
-      Width = 279
-      Height = 53
+      Width = 214
+      Height = 26
       Align = alClient
       BiDiMode = bdLeftToRight
       Caption = 'FECHAMENTO DE CAIXA'
@@ -95,14 +96,12 @@ inherited frmCaixaFechamento: TfrmCaixaFechamento
       ShowHint = False
       Transparent = True
       Layout = tlCenter
-      ExplicitWidth = 214
-      ExplicitHeight = 26
     end
   end
   object pnl1: TPanel
     Left = 0
     Top = 59
-    Width = 370
+    Width = 685
     Height = 147
     Align = alClient
     BevelOuter = bvNone
@@ -114,7 +113,7 @@ inherited frmCaixaFechamento: TfrmCaixaFechamento
       AlignWithMargins = True
       Left = 26
       Top = 105
-      Width = 318
+      Width = 633
       Height = 38
       Margins.Left = 25
       Margins.Right = 25
@@ -122,9 +121,10 @@ inherited frmCaixaFechamento: TfrmCaixaFechamento
       BevelOuter = bvNone
       Color = clRed
       TabOrder = 0
+      ExplicitWidth = 548
       object btnAbrirCaixa: TBitBtn
         AlignWithMargins = True
-        Left = 36
+        Left = 351
         Top = 3
         Width = 144
         Height = 32
@@ -140,10 +140,11 @@ inherited frmCaixaFechamento: TfrmCaixaFechamento
         ParentFont = False
         TabOrder = 0
         OnClick = btnAbrirCaixaClick
+        ExplicitLeft = 266
       end
       object BitBtn2: TBitBtn
         AlignWithMargins = True
-        Left = 188
+        Left = 503
         Top = 3
         Width = 130
         Height = 32
@@ -159,13 +160,14 @@ inherited frmCaixaFechamento: TfrmCaixaFechamento
         NumGlyphs = 2
         ParentFont = False
         TabOrder = 1
+        ExplicitLeft = 418
       end
     end
     object Panel2: TPanel
       AlignWithMargins = True
       Left = 4
       Top = 14
-      Width = 362
+      Width = 677
       Height = 53
       Margins.Top = 13
       Align = alTop
@@ -173,11 +175,11 @@ inherited frmCaixaFechamento: TfrmCaixaFechamento
       ParentColor = True
       TabOrder = 1
       object Label3: TLabel
-        Left = 23
+        Left = 2
         Top = 8
-        Width = 78
+        Width = 87
         Height = 15
-        Caption = 'Valor Abertura:'
+        Caption = '+ Valor Abertura:'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -11
@@ -186,11 +188,11 @@ inherited frmCaixaFechamento: TfrmCaixaFechamento
         ParentFont = False
       end
       object Label1: TLabel
-        Left = 136
+        Left = 348
         Top = 8
         Width = 76
         Height = 15
-        Caption = 'Total de Caixa:'
+        Caption = '+ Pagamentos:'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -11
@@ -199,11 +201,50 @@ inherited frmCaixaFechamento: TfrmCaixaFechamento
         ParentFont = False
       end
       object Label2: TLabel
-        Left = 251
+        Left = 119
         Top = 8
-        Width = 41
+        Width = 70
         Height = 15
-        Caption = 'Sangria:'
+        Caption = '+ Suprimento'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'Open Sans'
+        Font.Style = []
+        ParentFont = False
+      end
+      object Label4: TLabel
+        Left = 234
+        Top = 8
+        Width = 48
+        Height = 15
+        Caption = '- Sangria:'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'Open Sans'
+        Font.Style = []
+        ParentFont = False
+      end
+      object Label5: TLabel
+        Left = 464
+        Top = 9
+        Width = 36
+        Height = 15
+        Caption = '-Troco:'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'Open Sans'
+        Font.Style = []
+        ParentFont = False
+      end
+      object Label6: TLabel
+        Left = 581
+        Top = 8
+        Width = 85
+        Height = 15
+        Caption = '= Total de Caixa:'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -11
@@ -212,9 +253,9 @@ inherited frmCaixaFechamento: TfrmCaixaFechamento
         ParentFont = False
       end
       object edtSaldoAnteior: TJvCalcEdit
-        Left = 22
+        Left = -2
         Top = 26
-        Width = 108
+        Width = 97
         Height = 23
         Margins.Left = 4
         Margins.Top = 1
@@ -233,10 +274,10 @@ inherited frmCaixaFechamento: TfrmCaixaFechamento
         TabOrder = 0
         DecimalPlacesAlwaysShown = False
       end
-      object edtTotalDeCaixa: TJvCalcEdit
-        Left = 137
+      object edtPagamentos: TJvCalcEdit
+        Left = 344
         Top = 26
-        Width = 103
+        Width = 97
         Height = 23
         Margins.Left = 4
         Margins.Top = 1
@@ -255,10 +296,10 @@ inherited frmCaixaFechamento: TfrmCaixaFechamento
         TabOrder = 1
         DecimalPlacesAlwaysShown = False
       end
-      object edtSangria: TJvCalcEdit
-        Left = 247
+      object edtSuprimento: TJvCalcEdit
+        Left = 113
         Top = 26
-        Width = 99
+        Width = 97
         Height = 23
         Margins.Left = 4
         Margins.Top = 1
@@ -275,6 +316,72 @@ inherited frmCaixaFechamento: TfrmCaixaFechamento
         ReadOnly = True
         ShowButton = False
         TabOrder = 2
+        DecimalPlacesAlwaysShown = False
+      end
+      object edtSangria: TJvCalcEdit
+        Left = 228
+        Top = 26
+        Width = 97
+        Height = 23
+        Margins.Left = 4
+        Margins.Top = 1
+        TabStop = False
+        AutoSize = False
+        Color = clSilver
+        DisplayFormat = 'R$ ,0.00;-R$ ,0.00'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindow
+        Font.Height = -11
+        Font.Name = 'Open Sans'
+        Font.Style = []
+        ParentFont = False
+        ReadOnly = True
+        ShowButton = False
+        TabOrder = 3
+        DecimalPlacesAlwaysShown = False
+      end
+      object edtTrocos: TJvCalcEdit
+        Left = 459
+        Top = 27
+        Width = 97
+        Height = 23
+        Margins.Left = 4
+        Margins.Top = 1
+        TabStop = False
+        AutoSize = False
+        Color = clSilver
+        DisplayFormat = 'R$ ,0.00;-R$ ,0.00'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindow
+        Font.Height = -11
+        Font.Name = 'Open Sans'
+        Font.Style = []
+        ParentFont = False
+        ReadOnly = True
+        ShowButton = False
+        TabOrder = 4
+        DecimalPlacesAlwaysShown = False
+      end
+      object edtTotalDeCaixa: TJvCalcEdit
+        Left = 575
+        Top = 26
+        Width = 97
+        Height = 23
+        Margins.Left = 4
+        Margins.Top = 1
+        TabStop = False
+        AutoSize = False
+        Color = clSilver
+        DisplayFormat = 'R$ ,0.00;-R$ ,0.00'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindow
+        Font.Height = -11
+        Font.Name = 'Open Sans'
+        Font.Style = []
+        ParentFont = False
+        ReadOnly = True
+        ShowButton = False
+        TabOrder = 5
         DecimalPlacesAlwaysShown = False
       end
     end
