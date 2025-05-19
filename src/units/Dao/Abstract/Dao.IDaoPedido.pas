@@ -29,12 +29,14 @@ type
     function Listar(campo, valor: string; dataInicio, dataFim: TDate): TDataSet; overload;
     function Listar(campo, valor: string): TDataSet; overload;
     function Listar(dataInicio, dataFim: TDate): TDataSet; overload;
-    function Totais(dataInicio, dataFim: TDateTime; aHoraInicio, aHoraFim: TTime): TList<TPair<string, string>>; overload;
+    function Totais(dataInicio, dataFim: TDateTime; aNumCaixa: string; aMovimentacaoDoCaixa: boolean): TList<TPair<string, string>>; overload;
     function Totais(dataInicio, dataFim: TDateTime; CodVen: string): TList<TPair<string, string>>; overload;
     function TotaisParceiro(dataInicio, dataFim: TDate; CodParceiro: string): TList<TPair<string, Currency>>;
     function ProdutosVendidos(dataInicio, dataFim: TDate): TList<TProdutoVenda>;
-    function TotalCaixa(dataInicio: TDateTime; dataFim : TDateTime): Currency;
+    function TotalCaixa(dataInicio: TDateTime; dataFim: TDateTime): Currency;
+    function TotalDinheiro(dataInicio, dataFim: TDateTime): Currency;
     function TotalTroco(dataInicio, dataFim: TDateTime): Currency;
+    function ListaCaixas: TStringList;
   end;
 
 implementation

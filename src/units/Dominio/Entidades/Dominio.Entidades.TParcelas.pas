@@ -23,6 +23,7 @@ type
     FVendedorRecebimento: TVendedor;
     FIDPAGTO: INTEGER;
     FDATAALTERACAO: TDateTime;
+    FNUMCAIXA: string;
     procedure SetVendedorRecebimento(const Value: TVendedor);
     procedure SetIDPAGTO(const Value: INTEGER);
     procedure SetDATAALTERACAO(const Value: TDateTime);
@@ -57,6 +58,9 @@ type
 
     [campo('DATAALTERACAO', tpTIMESTAMP)]
     property DATAALTERACAO: TDateTime read FDATAALTERACAO write SetDATAALTERACAO;
+
+    [campo('NUMCAIXA', tpVARCHAR, 30, 0, True)]
+    property NUMCAIXA: string read FNUMCAIXA write FNUMCAIXA;
 
   public
     constructor Create();

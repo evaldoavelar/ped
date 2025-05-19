@@ -286,7 +286,7 @@ uses
   Login.FrmLogin, Caixa.Abertura, Caixa.Fechamento,
   Filtro.Vencimento, Filtro.Parcelas,
   Database.IDataseMigration, Database.TDataseMigrationBase, Filtro.Pedidos,
-  Grafico.Pedidos,
+  Grafico.Pedidos, Filtro.DatasNumCaixa,
   Sangria.Suprimento.Informar, Dominio.Entidades.TSangriaSuprimento.Tipo,
   Estoque.Atualizar,
   Estoque.Consultar, Etiquetas.Modelo3x2, Etiquetas.Modelo4x2, Sistema.TLog, Factory.Entidades, IFactory.Dao, IFactory.Entidades,
@@ -1196,28 +1196,33 @@ procedure TFrmPrincipal.actRelatorioVendasDoDiaExecute(Sender: TObject);
 var
   impressao: TRVendasDoDia;
   DataIncio, DataFim: TDatetime;
-
+  LNumCaixa: string;
   LFactory: IFactoryDao;
 begin
   TLog.d('>>> Entrando em  TFrmPrincipal.actRelatorioVendasDoDiaExecute ');
   try
-
-    frmFiltroDatas := TfrmFiltroDatas.Create(self);
+    LNumCaixa := '';
+    var
+    frmFiltro := TfrmFiltroDatasNumCaixa.Create(self);
     try
-      if frmFiltroDatas.showmodal <> mrOk then
+      if frmFiltro.showmodal <> mrOk then
         exit;
 
       DataIncio := Now;
       DataFim := Now;
 
-      ReplaceDate(DataIncio, frmFiltroDatas.edtDataIncio.Date);
+      ReplaceDate(DataIncio, frmFiltro.edtDataIncio.Date);
       ReplaceTime(DataIncio, EncodeTime(0, 0, 0, 0));
 
-      ReplaceDate(DataFim, frmFiltroDatas.edtDataFim.Date);
+      ReplaceDate(DataFim, frmFiltro.edtDataFim.Date);
       ReplaceTime(DataFim, EncodeTime(23, 59, 59, 0));
+
+      if frmFiltro.cbbNumeroDoCaixa.ItemIndex <> 0 then
+        LNumCaixa := frmFiltro.cbbNumeroDoCaixa.Text;
     finally
-      frmFiltroDatas.free;
+      frmFiltro.free;
     end;
+
     LFactory := TFactory.new(nil, true);
 
     impressao := TRVendasDoDia.Create(TFactoryEntidades.Parametros.ImpressoraTermica);
@@ -1226,7 +1231,8 @@ begin
       DataFim,
       TFactoryEntidades.new.VendedorLogado,
       LFactory.DadosEmitente,
-      LFactory.DaoPedido.Totais(DataIncio, DataFim, EncodeTime(0, 0, 0, 0), EncodeTime(23, 59, 59, 0)));
+      LFactory.DaoPedido.Totais(DataIncio, DataFim, LNumCaixa, false)
+      );
 
     FreeAndNil(impressao);
     LFactory.Close;
@@ -1309,10 +1315,10 @@ begin
     impressao := TRVendasDoDia.Create(TFactoryEntidades.Parametros.ImpressoraTermica);
 
     impressao.Imprime(
-      Vendedor,
+      TFactoryEntidades.new.VendedorLogado,
       DataIncio,
       DataFim,
-      TFactoryEntidades.new.VendedorLogado,
+      Vendedor,
       LFactory.DadosEmitente,
       LFactory.DaoPedido.Totais(DataIncio, DataFim, Vendedor.CODIGO)
       );

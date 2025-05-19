@@ -110,7 +110,7 @@ implementation
 
 uses
   Helper.currency,
-
+  Factory.Entidades,
   Util.Funcoes,
   Pedido.Venda.Part.Pagamento,
   Pedido.Pagamento.Imagem, Sistema.TLog,
@@ -292,6 +292,7 @@ begin
 
     var
     pagto := Pagamentos.NewPagamento();
+    pagto.NUMCAIXA := TFactoryEntidades.Parametros.PontoVenda.NUMCAIXA;
     pagto.DESCRICAO := forma.DESCRICAO;
     pagto.Tipo := forma.Tipo;
     pagto.IDPAGTO := forma.ID;

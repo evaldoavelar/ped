@@ -84,11 +84,11 @@ begin
     totais := LFactory.DaoPedido.totais(
       FCaixaAberto.DataAbertura,
       FCaixaAberto.DataFechamento,
-      TimeOf(FCaixaAberto.DataAbertura),
-      TimeOf(FCaixaAberto.DataFechamento));
+      TFactoryEntidades.Parametros.PontoVenda.NUMCAIXA,
+      true);
 
-    totais.Insert(0, TPair<string, string>.Create('Valor Abertura Caixa', FormatCurr('R$ ###,##0.00', FCaixaAberto.ValorAbertura)));
-    totais.Insert(1, TPair<string, string>.Create('Valor Fechamento Caixa', FormatCurr('R$ ###,##0.00', FCaixaAberto.ValorFechamento)));
+    totais.Insert(0, TPair<string, string>.Create('Total de Dinheiro na Abertura Abertura', FormatCurr('R$ ###,##0.00', FCaixaAberto.ValorAbertura)));
+    totais.Insert(1, TPair<string, string>.Create('Total de Dinheiro no Fechamento do Caixa', FormatCurr('R$ ###,##0.00', FCaixaAberto.ValorFechamento)));
     totais.Insert(2, TPair<string, string>.Create(' ', ''));
 
     impressao.Imprime(
@@ -159,7 +159,7 @@ begin
           try
 
             var
-            LTotal := TFactory.new().DaoPedido.TotalCaixa(FCaixaAberto.DataAbertura, now);
+            LTotal := TFactory.new().DaoPedido.TotalDinheiro(FCaixaAberto.DataAbertura, now);
 
             TThread.Queue(nil,
               procedure
@@ -199,7 +199,7 @@ begin
         begin
           try
             var
-            LTotal := TFactory.new().DAOTSangriaSuprimento.TotalSangriaSuprimento(1, FCaixaAberto.DataAbertura);
+            LTotal := TFactory.new().DAOTSangriaSuprimento.TotalSangriaSuprimento(1, FCaixaAberto.DataAbertura, now);
 
             TThread.Queue(nil,
               procedure
@@ -219,7 +219,7 @@ begin
         begin
           try
             var
-            LTotal := TFactory.new().DAOTSangriaSuprimento.TotalSangriaSuprimento(2, FCaixaAberto.DataAbertura);
+            LTotal := TFactory.new().DAOTSangriaSuprimento.TotalSangriaSuprimento(2, FCaixaAberto.DataAbertura, now);
 
             TThread.Queue(nil,
               procedure

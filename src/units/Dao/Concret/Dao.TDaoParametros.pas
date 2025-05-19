@@ -51,6 +51,7 @@ begin
         '       IMPRIMIR2VIAS = :IMPRIMIR2VIAS, ' +
         '       IMPRIMIRITENS2VIA = :IMPRIMIRITENS2VIA,' +
         '       VALIDADEORCAMENTO = :VALIDADEORCAMENTO, ' +
+        '       PORCENTAGEMMAXIMADESCONTO = :PORCENTAGEMMAXIMADESCONTO, ' +
         '       LOGOMARCAETIQUETA = :LOGOMARCAETIQUETA, ' +
         '       SERVIDORDATABASE = :SERVIDORDATABASE, ' +
         '       SERVIDORUSUARIO = :SERVIDORUSUARIO, ' +
@@ -102,7 +103,10 @@ begin
       qry.Open;
 
       if qry.IsEmpty then
-        Result := nil
+      begin
+        Result := TParametros.Create;
+        Result.VERSAOBD := '0.0.0.0';
+      end
       else
         Result := ParamsToObject(qry);
 
@@ -150,6 +154,7 @@ begin
         '             DATAALTERACAO, ' +
         '             EXIBIROBSERVACAO, ' +
         '             INFORMARPARCEIRONAVENDA, ' +
+        '             PORCENTAGEMMAXIMADESCONTO, ' +
         '             velocidade) ' +
         'VALUES     ( :VENDECLIENTEBLOQUEADO, ' +
         '             :ATUALIZACLIENTENAVENDA, ' +
@@ -171,6 +176,7 @@ begin
         '             :DATAALTERACAO, ' +
         '             :EXIBIROBSERVACAO, ' +
         '             :INFORMARPARCEIRONAVENDA, ' +
+        '             :PORCENTAGEMMAXIMADESCONTO, ' +
         '             :VELOCIDADE )';
 
       ObjectToParams(qry, Parametros);
@@ -252,6 +258,9 @@ begin
     if ds.Params.FindParam('DATAALTERACAO') <> nil then
       ds.Params.ParamByName('DATAALTERACAO').AsDate := Parametros.DATAALTERACAO;
 
+    if ds.Params.FindParam('PORCENTAGEMMAXIMADESCONTO') <> nil then
+      ds.Params.ParamByName('PORCENTAGEMMAXIMADESCONTO').AsCurrency := Parametros.PORCENTAGEMMAXIMADESCONTO;
+
   except
     on E: Exception do
     begin
@@ -265,7 +274,7 @@ function TDaoParametros.ParamsToObject(ds: TFDQuery): TParametros;
 begin
   try
     Result := TParametros.Create();
-
+    Result.VERSAOBD := ds.FieldByName('VERSAOBD').AsString;
     Result.VENDECLIENTEBLOQUEADO := ds.FieldByName('VENDECLIENTEBLOQUEADO').AsInteger = 1;
     Result.BLOQUEARCLIENTECOMATRASO := ds.FieldByName('BLOQUEARCLIENTECOMATRASO').AsInteger = 1;
     Result.ATUALIZACLIENTENAVENDA := ds.FieldByName('ATUALIZACLIENTENAVENDA').AsInteger = 1;
@@ -279,12 +288,12 @@ begin
     Result.ImpressoraTermica.VELOCIDADE := ds.FieldByName('VELOCIDADE').AsString;
     Result.ImpressoraTermica.IMPRIMIR2VIAS := ds.FieldByName('IMPRIMIR2VIAS').AsInteger = 1;
     Result.ImpressoraTermica.IMPRIMIRITENS2VIA := ds.FieldByName('IMPRIMIRITENS2VIA').AsInteger = 1;
-    Result.VERSAOBD := ds.FieldByName('VERSAOBD').AsString;
+
     Result.SERVIDORUSUARIO := ds.FieldByName('SERVIDORUSUARIO').AsString;
     Result.SERVIDORDATABASE := ds.FieldByName('SERVIDORDATABASE').AsString;
     Result.SERVIDORSENHA := ds.FieldByName('SERVIDORSENHA').AsString;
+    Result.PORCENTAGEMMAXIMADESCONTO := ds.FieldByName('PORCENTAGEMMAXIMADESCONTO').AsCurrency;
     // Result.NUMCAIXA := ds.FieldByName('NUMCAIXA').AsString;
-
     if not ds.FieldByName('LOGOMARCAETIQUETA').IsNull then
     begin
       Result.LOGOMARCAETIQUETA := TImage.Create(nil);

@@ -82,6 +82,8 @@ type
     edtNumeroDoCaixa: TEdit;
     chkFuncionarComoCliente: TCheckBox;
     chkExibirObservacao: TCheckBox;
+    Label20: TLabel;
+    edtPorcentagemMaximaDesconto: TEdit;
     procedure edtRazaoSocialChange(Sender: TObject);
     procedure actOkExecute(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -164,6 +166,7 @@ begin
   FParametros.Bind('ImpressoraTermica.IMPRIMIR2VIAS', chkImprimir2Vias, 'Checked');
   FParametros.Bind('ImpressoraTermica.IMPRIMIRITENS2VIA', chkImprimirItens2Via, 'Checked');
   FParametros.Bind('VALIDADEORCAMENTO', edtValidadeOrcamento, 'Text');
+  FParametros.Bind('PORCENTAGEMMAXIMADESCONTO', edtPorcentagemMaximaDesconto, 'Text');
 
   FParametros.Bind('PESQUISAPRODUTOPOR', rgPesquisaPor, 'ItemIndex');
   FParametros.Bind('INFORMARPARCEIRONAVENDA', chkInformarParceiroNaVenda, 'Checked');

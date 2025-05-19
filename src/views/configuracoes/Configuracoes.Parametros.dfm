@@ -36,7 +36,7 @@ inherited FrmConfiguracoes: TFrmConfiguracoes
     Top = 0
     Width = 796
     Height = 362
-    ActivePage = tsCaixa
+    ActivePage = ts2
     Align = alClient
     TabOrder = 0
     object ts1: TTabSheet
@@ -542,6 +542,19 @@ inherited FrmConfiguracoes: TFrmConfiguracoes
         Font.Style = []
         ParentFont = False
       end
+      object Label20: TLabel
+        Left = 224
+        Top = 232
+        Width = 195
+        Height = 13
+        Caption = 'Porcentagem M'#225'xima Para Dar Desconto'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = 10639360
+        Font.Height = -11
+        Font.Name = 'Tahoma'
+        Font.Style = []
+        ParentFont = False
+      end
       object chkVenderClienteBloqueado: TCheckBox
         Left = 16
         Top = 101
@@ -630,6 +643,22 @@ inherited FrmConfiguracoes: TFrmConfiguracoes
         Caption = 'Exibir Observa'#231#227'o'
         TabOrder = 7
         OnClick = chkVenderClienteBloqueadoClick
+      end
+      object edtPorcentagemMaximaDesconto: TEdit
+        Left = 224
+        Top = 251
+        Width = 121
+        Height = 21
+        Color = 15524818
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = 10639360
+        Font.Height = -11
+        Font.Name = 'Tahoma'
+        Font.Style = []
+        NumbersOnly = True
+        ParentFont = False
+        TabOrder = 8
+        OnChange = edtRazaoSocialChange
       end
     end
     object tsLogoMarca: TTabSheet

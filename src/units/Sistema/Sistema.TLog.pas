@@ -105,12 +105,18 @@ end;
 
 class procedure TLog.Custom(const aTexto: string; const Args: array of const);
 begin
-  GravarLog(Format(aTexto, Args), TTipoLog.Custom);
+  try
+    GravarLog(Format(aTexto, Args), TTipoLog.Custom);
+  except
+  end;
 end;
 
 class procedure TLog.d(const aTexto: string; const Args: array of const);
 begin
-  GravarLog(Format(aTexto, Args), TTipoLog.Debug);
+  try
+    GravarLog(Format(aTexto, Args), TTipoLog.Debug);
+  except
+  end;
 end;
 
 class procedure TLog.d(aTexto, aConteudo: string);
@@ -198,27 +204,30 @@ var
   i: integer;
   LLinha: string;
 begin
-  ds.First;
+  try
+    ds.First;
 
-  d(ds.Name);
+    d(ds.Name);
 
-  for i := 0 to ds.FieldCount - 1 do
-    LLinha := LLinha + ds.fields[i].FieldName + #9;
-
-  d(LLinha);
-
-  while not ds.Eof do
-  begin
-    LLinha := '';
     for i := 0 to ds.FieldCount - 1 do
-    begin
-      LLinha := LLinha + ds.fields[i].AsString + StringOfChar(' ', Length(ds.fields[i].FieldName) - Length(ds.fields[i].AsString)) + #9;
-    end;
-    d(LLinha);
-    ds.Next;
-  end;
+      LLinha := LLinha + ds.fields[i].FieldName + #9;
 
-  ds.First;
+    d(LLinha);
+
+    while not ds.Eof do
+    begin
+      LLinha := '';
+      for i := 0 to ds.FieldCount - 1 do
+      begin
+        LLinha := LLinha + ds.fields[i].AsString + StringOfChar(' ', Length(ds.fields[i].FieldName) - Length(ds.fields[i].AsString)) + #9;
+      end;
+      d(LLinha);
+      ds.Next;
+    end;
+
+    ds.First;
+  except
+  end;
 end;
 
 initialization

@@ -1,9 +1,9 @@
 inherited frmFiltroPedidos: TfrmFiltroPedidos
   Caption = 'Filtro Pedidos'
   ClientHeight = 672
-  ClientWidth = 1089
+  ClientWidth = 1106
   WindowState = wsMaximized
-  ExplicitWidth = 1105
+  ExplicitWidth = 1122
   ExplicitHeight = 711
   TextHeight = 13
   inherited splEsquerda: TSplitter
@@ -168,7 +168,7 @@ inherited frmFiltroPedidos: TfrmFiltroPedidos
     end
   end
   inherited dbGridResultado: TJvDBUltimGrid
-    Width = 933
+    Width = 950
     Height = 602
     OnDrawColumnCell = dbGridResultadoDrawColumnCell
     OnDblClick = dbGridResultadoDblClick
@@ -209,8 +209,8 @@ inherited frmFiltroPedidos: TfrmFiltroPedidos
       end
       item
         Expanded = False
-        FieldName = 'VALORLIQUIDO'
-        Title.Caption = 'Valor L'#237'quido'
+        FieldName = 'VALORBRUTO'
+        Title.Caption = 'Valor Bruto'
         Width = 90
         Visible = True
       end
@@ -223,9 +223,23 @@ inherited frmFiltroPedidos: TfrmFiltroPedidos
       end
       item
         Expanded = False
+        FieldName = 'VALORLIQUIDO'
+        Title.Caption = 'Valor L'#237'quido'
+        Width = 90
+        Visible = True
+      end
+      item
+        Expanded = False
         FieldName = 'VALORENTRADA'
         Title.Caption = 'Valor Entrada'
         Width = 90
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'TROCO'
+        Title.Caption = 'Troco'
+        Width = 61
         Visible = True
       end
       item
@@ -257,13 +271,6 @@ inherited frmFiltroPedidos: TfrmFiltroPedidos
       end
       item
         Expanded = False
-        FieldName = 'VALORBRUTO'
-        Title.Caption = 'Valor Bruto'
-        Width = 90
-        Visible = True
-      end
-      item
-        Expanded = False
         FieldName = 'STATUS'
         Title.Caption = 'Status'
         Visible = True
@@ -271,13 +278,13 @@ inherited frmFiltroPedidos: TfrmFiltroPedidos
   end
   inherited jvPnl1: TJvNavPanelHeader
     Top = 602
-    Width = 1089
+    Width = 1106
     Height = 70
     ExplicitTop = 602
     ExplicitWidth = 1089
     ExplicitHeight = 70
     DesignSize = (
-      1089
+      1106
       70)
     object Label1: TLabel [0]
       Left = 114
@@ -345,7 +352,7 @@ inherited frmFiltroPedidos: TfrmFiltroPedidos
       Transparent = True
     end
     inherited BTN_Voltar: TBitBtn
-      Left = 977
+      Left = 994
       Top = 38
       TabOrder = 5
       ExplicitLeft = 977

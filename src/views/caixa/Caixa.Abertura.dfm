@@ -2,15 +2,15 @@ inherited frmCaixaAbertura: TfrmCaixaAbertura
   BorderStyle = bsDialog
   Caption = 'Caixa'
   ClientHeight = 215
-  ClientWidth = 358
+  ClientWidth = 393
   OnShow = FormShow
-  ExplicitWidth = 374
+  ExplicitWidth = 409
   ExplicitHeight = 254
   TextHeight = 13
   object jvPnl1: TJvNavPanelHeader
     Left = 0
     Top = 0
-    Width = 358
+    Width = 393
     Height = 59
     Align = alTop
     Font.Charset = DEFAULT_CHARSET
@@ -22,10 +22,11 @@ inherited frmCaixaAbertura: TfrmCaixaAbertura
     ColorFrom = 10639360
     ColorTo = 10639360
     ImageIndex = 0
+    ExplicitWidth = 358
     object lbl2: TLabel
       Left = 85
       Top = 0
-      Width = 273
+      Width = 308
       Height = 59
       Align = alClient
       BiDiMode = bdLeftToRight
@@ -103,7 +104,7 @@ inherited frmCaixaAbertura: TfrmCaixaAbertura
   object pnl1: TPanel
     Left = 0
     Top = 59
-    Width = 358
+    Width = 393
     Height = 156
     Align = alClient
     BevelOuter = bvNone
@@ -111,11 +112,12 @@ inherited frmCaixaAbertura: TfrmCaixaAbertura
     Color = 15790320
     ParentBackground = False
     TabOrder = 1
+    ExplicitWidth = 358
     object pnl2: TPanel
       AlignWithMargins = True
       Left = 26
       Top = 114
-      Width = 306
+      Width = 341
       Height = 38
       Margins.Left = 25
       Margins.Right = 25
@@ -123,9 +125,10 @@ inherited frmCaixaAbertura: TfrmCaixaAbertura
       BevelOuter = bvNone
       Color = clRed
       TabOrder = 0
+      ExplicitWidth = 306
       object btnAbrirCaixa: TBitBtn
         AlignWithMargins = True
-        Left = 24
+        Left = 59
         Top = 3
         Width = 144
         Height = 32
@@ -141,10 +144,11 @@ inherited frmCaixaAbertura: TfrmCaixaAbertura
         ParentFont = False
         TabOrder = 0
         OnClick = btnAbrirCaixaClick
+        ExplicitLeft = 24
       end
       object BitBtn2: TBitBtn
         AlignWithMargins = True
-        Left = 176
+        Left = 211
         Top = 3
         Width = 130
         Height = 32
@@ -160,13 +164,14 @@ inherited frmCaixaAbertura: TfrmCaixaAbertura
         NumGlyphs = 2
         ParentFont = False
         TabOrder = 1
+        ExplicitLeft = 176
       end
     end
     object Panel1: TPanel
       AlignWithMargins = True
       Left = 26
       Top = 11
-      Width = 306
+      Width = 341
       Height = 57
       Margins.Left = 25
       Margins.Top = 10
@@ -176,14 +181,14 @@ inherited frmCaixaAbertura: TfrmCaixaAbertura
       ParentColor = True
       TabOrder = 1
       DesignSize = (
-        306
+        341
         57)
       object Label1: TLabel
         Left = 5
         Top = 8
-        Width = 74
+        Width = 77
         Height = 15
-        Caption = 'Saldo Anterior'
+        Caption = 'Saldo Anterior:'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -11
@@ -192,17 +197,28 @@ inherited frmCaixaAbertura: TfrmCaixaAbertura
         ParentFont = False
       end
       object Label2: TLabel
-        Left = 152
-        Top = 8
-        Width = 78
+        Left = 211
+        Top = 7
+        Width = 129
         Height = 15
-        Caption = 'Valor Adicional'
+        Caption = 'Dinheiro no Caixa Agora:'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -11
         Font.Name = 'Open Sans'
         Font.Style = []
         ParentFont = False
+      end
+      object btnRepetir: TSpeedButton
+        Left = 160
+        Top = 26
+        Width = 33
+        Height = 25
+        Hint = 'COPIAR SALDO'
+        Caption = '>>'
+        ParentShowHint = False
+        ShowHint = True
+        OnClick = btnRepetirClick
       end
       object edtSaldoAnteior: TJvCalcEdit
         Left = 5
@@ -227,9 +243,9 @@ inherited frmCaixaAbertura: TfrmCaixaAbertura
         DecimalPlacesAlwaysShown = False
       end
       object edtValorAdicional: TJvCalcEdit
-        Left = 152
+        Left = 211
         Top = 26
-        Width = 154
+        Width = 130
         Height = 25
         Margins.Left = 4
         Margins.Top = 1

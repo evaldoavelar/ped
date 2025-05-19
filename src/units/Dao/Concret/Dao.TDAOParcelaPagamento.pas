@@ -195,6 +195,7 @@ begin
           + '             TROCO, '
           + '             ACRESCIMO, '
           + '             DATAALTERACAO, '
+          + '             NUMCAIXA, '
           + '             VALOR ) '
           + 'VALUES      (:SEQ, '
           + '             :IDPEDIDO, '
@@ -207,6 +208,7 @@ begin
           + '             :TROCO, '
           + '             :ACRESCIMO, '
           + '             :DATAALTERACAO, '
+          + '             :NUMCAIXA, '
           + '             :VALOR )';
 
         EntityToParams(qry, pagto);

@@ -26,7 +26,6 @@ object FrmPrincipal: TFrmPrincipal
     BevelOuter = bvNone
     ParentBackground = False
     TabOrder = 0
-    ExplicitWidth = 1215
     DesignSize = (
       1156
       659)
@@ -14056,7 +14055,6 @@ object FrmPrincipal: TFrmPrincipal
       Color = 16513014
       ParentBackground = False
       TabOrder = 0
-      ExplicitWidth = 1215
       object pnlToolBarLeft: TPanel
         Left = 0
         Top = 0
@@ -14293,7 +14291,6 @@ object FrmPrincipal: TFrmPrincipal
         ParentFont = False
         ShowCaption = False
         TabOrder = 1
-        ExplicitWidth = 1010
         DesignSize = (
           951
           49)
@@ -15112,7 +15109,6 @@ object FrmPrincipal: TFrmPrincipal
       OpenedWidth = 250
       Placement = svpRight
       TabOrder = 3
-      ExplicitLeft = 1215
       object pnlAtalhos: TPanel
         AlignWithMargins = True
         Left = 3

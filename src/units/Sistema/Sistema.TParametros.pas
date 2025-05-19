@@ -37,6 +37,7 @@ type
     FDATAALTERACAO: TDateTime;
     FPontoVenda: TPontoVenda;
     FEXIBIROBSERVACAO: Boolean;
+    FPORCENTAGEMMAXIMADESCONTO: Currency;
 
     function getVENDECLIENTEBLOQUEADO: Boolean;
     procedure setVENDECLIENTEBLOQUEADO(const Value: Boolean);
@@ -68,6 +69,8 @@ type
     procedure SetPontoVenda(const Value: TPontoVenda);
     function getPontoVenda: TPontoVenda;
     procedure SetEXIBIROBSERVACAO(const Value: Boolean);
+    function GetPORCENTAGEMMAXIMADESCONTO: Currency;
+    procedure SetPORCENTAGEMMAXIMADESCONTO(const Value: Currency);
 
   public
 
@@ -121,6 +124,9 @@ type
     [campo('DATAALTERACAO', tpTIMESTAMP)]
     property DATAALTERACAO: TDateTime read FDATAALTERACAO write SetDATAALTERACAO;
 
+    [campo('PORCENTAGEMMAXIMADESCONTO', tpNUMERIC, 15, 4, True, '10')]
+    property PORCENTAGEMMAXIMADESCONTO: Currency read GetPORCENTAGEMMAXIMADESCONTO write SetPORCENTAGEMMAXIMADESCONTO;
+
     property PontoVenda: TPontoVenda read getPontoVenda write SetPontoVenda;
 
     constructor create; override;
@@ -140,6 +146,7 @@ begin
   inherited;
   Self.PESQUISAPRODUTOPOR := 0;
   Self.VALIDADEORCAMENTO := 15;
+  self.PORCENTAGEMMAXIMADESCONTO := 10;
   Self.ImpressoraTermica := TParametrosImpressoraTermica.create;
   Self.ImpressoraTinta := TParametrosImpressoraTinta.create;
   Self.PontoVenda := TPontoVenda.create;
@@ -191,6 +198,11 @@ end;
 function TParametros.getPontoVenda: TPontoVenda;
 begin
   result := FPontoVenda
+end;
+
+function TParametros.GetPORCENTAGEMMAXIMADESCONTO: Currency;
+begin
+  result := FPORCENTAGEMMAXIMADESCONTO;
 end;
 
 function TParametros.GetSERVIDORSENHAProxy: string;
@@ -303,6 +315,15 @@ begin
     FreeAndNil(FPontoVenda);
 
   FPontoVenda := Value;
+end;
+
+procedure TParametros.SetPORCENTAGEMMAXIMADESCONTO(const Value: Currency);
+begin
+  if Value <> FPORCENTAGEMMAXIMADESCONTO then
+  begin
+    FPORCENTAGEMMAXIMADESCONTO := Value;
+    Notify('PORCENTAGEMMAXIMADESCONTO');
+  end;
 end;
 
 procedure TParametros.SetSERVIDORDATABASE(const Value: string);

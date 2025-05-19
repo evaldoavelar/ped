@@ -242,6 +242,7 @@ begin
         + '             TROCO, '
         + '             DATAALTERACAO, '
         + '             ACRESCIMO, '
+        + '             NUMCAIXA, '
         + '             VALOR ) '
         + 'VALUES      (:SEQ, '
         + '             :IDPEDIDO, '
@@ -254,6 +255,7 @@ begin
         + '             :TROCO, '
         + '             :DATAALTERACAO, '
         + '             :ACRESCIMO, '
+        + '             :NUMCAIXA, '
         + '             :VALOR )';
 
       Validar(aPagto);

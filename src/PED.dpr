@@ -1,8 +1,5 @@
 program PED;
 
-
-
-
 uses
   Windows,
   Vcl.Forms,
@@ -224,7 +221,8 @@ uses
   Dao.IDAOControleCaixa in 'units\Dao\Abstract\Dao.IDAOControleCaixa.pas',
   Dao.TDaoControleCaixa in 'units\Dao\Concret\Dao.TDaoControleCaixa.pas',
   Caixa.Fechamento in 'views\caixa\Caixa.Fechamento.pas' {frmCaixaFechamento},
-  Relatorio.TRCaixa.Abertura in 'units\relatorio\Relatorio.TRCaixa.Abertura.pas';
+  Relatorio.TRCaixa.Abertura in 'units\relatorio\Relatorio.TRCaixa.Abertura.pas',
+  Filtro.DatasNumCaixa in 'views\filtro\Filtro.DatasNumCaixa.pas' {frmFiltroDatasNumCaixa};
 
 {$R *.res}
 
@@ -235,11 +233,12 @@ var
 begin
 
   Mutex := CreateMutex(nil, True, 'PED');
-//  if (Mutex = 0) or (GetLastError = ERROR_ALREADY_EXISTS) then
-//  begin
-//    MessageDlg('Você não pode executar outra cópia do aplicativo', mtInformation, [mbOK], 0);
-//  end
- // else
+
+  // if (Mutex = 0) or (GetLastError = ERROR_ALREADY_EXISTS) then
+  // begin
+  // MessageDlg('Você não pode executar outra cópia do aplicativo', mtInformation, [mbOK], 0);
+  // end
+  // else
   begin
     Application.Initialize;
     Application.MainFormOnTaskbar := True;

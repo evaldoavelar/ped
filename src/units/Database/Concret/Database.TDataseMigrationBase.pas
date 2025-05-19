@@ -130,7 +130,7 @@ begin
   try
 
     FParametros := Dao.GetParametros();
-    doSeed := false;
+    doSeed := FParametros.VERSAOBD = '0.0.0.0';
   except
     on E: Exception do
     begin
@@ -140,7 +140,10 @@ begin
       begin
         FParametros := TParametros.create;
         FParametros.VERSAOBD := '0.0.0.0';
-        doSeed := true;
+
+        var
+        blFaltaDeCampo := pos('Falha no ParamsToObject TParametros', E.Message) < 0;
+        doSeed := blFaltaDeCampo;
       end
     end;
   end;

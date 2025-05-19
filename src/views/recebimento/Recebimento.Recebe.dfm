@@ -335,10 +335,6 @@ inherited frmRecebimento: TfrmRecebimento
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 2
-    ExplicitLeft = 288
-    ExplicitTop = 224
-    ExplicitWidth = 185
-    ExplicitHeight = 41
     object strGridParcelas: TStringGrid
       Left = 0
       Top = 0
@@ -362,7 +358,6 @@ inherited frmRecebimento: TfrmRecebimento
       ShowHint = True
       TabOrder = 0
       OnDrawCell = strGridParcelasDrawCell
-      ExplicitTop = 121
       ColWidths = (
         76
         93

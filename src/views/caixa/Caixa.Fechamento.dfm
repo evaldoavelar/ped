@@ -22,7 +22,6 @@ inherited frmCaixaFechamento: TfrmCaixaFechamento
     ColorFrom = 2963905
     ColorTo = 2963905
     ImageIndex = 0
-    ExplicitWidth = 600
     object Image1: TImage
       AlignWithMargins = True
       Left = 0
@@ -78,11 +77,11 @@ inherited frmCaixaFechamento: TfrmCaixaFechamento
       AlignWithMargins = True
       Left = 88
       Top = 3
-      Width = 214
+      Width = 507
       Height = 26
       Align = alClient
       BiDiMode = bdLeftToRight
-      Caption = 'FECHAMENTO DE CAIXA'
+      Caption = 'FECHAMENTO DE CAIXA - MOVIMENTA'#199#195'O DE DINHEIRO'
       Color = clWhite
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWhite
@@ -121,7 +120,6 @@ inherited frmCaixaFechamento: TfrmCaixaFechamento
       BevelOuter = bvNone
       Color = clRed
       TabOrder = 0
-      ExplicitWidth = 548
       object btnAbrirCaixa: TBitBtn
         AlignWithMargins = True
         Left = 351
@@ -140,7 +138,6 @@ inherited frmCaixaFechamento: TfrmCaixaFechamento
         ParentFont = False
         TabOrder = 0
         OnClick = btnAbrirCaixaClick
-        ExplicitLeft = 266
       end
       object BitBtn2: TBitBtn
         AlignWithMargins = True
@@ -160,7 +157,6 @@ inherited frmCaixaFechamento: TfrmCaixaFechamento
         NumGlyphs = 2
         ParentFont = False
         TabOrder = 1
-        ExplicitLeft = 418
       end
     end
     object Panel2: TPanel
@@ -242,9 +238,9 @@ inherited frmCaixaFechamento: TfrmCaixaFechamento
       object Label6: TLabel
         Left = 581
         Top = 8
-        Width = 85
+        Width = 86
         Height = 15
-        Caption = '= Total de Caixa:'
+        Caption = '= Total no Caixa:'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -11

@@ -308,6 +308,7 @@ begin
           parcela := GetParcela(key);
           parcela.VendedorRecebimento := VendedorRecebimento;
           parcela.DATABAIXA := now;
+          parcela.NUMCAIXA := TFactoryEntidades.Parametros.PontoVenda.NUMCAIXA;
 
           frmConfirmaBaixa.ParcelaPagamento.Parcelas.Add(parcela);
         end;

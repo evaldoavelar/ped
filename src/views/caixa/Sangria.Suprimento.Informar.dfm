@@ -2,8 +2,8 @@ inherited FrmSangria: TFrmSangria
   BorderStyle = bsDialog
   Caption = 'Sangria'
   ClientHeight = 355
-  ClientWidth = 300
-  ExplicitWidth = 316
+  ClientWidth = 342
+  ExplicitWidth = 358
   ExplicitHeight = 394
   TextHeight = 13
   object Label1: TLabel
@@ -19,7 +19,7 @@ inherited FrmSangria: TFrmSangria
     Font.Style = [fsBold]
     ParentFont = False
   end
-  object Label2: TLabel
+  object lblRecebimentoRetirada: TLabel
     Left = 16
     Top = 80
     Width = 127
@@ -49,7 +49,7 @@ inherited FrmSangria: TFrmSangria
     AlignWithMargins = True
     Left = 3
     Top = 3
-    Width = 294
+    Width = 336
     Height = 40
     Align = alTop
     Alignment = taCenter
@@ -72,7 +72,7 @@ inherited FrmSangria: TFrmSangria
   object mmoHISTORICO: TMemo
     Left = 16
     Top = 147
-    Width = 265
+    Width = 307
     Height = 134
     Color = 15524818
     Font.Charset = DEFAULT_CHARSET
@@ -88,8 +88,8 @@ inherited FrmSangria: TFrmSangria
     OnChange = edtFormaChange
   end
   object edtForma: TEdit
-    Left = 160
-    Top = 105
+    Left = 201
+    Top = 109
     Width = 121
     Height = 21
     TabStop = False
@@ -107,7 +107,7 @@ inherited FrmSangria: TFrmSangria
     OnChange = edtFormaChange
   end
   object btnOk: TBitBtn
-    Left = 16
+    Left = 58
     Top = 307
     Width = 103
     Height = 32
@@ -125,7 +125,7 @@ inherited FrmSangria: TFrmSangria
     OnClick = btnOkClick
   end
   object btnCancelar: TBitBtn
-    Left = 160
+    Left = 202
     Top = 307
     Width = 121
     Height = 32
@@ -142,8 +142,8 @@ inherited FrmSangria: TFrmSangria
     OnClick = btnCancelarClick
   end
   object edtValor: TJvCalcEdit
-    Left = 161
-    Top = 68
+    Left = 202
+    Top = 72
     Width = 121
     Height = 27
     Alignment = taLeftJustify
@@ -161,7 +161,7 @@ inherited FrmSangria: TFrmSangria
     OnChange = edtValorChange
   end
   object JvEnterAsTab1: TJvEnterAsTab
-    Left = 55
-    Top = 53
+    Left = 39
+    Top = 5
   end
 end

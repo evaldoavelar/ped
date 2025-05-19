@@ -47,6 +47,7 @@ type
     FTipo: integer;
     FIDPAGTO: integer;
     FDATAALTERACAO: TDateTime;
+    FNUMCAIXA: string;
   public
     [AutoInc('AUTOINC')]
     [PrimaryKey('PKPEDIDOPAGAMENTOS', 'SEQ,IDPEDIDO')]
@@ -74,6 +75,8 @@ type
     property QUANTASVEZES: integer read FQUANTASVEZES write FQUANTASVEZES;
     [campo('DATAALTERACAO', tpTIMESTAMP)]
     property DATAALTERACAO: TDateTime read FDATAALTERACAO write FDATAALTERACAO;
+    [campo('NUMCAIXA', tpVARCHAR, 30, 0, True)]
+    property NUMCAIXA: string read FNUMCAIXA write FNUMCAIXA;
   end;
 
   TParcelaPagamentos = class

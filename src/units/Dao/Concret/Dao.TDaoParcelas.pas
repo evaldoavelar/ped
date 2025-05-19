@@ -108,6 +108,7 @@ begin
       + '     set '
       + '     DATABAIXA = :DATABAIXA, '
       + '     CODVENRECEBIMENTO =:CODVENRECEBIMENTO,'
+      + '     NUMCAIXA =:NUMCAIXA,'
       + '     RECEBIDO = :RECEBIDO '
       + 'where  '
       + '     NUMPARCELA = :NUMPARCELA '

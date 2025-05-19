@@ -23,11 +23,13 @@ type
     Label2: TLabel;
     edtSaldoAnteior: TJvCalcEdit;
     edtValorAdicional: TJvCalcEdit;
+    btnRepetir: TSpeedButton;
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure edtValorAdicionalKeyPress(Sender: TObject; var Key: Char);
     procedure btnAbrirCaixaClick(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
+    procedure btnRepetirClick(Sender: TObject);
   private
     { Private declarations }
     FParametros: TParametros;
@@ -86,6 +88,12 @@ begin
     end;
   end;
   TLog.d('<<< Saindo de TfrmCaixaAbertura.btnAbrirCaixaClick ');
+end;
+
+procedure TfrmCaixaAbertura.btnRepetirClick(Sender: TObject);
+begin
+  inherited;
+  edtValorAdicional.Text := edtSaldoAnteior.Text;
 end;
 
 procedure TfrmCaixaAbertura.edtValorAdicionalKeyPress(Sender: TObject;

@@ -26,6 +26,7 @@ type
     FQUANTASVEZES: integer;
     FTROCO: Currency;
     FDATAALTERACAO: TDateTime;
+    FNUMCAIXA: string;
     procedure SetACRESCIMO(const Value: Currency);
     procedure SetCONDICAO(const Value: string);
     procedure SetDESCRICAO(const Value: string);
@@ -75,6 +76,8 @@ type
     property QUANTASVEZES: integer read FQUANTASVEZES write SetQUANTASVEZES;
     [campo('DATAALTERACAO', tpTIMESTAMP)]
     property DATAALTERACAO: TDateTime read FDATAALTERACAO write FDATAALTERACAO;
+    [campo('NUMCAIXA', tpVARCHAR, 30, 0, True)]
+    property NUMCAIXA: string read FNUMCAIXA write FNUMCAIXA;
 
     property Parcelas: TObjectList<TParcelas> read Fparcelas write Setparcelas;
 

@@ -13,7 +13,7 @@ type
   TFrmSangria = class(TfrmBase)
     mmoHISTORICO: TMemo;
     Label1: TLabel;
-    Label2: TLabel;
+    lblRecebimentoRetirada: TLabel;
     edtForma: TEdit;
     Label3: TLabel;
     lblSangriaSuprimento: TLabel;
@@ -116,6 +116,7 @@ begin
   inherited;
   fFactory := TFactory.new(nil, True);
   FSangriaSuprimento := TSangriaSuprimento.Create;
+  FSangriaSuprimento.NUMCAIXA := TFactoryEntidades.Parametros.PontoVenda.NUMCAIXA;
   FSangriaSuprimento.FORMA := 'Dinheiro';
   FSangriaSuprimento.HISTORICO := 'Adicionando Troco Para o Caixa.';
 
@@ -141,6 +142,19 @@ begin
   FSangriaSuprimento.TipoSangriaSuprimento := aTipo;
   lblSangriaSuprimento.Caption := aTipo.Descricao;
   self.Caption := aTipo.Descricao;
+
+  case aTipo of
+    TSangriaSuprimentoTipo.Sangria:
+      begin
+        lblRecebimentoRetirada.Caption := 'Valor da Retirada Do Caixa:';
+        mmoHISTORICO.Lines.Text := 'RETIRADA DE SALDO DO CAIXA PARA PAGAMENTO DE CONTA';
+      end;
+    TSangriaSuprimentoTipo.Suprimento:
+      BEGIN
+        lblRecebimentoRetirada.Caption := 'Valor Adicional Para o Caixa:';
+        mmoHISTORICO.Lines.Text := 'ADIÇÃO DE SALDO AO CAIXA';
+      END;
+  end;
   TLog.d('<<< Saindo de TFrmSangria.setTipo ');
 end;
 

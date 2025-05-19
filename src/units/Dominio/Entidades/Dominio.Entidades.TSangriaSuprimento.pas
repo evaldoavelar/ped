@@ -22,6 +22,7 @@ type
     FFORMA: string;
     FCODVEN: string;
     FDATAALTERACAO: TDateTime;
+    FNUMCAIXA: string;
     function getTIPOPROXY: string;
     procedure SetID(const Value: integer);
     procedure SetTipo(const Value: integer);
@@ -59,6 +60,9 @@ type
 
     [Campo('HORA', tpTIME)]
     property HORA: TTime read FHORA write SetHORA;
+
+    [Campo('NUMCAIXA', tpVARCHAR, 30, 0, True)]
+    property NUMCAIXA: string read FNUMCAIXA write FNUMCAIXA;
 
     [Campo('CODVEN', tpVARCHAR, 10)]
     [ForeignKeyAttribute('FKSANGRIASUPRIVEN', 'CODVEN', 'VENDEDOR', 'CODIGO', None, None)]
