@@ -2,9 +2,9 @@ unit Util.VclFuncoes;
 
 interface
 
-uses System.Classes, System.MaskUtils, System.SysUtils,
-  System.DateUtils, Winapi.Windows, Winapi.ImageHlp,
-  Vcl.Controls, Vcl.Forms, DCPrc4, DCPbase64, DCPsha1;
+uses System.Classes, System.SysUtils,
+  Winapi.Windows, Winapi.ImageHlp,
+  Vcl.Controls, Vcl.Forms;
 
 type
 

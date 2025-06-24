@@ -26,6 +26,7 @@ type
     FTELEFONE: string;
     FFAX: string;
     FEMAIL: string;
+    FDATAALTERACAO: TDateTime;
 
     function getBAIRRO: string;
     function getCEP: string;
@@ -59,6 +60,7 @@ type
     procedure setRESPONSAVEL(const Value: string);
     procedure setTELEFONE(const Value: string);
     procedure setUF(const Value: string);
+    procedure SetDATAALTERACAO(const Value: TDateTime);
   public
     [campo('RAZAO_SOCIAL', tpVARCHAR, 60)]
     property RAZAO_SOCIAL: string read getRAZAO_SOCIAL write setRAZAO_SOCIAL;
@@ -107,6 +109,9 @@ type
 
     [campo('EMAIL', tpVARCHAR,40)]
     property EMAIL: string read getEMAIL write setEMAIL;
+
+    [campo('DATAALTERACAO', tpTIMESTAMP)]
+    property DATAALTERACAO: TDateTime  read FDATAALTERACAO write SetDATAALTERACAO;
 
     constructor Create();
   end;
@@ -244,6 +249,11 @@ begin
     FCOMPLEMENTO := Value;
     Notify('COMPLEMENTO');
   end;
+end;
+
+procedure TEmitente.SetDATAALTERACAO(const Value: TDateTime);
+begin
+  FDATAALTERACAO := Value;
 end;
 
 procedure TEmitente.setEMAIL(const Value: string);

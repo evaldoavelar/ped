@@ -1,11 +1,10 @@
 inherited frmFiltroPedidos: TfrmFiltroPedidos
   Caption = 'Filtro Pedidos'
   ClientHeight = 672
-  ClientWidth = 1016
-  OnCreate = FormCreate
-  ExplicitWidth = 1032
-  ExplicitHeight = 713
-  PixelsPerInch = 96
+  ClientWidth = 1106
+  WindowState = wsMaximized
+  ExplicitWidth = 1122
+  ExplicitHeight = 711
   TextHeight = 13
   inherited splEsquerda: TSplitter
     Height = 602
@@ -169,7 +168,7 @@ inherited frmFiltroPedidos: TfrmFiltroPedidos
     end
   end
   inherited dbGridResultado: TJvDBUltimGrid
-    Width = 860
+    Width = 950
     Height = 602
     OnDrawColumnCell = dbGridResultadoDrawColumnCell
     OnDblClick = dbGridResultadoDblClick
@@ -186,6 +185,12 @@ inherited frmFiltroPedidos: TfrmFiltroPedidos
         FieldName = 'NOME'
         Title.Caption = 'Nome'
         Width = 300
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'NUMCAIXA'
+        Title.Caption = 'Caixa'
         Visible = True
       end
       item
@@ -218,6 +223,13 @@ inherited frmFiltroPedidos: TfrmFiltroPedidos
       end
       item
         Expanded = False
+        FieldName = 'VALORLIQUIDO'
+        Title.Caption = 'Valor L'#237'quido'
+        Width = 90
+        Visible = True
+      end
+      item
+        Expanded = False
         FieldName = 'VALORENTRADA'
         Title.Caption = 'Valor Entrada'
         Width = 90
@@ -225,9 +237,9 @@ inherited frmFiltroPedidos: TfrmFiltroPedidos
       end
       item
         Expanded = False
-        FieldName = 'VALORLIQUIDO'
-        Title.Caption = 'Valor L'#237'quido'
-        Width = 90
+        FieldName = 'TROCO'
+        Title.Caption = 'Troco'
+        Width = 61
         Visible = True
       end
       item
@@ -266,13 +278,13 @@ inherited frmFiltroPedidos: TfrmFiltroPedidos
   end
   inherited jvPnl1: TJvNavPanelHeader
     Top = 602
-    Width = 1016
+    Width = 1106
     Height = 70
     ExplicitTop = 602
-    ExplicitWidth = 1016
+    ExplicitWidth = 1089
     ExplicitHeight = 70
     DesignSize = (
-      1016
+      1106
       70)
     object Label1: TLabel [0]
       Left = 114
@@ -340,10 +352,10 @@ inherited frmFiltroPedidos: TfrmFiltroPedidos
       Transparent = True
     end
     inherited BTN_Voltar: TBitBtn
-      Left = 904
+      Left = 994
       Top = 38
       TabOrder = 5
-      ExplicitLeft = 904
+      ExplicitLeft = 977
       ExplicitTop = 38
     end
     object BitBtn1: TBitBtn
@@ -407,9 +419,17 @@ inherited frmFiltroPedidos: TfrmFiltroPedidos
       Height = 21
       Hint = 'Selecione o campo para totalizar'
       Style = csDropDownList
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clBlack
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ItemIndex = 0
+      ParentFont = False
       ParentShowHint = False
       ShowHint = True
       TabOrder = 0
+      Text = 'Valor L'#237'quido'
       OnChange = cbbCampoSomarChange
       Items.Strings = (
         'Valor L'#237'quido'

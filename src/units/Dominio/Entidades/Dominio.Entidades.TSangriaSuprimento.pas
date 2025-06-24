@@ -21,6 +21,8 @@ type
     FDATA: TDate;
     FFORMA: string;
     FCODVEN: string;
+    FDATAALTERACAO: TDateTime;
+    FNUMCAIXA: string;
     function getTIPOPROXY: string;
     procedure SetID(const Value: integer);
     procedure SetTipo(const Value: integer);
@@ -32,6 +34,7 @@ type
     procedure SetHORA(const Value: TTime);
     procedure SetFORMA(const Value: string);
     procedure SetCODVEN(const Value: string);
+    procedure SetDATAALTERACAO(const Value: TDateTime);
   published
     [AutoInc('AUTOINC')]
     [PrimaryKey('PK_SANGRIASUPRIMENTO', 'ID')]
@@ -58,9 +61,16 @@ type
     [Campo('HORA', tpTIME)]
     property HORA: TTime read FHORA write SetHORA;
 
+    [Campo('NUMCAIXA', tpVARCHAR, 30, 0, True)]
+    property NUMCAIXA: string read FNUMCAIXA write FNUMCAIXA;
+
     [Campo('CODVEN', tpVARCHAR, 10)]
     [ForeignKeyAttribute('FKSANGRIASUPRIVEN', 'CODVEN', 'VENDEDOR', 'CODIGO', None, None)]
     property CODVEN: string read FCODVEN write SetCODVEN;
+
+    [Campo('DATAALTERACAO', tpTIMESTAMP)]
+    property DATAALTERACAO: TDateTime read FDATAALTERACAO write SetDATAALTERACAO;
+
   end;
 
 implementation
@@ -87,6 +97,11 @@ end;
 procedure TSangriaSuprimento.SetDATA(const Value: TDate);
 begin
   FDATA := Value;
+end;
+
+procedure TSangriaSuprimento.SetDATAALTERACAO(const Value: TDateTime);
+begin
+  FDATAALTERACAO := Value;
 end;
 
 procedure TSangriaSuprimento.SetFORMA(const Value: string);

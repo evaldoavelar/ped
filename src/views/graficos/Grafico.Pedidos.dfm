@@ -2,10 +2,9 @@ inherited frmGraficoPedidos: TfrmGraficoPedidos
   Caption = 'Gr'#225'ficos'
   ClientHeight = 609
   ClientWidth = 845
-  OnCreate = FormCreate
   OnShow = FormShow
   ExplicitWidth = 861
-  ExplicitHeight = 647
+  ExplicitHeight = 648
   PixelsPerInch = 96
   TextHeight = 13
   object spl1: TSplitter
@@ -33,10 +32,6 @@ inherited frmGraficoPedidos: TfrmGraficoPedidos
       TabOrder = 0
       object ts1: TTabSheet
         Caption = 'Gr'#225'fico 1'
-        ExplicitLeft = -84
-        ExplicitTop = -36
-        ExplicitWidth = 281
-        ExplicitHeight = 165
         object ChartVendasPeriodo: TChart
           Left = 0
           Top = 30
@@ -52,9 +47,6 @@ inherited frmGraficoPedidos: TfrmGraficoPedidos
           Align = alClient
           BevelOuter = bvNone
           TabOrder = 1
-          ExplicitTop = -126
-          ExplicitWidth = 281
-          ExplicitHeight = 291
           DefaultCanvas = 'TGDIPlusCanvas'
           PrintMargins = (
             15
@@ -80,8 +72,6 @@ inherited frmGraficoPedidos: TfrmGraficoPedidos
           Align = alTop
           BevelOuter = bvNone
           TabOrder = 0
-          ExplicitLeft = 16
-          ExplicitTop = 304
           object chkPontos: TCheckBox
             Left = 24
             Top = 3
@@ -105,6 +95,8 @@ inherited frmGraficoPedidos: TfrmGraficoPedidos
       object ts2: TTabSheet
         Caption = 'Gr'#225'fico 2'
         ImageIndex = 1
+        ExplicitLeft = 0
+        ExplicitTop = 0
         ExplicitWidth = 281
         ExplicitHeight = 165
         object Chart1: TChart

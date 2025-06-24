@@ -7,10 +7,16 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, untFrmBase, Vcl.StdCtrls, Vcl.Buttons,
   Vcl.Imaging.pngimage, Vcl.Imaging.jpeg, Vcl.ExtCtrls, Dominio.Entidades.CondicaoPagto,
   Dominio.Entidades.TPedido, System.Actions, Vcl.ActnList, Dominio.Entidades.TFormaPagto,
-  System.Generics.Collections, Dominio.Entidades.TFactory,
+  System.Generics.Collections, Dominio.Entidades.Pedido.Pagamentos, Dominio.Entidades.TCliente,
   Dominio.Entidades.Pedido.Pagamentos.Pagamento;
 
 type
+
+  TOnSetDesconto = reference to procedure(aTipo: TTipoDesconto; aValor: currency);
+  TOnGetValorLiquido = reference to function: currency;
+  TOnGetValorBruto = reference to function: currency;
+  TOnGetValorDesc = reference to function: currency;
+
   TFrmPagamento = class(TfrmBase)
     pnl2: TPanel;
     Label1: TLabel;
@@ -68,18 +74,30 @@ type
     procedure edtDescontoExit(Sender: TObject);
   private
     { Private declarations }
-    FPedido: TPedido;
+    FPagamentos: TPAGAMENTOS;
+    FRecebimento: boolean;
+    FOnValorLiquido: TOnGetValorLiquido;
+    FOnValorBruto: TOnGetValorBruto;
+    FCliente: TCliente;
+    FValorDesc: TOnGetValorDesc;
+    FOnDesconto: TOnSetDesconto;
+    FIDPedido: integer;
     procedure AddPagamento;
     procedure CarregaCondicaoDePagamento(aPagto: TList<TCONDICAODEPAGTO>);
     procedure ConfiguraPagamento;
-    procedure BindLabelsPagamentos(ValorRecebido, aValorAcrescimo,
-      ValorRestante, Troco: Currency);
+    procedure BindLabelsPagamentos(ValorRecebido, aValorAcrescimo, ValorRestante, Troco: currency);
     procedure BindPagamentos(aPagamentos: TPEDIDOPAGAMENTO);
-    procedure SetPedido(const Value: TPedido);
     procedure ParcelaPedido(aPagto: TPEDIDOPAGAMENTO);
   public
     { Public declarations }
-    property Pedido: TPedido read FPedido write SetPedido;
+    property Pagamentos: TPAGAMENTOS read FPagamentos write FPagamentos;
+    property Recebimento: boolean read FRecebimento write FRecebimento;
+    property OnGetValorLiquido: TOnGetValorLiquido read FOnValorLiquido write FOnValorLiquido;
+    property OnValorBruto: TOnGetValorBruto read FOnValorBruto write FOnValorBruto;
+    property Cliente: TCliente read FCliente write FCliente;
+    property OnGetValorDesc: TOnGetValorDesc read FValorDesc write FValorDesc;
+    property OnSetDesconto: TOnSetDesconto read FOnDesconto write FOnDesconto;
+    property IDPedido: integer read FIDPedido write FIDPedido;
   end;
 
 const
@@ -91,11 +109,11 @@ var
 implementation
 
 uses
-  Helper.Currency,
-  Helpers.HelperString,
+  Helper.currency,
+  Factory.Entidades,
   Util.Funcoes,
   Pedido.Venda.Part.Pagamento,
-  Pedido.Pagamento.Imagem,
+  Pedido.Pagamento.Imagem, Sistema.TLog,
   Dominio.Entidades.TFormaPagto.Tipo;
 
 {$R *.dfm}
@@ -103,77 +121,82 @@ uses
 
 procedure TFrmPagamento.actCancelarExecute(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TFrmPagamento.actCancelarExecute ');
   inherited;
-  for VAR I := FPedido.Pagamentos.FormasDePagamento.Count - 1 downto 0 do
+  for VAR I := Pagamentos.FormasDePagamento.Count - 1 downto 0 do
   Begin
-    FPedido.Pagamentos.RemovePagamento(FPedido.Pagamentos.FormasDePagamento[I]);
+    Pagamentos.RemovePagamento(Pagamentos.FormasDePagamento[I]);
   End;
 
   close;
+  TLog.d('<<< Saindo de TFrmPagamento.actCancelarExecute ');
 end;
 
 procedure TFrmPagamento.actFinalizaPagamentoExecute(Sender: TObject);
 begin
-
+  TLog.d('>>> Entrando em  TFrmPagamento.actFinalizaPagamentoExecute ');
   TRY
     inherited;
-    if FPedido.Pagamentos.ValorRestante = 0 then
+    if Pagamentos.ValorRestante = 0 then
       close()
     else
     begin
       AddPagamento;
       edtValorPagto.Text := '';
-      if FPedido.Pagamentos.ValorRestante > 0 then
+      if Pagamentos.ValorRestante > 0 then
         try
           lvFormaPagto.SetFocus;
         except
         end;
     end;
   except
-    on E: Exception do
-      MessageDlg(E.Message, mtError, [mbOK], 0);
+    on e: Exception do
+    begin
+      TLog.d(e.message);
+      MessageDlg(e.message, mtError, [mbOK], 0);
+    end;
   end;
+  TLog.d('<<< Saindo de TFrmPagamento.actFinalizaPagamentoExecute ');
 end;
 
-procedure TFrmPagamento.BindLabelsPagamentos(ValorRecebido: Currency; aValorAcrescimo: Currency; ValorRestante: Currency; Troco: Currency);
+procedure TFrmPagamento.BindLabelsPagamentos(ValorRecebido: currency; aValorAcrescimo: currency; ValorRestante: currency; Troco: currency);
 begin
+  TLog.d('>>> Entrando em  TFrmPagamento.BindLabelsPagamentos ');
   lblValorRestante.Caption := ValorRestante.ToReais;
   lblValorPago.Caption := ValorRecebido.ToReais;
   lblTroco.Caption := Troco.ToReais;
-  lblValorLiquido.Caption := FPedido.VALORLIQUIDO.ToReais;
+  lblValorLiquido.Caption := OnGetValorLiquido.ToReais;
   // lblValorAcrescimo.Caption := aValorAcrescimo.ToReais;
-  lblValorTotal.Caption := FPedido.ValorBruto.ToReais;
+  lblValorTotal.Caption := OnValorBruto.ToReais;
+  TLog.d('<<< Saindo de TFrmPagamento.BindLabelsPagamentos ');
 end;
 
 procedure TFrmPagamento.ConfiguraPagamento;
 begin
-  // flog.d('>>> Entrando em  TViewOrdemDeServico.ConfiguraPagamento ');
+  TLog.d('>>> Entrando em  TFrmPagamento.ConfiguraPagamento ');
   try
-
     LimpaScrollBox(scrBoxPagamentos);
     TFramePedidoPagamentoImagem
       .new(nil)
       .SetParent(scrBoxPagamentos)
       .setup;
 
-    FPedido.Pagamentos.ValorOriginal := FPedido.VALORLIQUIDO;
+    Pagamentos.ValorOriginal := OnGetValorLiquido;
 
-    FPedido.Pagamentos.OnEfetuaPagamento := procedure(ValorRecebido: Currency; aValorAcrescimo: Currency; ValorRestante: Currency; Troco: Currency)
+    Pagamentos.OnEfetuaPagamento := procedure(ValorRecebido: currency; aValorAcrescimo: currency; ValorRestante: currency; Troco: currency)
       begin
         BindLabelsPagamentos(ValorRecebido, aValorAcrescimo, ValorRestante, Troco);
-
       end;
 
-    BindLabelsPagamentos(FPedido.Pagamentos.ValorRecebido, FPedido.Pagamentos.ValorAcrescimo, FPedido.Pagamentos.ValorRestante, FPedido.Pagamentos.Troco);
+    BindLabelsPagamentos(Pagamentos.ValorRecebido, Pagamentos.ValorAcrescimo, Pagamentos.ValorRestante, Pagamentos.Troco);
     var
-    formaPagtos := TFactory
+    formaPagtos := fFactory
       .DaoFormaPagto
       .ListaAtivosObject();
 
     LimpaListBox<TFormaPagto>(lvFormaPagto);
-    // LimpaListBox<TCONDICAODEPAGTO>(lvCondicaoPagamento);
 
-    for var pagto in FPedido.Pagamentos.FormasDePagamento do
+    for var pagto in Pagamentos.FormasDePagamento do
       BindPagamentos(pagto);
 
     lvCondicaoPagamento.Clear;
@@ -184,24 +207,25 @@ begin
 
     lvFormaPagto.ItemIndex := lvFormaPagto.Items.IndexOf('DINHEIRO');
   except
-    on E: Exception do
+    on e: Exception do
     begin
       // flog.d(E);
-      raise Exception.Create('ConfiguraPagamento: ' + E.Message);
+      raise Exception.Create('ConfiguraPagamento: ' + e.message);
     end;
   end;
-  // flog.d('<<< Saindo de TViewOrdemDeServico.ConfiguraPagamento ');
+  TLog.d('<<< Saindo de TFrmPagamento.ConfiguraPagamento ');
 end;
 
 procedure TFrmPagamento.CarregaCondicaoDePagamento(aPagto: TList<TCONDICAODEPAGTO>);
 begin
+  TLog.d('>>> Entrando em  TFrmPagamento.CarregaCondicaoDePagamento ');
   lvCondicaoPagamento.Clear;
   for var condicao in aPagto do
   begin
     var
-    totalAcrescimo := condicao.CalculaAcrescimo(FPedido.Pagamentos.ValorRestante);
+    totalAcrescimo := condicao.CalculaAcrescimo(Pagamentos.ValorRestante);
     var
-    ValorAcrescimo := condicao.CalculaValorDoAcrescimo(FPedido.Pagamentos.ValorRestante);
+    ValorAcrescimo := condicao.CalculaValorDoAcrescimo(Pagamentos.ValorRestante);
 
     var
     DescricaoAcrescimo := TUtil.IFF<string>(ValorAcrescimo > 0,
@@ -214,13 +238,15 @@ begin
       condicao
       );
   end;
-  lvCondicaoPagamento.ItemIndex := 0
+  lvCondicaoPagamento.ItemIndex := 0;
+  TLog.d('<<< Saindo de TFrmPagamento.CarregaCondicaoDePagamento ');
 end;
 
 procedure TFrmPagamento.AddPagamento;
 VAR
-  valor: Currency;
+  valor: currency;
 begin
+  TLog.d('>>> Entrando em  TFrmPagamento.AddPagamento ');
   try
     if lvFormaPagto.ItemIndex < 0 then
       raise Exception.Create('SELECIONE A FORMA DE PAGAMENTO');
@@ -240,7 +266,7 @@ begin
     if valor <= 0 then
       raise Exception.Create('VALOR DO PAGAMENTO PRECISA SER MAIOR QUE ZERO');
 
-    if FPedido.Pagamentos.FormasDePagamento.Count = 0 then
+    if Pagamentos.FormasDePagamento.Count = 0 then
       LimpaScrollBox(scrBoxPagamentos);
 
     VAR
@@ -248,55 +274,65 @@ begin
     var
     condicao := TCONDICAODEPAGTO(lvCondicaoPagamento.Items.Objects[lvCondicaoPagamento.ItemIndex]);
     var
-    valorCalculoAccrescimo := TUtil.IFF<Currency>(valor < FPedido.Pagamentos.ValorRestante, FPedido.Pagamentos.ValorRestante, valor);
+    valorCalculoAccrescimo := TUtil.IFF<currency>(valor < Pagamentos.ValorRestante, Pagamentos.ValorRestante, valor);
     var
     totalCrescimo := condicao.CalculaValorDoAcrescimo(valorCalculoAccrescimo);
 
-    if (valor > (FPedido.Pagamentos.ValorRestante + totalCrescimo))
+    var
+    Troco := (valor - (Pagamentos.ValorRestante + totalCrescimo));
+    Troco := TUtil.IFF<currency>(Troco < 0, Troco, 0);
+
+    if (valor > (Pagamentos.ValorRestante + totalCrescimo))
       and (forma.TipoPagamento <> TTipoPagto.dinheiro) then
       raise Exception.Create('TROCO SOMENTE PERMITIDO PARA PAGAMENTO EM DINHEIRO!');
 
-    if (forma.TipoPagamento = TTipoPagto.Parcelado) then
-      if (not Assigned(FPedido.Cliente)) or (FPedido.Cliente.CODIGO = '000000') or (FPedido.Cliente.CODIGO = '') then
-        raise Exception.Create('PARA VENDER PARCELADO É PRECISO INFORMAR O CLIENTE!');
+    if (forma.TipoPagamento = TTipoPagto.Crediario) then
+      if (not Assigned(Cliente)) or (Cliente.CODIGO = '000000') or (Cliente.CODIGO = '') then
+        raise Exception.Create('PARA VENDER NO CREDIÁRIO É PRECISO INFORMAR O CLIENTE!');
 
     var
-    pagto := FPedido.Pagamentos.NewPagamento();
+    pagto := Pagamentos.NewPagamento();
+    pagto.NUMCAIXA := TFactoryEntidades.Parametros.PontoVenda.NUMCAIXA;
     pagto.DESCRICAO := forma.DESCRICAO;
     pagto.Tipo := forma.Tipo;
     pagto.IDPAGTO := forma.ID;
-    pagto.IDPEDIDO := FPedido.ID;
+    pagto.IDPedido := IDPedido;
     pagto.IDCONDICAO := condicao.ID;
     pagto.condicao := condicao.DESCRICAO;
     pagto.valor := valor;
+    pagto.Troco := Troco;
     pagto.QUANTASVEZES := condicao.QUANTASVEZES;
     pagto.ACRESCIMO := totalCrescimo;
 
-    if (pagto.TipoPagamento = TTipoPagto.Parcelado) then
+    if (pagto.TipoPagamento = TTipoPagto.Crediario) then
       ParcelaPedido(pagto);
 
-    FPedido.Pagamentos.AddPagamento(pagto);
+    Pagamentos.AddPagamento(pagto);
 
     BindPagamentos(pagto);
 
   except
-    on E: Exception do
-      MessageDlg(E.Message, mtError, [mbOK], 0);
+    on e: Exception do
+    begin
+      TLog.d(e.message);
+      MessageDlg(e.message, mtError, [mbOK], 0);
+    end;
   end;
+  TLog.d('<<< Saindo de TFrmPagamento.AddPagamento ');
 end;
 
 procedure TFrmPagamento.ParcelaPedido(aPagto: TPEDIDOPAGAMENTO);
 var
-  NumParcelas: Integer;
+  NumParcelas: integer;
   VencimentoPrimeiraParcela: TDate;
 begin
   try
     NumParcelas := aPagto.QUANTASVEZES;
     VencimentoPrimeiraParcela := IncMonth(now, 1);
-    aPagto.ParcelarPedido(FPedido.Cliente.CODIGO, NumParcelas, VencimentoPrimeiraParcela);
+    aPagto.ParcelarPedido(Cliente.CODIGO, NumParcelas, VencimentoPrimeiraParcela);
   except
-    on E: Exception do
-      raise Exception.Create('Falha ao gerar parcelas: ' + E.Message);
+    on e: Exception do
+      raise Exception.Create('Falha ao gerar parcelas: ' + e.message);
   end;
 end;
 
@@ -310,7 +346,7 @@ begin
     procedure(aobj: TObject)
     begin
       // flog.d('Pagamento cancelado');
-      FPedido.Pagamentos.RemovePagamento(aPagamentos);
+      Pagamentos.RemovePagamento(aPagamentos);
       // FController.Salvar(Self.ActiveOS);
       aobj.Free;
     end)
@@ -320,9 +356,9 @@ end;
 procedure TFrmPagamento.edtDescontoExit(Sender: TObject);
 begin
   inherited;
-  edtDesconto.Text := Format('%f', [FPedido.VALORDESC]);
-  FPedido.Pagamentos.ValorOriginal := FPedido.VALORLIQUIDO;
-  BindLabelsPagamentos(FPedido.Pagamentos.ValorRecebido, FPedido.Pagamentos.ValorAcrescimo, FPedido.Pagamentos.ValorRestante, FPedido.Pagamentos.Troco);
+  edtDesconto.Text := Format('%f', [OnGetValorDesc]);
+  Pagamentos.ValorOriginal := OnGetValorLiquido;
+  BindLabelsPagamentos(Pagamentos.ValorRecebido, Pagamentos.ValorAcrescimo, Pagamentos.ValorRestante, Pagamentos.Troco);
 end;
 
 procedure TFrmPagamento.edtDescontoKeyPress(Sender: TObject; var Key: Char);
@@ -332,12 +368,17 @@ begin
   begin
     try
       if rbPorcentagem.Checked then
-        FPedido.setDescontos(TTipoDesconto.tpPercentual, StrToCurrDef(edtDesconto.Text, 0))
+        OnSetDesconto(TTipoDesconto.tpPercentual, StrToCurrDef(edtDesconto.Text, 0))
       else
-        FPedido.setDescontos(TTipoDesconto.tpValor, StrToCurrDef(edtDesconto.Text, 0));
+        OnSetDesconto(TTipoDesconto.tpValor, StrToCurrDef(edtDesconto.Text, 0));
 
       lvFormaPagto.SetFocus;
     except
+      on e: Exception do
+      begin
+        TLog.d(e.message);
+        MessageDlg(e.message, mtError, [mbOK], 0);
+      end;
     end;
     Key := #0
   end
@@ -374,17 +415,24 @@ end;
 
 procedure TFrmPagamento.FormShow(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TFrmPagamento.FormShow ');
   inherited;
   try
+    edtDesconto.Enabled := not Recebimento;
+    rbValor.Enabled := not Recebimento;
+    rbPorcentagem.Enabled := not Recebimento;
+
     edtDesconto.SetFocus;
   except
   end;
 
   ConfiguraPagamento();
+  TLog.d('<<< Saindo de TFrmPagamento.FormShow ');
 end;
 
 procedure TFrmPagamento.lvCondicaoPagamentoExit(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TFrmPagamento.lvCondicaoPagamentoExit ');
   inherited;
   TListBox(Sender).Font.Size := TListBox(Sender).Font.Size - 1;
   TListBox(Sender).Color := corDestaque;
@@ -392,8 +440,9 @@ begin
   begin
     var
     condicao := TCONDICAODEPAGTO(lvCondicaoPagamento.Items.Objects[lvCondicaoPagamento.ItemIndex]);
-    edtValorPagto.Text := condicao.CalculaAcrescimo(FPedido.Pagamentos.ValorRestante).ToStrDuasCasasSemPonto;
+    edtValorPagto.Text := condicao.CalculaAcrescimo(Pagamentos.ValorRestante).ToStrDuasCasasSemPonto;
   end;
+  TLog.d('<<< Saindo de TFrmPagamento.lvCondicaoPagamentoExit ');
 end;
 
 procedure TFrmPagamento.lvCondicaoPagamentoKeyPress(Sender: TObject;
@@ -415,10 +464,14 @@ begin
   inherited;
   TListBox(Sender).Font.Size := TListBox(Sender).Font.Size + 1;
   TListBox(Sender).Color := clWhite;
+  if TListBox(Sender).Items.Count = 1 then
+    TListBox(Sender).ItemIndex := 0;
+
 end;
 
 procedure TFrmPagamento.lvFormaPagtoExit(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TFrmPagamento.lvFormaPagtoExit ');
   inherited;
   TListBox(Sender).Font.Size := TListBox(Sender).Font.Size - 1;
   TListBox(Sender).Color := corDestaque;
@@ -433,8 +486,9 @@ begin
   begin
     var
     condicao := TCONDICAODEPAGTO(lvCondicaoPagamento.Items.Objects[lvCondicaoPagamento.ItemIndex]);
-    edtValorPagto.Text := condicao.CalculaAcrescimo(FPedido.Pagamentos.ValorRestante).ToStrDuasCasasSemPonto;
+    edtValorPagto.Text := condicao.CalculaAcrescimo(Pagamentos.ValorRestante).ToStrDuasCasasSemPonto;
   end;
+  TLog.d('<<< Saindo de TFrmPagamento.lvFormaPagtoExit ');
 end;
 
 procedure TFrmPagamento.lvFormaPagtoKeyPress(Sender: TObject;
@@ -452,11 +506,6 @@ begin
     end
   ELSE if Key = #27 then
     close;
-end;
-
-procedure TFrmPagamento.SetPedido(const Value: TPedido);
-begin
-  FPedido := Value;
 end;
 
 end.

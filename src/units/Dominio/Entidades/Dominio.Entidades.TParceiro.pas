@@ -14,10 +14,12 @@ type
     FCODIGO: string;
     FNOME: string;
     FINATIVO: Boolean;
+    FDATAALTERACAO: TDateTime;
     procedure SetCODIGO(const Value: string);
 
     procedure SetNOME(const Value: string);
     procedure SetINATIVO(const Value: Boolean);
+    procedure SetDATAALTERACAO(const Value: TDateTime);
   published
     [campo('CODIGO', tpVARCHAR, 10, 0, True)]
     [PrimaryKey('PK_PARCEIRO', 'CODIGO')]
@@ -28,6 +30,9 @@ type
 
     [campo('INATIVO', tpINTEGER)]
     property INATIVO: Boolean read FINATIVO write SetINATIVO;
+
+    [campo('DATAALTERACAO', tpTIMESTAMP)]
+    property DATAALTERACAO: TDateTime read FDATAALTERACAO write SetDATAALTERACAO;
 
   end;
 
@@ -40,7 +45,10 @@ begin
   FCODIGO := Value;
 end;
 
-
+procedure TParceiro.SetDATAALTERACAO(const Value: TDateTime);
+begin
+  FDATAALTERACAO := Value;
+end;
 
 procedure TParceiro.SetINATIVO(const Value: Boolean);
 begin

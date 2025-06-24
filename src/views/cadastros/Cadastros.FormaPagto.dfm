@@ -3,21 +3,20 @@ inherited frmCadastroFormaPagto: TfrmCadastroFormaPagto
   ClientHeight = 586
   ClientWidth = 693
   KeyPreview = True
-  ExplicitWidth = 699
-  ExplicitHeight = 615
-  PixelsPerInch = 96
+  ExplicitWidth = 709
+  ExplicitHeight = 625
   TextHeight = 13
   inherited pnlContainer: TPanel
     Width = 693
-    Height = 470
+    Height = 488
     ExplicitWidth = 693
-    ExplicitHeight = 470
+    ExplicitHeight = 488
     inherited pgcPrincipal: TPageControl
       Width = 687
-      Height = 464
+      Height = 482
       ActivePage = ts1
       ExplicitWidth = 687
-      ExplicitHeight = 464
+      ExplicitHeight = 482
       object ts1: TTabSheet
         Caption = 'Pagamento'
         object lbl3: TLabel
@@ -380,14 +379,13 @@ inherited frmCadastroFormaPagto: TfrmCadastroFormaPagto
                       Color = clWhite
                       MaxLength = 30
                       TabOrder = 0
-                      ExplicitLeft = 2
                     end
                   end
                   object Panel11: TPanel
                     AlignWithMargins = True
                     Left = 384
                     Top = 3
-                    Width = 114
+                    Width = 115
                     Height = 51
                     Align = alClient
                     BevelOuter = bvNone
@@ -396,7 +394,7 @@ inherited frmCadastroFormaPagto: TfrmCadastroFormaPagto
                     object Label6: TLabel
                       Left = 0
                       Top = 0
-                      Width = 114
+                      Width = 115
                       Height = 13
                       Align = alTop
                       Caption = 'QUANTAS VEZES'
@@ -406,7 +404,7 @@ inherited frmCadastroFormaPagto: TfrmCadastroFormaPagto
                       AlignWithMargins = True
                       Left = 3
                       Top = 19
-                      Width = 108
+                      Width = 109
                       Height = 21
                       Margins.Top = 6
                       Align = alTop
@@ -415,12 +413,11 @@ inherited frmCadastroFormaPagto: TfrmCadastroFormaPagto
                       MaxLength = 10
                       NumbersOnly = True
                       TabOrder = 0
-                      ExplicitLeft = 2
                     end
                   end
                   object Panel12: TPanel
                     AlignWithMargins = True
-                    Left = 504
+                    Left = 505
                     Top = 3
                     Width = 90
                     Height = 51
@@ -456,19 +453,19 @@ inherited frmCadastroFormaPagto: TfrmCadastroFormaPagto
                   end
                   object Panel13: TPanel
                     AlignWithMargins = True
-                    Left = 600
+                    Left = 601
                     Top = 3
-                    Width = 39
+                    Width = 38
                     Height = 51
                     Align = alClient
                     BevelOuter = bvNone
                     ParentColor = True
                     TabOrder = 3
                     DesignSize = (
-                      39
+                      38
                       51)
                     object Panel14: TPanel
-                      Left = 9
+                      Left = 8
                       Top = 17
                       Width = 27
                       Height = 26
@@ -568,9 +565,9 @@ inherited frmCadastroFormaPagto: TfrmCadastroFormaPagto
   inherited pnlTop: TPanel
     Width = 693
     ExplicitWidth = 693
-    inherited Image1: TImage
-      Width = 693
-      ExplicitWidth = 693
+    inherited btnPesquisar: TBitBtn
+      Left = 574
+      ExplicitLeft = 574
     end
   end
 end

@@ -5,7 +5,7 @@ interface
 uses
   System.Generics.Collections,
   System.SysUtils, System.Classes, Data.DB,
-  Dao.TDaoBase, Dominio.Entidades.CondicaoPagto;
+  Sistema.TLog, Dominio.Entidades.CondicaoPagto;
 
 type
 

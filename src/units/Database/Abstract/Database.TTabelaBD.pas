@@ -6,8 +6,8 @@ uses
   System.SysUtils, System.Classes,
   System.Generics.Collections,
   System.Rtti,
-  Database.IDataseMigration,
-  Dominio.Entidades.TEntity,
+
+
   Dominio.Mapeamento.Atributos;
 
 type

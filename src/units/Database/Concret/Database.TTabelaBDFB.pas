@@ -6,9 +6,9 @@ uses
   System.SysUtils, System.Classes,
   System.Generics.Collections,
   System.Rtti,
-  Database.IDataseMigration,
+
   Database.TTabelaBD,
-  Dominio.Entidades.TEntity,
+
   Dominio.Mapeamento.Atributos,
   Dominio.Mapeamento.Tipos;
 
@@ -26,8 +26,7 @@ type
 
 implementation
 
-uses
-  Dominio.Entidades.TPedido;
+
 
 { TTabelaBDFB }
 

@@ -2,11 +2,9 @@ inherited frmFiltroBase: TfrmFiltroBase
   Caption = 'Filtro'
   ClientHeight = 655
   ClientWidth = 856
-  OnDestroy = FormDestroy
   OnShow = FormShow
   ExplicitWidth = 872
-  ExplicitHeight = 693
-  PixelsPerInch = 96
+  ExplicitHeight = 694
   TextHeight = 13
   object splEsquerda: TSplitter
     Left = 153
@@ -310,7 +308,6 @@ inherited frmFiltroBase: TfrmFiltroBase
     ColorFrom = 10639360
     ColorTo = 10639360
     ImageIndex = 0
-    ExplicitTop = 622
     DesignSize = (
       856
       38)

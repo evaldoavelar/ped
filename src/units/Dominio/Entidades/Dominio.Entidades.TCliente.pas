@@ -49,6 +49,7 @@ type
     FPROFISSAO: string;
     FCONJUGE: string;
     FBLOQUEADO: boolean;
+    FDATAALTERACAO: TDateTime;
 
     procedure setCODIGO(value: string);
     procedure setNOME(value: string);
@@ -127,6 +128,7 @@ type
     function getLOCAL: string;
     function getPROFISSAO: string;
     function getCONJUGE: string;
+    procedure SetDATAALTERACAO(const value: TDateTime);
 
   published
 
@@ -245,8 +247,11 @@ type
     [campo('CONJUGE', tpVARCHAR, 40)]
     property CONJUGE: string read getCONJUGE write setCONJUGE;
 
-    [campo('BLOQUEADO', tpINTEGER,0,0)]
+    [campo('BLOQUEADO', tpINTEGER, 0, 0)]
     property BLOQUEADO: boolean read FBLOQUEADO write FBLOQUEADO;
+
+    [campo('DATAALTERACAO', tpTIMESTAMP)]
+    property DATAALTERACAO: TDateTime read FDATAALTERACAO write SetDATAALTERACAO;
 
   public
     constructor create();
@@ -621,6 +626,15 @@ begin
   begin
     FCONTATO := value;
     Notify('CONTATO');
+  end;
+end;
+
+procedure TCliente.SetDATAALTERACAO(const value: TDateTime);
+begin
+  if value <> FDATAALTERACAO then
+  begin
+    FDATAALTERACAO := value;
+    Notify('DATAALTERACAO');
   end;
 end;
 

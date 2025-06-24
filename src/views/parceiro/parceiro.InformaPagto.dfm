@@ -3,11 +3,9 @@ inherited FrmParceiroInfoPagto: TFrmParceiroInfoPagto
   Caption = 'PARCEIRO'
   ClientHeight = 427
   ClientWidth = 488
-  OnCreate = FormCreate
-  OnDestroy = FormDestroy
   OnShow = FormShow
   ExplicitWidth = 494
-  ExplicitHeight = 455
+  ExplicitHeight = 456
   PixelsPerInch = 96
   TextHeight = 13
   object Panel1: TPanel
@@ -20,15 +18,13 @@ inherited FrmParceiroInfoPagto: TFrmParceiroInfoPagto
     Color = 15790320
     ParentBackground = False
     TabOrder = 0
-    ExplicitLeft = 3
-    ExplicitTop = 3
     DesignSize = (
       488
       384)
     object Label1: TLabel
       Left = 12
       Top = 74
-      Width = 186
+      Width = 185
       Height = 13
       Caption = 'ESCOLHA A FORMA DE PAGAMENTO'
       Font.Charset = DEFAULT_CHARSET
@@ -55,7 +51,7 @@ inherited FrmParceiroInfoPagto: TFrmParceiroInfoPagto
     object lbl1: TLabel
       Left = 12
       Top = 11
-      Width = 116
+      Width = 115
       Height = 13
       Caption = 'INFORME O PARCEIRO'
       Font.Charset = DEFAULT_CHARSET
@@ -248,7 +244,7 @@ inherited FrmParceiroInfoPagto: TFrmParceiroInfoPagto
               Font.Style = [fsBold]
               ParentFont = False
               WordWrap = True
-              ExplicitWidth = 64
+              ExplicitWidth = 63
             end
           end
         end
@@ -408,7 +404,7 @@ inherited FrmParceiroInfoPagto: TFrmParceiroInfoPagto
           AlignWithMargins = True
           Left = 8
           Top = 21
-          Width = 128
+          Width = 125
           Height = 17
           Margins.Left = 25
           Margins.Top = 0
@@ -429,7 +425,7 @@ inherited FrmParceiroInfoPagto: TFrmParceiroInfoPagto
           AlignWithMargins = True
           Left = 8
           Top = 72
-          Width = 94
+          Width = 93
           Height = 13
           Margins.Left = 25
           Margins.Top = 0
@@ -562,7 +558,7 @@ inherited FrmParceiroInfoPagto: TFrmParceiroInfoPagto
     object Label11: TLabel
       Left = 0
       Top = 0
-      Width = 212
+      Width = 196
       Height = 40
       Align = alLeft
       Alignment = taCenter
@@ -574,6 +570,7 @@ inherited FrmParceiroInfoPagto: TFrmParceiroInfoPagto
       Font.Style = [fsBold]
       ParentFont = False
       Layout = tlCenter
+      ExplicitHeight = 13
     end
     object btnIncluir: TBitBtn
       Left = 293

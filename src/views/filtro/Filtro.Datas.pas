@@ -46,30 +46,37 @@ implementation
 {$R *.dfm}
 
 
-uses Util.Funcoes;
+uses Util.Funcoes, sistema.TLog;
 
 procedure TfrmFiltroDatas.actMesExecute(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TfrmFiltroDatas.actMesExecute ');
   inherited;
   edtDataFim.Date := TUtil.LastDayOfMonth(Date);
   edtDataIncio.Date := TUtil.FirstDayOfMonth(Date);
-
+  TLog.d('<<< Saindo de TfrmFiltroDatas.actMesExecute ');
 end;
 
 procedure TfrmFiltroDatas.actSemanaExecute(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TfrmFiltroDatas.actSemanaExecute ');
   inherited;
   edtDataIncio.Date := TUtil.FirstDayOfWeek(Date);
   edtDataFim.Date := TUtil.LastDayOfWeek(Date);
-
+  TLog.d('<<< Saindo de TfrmFiltroDatas.actSemanaExecute ');
 end;
 
 procedure TfrmFiltroDatas.FormShow(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TfrmFiltroDatas.FormShow ');
   inherited;
-   edtDataIncio.Date := Now;
-   edtDataFim.Date := IncMonth(Now,1);
-end;
+  edtDataIncio.Date := Now;
+  var
+  LDataFim := Now;
+  TUtil.ReplaceTimer(LDataFim, 23, 59, 59, 0);
+  edtDataFim.Date := LDataFim;
 
+  TLog.d('<<< Saindo de TfrmFiltroDatas.FormShow ');
+end;
 
 end.

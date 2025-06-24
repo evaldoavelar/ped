@@ -4,9 +4,10 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Consulta.Base, Data.DB, System.Actions, Vcl.ActnList, Vcl.Grids, Vcl.DBGrids, JvExDBGrids, JvDBGrid, JvDBUltimGrid, Vcl.StdCtrls,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Consulta.Base, Data.DB, System.Actions, Vcl.ActnList, Vcl.DBGrids, JvExDBGrids, JvDBGrid, JvDBUltimGrid,
   Vcl.Buttons, JvExControls,
-  JvNavigationPane, Dao.IDaoParceiro.FormaPagto, Dominio.Entidades.TParceiro.FormaPagto, Vcl.Imaging.jpeg, Vcl.ExtCtrls;
+  JvNavigationPane, Dao.IDaoParceiro.FormaPagto, Dominio.Entidades.TParceiro.FormaPagto, Vcl.Imaging.jpeg, Vcl.ExtCtrls,
+  Vcl.StdCtrls, Vcl.Grids;
 
 type
   TFrmConsultaFormaPagtoParceiro = class(TfrmConsultaBase)
@@ -34,26 +35,31 @@ implementation
 {$R *.dfm}
 
 
-uses Dominio.Entidades.TFactory;
+uses Sistema.TLog;
 
 procedure TFrmConsultaFormaPagtoParceiro.FormCreate(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TFrmConsultaFormaPagtoParceiro.FormCreate ');
   inherited;
   ParceiroFormaPagto := nil;
-  daoForma := TFactory.DaoParceiroFormaPagto;
+  daoForma := FFactory.DaoParceiroFormaPagto;
   cbbPesquisa.ItemIndex := 1;
+  TLog.d('<<< Saindo de TFrmConsultaFormaPagtoParceiro.FormCreate ');
 end;
 
 procedure TFrmConsultaFormaPagtoParceiro.FormDestroy(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TFrmConsultaFormaPagtoParceiro.FormDestroy ');
   inherited;
   dbGridResultado.DataSource.DataSet.Free;
+  TLog.d('<<< Saindo de TFrmConsultaFormaPagtoParceiro.FormDestroy ');
 end;
 
 procedure TFrmConsultaFormaPagtoParceiro.Pesquisar;
 var
   campo: string;
 begin
+  TLog.d('>>> Entrando em  TFrmConsultaFormaPagtoParceiro.Pesquisar ');
   inherited;
   case cbbPesquisa.ItemIndex of
     0:
@@ -68,10 +74,12 @@ begin
   dbGridResultado.DataSource.DataSet := daoForma.Listar(campo, edtValor.Text + '%');
 
   ParceiroFormaPagto := nil;
+  TLog.d('<<< Saindo de TFrmConsultaFormaPagtoParceiro.Pesquisar ');
 end;
 
 procedure TFrmConsultaFormaPagtoParceiro.Selecionar;
 begin
+  TLog.d('>>> Entrando em  TFrmConsultaFormaPagtoParceiro.Selecionar ');
   inherited;
   if (dbGridResultado.DataSource.DataSet = nil) or dbGridResultado.DataSource.DataSet.IsEmpty then
     raise Exception.Create('Nenhum dado para selecionar');
@@ -79,6 +87,7 @@ begin
   FParceiroFormaPagto := daoForma.GeTParceiroFormaPagto(dbGridResultado.DataSource.DataSet.FieldByName('ID').AsInteger);
 
   inherited;
+  TLog.d('<<< Saindo de TFrmConsultaFormaPagtoParceiro.Selecionar ');
 end;
 
 end.

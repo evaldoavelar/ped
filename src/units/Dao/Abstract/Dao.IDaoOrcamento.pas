@@ -5,11 +5,11 @@ interface
 
 
 uses
-  System.Generics.Collections, System.SysUtils, System.Classes,
+  System.SysUtils, System.Classes,
   Vcl.Graphics, Vcl.ExtCtrls, Vcl.Imaging.jpeg,
   Data.DB,
-  Dao.TDaoBase,
-  Dominio.Entidades.TItemOrcamento, Dominio.Entidades.TOrcamento, Dominio.Entidades.TParcelas;
+  Sistema.TLog,
+  Dominio.Entidades.TItemOrcamento, Dominio.Entidades.TOrcamento;
 
 type
 
@@ -26,6 +26,11 @@ type
     function Listar(campo, valor: string; dataInicio, dataFim: TDate): TDataSet; overload;
     function Listar(campo, valor: string): TDataSet; overload;
     function Listar(dataInicio, dataFim: TDate): TDataSet; overload;
+
+    procedure StartTransaction;
+    procedure Commit;
+    procedure Rollback;
+
   end;
 implementation
 

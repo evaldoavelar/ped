@@ -39,14 +39,19 @@ type
     procedure edtSenhaKeyPress(Sender: TObject; var Key: Char);
     procedure edtCodigoExit(Sender: TObject);
     procedure actSairExecute(Sender: TObject);
+    procedure btnBancoDeDadosClick(Sender: TObject);
+    procedure FormShow(Sender: TObject);
   private
     FVendedor: TVendedor;
     daoVendedor: IDaoVendedor;
+    FConfigurarDataBase: boolean;
     function getVendedor: TVendedor;
     procedure setVendedor(const Value: TVendedor);
+    procedure ConfiguraBancoDeDados;
     { Private declarations }
   public
     { Public declarations }
+    property ConfigurarDataBase: boolean read FConfigurarDataBase write FConfigurarDataBase;
     property Vendedor: TVendedor read getVendedor;
     procedure Login;
   end;
@@ -59,7 +64,7 @@ implementation
 {$R *.dfm}
 
 
-uses Dominio.Entidades.TFactory;
+uses Configuracoes.Database, Sistema.TLog;
 
 procedure TfrmLogin.actLoginExecute(Sender: TObject);
 
@@ -75,9 +80,40 @@ begin
   self.ModalResult := mrAbort;
 end;
 
+procedure TfrmLogin.btnBancoDeDadosClick(Sender: TObject);
+begin
+  TLog.d('>>> Entrando em  TfrmLogin.btnBancoDeDadosClick ');
+  try
+    ConfiguraBancoDeDados;
+  except
+    on E: Exception do
+    begin
+      TLog.d(E.message);
+      MessageDlg(E.message, mtError, [mbOK], 0);
+    end;
+  end;
+  TLog.d('<<< Saindo de TfrmLogin.btnBancoDeDadosClick ');
+end;
+
+procedure TfrmLogin.ConfiguraBancoDeDados;
+var
+  FrmConfiguracoesDatabase: TFrmConfiguracoesDatabase;
+begin
+  inherited;
+  FrmConfiguracoesDatabase := TFrmConfiguracoesDatabase.Create(self);
+  try
+    FrmConfiguracoesDatabase.showmodal;
+  finally
+    FrmConfiguracoesDatabase.Free;
+  end;
+end;
+
 procedure TfrmLogin.edtCodigoExit(Sender: TObject);
 begin
   inherited;
+  if daoVendedor = nil then
+    daoVendedor := FFactory.daoVendedor;
+
   FVendedor := daoVendedor.getVendedor(edtCodigo.Text);
   // if Assigned(FVendedor) then
   // edtNome.Text := FVendedor.NOME;
@@ -101,8 +137,26 @@ end;
 
 procedure TfrmLogin.FormCreate(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TfrmLogin.FormCreate ');
+  ActiveControl := nil;
   inherited;
-  daoVendedor := TFactory.daoVendedor;
+
+  TLog.d('<<< Saindo de TfrmLogin.FormCreate ');
+end;
+
+procedure TfrmLogin.FormShow(Sender: TObject);
+begin
+  inherited;
+  if not FConfigurarDataBase then
+  begin
+    daoVendedor := FFactory.daoVendedor;
+    try
+      edtCodigo.SetFocus;
+    except
+      on E: Exception do
+    end;
+
+  end;
 end;
 
 function TfrmLogin.getVendedor: TVendedor;
@@ -112,6 +166,7 @@ end;
 
 procedure TfrmLogin.Login;
 begin
+  TLog.d('>>> Entrando em  TfrmLogin.Login ');
   try
 
     if not Assigned(FVendedor) then
@@ -131,9 +186,11 @@ begin
   except
     on E: Exception do
     begin
-      MessageDlg(E.Message, mtError, [mbOK], 0);
+      TLog.d(E.message);
+      MessageDlg(E.message, mtError, [mbOK], 0);
     end;
   end;
+  TLog.d('<<< Saindo de TfrmLogin.Login ');
 end;
 
 procedure TfrmLogin.setVendedor(const Value: TVendedor);

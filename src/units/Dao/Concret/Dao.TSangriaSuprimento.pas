@@ -3,10 +3,10 @@ unit Dao.TSangriaSuprimento;
 interface
 
 uses System.Generics.Collections,
-  System.SysUtils, System.Classes, Dominio.Entidades.TFactory,
+  System.SysUtils, System.Classes,
   FireDAC.Stan.Error,
   Data.DB, FireDAC.Comp.Client, Dao.IDAOTSangriaSuprimento,
-  Dao.TDaoBase, Dominio.Entidades.TSangriaSuprimento;
+  Dao.TDaoBase, Sistema.TLog, Dominio.Entidades.TSangriaSuprimento;
 
 type
   TDaoSangriaSuprimento = class(TDaoBase, IDAOTSangriaSuprimento)
@@ -16,11 +16,12 @@ type
     procedure Inclui(aObj: TSangriaSuprimento);
     procedure Valida(aObj: TSangriaSuprimento);
     function ListaObject(aData: TDate): TObjectList<TSangriaSuprimento>;
+    function TotalSangriaSuprimento(aTipo: Integer; dataInicio, dataFim: TDateTime): Currency;
   private
     function GeraID: Integer;
   public
 
-    class function New(Connection: TFDConnection): IDAOTSangriaSuprimento;
+    class function New(Connection: TFDConnection; aKeepConection: Boolean): IDAOTSangriaSuprimento;
   end;
 
 implementation
@@ -40,7 +41,7 @@ procedure TDaoSangriaSuprimento.Inclui(aObj: TSangriaSuprimento);
 var
   qry: TFDQuery;
 begin
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
       Valida(aObj);
@@ -54,7 +55,9 @@ begin
         + '             CODVEN, '
         + '             VALOR, '
         + '             FORMA, '
+        + '             DATAALTERACAO, '
         + '             HORA, '
+        + '             NUMCAIXA, '
         + '             DATA ) '
         + 'VALUES      (:id, '
         + '             :TIPO, '
@@ -62,16 +65,20 @@ begin
         + '             :CODVEN, '
         + '             :VALOR, '
         + '             :FORMA, '
+        + '             :DATAALTERACAO, '
         + '             :HORA, '
+        + '             :NUMCAIXA, '
         + '             :DATA )';
 
       EntityToParams(qry, aObj);
+      TLog.d(qry);
       qry.ExecSQL;
 
     except
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha SANGRIA SUPRIMENTO: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha SANGRIA SUPRIMENTO: ' + E.message);
       end;
     end;
   finally
@@ -86,7 +93,7 @@ var
   LSangriaSuprimento: TSangriaSuprimento;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   Result := TObjectList<TSangriaSuprimento>.Create();
   try
     try
@@ -98,7 +105,8 @@ begin
         + 'order by HORA';
 
       qry.ParamByName('DATA').AsDate := aData;
-      qry.open;
+      TLog.d(qry);
+      qry.Open;
 
       while not qry.Eof do
       begin
@@ -115,16 +123,51 @@ begin
   except
     on E: Exception do
     begin
-      raise TDaoException.Create('Falha Listar SANGRIASUPRIMENTO: ' + E.Message);
+      TLog.d(E.message);
+      raise TDaoException.Create('Falha Listar SANGRIASUPRIMENTO: ' + E.message);
     end;
   end;
 
 end;
 
 class function TDaoSangriaSuprimento.New(
-  Connection: TFDConnection): IDAOTSangriaSuprimento;
+  Connection: TFDConnection; aKeepConection: Boolean): IDAOTSangriaSuprimento;
 begin
-  Result := TDaoSangriaSuprimento.Create(Connection);
+  Result := TDaoSangriaSuprimento.Create(Connection, aKeepConection);
+end;
+
+function TDaoSangriaSuprimento.TotalSangriaSuprimento(aTipo: Integer; dataInicio, dataFim: TDateTime): Currency;
+var
+  qry: TFDQuery;
+begin
+  try
+    try
+      qry := Self.Query();
+      qry.SQL.Text := ''
+        + 'SELECT  Sum(valor) AS Total '
+        + 'FROM   SANGRIASUPRIMENTO '
+        + 'WHERE DATAALTERACAO >= :dataInicio '
+        + '      and DATAALTERACAO <= :dataFim'
+        + '      and tipo = :tipo';
+
+      qry.ParamByName('tipo').AsInteger := aTipo;
+      qry.ParamByName('dataInicio').AsDateTime := dataInicio;
+      qry.ParamByName('dataFim').AsDateTime := dataFim;
+      TLog.d(qry);
+      qry.Open();
+
+      Result := qry.FieldByName('total').AsCurrency;
+    finally
+      FreeAndNil(qry);
+    end;
+  except
+    on E: Exception do
+    begin
+      TLog.d(E.message);
+      raise TDaoException.Create('Falha ao calcular Total caixa: ' + E.message);
+    end;
+  end;
+
 end;
 
 procedure TDaoSangriaSuprimento.Valida(aObj: TSangriaSuprimento);

@@ -5,10 +5,11 @@ interface
 uses
   system.SysUtils, Vcl.ExtCtrls,
   Dominio.Entidades.TEntity,
-  Sistema.TFormaPesquisa,
+
   Impressao.Parametros.Impressora.Termica,
   Dominio.Mapeamento.Atributos,
-  Dominio.Mapeamento.Tipos, Impressao.Parametros.Impressora.Tinta;
+  Dominio.Mapeamento.Tipos, Impressao.Parametros.Impressora.Tinta,
+  Sistema.Parametros.PontoVenda;
 
 type
 
@@ -28,6 +29,15 @@ type
     FLOGOMARCAETIQUETA: TImage;
     FImpressoraTinta: TParametrosImpressoraTinta;
     FDIRETORIORELATORIOS: string;
+    FNUMCAIXA: string;
+    FSERVIDORSENHA: string;
+    FSERVIDORDATABASE: string;
+    FSERVIDORUSUARIO: string;
+
+    FDATAALTERACAO: TDateTime;
+    FPontoVenda: TPontoVenda;
+    FEXIBIROBSERVACAO: Boolean;
+    FPORCENTAGEMMAXIMADESCONTO: Currency;
 
     function getVENDECLIENTEBLOQUEADO: Boolean;
     procedure setVENDECLIENTEBLOQUEADO(const Value: Boolean);
@@ -48,9 +58,22 @@ type
     procedure SetImpressoraTinta(const Value: TParametrosImpressoraTinta);
     procedure SetDIRETORIORELATORIOS(const Value: string);
     function GETDIRETORIORELATORIOS: string;
+    procedure SetNUMCAIXA(const Value: string);
+    procedure SetSERVIDORDATABASE(const Value: string);
+    procedure SetSERVIDORSENHA(const Value: string);
+    procedure SetSERVIDORUSUARIO(const Value: string);
+
+    function GetSERVIDORSENHAProxy: string;
+    procedure SetSERVIDORSENHAProxy(const Value: string);
+    procedure SetDATAALTERACAO(const Value: TDateTime);
+    procedure SetPontoVenda(const Value: TPontoVenda);
+    function getPontoVenda: TPontoVenda;
+    procedure SetEXIBIROBSERVACAO(const Value: Boolean);
+    function GetPORCENTAGEMMAXIMADESCONTO: Currency;
+    procedure SetPORCENTAGEMMAXIMADESCONTO(const Value: Currency);
 
   public
-    destructor Destroy; override;
+
     [campo('VENDECLIENTEBLOQUEADO', tpINTEGER)]
     property VENDECLIENTEBLOQUEADO: Boolean read getVENDECLIENTEBLOQUEADO write setVENDECLIENTEBLOQUEADO;
 
@@ -78,20 +101,43 @@ type
     [campo('INFORMARPARCEIRONAVENDA', tpINTEGER, 0, 0, True, '1')]
     property INFORMARPARCEIRONAVENDA: Boolean read FINFORMARPARCEIRONAVENDA write SetINFORMARPARCEIRONAVENDA;
 
+    [campo('EXIBIROBSERVACAO', tpINTEGER, 0, 0, True, '1')]
+    property EXIBIROBSERVACAO: Boolean read FEXIBIROBSERVACAO write SetEXIBIROBSERVACAO;
+
     [campo('LOGOMARCAETIQUETA', tpBLOB, 0, 9048)]
     property LOGOMARCAETIQUETA: TImage read FLOGOMARCAETIQUETA write FLOGOMARCAETIQUETA;
 
     [campo('DIRETORIORELATORIOS', tpVARCHAR, 2000)]
     property DIRETORIORELATORIOS: string read GETDIRETORIORELATORIOS;
 
+    [campo('SERVIDORDATABASE', tpVARCHAR, 300)]
+    property SERVIDORDATABASE: string read FSERVIDORDATABASE write SetSERVIDORDATABASE;
+
+    [campo('SERVIDORUSUARIO', tpVARCHAR, 60)]
+    property SERVIDORUSUARIO: string read FSERVIDORUSUARIO write SetSERVIDORUSUARIO;
+
+    [campo('SERVIDORSENHA', tpVARCHAR, 60)]
+    property SERVIDORSENHA: string read FSERVIDORSENHA write SetSERVIDORSENHA;
+    [IGNORE(True)]
+    property SERVIDORSENHAProxy: string read GetSERVIDORSENHAProxy write SetSERVIDORSENHAProxy;
+
+    [campo('DATAALTERACAO', tpTIMESTAMP)]
+    property DATAALTERACAO: TDateTime read FDATAALTERACAO write SetDATAALTERACAO;
+
+    [campo('PORCENTAGEMMAXIMADESCONTO', tpNUMERIC, 15, 4, True, '10')]
+    property PORCENTAGEMMAXIMADESCONTO: Currency read GetPORCENTAGEMMAXIMADESCONTO write SetPORCENTAGEMMAXIMADESCONTO;
+
+    property PontoVenda: TPontoVenda read getPontoVenda write SetPontoVenda;
+
     constructor create; override;
+    destructor Destroy; override;
 
   end;
 
 implementation
 
 uses
-  Util.Funcoes;
+  Util.Funcoes, Util.TCript, Sistema.Constantes;
 
 { TParametros }
 
@@ -100,8 +146,10 @@ begin
   inherited;
   Self.PESQUISAPRODUTOPOR := 0;
   Self.VALIDADEORCAMENTO := 15;
+  self.PORCENTAGEMMAXIMADESCONTO := 10;
   Self.ImpressoraTermica := TParametrosImpressoraTermica.create;
   Self.ImpressoraTinta := TParametrosImpressoraTinta.create;
+  Self.PontoVenda := TPontoVenda.create;
 end;
 
 destructor TParametros.Destroy;
@@ -111,6 +159,9 @@ begin
 
   if Assigned(FImpressoraTinta) then
     FreeAndNil(FImpressoraTinta);
+
+  if Assigned(FPontoVenda) then
+    FreeAndNil(FPontoVenda);
   inherited;
 end;
 
@@ -142,6 +193,21 @@ end;
 function TParametros.getPESQUISAPRODUTOPOR: Integer;
 begin
   result := FPESQUISAPRODUTOPOR;
+end;
+
+function TParametros.getPontoVenda: TPontoVenda;
+begin
+  result := FPontoVenda
+end;
+
+function TParametros.GetPORCENTAGEMMAXIMADESCONTO: Currency;
+begin
+  result := FPORCENTAGEMMAXIMADESCONTO;
+end;
+
+function TParametros.GetSERVIDORSENHAProxy: string;
+begin
+  result := TCript.StringDescripty(CHAVE, FSERVIDORSENHA);
 end;
 
 function TParametros.getVENDECLIENTEBLOQUEADO: Boolean;
@@ -182,12 +248,26 @@ begin
   end;
 end;
 
+procedure TParametros.SetDATAALTERACAO(const Value: TDateTime);
+begin
+  FDATAALTERACAO := Value;
+end;
+
 procedure TParametros.SetDIRETORIORELATORIOS(const Value: string);
 begin
   if Value <> FDIRETORIORELATORIOS then
   begin
     FDIRETORIORELATORIOS := Value;
     Notify('DIRETORIORELATORIOS');
+  end;
+end;
+
+procedure TParametros.SetEXIBIROBSERVACAO(const Value: Boolean);
+begin
+  if Value <> FEXIBIROBSERVACAO then
+  begin
+    FEXIBIROBSERVACAO := Value;
+    Notify('EXIBIROBSERVACAO');
   end;
 end;
 
@@ -215,6 +295,11 @@ begin
   end;
 end;
 
+procedure TParametros.SetNUMCAIXA(const Value: string);
+begin
+  FNUMCAIXA := Value;
+end;
+
 procedure TParametros.SetPESQUISAPRODUTOPOR(const Value: Integer);
 begin
   if Value <> FPESQUISAPRODUTOPOR then
@@ -222,6 +307,57 @@ begin
     FPESQUISAPRODUTOPOR := Value;
     Notify('PESQUISAPRODUTOPOR');
   end;
+end;
+
+procedure TParametros.SetPontoVenda(const Value: TPontoVenda);
+begin
+  if FPontoVenda <> nil then
+    FreeAndNil(FPontoVenda);
+
+  FPontoVenda := Value;
+end;
+
+procedure TParametros.SetPORCENTAGEMMAXIMADESCONTO(const Value: Currency);
+begin
+  if Value <> FPORCENTAGEMMAXIMADESCONTO then
+  begin
+    FPORCENTAGEMMAXIMADESCONTO := Value;
+    Notify('PORCENTAGEMMAXIMADESCONTO');
+  end;
+end;
+
+procedure TParametros.SetSERVIDORDATABASE(const Value: string);
+begin
+  if Value <> FSERVIDORDATABASE then
+  begin
+    FSERVIDORDATABASE := Value;
+    Notify('SERVIDORDATABASE');
+  end;
+end;
+
+procedure TParametros.SetSERVIDORSENHA(const Value: string);
+begin
+
+  if Value <> FSERVIDORSENHA then
+  begin
+    FSERVIDORSENHA := Value;
+    Notify('SERVIDORSENHA');
+  end;
+end;
+
+procedure TParametros.SetSERVIDORSENHAProxy(const Value: string);
+begin
+  FSERVIDORSENHA := TCript.StringEncripty(CHAVE, Value);
+end;
+
+procedure TParametros.SetSERVIDORUSUARIO(const Value: string);
+begin
+  if Value <> FSERVIDORUSUARIO then
+  begin
+    FSERVIDORUSUARIO := Value;
+    Notify('SERVIDORUSUARIO');
+  end;
+
 end;
 
 procedure TParametros.SetVALIDADEORCAMENTO(const Value: Integer);

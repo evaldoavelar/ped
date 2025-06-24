@@ -2,7 +2,7 @@ unit Dao.IDAOTSangriaSuprimento;
 
 interface
 
-uses  System.Generics.Collections, Dominio.Entidades.TSangriaSuprimento;
+uses System.Generics.Collections, Dominio.Entidades.TSangriaSuprimento;
 
 type
 
@@ -12,6 +12,7 @@ type
     procedure Inclui(aObj: TSangriaSuprimento);
     procedure Valida(aObj: TSangriaSuprimento);
     function ListaObject(aData: TDate): TObjectList<TSangriaSuprimento>;
+    function TotalSangriaSuprimento(aTipo: integer; dataInicio, dataFim: TDateTime): Currency;
   end;
 
 implementation

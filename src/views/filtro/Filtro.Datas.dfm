@@ -4,9 +4,8 @@ inherited frmFiltroDatas: TfrmFiltroDatas
   ClientHeight = 166
   ClientWidth = 372
   OnShow = FormShow
-  ExplicitWidth = 378
-  ExplicitHeight = 194
-  PixelsPerInch = 96
+  ExplicitWidth = 388
+  ExplicitHeight = 205
   TextHeight = 13
   object pnl1: TPanel
     Left = 0

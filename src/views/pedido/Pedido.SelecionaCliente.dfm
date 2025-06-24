@@ -4,7 +4,6 @@ inherited FrmInfoCliente: TFrmInfoCliente
   ClientHeight = 519
   ClientWidth = 871
   OnClose = FormClose
-  OnCreate = FormCreate
   OnShow = FormShow
   ExplicitWidth = 877
   ExplicitHeight = 548

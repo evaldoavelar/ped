@@ -2,8 +2,6 @@ inherited FrmEtiquetasModelo4x2: TFrmEtiquetasModelo4x2
   Caption = 'Etiquetas Modelo 4x2'
   ClientHeight = 389
   ClientWidth = 499
-  OnCreate = FormCreate
-  OnDestroy = FormDestroy
   ExplicitWidth = 515
   ExplicitHeight = 428
   PixelsPerInch = 96

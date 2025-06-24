@@ -3,9 +3,8 @@ inherited frmFiltroCliente: TfrmFiltroCliente
   Caption = 'Cliente'
   ClientHeight = 161
   ClientWidth = 385
-  OnDestroy = FormDestroy
   ExplicitWidth = 391
-  ExplicitHeight = 189
+  ExplicitHeight = 190
   PixelsPerInch = 96
   TextHeight = 13
   object pnl2: TPanel

@@ -26,7 +26,7 @@ unit DCPcrypt2;
 
 interface
 uses
-  Classes, Sysutils, DCPconst, DCPbase64;
+  Classes, Sysutils, DCPbase64;
 
 //{$DEFINE DCP1COMPAT}  { DCPcrypt v1.31 compatiblity mode - see documentation }
 

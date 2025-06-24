@@ -8,9 +8,10 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, untFrmBase, Data.Bind.Controls,
   Data.Bind.GenData, Data.Bind.EngExt, Vcl.Bind.DBEngExt, System.Rtti,
   System.Bindings.Outputs, Vcl.Bind.Editors, Data.Bind.Components,
-  System.ImageList, Vcl.ImgList, Data.Bind.ObjectScope, Vcl.Buttons,
+  Data.Bind.ObjectScope, Vcl.Buttons,
   Vcl.Bind.Navigator, Vcl.Imaging.pngimage, Vcl.ExtCtrls, Vcl.Mask,
-  Vcl.StdCtrls, Vcl.AutoComplete, Vcl.ComCtrls, System.Generics.Collections, Dominio.Entidades.TProduto;
+  Vcl.StdCtrls, Vcl.AutoComplete, Vcl.ComCtrls, System.Generics.Collections, Dominio.Entidades.TProduto,
+  System.ImageList, Vcl.ImgList;
 
 type
   TViewEstoqueMovimentacoes = class(TfrmBase)
@@ -80,7 +81,7 @@ var
 implementation
 
 uses
-  Dominio.Entidades.TFactory, Dao.IDaoEstoqueProduto, Dao.IDaoFiltroEstoque, Util.Thread;
+  Dao.IDaoEstoqueProduto, Dao.IDaoFiltroEstoque, Util.Thread, Sistema.TLog;
 
 {$R *.dfm}
 
@@ -90,6 +91,7 @@ var
   totalEntradas: double;
   totalSaidas: double;
 begin
+  TLog.d('>>> Entrando em  TViewEstoqueMovimentacoes.CalculaTotais ');
   totalEntradas := 0;
   totalSaidas := 0;
   for var Estoque in aLista do
@@ -103,6 +105,10 @@ begin
   lblTotalEntradas.Caption := Format('QUANTIDADE DE PRODUTOS QUE ENTROU: %f', [totalEntradas]);
   lblTotalSaidas.Caption := Format('QUANTIDADE DE PRODUTOS QUE SAIU: %f', [totalSaidas]);
 
+  TLog.d(lblTotalEntradas.Caption);
+  TLog.d(lblTotalSaidas.Caption);
+
+  TLog.d('<<< Saindo de TViewEstoqueMovimentacoes.CalculaTotais ');
 end;
 
 procedure TViewEstoqueMovimentacoes.edtPesquisaProdutoClick(Sender: TObject);
@@ -127,7 +133,7 @@ begin
       and (Key <> VK_RETURN) then
     begin
       OutputDebugString(PWideChar(edtPesquisaProduto.Text));
-      itens := TFactory.DaoProduto.GetProdutosPorDescricaoParcial(edtPesquisaProduto.Text);
+      itens := FFactory.DaoProduto.GetProdutosPorDescricaoParcial(edtPesquisaProduto.Text);
       itens.OwnsObjects := FALSE;
       for Item in itens do
       begin
@@ -147,25 +153,30 @@ end;
 
 procedure TViewEstoqueMovimentacoes.FormCreate(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TViewEstoqueMovimentacoes.FormCreate ');
   inherited;
   FCachePesquisaProduto := TStringList.Create;
+  TLog.d('<<< Saindo de TViewEstoqueMovimentacoes.FormCreate ');
 end;
 
 procedure TViewEstoqueMovimentacoes.FormDestroy(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TViewEstoqueMovimentacoes.FormDestroy ');
   inherited;
   LiberaTListDoAdapter<TEstoqueProduto>(adpBASE.Adapter);
   LiberaProdutosedtPesquisaProduto;
+  TLog.d('<<< Saindo de TViewEstoqueMovimentacoes.FormDestroy ');
 end;
 
 procedure TViewEstoqueMovimentacoes.FormResize(Sender: TObject);
 begin
   inherited;
- //utoSizeCol(lvPesquisa);
+  // utoSizeCol(lvPesquisa);
 end;
 
 procedure TViewEstoqueMovimentacoes.FormShow(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TViewEstoqueMovimentacoes.FormShow ');
   inherited;
   edtDataInicnio.Text := FormatDateTime('dd/mm/yyyy', now);
   edtDataFinal.Text := FormatDateTime('dd/mm/yyyy', now);
@@ -177,14 +188,17 @@ begin
   except
   end;
   FiltrarPorPamatros;
+  TLog.d('<<< Saindo de TViewEstoqueMovimentacoes.FormShow ');
 end;
 
 procedure TViewEstoqueMovimentacoes.LiberaProdutosedtPesquisaProduto;
 var
   i: Integer;
 begin
+  TLog.d('>>> Entrando em  TViewEstoqueMovimentacoes.LiberaProdutosedtPesquisaProduto ');
   edtPesquisaProduto.Clear;
   FCachePesquisaProduto.Clear;
+  TLog.d('<<< Saindo de TViewEstoqueMovimentacoes.LiberaProdutosedtPesquisaProduto ');
 end;
 
 procedure TViewEstoqueMovimentacoes.lvPesquisaCustomDrawItem(
@@ -237,6 +251,7 @@ procedure TViewEstoqueMovimentacoes.FiltrarPorPamatros;
 var
   Filtro: IDaoEstoqueFiltro;
 begin
+  TLog.d('>>> Entrando em  TViewEstoqueMovimentacoes.FiltrarPorPamatros ');
   TThreadUtil.Executar(
     // Exception
     procedure(e: Exception)
@@ -250,7 +265,7 @@ begin
       // liberar a lista de produtos da pesquisa anterior
       LiberaTListDoAdapter<TEstoqueProduto>(adpBASE.Adapter);
 
-      Filtro := TFactory.DaoFiltroEstoque;
+      Filtro := FFactory.DaoFiltroEstoque;
 
       Filtro
         .setDataIncio(StrToDateTimeDef(edtDataInicnio.Text, 0))
@@ -272,7 +287,7 @@ begin
 
       // criar um novo adapter a partir da lista de produtos retornada
       var
-      estoques := TFactory
+      estoques := fFactory
         .DaoEstoqueProduto
         .ListaObject(Filtro);
 
@@ -296,7 +311,7 @@ begin
 
     end
     );
-
+  TLog.d('<<< Saindo de TViewEstoqueMovimentacoes.FiltrarPorPamatros ');
 end;
 
 initialization

@@ -1,6 +1,5 @@
 inherited frmFiltroVendasParceiro: TfrmFiltroVendasParceiro
   Caption = 'Filtro Vendas Parceiro'
-  ExplicitTop = -182
   PixelsPerInch = 96
   TextHeight = 13
   inherited splEsquerda: TSplitter

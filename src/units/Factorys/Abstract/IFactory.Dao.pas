@@ -1,0 +1,54 @@
+unit IFactory.Dao;
+
+interface
+
+uses
+  Dao.IDaoEmitente, Dao.IDaoFornecedor, Dao.IDaoFormaPagto,
+  Dao.IDaoParceiro.FormaPagto, Dao.IDaoParceiroVenda,
+  Dao.IDaoParametrosBancoDeDados, Dao.IDaoEstoqueProduto,
+  Dao.IDoParceiroVenda.Pagamentos, Dao.IDaoParceiro, Dao.IDAOPedidoPeriodo,
+  Dao.IDaoProdutos, Dao.IDAOCliente, Dao.IDaoParcelas, Dao.IDaoPedido,
+  Dao.IDaoOrcamento, Dao.IDaoVendedor, Dao.IDaoParametros,
+  Dao.IDAOPedidoPagamento, Dao.IDAOTSangriaSuprimento, Dao.IDaoFiltroEstoque,
+  Dominio.Entidades.TEmitente, FireDAC.Comp.Client, Dao.IDAOParcelaPagamento,
+  Sistema.TBancoDeDados, Dao.IDaoImportacao, Dao.IDAOControleCaixa;
+
+type
+
+  IFactoryDao = interface
+    function DaoEmitente(): IDaoEmitente;
+    function DaoCliente(): IDAOCliente;
+    function DaoFornecedor(): IDaoFornecedor;
+    function DaoProduto(): IDaoProdutos;
+    function DaoOrcamento(): IDaoOrcamento;
+    function DaoFormaPagto(): IDaoFormaPagto;
+    function DaoPedido(): IDaoPedido;
+    function DaoParcelas(): IDaoParcelas;
+    function DaoVendedor(): IDaoVendedor;
+    function DaoParametros(): IDaoParametros;
+    function DaoPedidoPeriodo(): IDAOPedidoPeriodo;
+    function DaoParceiro(): IDaoParceiro;
+    function DaoParceiroFormaPagto(): IDaoParceiroFormaPagto;
+    function DaoParceiroVendaPagto(): IDaoParceiroVendaPagto;
+    function DaoParceiroVenda(): IDaoParceiroVenda;
+    function DAOPedidoPagamento(): IDAOPedidoPagamento;
+    function DAOTSangriaSuprimento(): IDAOTSangriaSuprimento;
+    function DaoEstoqueProduto(): IDaoEstoqueProduto;
+    function DaoFiltroEstoque(): IDaoEstoqueFiltro;
+    function DaoParametrosBancoDeDados: IDaoParametrosBancoDeDados;
+    function DaoImportacao: IDaoImportacao;
+    function DAOParcelaPagamento: IDAOParcelaPagamento;
+    function DAOControleCaixa: IDAOControleCaixa;
+
+    function getDadosEmitente: TEmitente;
+    property DadosEmitente: TEmitente read getDadosEmitente;
+
+    function Query(): TFDQuery;
+    function Conexao(aBancoDeDados: TParametrosBancoDeDados = nil; aAutoReconnect: Boolean = true): TFDConnection;
+    procedure Close();
+
+  end;
+
+implementation
+
+end.

@@ -6,8 +6,9 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Consulta.Base, Data.DB,
   System.Actions, Vcl.ActnList, Vcl.Grids, Vcl.DBGrids, JvExDBGrids, JvDBGrid,
-  JvDBUltimGrid, Vcl.StdCtrls, Vcl.Buttons, JvExControls, JvNavigationPane,
-  Dao.IDaoCliente, Dominio.Entidades.TCliente, Vcl.Imaging.jpeg, Vcl.ExtCtrls;
+  JvDBUltimGrid, Vcl.Buttons, JvExControls, JvNavigationPane,
+  Dao.IDaoCliente, Dominio.Entidades.TCliente, Vcl.Imaging.jpeg, Vcl.ExtCtrls,
+  Vcl.StdCtrls;
 
 type
   TfrmConsultaCliente = class(TfrmConsultaBase)
@@ -35,13 +36,15 @@ implementation
 {$R *.dfm}
 
 
-uses Dominio.Entidades.TFactory;
+uses Factory.Dao, Sistema.TLog;
 
 procedure TfrmConsultaCliente.actVoltaExecute(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TfrmConsultaCliente.actVoltaExecute ');
   if Assigned(FCliente) then
     FreeAndNil(FCliente);
   inherited;
+  TLog.d('<<< Saindo de TfrmConsultaCliente.actVoltaExecute ');
 end;
 
 procedure TfrmConsultaCliente.dbGridResultadoDrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
@@ -59,24 +62,32 @@ end;
 
 procedure TfrmConsultaCliente.FormCreate(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TfrmConsultaCliente.FormCreate ');
   inherited;
-  daoCliente := TFactory.daoCliente;
+  daoCliente := TFactory
+    .new
+    .daoCliente;
+
   cbbPesquisa.ItemIndex := 1;
+  TLog.d('<<< Saindo de TfrmConsultaCliente.FormCreate ');
 end;
 
 procedure TfrmConsultaCliente.FormDestroy(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TfrmConsultaCliente.FormDestroy ');
   if Assigned(FCliente) then
     FreeAndNil(FCliente);
 
-  dbGridResultado.DataSource.DataSet.Free;
+ // dbGridResultado.DataSource.DataSet.Free;
   inherited;
+  TLog.d('<<< Saindo de TfrmConsultaCliente.FormDestroy ');
 end;
 
 procedure TfrmConsultaCliente.Pesquisar;
 var
   campo: string;
 begin
+  TLog.d('>>> Entrando em  TfrmConsultaCliente.Pesquisar ');
   inherited;
   case cbbPesquisa.ItemIndex of
     0:
@@ -92,12 +103,14 @@ begin
   dbGridResultado.DataSource.DataSet := daoCliente.Listar(campo, edtValor.Text + '%');
 
   FCliente := nil;
+  TLog.d('<<< Saindo de TfrmConsultaCliente.Pesquisar ');
 end;
 
 procedure TfrmConsultaCliente.Selecionar;
 begin
+  TLog.d('>>> Entrando em  TfrmConsultaCliente.Selecionar ');
 
- if (dbGridResultado.DataSource.DataSet = nil) or  dbGridResultado.DataSource.DataSet.IsEmpty then
+  if (dbGridResultado.DataSource.DataSet = nil) or dbGridResultado.DataSource.DataSet.IsEmpty then
     raise Exception.Create('Nenhum dado para selecionar');
 
   if Assigned(FCliente) then
@@ -106,6 +119,7 @@ begin
   FCliente := daoCliente.GeTCliente(dbGridResultado.DataSource.DataSet.FieldByName('CODIGO').AsString);
 
   inherited;
+  TLog.d('<<< Saindo de TfrmConsultaCliente.Selecionar ');
 end;
 
 end.

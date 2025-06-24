@@ -55,8 +55,8 @@ type
     FSequenceType: TSequenceType;
     FName: string;
   public
-    constructor Create(AName , AColumns, ADescription: string); overload;
-    constructor Create(AName:string;  AColumns: string; ASequenceType: TSequenceType = NotInc; ASortingOrder: TSortingOrder = NoSort; AUnique: Boolean = False;
+    constructor Create(AName, AColumns, ADescription: string); overload;
+    constructor Create(AName: string; AColumns: string; ASequenceType: TSequenceType = NotInc; ASortingOrder: TSortingOrder = NoSort; AUnique: Boolean = False;
       ADescription: string = ''); overload;
     function CatColumns: string;
 
@@ -74,10 +74,10 @@ type
     FReferenceFieldName: string;
     FRuleUpdate: TRuleAction;
     FRuleDelete: TRuleAction;
-    FName : string;
+    FName: string;
     FColumns: string;
   public
-    constructor Create(AName: string; AColumns:string;  AReferenceTableName: string; AReferenceFieldName: string; ARuleDelete, ARuleUpdate: TRuleAction; ADescription: string = '');
+    constructor Create(AName: string; AColumns: string; AReferenceTableName: string; AReferenceFieldName: string; ARuleDelete, ARuleUpdate: TRuleAction; ADescription: string = '');
 
     property Name: string read FName write FName;
     property Columns: string read FColumns write FColumns;
@@ -87,6 +87,26 @@ type
     property RuleUpdate: TRuleAction read FRuleUpdate;
 
   end;
+
+  AutoIncAttribute = class(TCustomAttribute)
+  private
+    FTabelaIncremento: string;
+    procedure SetTabelaIncremento(const Value: string);
+  published
+    property TabelaIncremento: string read FTabelaIncremento write SetTabelaIncremento;
+    constructor Create(ATabelaIncremento: string);
+  end;
+
+  IGNOREAttribute = class(TCustomAttribute)
+  private
+    FIgnore: Boolean;
+    procedure SetIgnore(const Value: Boolean);
+  published
+    property Ignore: Boolean read FIgnore write SetIgnore;
+    constructor Create(AIgnore: Boolean);
+  end;
+
+  IgnoreNoInsertAttribute = class(TCustomAttribute);
 
 implementation
 
@@ -107,9 +127,9 @@ end;
 
 { PrimaryKey }
 
-constructor PrimaryKeyAttribute.Create(AName ,AColumns, ADescription: string);
+constructor PrimaryKeyAttribute.Create(AName, AColumns, ADescription: string);
 begin
-  Create(AName ,AColumns, NotInc, NoSort, False, ADescription);
+  Create(AName, AColumns, NotInc, NoSort, False, ADescription);
 end;
 
 function PrimaryKeyAttribute.CatColumns: string;
@@ -125,7 +145,7 @@ begin
   end;
 end;
 
-constructor PrimaryKeyAttribute.Create(AName :string; AColumns: string; ASequenceType: TSequenceType;
+constructor PrimaryKeyAttribute.Create(AName: string; AColumns: string; ASequenceType: TSequenceType;
   ASortingOrder: TSortingOrder; AUnique: Boolean; ADescription: string);
 var
   rColumns: TStrArray;
@@ -172,6 +192,30 @@ end;
 constructor TabelaAttribute.Create(ATabela: string);
 begin
   Self.FTabela := ATabela;
+end;
+
+{ AutoIncAttribute }
+
+constructor AutoIncAttribute.Create(ATabelaIncremento: string);
+begin
+  Self.FTabelaIncremento := ATabelaIncremento;
+end;
+
+procedure AutoIncAttribute.SetTabelaIncremento(const Value: string);
+begin
+  Self.FTabelaIncremento := Value;
+end;
+
+{ IGNOREAttribute }
+
+constructor IGNOREAttribute.Create(AIgnore: Boolean);
+begin
+  Self.FIgnore := AIgnore;
+end;
+
+procedure IGNOREAttribute.SetIgnore(const Value: Boolean);
+begin
+  Self.FIgnore := Value;
 end;
 
 end.

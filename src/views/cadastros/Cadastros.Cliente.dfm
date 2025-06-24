@@ -6,18 +6,12 @@ inherited frmCadastroCliente: TfrmCadastroCliente
   PixelsPerInch = 96
   TextHeight = 13
   inherited pnlContainer: TPanel
-    Top = 83
     Width = 678
-    Height = 397
-    ExplicitTop = 83
     ExplicitWidth = 678
-    ExplicitHeight = 397
     inherited pgcPrincipal: TPageControl
       Width = 672
-      Height = 391
       ActivePage = ts1
       ExplicitWidth = 672
-      ExplicitHeight = 391
       object ts1: TTabSheet
         Caption = 'Dados'
         object lbl3: TLabel
@@ -790,24 +784,14 @@ inherited frmCadastroCliente: TfrmCadastroCliente
   end
   inherited pnlTop: TPanel
     Width = 678
-    Height = 83
     ExplicitWidth = 678
-    ExplicitHeight = 83
-    inherited Label1: TLabel
-      Left = 13
-      ExplicitLeft = 13
-    end
-    inherited lblCliente: TLabel
-      Top = 44
-      ExplicitTop = 44
-    end
-    inherited edtPesquisa: TSearchBox
-      Top = 19
-      ExplicitTop = 19
+    inherited Image1: TImage
+      Height = 73
+      ExplicitHeight = 73
     end
     inherited btnPesquisar: TBitBtn
-      Top = 17
-      ExplicitTop = 17
+      Left = 559
+      ExplicitLeft = 559
     end
   end
 end

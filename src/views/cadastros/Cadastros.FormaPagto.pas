@@ -6,10 +6,11 @@ uses
   System.Bindings.Helper,
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Dominio.Entidades.CondicaoPagto,
-  Vcl.StdCtrls, Vcl.ComCtrls, Dominio.Entidades.TFormaPagto.Tipo,
+  Vcl.StdCtrls, Vcl.ComCtrls, Dominio.Entidades.TFormaPagto.Tipo, Dominio.Entidades.TEntity, System.Generics.Collections,
   Dao.IDaoFormaPagto, Dominio.Entidades.TFormaPagto, JvExMask, JvToolEdit, JvBaseEdits, JvComponentBase, JvEnterTab,
-  Vcl.Mask, System.Actions, Vcl.ActnList, Vcl.WinXCtrls, Vcl.Buttons, Helper.Currency,
-  Vcl.ExtCtrls, Cadastros.Base, Vcl.Imaging.jpeg, Vcl.Imaging.pngimage;
+  System.Actions, Vcl.ActnList, Vcl.Buttons, Helper.Currency,
+  Vcl.ExtCtrls, Cadastros.Base, Vcl.Imaging.jpeg, Vcl.Imaging.pngimage,
+  Vcl.AutoComplete;
 
 type
   TfrmCadastroFormaPagto = class(TfrmCadastroBase)
@@ -71,7 +72,9 @@ type
     procedure Cancelar; override;
     procedure Bind(); override;
     procedure Novo(); override;
-    procedure getEntity; override;
+    procedure getEntity(aEntity: TObject); override;
+    function MontaDescricaoPesquisa(aItem: TEntity): string; override;
+    function PesquisaPorDescricaoParcial(aValor: string): TObjectList<TEntity>; override;
     procedure AtualizarEntity(); override;
     procedure IncluirEntity(); override;
   end;
@@ -84,7 +87,8 @@ implementation
 {$R *.dfm}
 
 
-uses Dominio.Entidades.TFactory, Consulta.FormaPagto, Utils.Rtti, Pedido.Venda.Part.CondicaoPagamento;
+uses Consulta.FormaPagto, Utils.Rtti, Pedido.Venda.Part.CondicaoPagamento,
+  Sistema.TLog, Factory.Entidades;
 
 { TfrmCadastroFormaPagto }
 
@@ -115,8 +119,9 @@ end;
 procedure TfrmCadastroFormaPagto.AtualizarEntity;
 begin
   inherited;
+  FFormaPagto.DATAALTERACAO := now;
   DaoFormaPagto.AtualizaFormaPagtos(FFormaPagto);
-  edtPesquisa.Text := FFormaPagto.ID.ToString;
+  edtPesquisa.Text := FFormaPagto.DESCRICAO;
 end;
 
 procedure TfrmCadastroFormaPagto.Bind;
@@ -128,7 +133,7 @@ begin
   FFormaPagto.Bind('ID', edtCodigo, 'Text');
   FFormaPagto.Bind('DESCRICAO', edtDescricao, 'Text');
   FFormaPagto.Bind('ATIVO', chkATIVO, 'Checked');
-  FFormaPagto.BindReadOnly('DESCRICAO', lblCliente, 'Caption');
+  // FFormaPagto.BindReadOnly('DESCRICAO', lblCliente, 'Caption');
   cbbTipo.ItemIndex := cbbTipo.Items.IndexOf(FFormaPagto.TipoPagamento.ToString);
 
   LimpaScrollBox(scrlbxMeiosPagamentos);
@@ -177,6 +182,14 @@ begin
   Begin
     aScroll.Controls[i].Free;
   End;
+end;
+
+function TfrmCadastroFormaPagto.MontaDescricaoPesquisa(aItem: TEntity): string;
+var
+  LItem: TFormaPagto;
+begin
+  LItem := aItem as TFormaPagto;
+  result := LItem.DESCRICAO;
 end;
 
 procedure TfrmCadastroFormaPagto.BindCondicaoPagamento(aCondicao: TCONDICAODEPAGTO);
@@ -279,6 +292,7 @@ end;
 
 procedure TfrmCadastroFormaPagto.FormDestroy(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TfrmCadastroFormaPagto.FormDestroy ');
   DaoFormaPagto := nil;
   if Assigned(FFormaPagto) then
   begin
@@ -286,20 +300,40 @@ begin
     FFormaPagto := nil;
   end;
   inherited;
+  TLog.d('<<< Saindo de TfrmCadastroFormaPagto.FormDestroy ');
 end;
 
 procedure TfrmCadastroFormaPagto.FormShow(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TfrmCadastroFormaPagto.FormShow ');
   inherited;
-  DaoFormaPagto := TFactory.DaoFormaPagto;
+  DaoFormaPagto := fFactory.DaoFormaPagto;
   cbbTipo.Clear;
   TRttiUtil.EnumToValues<TTipoPagto>(cbbTipo.Items);
+  TLog.d('<<< Saindo de TfrmCadastroFormaPagto.FormShow ');
 end;
 
 procedure TfrmCadastroFormaPagto.getEntity;
+var
+  LItem: TFormaPagto;
 begin
+  TLog.d('>>> Entrando em  TfrmCadastroFormaPagto.getEntity ');
   try
-    FFormaPagto := DaoFormaPagto.GeTFormaPagto(StrToIntDef(edtPesquisa.Text, 0));
+    // edição
+    if (aEntity = nil) and (FFormaPagto <> nil) then
+    begin
+      FFormaPagto := DaoFormaPagto.GeTFormaPagto(FFormaPagto.ID);
+    end
+    else
+    begin // pesquisa
+      LItem := aEntity as TFormaPagto;
+
+      if Assigned(FFormaPagto) then
+        FreeAndNil(FFormaPagto);
+
+      FFormaPagto := DaoFormaPagto.GeTFormaPagto(LItem.ID);
+    end;
+
     if not Assigned(FFormaPagto) then
       raise Exception.Create('Forma de Pagamento não encontrado');
     Bind();
@@ -307,23 +341,28 @@ begin
   except
     on e: Exception do
     begin
+      TLog.d(e.Message);
       MessageDlg(e.Message, mtError, [mbOK], 0);
       edtPesquisa.SetFocus;
     end;
   end;
-
+  TLog.d('<<< Saindo de TfrmCadastroFormaPagto.getEntity ');
 end;
 
 procedure TfrmCadastroFormaPagto.IncluirEntity;
 begin
+  TLog.d('>>> Entrando em  TfrmCadastroFormaPagto.IncluirEntity ');
   inherited;
   FFormaPagto.ID := DaoFormaPagto.GeraID;
+  FFormaPagto.DATAALTERACAO := now;
   DaoFormaPagto.IncluiPagto(FFormaPagto);
-  edtPesquisa.Text := FFormaPagto.ID.ToString;
+  edtPesquisa.Text := FFormaPagto.DESCRICAO;
+  TLog.d('<<< Saindo de TfrmCadastroFormaPagto.IncluirEntity ');
 end;
 
 procedure TfrmCadastroFormaPagto.Novo;
 begin
+  TLog.d('>>> Entrando em  TfrmCadastroFormaPagto.Novo ');
   try
     inherited;
 
@@ -333,7 +372,7 @@ begin
       FFormaPagto := nil;
     end;
 
-    Self.FFormaPagto := TFactory.FormaPagto;
+    Self.FFormaPagto := TFactoryEntidades.New.FormaPagto;
     Bind;
     try
       edtDescricao.SetFocus;
@@ -343,13 +382,34 @@ begin
 
   except
     on e: Exception do
+    begin
+      TLog.d(e.Message);
       MessageDlg(e.Message, mtError, [mbOK], 0);
+    end;
   end;
+  TLog.d('<<< Saindo de TfrmCadastroFormaPagto.Novo ');
+end;
+
+function TfrmCadastroFormaPagto.PesquisaPorDescricaoParcial(
+  aValor: string): TObjectList<TEntity>;
+var
+  LLista: TObjectList<TFormaPagto>;
+  item: TFormaPagto;
+begin
+  LLista := DaoFormaPagto.Listar(aValor);
+  result := TObjectList<TEntity>.Create();
+
+  for item in LLista do
+    result.Add(item);
+
+  LLista.OwnsObjects := False;
+  LLista.Free;
 
 end;
 
 procedure TfrmCadastroFormaPagto.Pesquisar;
 begin
+  TLog.d('>>> Entrando em  TfrmCadastroFormaPagto.Pesquisar ');
   inherited;
   try
     frmConsultaFormaPagto := TfrmConsultaFormaPagto.Create(Self);
@@ -359,7 +419,7 @@ begin
       if Assigned(frmConsultaFormaPagto.FormaPagto) then
       begin
         Self.FFormaPagto := frmConsultaFormaPagto.FormaPagto;
-        edtPesquisa.Text := IntToStr(Self.FFormaPagto.ID);
+        edtPesquisa.Text := Self.FFormaPagto.DESCRICAO;
         Bind();
         inherited;
       end
@@ -373,8 +433,12 @@ begin
     end;
   except
     on e: Exception do
+    begin
+      TLog.d(e.Message);
       MessageDlg(e.Message, mtError, [mbOK], 0);
+    end;
   end;
+  TLog.d('<<< Saindo de TfrmCadastroFormaPagto.Pesquisar ');
 end;
 
 end.

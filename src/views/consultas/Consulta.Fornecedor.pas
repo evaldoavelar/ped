@@ -6,9 +6,9 @@ uses
 
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Consulta.Base, Data.DB, Vcl.DBGrids, JvExDBGrids, JvDBGrid, JvDBUltimGrid,
-  Vcl.StdCtrls, JvExControls, JvNavigationPane,
+  JvExControls, JvNavigationPane,
   Dao.IDaoFornecedor, Dominio.Entidades.TFornecedor, System.Actions, Vcl.ActnList,
-  Vcl.Grids, Vcl.Buttons, Vcl.Imaging.jpeg, Vcl.ExtCtrls;
+  Vcl.Buttons, Vcl.Imaging.jpeg, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.Grids;
 
 type
   TfrmConsultaFornecedor = class(TfrmConsultaBase)
@@ -33,26 +33,31 @@ implementation
 {$R *.dfm}
 
 
-uses Dominio.Entidades.TFactory;
+uses Sistema.TLog;
 
 procedure TfrmConsultaFornecedor.FormCreate(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TfrmConsultaFornecedor.FormCreate ');
   inherited;
   Fornecedor := nil;
-  DaoFornecedor := TFactory.DaoFornecedor;
+  DaoFornecedor := fFactory.DaoFornecedor;
   cbbPesquisa.ItemIndex := 1;
+  TLog.d('<<< Saindo de TfrmConsultaFornecedor.FormCreate ');
 end;
 
 procedure TfrmConsultaFornecedor.FormDestroy(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TfrmConsultaFornecedor.FormDestroy ');
   inherited;
   dbGridResultado.DataSource.DataSet.Free;
+  TLog.d('<<< Saindo de TfrmConsultaFornecedor.FormDestroy ');
 end;
 
 procedure TfrmConsultaFornecedor.Pesquisar;
 var
   campo: string;
 begin
+  TLog.d('>>> Entrando em  TfrmConsultaFornecedor.Pesquisar ');
   inherited;
   case cbbPesquisa.ItemIndex of
     0:
@@ -67,17 +72,20 @@ begin
   dbGridResultado.DataSource.DataSet := DaoFornecedor.Listar(campo, edtValor.Text + '%');
 
   Fornecedor := nil;
+  TLog.d('<<< Saindo de TfrmConsultaFornecedor.Pesquisar ');
 end;
 
 procedure TfrmConsultaFornecedor.Selecionar;
 begin
+  TLog.d('>>> Entrando em  TfrmConsultaFornecedor.Selecionar ');
   inherited;
-if (dbGridResultado.DataSource.DataSet = nil) or  dbGridResultado.DataSource.DataSet.IsEmpty then
+  if (dbGridResultado.DataSource.DataSet = nil) or dbGridResultado.DataSource.DataSet.IsEmpty then
     raise Exception.Create('Nenhum dado para selecionar');
 
   FFornecedor := DaoFornecedor.GeFornecedor(dbGridResultado.DataSource.DataSet.FieldByName('CODIGO').AsString);
 
   inherited;
+  TLog.d('<<< Saindo de TfrmConsultaFornecedor.Selecionar ');
 end;
 
 end.

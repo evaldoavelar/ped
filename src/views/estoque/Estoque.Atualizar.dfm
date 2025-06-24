@@ -2,12 +2,9 @@ inherited FrmEstoqueAtualizar: TFrmEstoqueAtualizar
   Caption = 'Estoque'
   ClientHeight = 432
   ClientWidth = 760
-  OnCreate = FormCreate
-  OnDestroy = FormDestroy
   OnShow = FormShow
   ExplicitWidth = 776
   ExplicitHeight = 471
-  PixelsPerInch = 96
   TextHeight = 13
   object PageControl1: TPageControl
     Left = 0
@@ -244,26 +241,26 @@ inherited FrmEstoqueAtualizar: TFrmEstoqueAtualizar
                 OnClick = edtPesquisaProdutoClick
                 OnKeyPress = edtPesquisaProdutoKeyPress
                 OnKeyUp = edtPesquisaProdutoKeyUp
-                DropDownWidth = 0
+                DropDownWidth = 500
               end
             end
           end
           object Panel2: TPanel
             Left = 449
             Top = 0
-            Width = 156
+            Width = 157
             Height = 63
             Align = alClient
             BevelOuter = bvNone
             TabOrder = 1
             DesignSize = (
-              156
+              157
               63)
             object Label2: TLabel
               AlignWithMargins = True
               Left = 3
               Top = 3
-              Width = 150
+              Width = 151
               Height = 13
               Hint = 'N'#218'MERO DA NOTA FISCAL DE COMPRA'
               Align = alTop
@@ -285,7 +282,7 @@ inherited FrmEstoqueAtualizar: TFrmEstoqueAtualizar
               AlignWithMargins = True
               Left = 3
               Top = 24
-              Width = 150
+              Width = 151
               Height = 25
               Margins.Top = 5
               Align = alTop
@@ -300,7 +297,7 @@ inherited FrmEstoqueAtualizar: TFrmEstoqueAtualizar
               OnKeyPress = edtNumeroNFKeyPress
             end
             object Panel6: TPanel
-              Left = 214
+              Left = 215
               Top = 23
               Width = 28
               Height = 22
@@ -355,18 +352,18 @@ inherited FrmEstoqueAtualizar: TFrmEstoqueAtualizar
             end
           end
           object Panel7: TPanel
-            Left = 605
+            Left = 606
             Top = 0
-            Width = 141
+            Width = 140
             Height = 63
             Align = alClient
             BevelOuter = bvNone
             TabOrder = 2
             DesignSize = (
-              141
+              140
               63)
             object Panel8: TPanel
-              Left = 217
+              Left = 216
               Top = 23
               Width = 28
               Height = 22
@@ -758,7 +755,6 @@ inherited FrmEstoqueAtualizar: TFrmEstoqueAtualizar
         Font.Style = []
         ParentFont = False
         Layout = tlCenter
-        ExplicitTop = 44
         ExplicitWidth = 521
         ExplicitHeight = 96
       end
@@ -776,7 +772,6 @@ inherited FrmEstoqueAtualizar: TFrmEstoqueAtualizar
         BevelOuter = bvNone
         ParentBackground = False
         TabOrder = 0
-        ExplicitTop = 0
         object Panel10: TPanel
           AlignWithMargins = True
           Left = 641
@@ -788,9 +783,6 @@ inherited FrmEstoqueAtualizar: TFrmEstoqueAtualizar
           Color = 10640128
           ParentBackground = False
           TabOrder = 0
-          ExplicitLeft = 0
-          ExplicitTop = 0
-          ExplicitHeight = 40
           object Label1: TLabel
             Left = 39
             Top = 8

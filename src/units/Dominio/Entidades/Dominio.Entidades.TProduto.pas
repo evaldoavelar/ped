@@ -32,6 +32,7 @@ type
     FESTOQUE: Double;
     FAVISARESTOQUEBAIXO: Boolean;
     FINATIVO: Boolean;
+    FDATAALTERACAO: TDateTime;
     function getBLOQUEADO: Boolean;
     procedure setBLOQUEADO(const Value: Boolean);
     function getALTERACAO_PRECO: TDateTime;
@@ -74,6 +75,7 @@ type
     procedure SetESTOQUE(const Value: Double);
     procedure SetESTOQUEMINIMO(const Value: Double);
     procedure SetINATIVO(const Value: Boolean);
+    procedure SetDATAALTERACAO(const Value: TDateTime);
   published
     [campo('CODIGO  ', tpVARCHAR, 6, 0, True)]
     [PrimaryKey('PRODUTO_PRIMARY', 'CODIGO')]
@@ -142,6 +144,9 @@ type
 
     [campo('ESTOQUEMINIMO', tpFLOAT)]
     property ESTOQUEMINIMO: Double read FESTOQUEMINIMO write SetESTOQUEMINIMO;
+
+    [campo('DATAALTERACAO', tpTIMESTAMP)]
+    property DATAALTERACAO: TDateTime read FDATAALTERACAO write SetDATAALTERACAO;
 
   public
     constructor create();
@@ -367,6 +372,11 @@ begin
     FCUSTO_MEDIO := Value;
     Notify('CUSTO_MEDIO');
   end;
+end;
+
+procedure TProduto.SetDATAALTERACAO(const Value: TDateTime);
+begin
+  FDATAALTERACAO := Value;
 end;
 
 procedure TProduto.setDATA_CADASTRO(const Value: TDateTime);

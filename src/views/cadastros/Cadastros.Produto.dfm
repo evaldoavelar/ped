@@ -1,16 +1,15 @@
 inherited frmCadastroProduto: TfrmCadastroProduto
   Caption = 'Cadastro Produto'
   ClientHeight = 572
-  ExplicitHeight = 601
-  PixelsPerInch = 96
+  ExplicitHeight = 611
   TextHeight = 13
   inherited pnlContainer: TPanel
-    Height = 456
-    ExplicitHeight = 456
+    Height = 474
+    ExplicitHeight = 474
     inherited pgcPrincipal: TPageControl
-      Height = 450
+      Height = 468
       ActivePage = ts1
-      ExplicitHeight = 450
+      ExplicitHeight = 468
       object ts1: TTabSheet
         Caption = 'Produto'
         object lbl3: TLabel
@@ -136,6 +135,7 @@ inherited frmCadastroProduto: TfrmCadastroProduto
           Top = 35
           Width = 179
           Height = 24
+          TabStop = False
           CharCase = ecUpperCase
           Color = 15524818
           Enabled = False
@@ -329,18 +329,19 @@ inherited frmCadastroProduto: TfrmCadastroProduto
           BevelOuter = bvNone
           TabOrder = 8
           object Panel2: TPanel
-            Left = 113
+            Left = 140
             Top = 0
-            Width = 113
+            Width = 145
             Height = 56
             Align = alLeft
             BevelOuter = bvNone
             TabOrder = 1
+            ExplicitLeft = 113
             object Label13: TLabel
               AlignWithMargins = True
               Left = 3
               Top = 3
-              Width = 107
+              Width = 139
               Height = 13
               Align = alTop
               Caption = 'Estoque Min'#237'mo'
@@ -354,11 +355,11 @@ inherited frmCadastroProduto: TfrmCadastroProduto
             end
             object edtEstoqueMinimo: TEdit
               AlignWithMargins = True
-              Left = 25
+              Left = 5
               Top = 22
-              Width = 72
+              Width = 114
               Height = 31
-              Margins.Left = 25
+              Margins.Left = 5
               Margins.Right = 12
               Align = alLeft
               Alignment = taCenter
@@ -373,12 +374,13 @@ inherited frmCadastroProduto: TfrmCadastroProduto
               TabOrder = 0
               Text = '0'
               OnChange = edtCodigoChange
+              ExplicitLeft = 40
             end
           end
           object Panel3: TPanel
             Left = 0
             Top = 0
-            Width = 113
+            Width = 140
             Height = 56
             Align = alLeft
             BevelOuter = bvNone
@@ -387,7 +389,7 @@ inherited frmCadastroProduto: TfrmCadastroProduto
               AlignWithMargins = True
               Left = 3
               Top = 3
-              Width = 107
+              Width = 134
               Height = 13
               Align = alTop
               Caption = 'Estoque Atual'
@@ -401,13 +403,13 @@ inherited frmCadastroProduto: TfrmCadastroProduto
             end
             object edtEstoque: TEdit
               AlignWithMargins = True
-              Left = 25
+              Left = 5
               Top = 22
-              Width = 72
+              Width = 120
               Height = 31
-              Margins.Left = 25
-              Margins.Right = 12
-              Align = alLeft
+              Margins.Left = 5
+              Margins.Right = 15
+              Align = alClient
               Alignment = taCenter
               AutoSize = False
               Color = clWhite
@@ -421,6 +423,8 @@ inherited frmCadastroProduto: TfrmCadastroProduto
               TabOrder = 0
               Text = '0'
               OnChange = edtCodigoChange
+              ExplicitLeft = 0
+              ExplicitWidth = 97
             end
           end
           object chkAvisarEstoque: TCheckBox
@@ -617,10 +621,6 @@ inherited frmCadastroProduto: TfrmCadastroProduto
       object ts3: TTabSheet
         Caption = 'Observa'#231#227'o'
         ImageIndex = 2
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object mmoObservacao: TMemo
           Left = 9
           Top = 24
@@ -666,14 +666,6 @@ inherited frmCadastroProduto: TfrmCadastroProduto
     end
     inherited BitBtn1: TBitBtn
       TabOrder = 2
-    end
-  end
-  inherited pnlTop: TPanel
-    inherited edtPesquisa: TSearchBox
-      ParentCustomHint = False
-      ParentBiDiMode = False
-      ParentCtl3D = False
-      ParentDoubleBuffered = False
     end
   end
   inherited act1: TActionList

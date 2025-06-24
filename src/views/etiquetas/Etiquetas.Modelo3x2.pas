@@ -3,14 +3,14 @@ unit Etiquetas.Modelo3x2;
 interface
 
 uses
-  System.Bindings.Helper, Dominio.Entidades.TProduto, System.Generics.Collections,
+  Dominio.Entidades.TProduto, System.Generics.Collections,
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, untFrmBase, Vcl.Mask, Vcl.StdCtrls,
-  Vcl.ActnList, Vcl.ComCtrls, Vcl.Buttons, Vcl.ExtCtrls, Utils.Rtti, Util.Funcoes,
-  ACBrPosPrinter, System.TypInfo, Dao.IDaoProdutos, Impressao.Etiquetas,
-  Dao.IDaoEmitente, Dominio.Entidades.TEmitente, Sistema.TParametros, Dao.IDaoParametros,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, untFrmBase, Vcl.StdCtrls,
+  Vcl.ActnList, Vcl.ComCtrls, Vcl.Buttons, Vcl.ExtCtrls, Util.Funcoes,
+  System.TypInfo, Dao.IDaoProdutos, Impressao.Etiquetas,
+  Dominio.Entidades.TEmitente, Sistema.TParametros,
   Data.Bind.Components, Data.Bind.EngExt, Vcl.Bind.DBEngExt, System.Actions,
-  Vcl.ExtDlgs, Vcl.Imaging.pngimage, JvExMask, JvToolEdit, Vcl.AutoComplete,
+  Vcl.Imaging.pngimage, JvExMask, JvToolEdit, Vcl.AutoComplete,
   frxClass;
 
 type
@@ -241,8 +241,9 @@ var
 
 implementation
 
-uses Dominio.Entidades.TFactory, Vcl.Printers, System.StrUtils,
-  Consulta.Produto, Relatorio.FREtiquetas.Modelo3x2, Utils.ArrayUtil;
+uses Vcl.Printers,
+  Consulta.Produto, Relatorio.FREtiquetas.Modelo3x2, Utils.ArrayUtil,
+  Factory.Entidades;
 
 {$R *.dfm}
 
@@ -450,7 +451,7 @@ var
   Relatorio: TFREtiquetasModelo3x2;
   LEtiquetas: Tarray<TImpressaoEtiquetas>;
   I: integer;
-  LCopias: Integer;
+  LCopias: integer;
 begin
   try
     inherited;
@@ -458,10 +459,10 @@ begin
     for I := 1 to 6 do
       TArrayUtil<TImpressaoEtiquetas>.Append(LEtiquetas, GetEtiqueta(I));
 
-    LCopias :=  StrToIntDef(edtNumCopias.Text, 1);
+    LCopias := StrToIntDef(edtNumCopias.Text, 1);
 
     Relatorio := TFREtiquetasModelo3x2.Create(self);
-    Relatorio.MostraPreview := false;
+    Relatorio.MostraPreview := FALSE;
     Relatorio.Imprimir(LEtiquetas, LCopias);
     Relatorio.Free;
   except
@@ -590,19 +591,19 @@ procedure TFrmEtiquetasModelo3x2.FormCreate(Sender: TObject);
 begin
   inherited;
   CachePesquisa := TStringList.Create;
-  FDaoProdutos := TFactory.DaoProduto;
+  FDaoProdutos := FFactory.DaoProduto;
   try
-    FEmitente := TFactory.DaoEmitente.GetEmitente();
+    FEmitente := FFactory.DaoEmitente.GetEmitente();
 
     if not Assigned(FEmitente) then
     begin
-      FEmitente := TFactory.Emitente;
+      FEmitente := TFactoryEntidades.new.Emitente;
     end;
 
-    FParametros := TFactory.DaoParametros.GetParametros;
+    FParametros := FFactory.DaoParametros.GetParametros;
     if not Assigned(FParametros) then
     begin
-      FParametros := TFactory.Parametros;
+      FParametros := TParametros.Create;
     end;
 
     Bind;

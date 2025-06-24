@@ -5,7 +5,7 @@ interface
 uses
   System.Generics.Collections, classes, System.SysUtils,
   Vcl.Graphics, Vcl.ExtCtrls,
-  Dominio.Entidades.TCliente,
+
   Dominio.Entidades.TVendedor,
   Dominio.Entidades.TEntity,
   Dominio.Entidades.TItemOrcamento,
@@ -29,7 +29,7 @@ type
     FVALORENTRADA: currency;
     FSTATUS: string;
     FCliente: string;
-    FTELEFONE :string;
+    FTELEFONE: string;
     FVendedor: TVendedor;
     FItens: TObjectList<TItemOrcamento>;
 
@@ -37,6 +37,7 @@ type
     FOnExcluiItem: TOnExcluiItem;
     FOnChange: TOnChange;
     FDATAVENCIMENTO: TDateTime;
+    FDATAALTERACAO: TDateTime;
 
     function GetValorBruto: currency;
     function getValorLiquido: currency;
@@ -50,6 +51,7 @@ type
     function getUltimoSequencial: Integer;
     function getTELEFONE: string;
     procedure setTELEFONE(const Value: string);
+    procedure SetDATAALTERACAO(const Value: TDateTime);
 
   public
     constructor create;
@@ -60,6 +62,7 @@ type
     procedure AssignedItens(itens: TObjectList<TItemOrcamento>);
 
   published
+    [AutoInc('AUTOINC')]
     [campo('ID', tpINTEGER, 0, 0, True)]
     [PrimaryKey('PK_ORCAMENTO', 'ID')]
     property ID: Integer read FID write FID;
@@ -98,10 +101,10 @@ type
     [campo('CLIENTE', tpVARCHAR, 40)]
     property CLIENTE: string read FCliente write FCliente;
 
-     [campo('TELEFONE', tpVARCHAR, 21)]
+    [campo('TELEFONE', tpVARCHAR, 21)]
     property TELEFONE: string read getTELEFONE write setTELEFONE;
 
-    [campo('CODVEN', tpVARCHAR,10)]
+    [campo('CODVEN', tpVARCHAR, 10)]
     [ForeignKeyAttribute('FK_ORC_VENDEDOR', 'CODVEN', 'VENDEDOR', 'CODIGO', None, None)]
     property Vendedor: TVendedor read FVendedor write FVendedor;
 
@@ -110,6 +113,8 @@ type
     [campo('VOLUME', tpNUMERIC, 15, 4)]
     property Volume: Double read getVolume;
 
+    [campo('DATAALTERACAO', tpTIMESTAMP)]
+    property DATAALTERACAO: TDateTime read FDATAALTERACAO write SetDATAALTERACAO;
 
     property OnVendeItem: TOnVendeItem read FOnVendeItem write FOnVendeItem;
     property OnChange: TOnChange read FOnChange write FOnChange;
@@ -213,7 +218,7 @@ end;
 
 function TOrcamento.getTELEFONE: string;
 begin
-   result := FTELEFONE;
+  result := FTELEFONE;
 end;
 
 function TOrcamento.getUltimoSequencial: Integer;
@@ -284,6 +289,11 @@ begin
 
 end;
 
+procedure TOrcamento.SetDATAALTERACAO(const Value: TDateTime);
+begin
+  FDATAALTERACAO := Value;
+end;
+
 procedure TOrcamento.SetDesconto(const Value: currency);
 begin
   if Value < 0 then
@@ -306,7 +316,7 @@ end;
 
 procedure TOrcamento.setTELEFONE(const Value: string);
 begin
-   Self.FTELEFONE := Value;
+  Self.FTELEFONE := Value;
 end;
 
 procedure TOrcamento.VendeItem(Item: TItemOrcamento);

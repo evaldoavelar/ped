@@ -6,7 +6,7 @@ uses
   System.Generics.Collections,
   System.SysUtils, System.Classes,
   Data.DB, FireDAC.Comp.Client,
-  Dao.TDaoBase,
+  Dao.TDaoBase, Sistema.TLog,
   Dominio.Entidades.TItemOrcamento;
 
 type
@@ -28,7 +28,7 @@ type
 implementation
 
 uses
-  Util.Exceptions, Dominio.Entidades.TFactory, Dao.TDaoProdutos;
+  Util.Exceptions;
 
 { TDaoVendedor }
 
@@ -42,7 +42,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
       qry.SQL.Text := ''
@@ -54,12 +54,14 @@ begin
 
       qry.ParamByName('SEQ').AsInteger := SEQ;
       qry.ParamByName('IDOrcamento').AsInteger := IDOrcamento;
+      TLog.d(qry);
       qry.ExecSQL;
 
     except
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha ExcluiItemOrcamento: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha ExcluiItemOrcamento: ' + E.message);
       end;
     end;
   finally
@@ -78,7 +80,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
       qry.SQL.Text := ''
@@ -90,7 +92,8 @@ begin
 
       qry.ParamByName('SEQ').AsInteger := SEQ;
       qry.ParamByName('IDOrcamento').AsInteger := IDOrcamento;
-      qry.open;
+      TLog.d(qry);
+      qry.Open;
 
       if qry.IsEmpty then
         Result := nil
@@ -100,7 +103,8 @@ begin
     except
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha GeTItemOrcamento: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha GeTItemOrcamento: ' + E.message);
       end;
     end;
   finally
@@ -114,7 +118,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
 
     try
@@ -127,7 +131,8 @@ begin
         + '     IDOrcamento = :IDOrcamento';
 
       qry.ParamByName('IDOrcamento').AsInteger := IDOrcamento;
-      qry.open;
+      TLog.d(qry);
+      qry.Open;
 
       while not qry.eof do
       begin
@@ -138,7 +143,8 @@ begin
     except
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha GeTItemsOrcamento: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha GeTItemsOrcamento: ' + E.message);
       end;
     end;
   finally
@@ -153,7 +159,7 @@ var
 begin
   ValidaItem(ItemOrcamento);
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     qry.Connection := FConnection;
     qry.SQL.Text := ''
@@ -184,6 +190,7 @@ begin
     try
 
       FConnection.StartTransaction;
+      TLog.d(qry);
       qry.ExecSQL;
 
       FConnection.Commit;
@@ -191,7 +198,8 @@ begin
       on E: Exception do
       begin
         FConnection.Rollback;
-        raise TDaoException.Create('Falha ao Gravar TItemOrcamento: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha ao Gravar TItemOrcamento: ' + E.message);
       end;
     end;
   finally
@@ -224,7 +232,10 @@ begin
     // ds.Params.ParamByName('VALOR_TOTAL').AsCurrency := ItemOrcamento.VALOR_TOTAL;
   except
     on E: Exception do
-      raise TDaoException.Create('Falha ao associar parâmetros TItemOrcamento: ' + E.Message);
+    begin
+      TLog.d(E.message);
+      raise TDaoException.Create('Falha ao associar parâmetros TItemOrcamento: ' + E.message);
+    end;
   end;
 end;
 
@@ -245,7 +256,10 @@ begin
     // Result.VALOR_DESCONTO := ds.FieldByName('VALOR_DESCONTO').AsCurrency;
   except
     on E: Exception do
-      raise TDaoException.Create('Falha no ParamsToObject ItemOrcamento: ' + E.Message);
+    begin
+      TLog.d(E.message);
+      raise TDaoException.Create('Falha no ParamsToObject ItemOrcamento: ' + E.message);
+    end;
   end;
 
 end;

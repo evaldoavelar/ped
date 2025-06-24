@@ -6,13 +6,14 @@ uses
   System.SysUtils, System.Classes, FireDAC.Stan.Error,
   Data.DB, FireDAC.Comp.Client,
   System.Generics.Collections,
-  Dao.TDaoBase,
+  Dao.TDaoBase, Sistema.TLog,
   Dominio.Entidades.TProduto, Dao.IDaoFornecedor, Dao.IDaoProdutos;
 
 type
 
   TDaoProduto = class(TDaoBase, IDaoProdutos)
   private
+    FDaoFornecedor: IDaoFornecedor;
     procedure ObjectToParams(ds: TFDQuery; Produto: TProduto);
     function ParamsToObject(ds: TFDQuery): TProduto;
   public
@@ -28,22 +29,30 @@ type
     function GetProdutoPorCodigoBarras(codBarras: string): TProduto;
     function GeraID: string;
     function EntradaSaidaEstoque(aCODIGO: string; aQuantidade: Double; aAutoCommit: Boolean): integer;
-
+  public
+    constructor Create(Connection: TFDConnection; aKeepConection: Boolean; aDaoFornecedor: IDaoFornecedor); virtual;
   end;
 
 implementation
 
 uses
-  Util.Exceptions, Dominio.Entidades.TFactory;
+  Util.Exceptions;
 
 { TDaoProduto }
+
+constructor TDaoProduto.Create(Connection: TFDConnection;
+  aKeepConection: Boolean; aDaoFornecedor: IDaoFornecedor);
+begin
+  inherited Create(Connection, aKeepConection);
+  FDaoFornecedor := aDaoFornecedor;
+end;
 
 function TDaoProduto.EntradaSaidaEstoque(aCODIGO: string; aQuantidade: Double; aAutoCommit: Boolean): integer;
 var
   aCampoValor: TDictionary<string, Variant>;
   qry: TFDQuery;
 begin
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
 
     aCampoValor := TDictionary<string, Variant>.Create();
@@ -51,13 +60,14 @@ begin
       if aAutoCommit then
         FConnection.StartTransaction;
 
-      qry.SQL.Append('update PRODUTO ');
-      qry.SQL.Append('set  ESTOQUE = ESTOQUE + :QUANTIDADE  ');
-      qry.SQL.Append('WHERE  CODIGO = :CODIGO ');
+      qry.SQL.Append('UPDATE PRODUTO ');
+      qry.SQL.Append('SET ESTOQUE = (ESTOQUE + :QUANTIDADE) ');
+      qry.SQL.Append('WHERE CODIGO = :CODIGO ');
 
       qry.ParamByName('CODIGO').AsString := aCODIGO;
       qry.ParamByName('QUANTIDADE').AsFloat := aQuantidade;
 
+      TLog.d(qry);
       qry.ExecSQL;
 
       result := qry.RowsAffected;
@@ -70,7 +80,8 @@ begin
         // FLog.d(E.Message);
         if aAutoCommit then
           FConnection.Rollback;
-        raise TDaoException.Create(' TDaoProduto.EntradaSaidaEstoque: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create(' TDaoProduto.EntradaSaidaEstoque: ' + E.message);
       end;
 
     end;
@@ -85,7 +96,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
       qry.SQL.Text := ''
@@ -95,6 +106,7 @@ begin
         + '     CODIGO = :CODIGO';
 
       qry.ParamByName('CODIGO').AsString := codigo;
+      TLog.d(qry);
       qry.ExecSQL;
     except
       on E: EFDDBEngineException do
@@ -106,7 +118,8 @@ begin
       end;
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha ExcluirProduto: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha ExcluirProduto: ' + E.message);
       end;
     end;
   finally
@@ -121,7 +134,7 @@ var
   ProdutoTeste: TProduto;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
 
@@ -178,17 +191,21 @@ begin
         + '       ESTOQUE = :ESTOQUE, '
         + '       ESTOQUEMINIMO = :ESTOQUEMINIMO, '
         + '       AVISARESTOQUEBAIXO = :AVISARESTOQUEBAIXO, '
+        + '       INATIVO = :INATIVO, '
+        + '       DATAALTERACAO = :DATAALTERACAO, '
         + '       observacoes = :OBSERVACOES '
         + 'where ' +
         '        CODIGO = :CODIGO ';
 
       ObjectToParams(qry, Produto);
+      TLog.d(qry);
       qry.ExecSQL;
 
     except
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha AtualizaProduto: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha AtualizaProduto: ' + E.message);
       end;
     end;
   finally
@@ -208,7 +225,7 @@ var
 
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
       qry.SQL.Text := ''
@@ -219,17 +236,23 @@ begin
         + ' order by descricao ';
 
       qry.ParamByName('CODIGO').AsString := codigo;
-      qry.open;
+      TLog.d(qry);
+      qry.Open;
 
       if qry.IsEmpty then
         result := nil
       else
+      begin
         result := ParamsToObject(qry);
+        if result.CODFORNECEDOR <> '' then
+          result.Fornecedor := FDaoFornecedor.GeFornecedor(result.CODFORNECEDOR);
+      end;
 
     except
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha GetProdutoPorCodigo: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha GetProdutoPorCodigo: ' + E.message);
       end;
     end;
   finally
@@ -243,7 +266,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
       qry.SQL.Text := ''
@@ -253,7 +276,8 @@ begin
         + '     BARRAS = :BARRAS';
 
       qry.ParamByName('BARRAS').AsString := codBarras;
-      qry.open;
+      TLog.d(qry);
+      qry.Open;
 
       if qry.IsEmpty then
         result := nil
@@ -263,7 +287,8 @@ begin
     except
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha GetProdutoPorCodigoBarras: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha GetProdutoPorCodigoBarras: ' + E.message);
       end;
     end;
   finally
@@ -277,7 +302,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
       qry.SQL.Text := ''
@@ -292,7 +317,8 @@ begin
         descricao := copy(descricao, 0, 39);
 
       qry.ParamByName('descricao').AsString := descricao;
-      qry.open;
+      TLog.d(qry);
+      qry.Open;
 
       result := TObjectList<TProduto>.Create();
 
@@ -305,7 +331,8 @@ begin
     except
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha GetProdutoPorDescricao: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha GetProdutoPorDescricao: ' + E.message);
       end;
     end;
   finally
@@ -319,7 +346,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
       qry.SQL.Text := ''
@@ -334,7 +361,8 @@ begin
         descricao := copy(descricao, 0, 38);
 
       qry.ParamByName('descricao').AsString := descricao + '%';
-      qry.open;
+      TLog.d(qry);
+      qry.Open;
 
       result := TObjectList<TProduto>.Create();
 
@@ -347,7 +375,8 @@ begin
     except
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha GetProdutosPorDescricaoParcial: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha GetProdutosPorDescricaoParcial: ' + E.message);
       end;
     end;
   finally
@@ -361,7 +390,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
       qry.SQL.Text := ''
@@ -373,7 +402,8 @@ begin
         + ' order by descricao ';
 
       qry.ParamByName('descricao').AsString := descricao;
-      qry.open;
+      TLog.d(qry);
+      qry.Open;
 
       if qry.IsEmpty then
         result := nil
@@ -383,7 +413,8 @@ begin
     except
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha GetProdutoPorDescricao: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha GetProdutoPorDescricao: ' + E.message);
       end;
     end;
   finally
@@ -399,7 +430,7 @@ var
   descricao: string;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
 
@@ -447,7 +478,9 @@ begin
         + '             ESTOQUE, '
         + '             ESTOQUEMINIMO, '
         + '             AVISARESTOQUEBAIXO, '
+        + '             INATIVO, '
         + '             QUANTIDADEFRACIONADA, '
+        + '             DATAALTERACAO, '
         + '             observacoes) '
         + 'VALUES     ( :CODIGO, '
         + '             :BARRAS, '
@@ -467,16 +500,20 @@ begin
         + '             :ESTOQUE, '
         + '             :ESTOQUEMINIMO, '
         + '             :AVISARESTOQUEBAIXO, '
+        + '             :INATIVO, '
         + '             :QUANTIDADEFRACIONADA, '
+        + '             :DATAALTERACAO, '
         + '             :OBSERVACOES)';
 
       ObjectToParams(qry, Produto);
+      TLog.d(qry);
       qry.ExecSQL;
 
     except
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha IncluiProduto: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha IncluiProduto: ' + E.message);
       end;
     end;
   finally
@@ -489,7 +526,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
 
   try
     qry.SQL.Text := ''
@@ -504,14 +541,16 @@ begin
       + ' UPPER( ' + campo + ') CONTAINING  UPPER( ' + QuotedStr(valor) + ') '
       + ' order by descricao';
 
-    qry.open;
+    TLog.d(qry);
+    qry.Open;
 
     result := qry;
 
   except
     on E: Exception do
     begin
-      raise TDaoException.Create('Falha Listar Produto: ' + E.Message);
+      TLog.d(E.message);
+      raise TDaoException.Create('Falha Listar Produto: ' + E.message);
     end;
   end;
 
@@ -589,46 +628,36 @@ begin
     if ds.Params.FindParam('AVISARESTOQUEBAIXO') <> nil then
       ds.Params.ParamByName('AVISARESTOQUEBAIXO').AsBoolean := Produto.AVISARESTOQUEBAIXO;
 
+    if ds.Params.FindParam('INATIVO') <> nil then
+      ds.Params.ParamByName('INATIVO').AsBoolean := Produto.INATIVO;
+
+    if ds.Params.FindParam('DATAALTERACAO') <> nil then
+      ds.Params.ParamByName('DATAALTERACAO').AsDate := Produto.DATAALTERACAO;
+
   except
     on E: Exception do
-      raise TDaoException.Create('Falha ao associar parâmetros Produto: ' + E.Message);
+    begin
+      TLog.d(E.message);
+      raise TDaoException.Create('Falha ao associar parâmetros Produto: ' + E.message);
+    end;
   end;
 end;
 
 function TDaoProduto.ParamsToObject(ds: TFDQuery): TProduto;
-var
-  DaoFornecedor: IDaoFornecedor;
 begin
-  DaoFornecedor := TFactory.DaoFornecedor();
-
   try
 
     result := TProduto.Create();
     FieldsToEntity(ds, result);
 
-    // Result.codigo := ds.FieldByName('CODIGO').AsString;
-    // Result.BARRAS := ds.FieldByName('BARRAS').AsString;
-    // Result.DESCRICAO := ds.FieldByName('DESCRICAO').AsString;
-    // Result.UND := ds.FieldByName('UND').AsString;
-    // Result.CODFORNECEDOR := ds.FieldByName('CODFORNECEDOR').AsString;
-    // Result.CUSTO_MEDIO := ds.FieldByName('CUSTO_MEDIO').AsCurrency;
-    // Result.PRECO_CUSTO := ds.FieldByName('PRECO_CUSTO').AsCurrency;
-    // Result.PRECO_VENDA := ds.FieldByName('PRECO_VENDA').AsCurrency;
-    // Result.PRECO_ATACADO := ds.FieldByName('PRECO_ATACADO').AsCurrency;
-    // Result.MARGEM_LUCRO := ds.FieldByName('MARGEM_LUCRO').AsCurrency;
-    // Result.ALTERACAO_PRECO := ds.FieldByName('ALTERACAO_PRECO').AsDateTime;
-    // Result.ULTIMA_COMPRA := ds.FieldByName('ULTIMA_COMPRA').AsDateTime;
-    // Result.ULTIMA_VENDA := ds.FieldByName('ULTIMA_VENDA').AsDateTime;
-    // Result.DATA_CADASTRO := ds.FieldByName('DATA_CADASTRO').AsDateTime;
-    // Result.BLOQUEADO := ds.FieldByName('BLOQUEADO').AsInteger = 1;
-    // Result.QUANTIDADEFRACIONADA := ds.FieldByName('QUANTIDADEFRACIONADA').AsInteger = 1;
-    // Result.OBSERVACOES := ds.FieldByName('OBSERVACOES').AsString;
-
-    result.Fornecedor := DaoFornecedor.GeFornecedor(result.CODFORNECEDOR);
+    // result.Fornecedor := FDaoFornecedor.GeFornecedor(result.CODFORNECEDOR);
 
   except
     on E: Exception do
-      raise TDaoException.Create('Falha no ParamsToObject Produto: ' + E.Message);
+    begin
+      TLog.d(E.message);
+      raise TDaoException.Create('Falha no ParamsToObject Produto: ' + E.message);
+    end;
   end;
 
 end;

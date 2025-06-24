@@ -4,9 +4,9 @@ interface
 
 uses System.Generics.Collections,
   System.SysUtils, System.Classes,
-  FireDAC.Stan.Error,
+  FireDAC.Stan.Error, Sistema.TLog,
   Data.DB, FireDAC.Comp.Client, Dominio.Entidades.CondicaoPagto,
-  Dao.TDaoBase, Dao.IDaoCondicaoPagto;
+  Dao.TDaoBase,  Dao.IDaoCondicaoPagto;
 
 type
   TDaoCondicaoPagto = class(TDaoBase, IDaoCondicaoPagto)
@@ -23,12 +23,12 @@ type
     function GeraID: Integer;
   public
 
-    class function New(Connection: TFDConnection): IDaoCondicaoPagto;
+    class function New(Connection: TFDConnection; aKeepConection: Boolean): IDaoCondicaoPagto;
   end;
 
 implementation
 
-uses Dominio.Entidades.TFactory, Util.Exceptions;
+uses Util.Exceptions;
 { TClasseBase }
 
 procedure TDaoCondicaoPagto.Atualiza(aCondicaoPagto: TCONDICAODEPAGTO);
@@ -36,7 +36,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
       qry.SQL.Text := ''
@@ -44,6 +44,7 @@ begin
         + '  set'
         + '     DESCRICAO = :DESCRICAO, '
         + '     ACRESCIMO = :ACRESCIMO, '
+        + '     DATAALTERACAO = :DATAALTERACAO, '
         + '     QUANTASVEZES = :QUANTASVEZES   '
         + 'where       '
         + '     id = :id ';
@@ -51,12 +52,14 @@ begin
       ValidaCondicao(aCondicaoPagto);
       EntityToParams(qry, aCondicaoPagto);
 
+      TLog.d(qry);
       qry.ExecSQL;
 
     except
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha Atualiza Condicao Pagtos: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha Atualiza Condicao Pagtos: ' + E.message);
       end;
     end;
   finally
@@ -69,7 +72,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
       qry.SQL.Text := ''
@@ -79,6 +82,7 @@ begin
         + '     id = :id';
 
       qry.ParamByName('id').AsInteger := id;
+      TLog.d(qry);
       qry.ExecSQL;
     except
       on E: EFDDBEngineException do
@@ -90,7 +94,8 @@ begin
       end;
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha ExcluirCliente: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha ExcluirCliente: ' + E.message);
       end;
     end;
   finally
@@ -104,7 +109,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
       qry.SQL.Text := ''
@@ -114,6 +119,7 @@ begin
         + '     IDPAGTO = :IDPAGTO';
 
       qry.ParamByName('IDPAGTO').AsInteger := aIDPAGTO;
+      TLog.d(qry);
       qry.ExecSQL;
     except
       on E: EFDDBEngineException do
@@ -125,7 +131,8 @@ begin
       end;
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha ExcluirCliente: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha ExcluirCliente: ' + E.message);
       end;
     end;
   finally
@@ -139,7 +146,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
       qry.SQL.Text := ''
@@ -149,7 +156,8 @@ begin
         + '    id = :id ';
 
       qry.ParamByName('ID').AsInteger := id;
-      qry.open;
+      TLog.d(qry);
+      qry.Open;
 
       if qry.IsEmpty then
         Result := nil
@@ -162,7 +170,8 @@ begin
     except
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha GeTCONDICAODEPAGTO: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha GeTCONDICAODEPAGTO: ' + E.message);
       end;
     end;
   finally
@@ -180,10 +189,10 @@ procedure TDaoCondicaoPagto.Inclui(aCondicaoPagto: TCONDICAODEPAGTO);
 var
   qry: TFDQuery;
 begin
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
-      aCondicaoPagto.ID := GeraID;
+      aCondicaoPagto.id := GeraID;
 
       qry.SQL.Text := ''
         + 'INSERT INTO CONDICAODEPAGTO '
@@ -191,21 +200,25 @@ begin
         + '             IDPAGTO, '
         + '             DESCRICAO, '
         + '             ACRESCIMO, '
+        + '             DATAALTERACAO, '
         + '             QUANTASVEZES ) '
         + 'VALUES      (:id, '
         + '             :IDPAGTO, '
         + '             :DESCRICAO, '
         + '             :ACRESCIMO, '
+        + '             :DATAALTERACAO, '
         + '             :QUANTASVEZES )';
 
       ValidaCondicao(aCondicaoPagto);
       EntityToParams(qry, aCondicaoPagto);
+      TLog.d(qry);
       qry.ExecSQL;
 
     except
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha Pagamento Cliente: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha Pagamento Cliente: ' + E.message);
       end;
     end;
   finally
@@ -220,7 +233,7 @@ var
   condicao: TCONDICAODEPAGTO;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   Result := tLIST<TCONDICAODEPAGTO>.Create();
   try
     try
@@ -232,7 +245,8 @@ begin
         + 'order by QUANTASVEZES';
 
       qry.ParamByName('IDPAGTO').AsInteger := aIDPAGTO;
-      qry.open;
+      TLog.d(qry);
+      qry.Open;
 
       while not qry.Eof do
       begin
@@ -249,14 +263,15 @@ begin
   except
     on E: Exception do
     begin
-      raise TDaoException.Create('Falha Listar Pagto: ' + E.Message);
+      TLog.d(E.message);
+      raise TDaoException.Create('Falha Listar Pagto: ' + E.message);
     end;
   end;
 end;
 
-class function TDaoCondicaoPagto.New(Connection: TFDConnection): IDaoCondicaoPagto;
+class function TDaoCondicaoPagto.New(Connection: TFDConnection; aKeepConection: Boolean): IDaoCondicaoPagto;
 begin
-  Result := TDaoCondicaoPagto.Create(Connection);
+  Result := TDaoCondicaoPagto.Create(Connection,aKeepConection);
 end;
 
 procedure TDaoCondicaoPagto.ValidaCondicao(aCondicaoPagto: TCONDICAODEPAGTO);

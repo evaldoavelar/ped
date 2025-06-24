@@ -6,14 +6,14 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, untFrmBase, Vcl.StdCtrls, Vcl.Buttons,
   Dominio.Entidades.TSangriaSuprimento, Dominio.Entidades.TSangriaSuprimento.Tipo,
-  Vcl.Mask, JvExMask, JvToolEdit, JvBaseEdits, Relatorio.TRSangriaSuprimento,
-  JvComponentBase, JvEnterTab;
+  JvExMask, JvToolEdit, JvBaseEdits, Relatorio.TRSangriaSuprimento,
+  JvComponentBase, JvEnterTab, Vcl.Mask;
 
 type
   TFrmSangria = class(TfrmBase)
     mmoHISTORICO: TMemo;
     Label1: TLabel;
-    Label2: TLabel;
+    lblRecebimentoRetirada: TLabel;
     edtForma: TEdit;
     Label3: TLabel;
     lblSangriaSuprimento: TLabel;
@@ -41,51 +41,63 @@ var
 implementation
 
 uses
-  System.Bindings.Helper, Dominio.Entidades.TFactory;
+  System.Bindings.Helper, Factory.Dao, Factory.Entidades, Sistema.TLog;
 
 {$R *.dfm}
 
 
 procedure TFrmSangria.btnCancelarClick(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TFrmSangria.btnCancelarClick ');
   inherited;
   close;
+  TLog.d('<<< Saindo de TFrmSangria.btnCancelarClick ');
 end;
 
 procedure TFrmSangria.btnOkClick(Sender: TObject);
 var
   impressao: TRSangriaSuprimento;
 begin
+  TLog.d('>>> Entrando em  TFrmSangria.btnOkClick ');
   try
     inherited;
     FSangriaSuprimento.DATA := now;
     FSangriaSuprimento.HORA := now;
+    FSangriaSuprimento.DATAALTERACAO := now;
+    FSangriaSuprimento.NUMCAIXA := TFactoryEntidades.Parametros.PontoVenda.NUMCAIXA;
 
-    TFactory
+
+    fFactory
       .DAOTSangriaSuprimento
       .Inclui(FSangriaSuprimento);
 
     try
-      impressao := TRSangriaSuprimento.Create(TFactory.Parametros.ImpressoraTermica);
+      impressao := TRSangriaSuprimento.Create(TFactoryEntidades.Parametros.ImpressoraTermica);
 
       impressao.Imprime(
         FSangriaSuprimento,
-        TFactory.VendedorLogado,
-        TFactory.DadosEmitente
+        TFactoryEntidades.new.VendedorLogado,
+        fFactory.DadosEmitente
         );
 
       FreeAndNil(impressao);
     except
-      on E: Exception do
-        MessageDlg(E.Message, mtError, [mbOK], 0);
+      on e: Exception do
+      begin
+        TLog.d(e.Message);
+        MessageDlg(e.Message, mtError, [mbOK], 0);
+      end;
     end;
 
     close;
   except
-    on E: Exception do
-      MessageDlg(E.Message, mtError, [mbOK], 0);
+    on e: Exception do
+    begin
+      TLog.d(e.Message);
+      MessageDlg(e.Message, mtError, [mbOK], 0);
+    end;
   end;
-
+  TLog.d('<<< Saindo de TFrmSangria.btnOkClick ');
 end;
 
 procedure TFrmSangria.edtFormaChange(Sender: TObject);
@@ -102,27 +114,50 @@ end;
 
 procedure TFrmSangria.FormCreate(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TFrmSangria.FormCreate ');
   inherited;
-  FSangriaSuprimento:= TSangriaSuprimento.create;
+  fFactory := TFactory.new(nil, True);
+  FSangriaSuprimento := TSangriaSuprimento.Create;
+  FSangriaSuprimento.NUMCAIXA := TFactoryEntidades.Parametros.PontoVenda.NUMCAIXA;
   FSangriaSuprimento.FORMA := 'Dinheiro';
+  FSangriaSuprimento.HISTORICO := 'Adicionando Troco Para o Caixa.';
 
   FSangriaSuprimento.Bind('FORMA', edtForma, 'Text');
   FSangriaSuprimento.Bind('VALOR', edtValor, 'Value');
   FSangriaSuprimento.Bind('HISTORICO', mmoHISTORICO, 'Text');
-   FSangriaSuprimento.CODVEN := TFactory.VendedorLogado.CODIGO;
+  FSangriaSuprimento.CODVEN := TFactoryEntidades.new.VendedorLogado.CODIGO;
+  TLog.d('<<< Saindo de TFrmSangria.FormCreate ');
 end;
 
 procedure TFrmSangria.FormDestroy(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TFrmSangria.FormDestroy ');
   inherited;
   FreeAndNil(FSangriaSuprimento);
+  fFactory.close;
+  TLog.d('<<< Saindo de TFrmSangria.FormDestroy ');
 end;
 
 procedure TFrmSangria.setTipo(aTipo: TSangriaSuprimentoTipo);
 begin
+  TLog.d('>>> Entrando em  TFrmSangria.setTipo ');
   FSangriaSuprimento.TipoSangriaSuprimento := aTipo;
   lblSangriaSuprimento.Caption := aTipo.Descricao;
   self.Caption := aTipo.Descricao;
+
+  case aTipo of
+    TSangriaSuprimentoTipo.Sangria:
+      begin
+        lblRecebimentoRetirada.Caption := 'Valor da Retirada Do Caixa:';
+        mmoHISTORICO.Lines.Text := 'RETIRADA DE SALDO DO CAIXA PARA PAGAMENTO DE CONTA';
+      end;
+    TSangriaSuprimentoTipo.Suprimento:
+      BEGIN
+        lblRecebimentoRetirada.Caption := 'Valor Adicional Para o Caixa:';
+        mmoHISTORICO.Lines.Text := 'ADIÇÃO DE SALDO AO CAIXA';
+      END;
+  end;
+  TLog.d('<<< Saindo de TFrmSangria.setTipo ');
 end;
 
 end.

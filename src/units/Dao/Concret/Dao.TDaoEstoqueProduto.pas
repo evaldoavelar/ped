@@ -6,7 +6,7 @@ uses System.Generics.Collections,
   System.SysUtils, System.Classes,
   FireDAC.Stan.Error,
   Data.DB, FireDAC.Comp.Client, Dao.IDaoFiltroEstoque,
-  Dao.TDaoBase, Dao.IDaoEstoqueProduto, Dominio.Entidades.TEstoqueProduto;
+  Dao.TDaoBase, Sistema.TLog, Dao.IDaoEstoqueProduto, Dominio.Entidades.TEstoqueProduto;
 
 type
   TDaoEstoqueProduto = class(TDaoBase, IDaoEstoqueProduto)
@@ -15,7 +15,7 @@ type
     procedure Inclui(aESTOQUEPRODUTO: TEstoqueProduto);
     procedure Delete(aESTOQUEPRODUTO: TEstoqueProduto);
     procedure Valida(aESTOQUEPRODUTO: TEstoqueProduto);
-    function UpdateStatus(aIDPEDIDO: Integer; aSEQ: Integer; aStatus: string ): Integer; overload;
+    function UpdateStatus(aIDPEDIDO: Integer; aSEQ: Integer; aStatus: string): Integer; overload;
     function ListaObject(aFiltro: IDaoEstoqueFiltro): tLIST<TEstoqueProduto>;
   private
     function GeraID: Integer;
@@ -27,7 +27,7 @@ type
 implementation
 
 uses
-  Util.Exceptions, Dominio.Entidades.TFactory;
+  Util.Exceptions;
 
 { TDaoEstoqueProduto }
 
@@ -35,7 +35,7 @@ procedure TDaoEstoqueProduto.Delete(aESTOQUEPRODUTO: TEstoqueProduto);
 var
   qry: TFDQuery;
 begin
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
 
@@ -44,12 +44,14 @@ begin
         + 'where    id =  :id ';
 
       qry.ParamByName('ID').AsInteger := aESTOQUEPRODUTO.ID;
+      TLog.d(qry);
       qry.ExecSQL;
 
     except
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha Delete ESTOQUEPRODUTO: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha Delete ESTOQUEPRODUTO: ' + E.message);
       end;
     end;
   finally
@@ -68,7 +70,7 @@ procedure TDaoEstoqueProduto.Inclui(aESTOQUEPRODUTO: TEstoqueProduto);
 var
   qry: TFDQuery;
 begin
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
       aESTOQUEPRODUTO.ID := GeraID;
@@ -85,6 +87,7 @@ begin
         + '             STATUS, '
         + '             DATA, '
         + '             CODIGOPRD, '
+        + '             DATAALTERACAO, '
         + '             USUARIOCRIACAO '
         + '              ) '
         + 'VALUES      (:id, '
@@ -97,17 +100,20 @@ begin
         + '             :STATUS, '
         + '             :DATA, '
         + '             :CODIGOPRD, '
+        + '             :DATAALTERACAO, '
         + '             :USUARIOCRIACAO '
         + '              )';
 
       Valida(aESTOQUEPRODUTO);
       EntityToParams(qry, aESTOQUEPRODUTO);
+      TLog.d(qry);
       qry.ExecSQL;
 
     except
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha ESTOQUEPRODUTO: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha ESTOQUEPRODUTO: ' + E.message);
       end;
     end;
   finally
@@ -121,7 +127,7 @@ var
   estoque: TEstoqueProduto;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   Result := tLIST<TEstoqueProduto>.Create();
   try
     try
@@ -150,7 +156,8 @@ begin
 
       qry.SQL.append(' order by data');
 
-      qry.open;
+      TLog.d(qry);
+      qry.Open;
 
       while not qry.Eof do
       begin
@@ -167,7 +174,8 @@ begin
   except
     on E: Exception do
     begin
-      raise TDaoException.Create('Falha Listar estoqueproduto: ' + E.Message);
+      TLog.d(E.message);
+      raise TDaoException.Create('Falha Listar estoqueproduto: ' + E.message);
     end;
   end;
 
@@ -176,7 +184,7 @@ end;
 class function TDaoEstoqueProduto.New(
   Connection: TFDConnection): IDaoEstoqueProduto;
 begin
-  Result := TDaoEstoqueProduto.Create(Connection);
+  Result := TDaoEstoqueProduto.Create(Connection,true);
 end;
 
 function TDaoEstoqueProduto.UpdateStatus(aIDPEDIDO, aSEQ: Integer;
@@ -184,7 +192,7 @@ function TDaoEstoqueProduto.UpdateStatus(aIDPEDIDO, aSEQ: Integer;
 var
   qry: TFDQuery;
 begin
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
 
     try
@@ -198,6 +206,7 @@ begin
       qry.ParamByName('IDOS').AsInteger := aIDPEDIDO;
       qry.ParamByName('STATUS').AsString := aStatus;
 
+      TLog.d(qry);
       qry.ExecSQL;
 
       Result := qry.RowsAffected;
@@ -205,7 +214,8 @@ begin
     except
       on E: Exception do
       begin
-        raise TDaoException.Create(' TDaoProduto.EntradaSaidaEstoque: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create(' TDaoProduto.EntradaSaidaEstoque: ' + E.message);
       end;
 
     end;

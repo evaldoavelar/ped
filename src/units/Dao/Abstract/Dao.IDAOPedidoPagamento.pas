@@ -15,6 +15,7 @@ type
     procedure Atualiza(aPagto: TPEDIDOPAGAMENTO);
     function GetPAGTO(SEQ: Integer; idpedido: Integer): TPEDIDOPAGAMENTO;
     function ListaObject(idpedido: Integer): tLIST<TPEDIDOPAGAMENTO>;
+    function TiposPagamento(idpedido: Integer): TArray<Integer>;
   end;
 
 implementation

@@ -5,7 +5,7 @@ interface
 uses
   System.SysUtils, System.Classes, FireDAC.Stan.Error, System.Generics.Collections,
   Data.DB, FireDAC.Comp.Client,
-  Dao.TDaoBase, Dao.IDaoVendedor,
+  Dao.TDaoBase, Sistema.TLog, Dao.IDaoVendedor,
   Dominio.Entidades.TVendedor;
 
 type
@@ -20,6 +20,7 @@ type
     procedure IncluiVendedor(vendedor: TVendedor);
     procedure ValidaVendedor(vendedor: TVendedor);
     function Listar(campo, valor: string): TDataSet; overload;
+    function Listar(descricao: string): TObjectList<TVendedor>; overload;
     function Listar(): TObjectList<TVendedor>; overload;
     procedure AtualizaVendedor(vendedor: TVendedor);
     function GetVendedor(codigo: string): TVendedor;
@@ -31,7 +32,7 @@ type
 implementation
 
 uses
-  Util.Exceptions, Dominio.Entidades.TFactory;
+  Util.Exceptions;
 
 { TDaoVendedor }
 
@@ -40,7 +41,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
       qry.SQL.Text := ''
@@ -50,6 +51,7 @@ begin
         + '     CODIGO = :CODIGO';
 
       qry.ParamByName('CODIGO').AsString := codigo;
+      TLog.d(qry);
       qry.ExecSQL;
     except
       on E: EFDDBEngineException do
@@ -61,7 +63,8 @@ begin
       end;
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha ExcluirVendedor: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha ExcluirVendedor: ' + E.message);
       end;
     end;
   finally
@@ -75,7 +78,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
       qry.SQL.Text := ''
@@ -89,6 +92,7 @@ begin
         + '     PODERECEBERPARCELA = :PODERECEBERPARCELA, '
         + '     PODECANCELARPEDIDO = :PODECANCELARPEDIDO, '
         + '     PODECANCELARORCAMENTO = :PODECANCELARORCAMENTO, '
+        + '     DATAALTERACAO = :DATAALTERACAO, '
         + '     PODEACESSARPARAMETROS = :PODEACESSARPARAMETROS '
         + 'where       '
         + '     CODIGO = :CODIGO ';
@@ -96,12 +100,14 @@ begin
       ValidaVendedor(vendedor);
       ObjectToParams(qry, vendedor);
 
+      TLog.d(qry);
       qry.ExecSQL;
 
     except
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha AtualizaVendedor: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha AtualizaVendedor: ' + E.message);
       end;
     end;
   finally
@@ -120,7 +126,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
       qry.SQL.Text := ''
@@ -130,7 +136,8 @@ begin
         + '     CODIGO = :CODIGO';
 
       qry.ParamByName('CODIGO').AsString := codigo;
-      qry.open;
+      TLog.d(qry);
+      qry.Open;
 
       if qry.IsEmpty then
         Result := nil
@@ -140,7 +147,12 @@ begin
     except
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha GetVendedor: ' + E.Message);
+        TLog.d(E.message);
+
+        if E.message.Contains('unavailable database') then
+          raise Exception.Create('Banco de dados não disponível')
+        else
+          raise TDaoException.Create('Falha GetVendedor: ' + E.message);
       end;
     end;
   finally
@@ -154,7 +166,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
       qry.SQL.Text := ''
@@ -164,7 +176,8 @@ begin
         + '     NOME = :NOME';
 
       qry.ParamByName('NOME').AsString := nome;
-      qry.open;
+      TLog.d(qry);
+      qry.Open;
 
       if qry.IsEmpty then
         Result := nil
@@ -174,7 +187,8 @@ begin
     except
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha ao GetVendedorbyNome: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha ao GetVendedorbyNome: ' + E.message);
       end;
     end;
   finally
@@ -193,7 +207,7 @@ begin
 
   vendedor.codigo := Self.GeraID;
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
       qry.SQL.Text := ''
@@ -206,6 +220,7 @@ begin
         + '             PODECANCELARPEDIDO, '
         + '             PODECANCELARORCAMENTO, '
         + '             PODEACESSARPARAMETROS, '
+        + '             DATAALTERACAO, '
         + '             COMISSAOP, '
         + '             COMISSAOV ) '
         + 'VALUES      (:CODIGO, '
@@ -216,18 +231,21 @@ begin
         + '             :PODECANCELARPEDIDO, '
         + '             :PODECANCELARORCAMENTO, '
         + '             :PODEACESSARPARAMETROS, '
+        + '             :DATAALTERACAO, '
         + '             :COMISSAOP, '
         + '             :COMISSAOV )';
 
       ValidaVendedor(vendedor);
       ObjectToParams(qry, vendedor);
 
+      TLog.d(qry);
       qry.ExecSQL;
 
     except
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha IncluiVendedor: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha IncluiVendedor: ' + E.message);
       end;
     end;
   finally
@@ -241,7 +259,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   Result := TObjectList<TVendedor>.Create();
 
   try
@@ -250,18 +268,54 @@ begin
       + 'from   VENDEDOR '
       + 'order by NOME';
 
-    qry.open;
+    TLog.d(qry);
+    qry.Open;
 
-   while not qry.Eof do
-   begin
-     Result.Add( ParamsToObject(qry) );
-     qry.Next;
-   end;
+    while not qry.Eof do
+    begin
+      Result.Add(ParamsToObject(qry));
+      qry.Next;
+    end;
 
   except
     on E: Exception do
     begin
-      raise TDaoException.Create('Falha Listar Vendedor: ' + E.Message);
+      TLog.d(E.message);
+      raise TDaoException.Create('Falha Listar Vendedor: ' + E.message);
+    end;
+  end;
+
+end;
+
+function TDaoVendedor.Listar(descricao: string): TObjectList<TVendedor>;
+var
+  qry: TFDQuery;
+begin
+
+  qry := Self.Query();
+  Result := TObjectList<TVendedor>.Create();
+
+  try
+    qry.SQL.Text := ''
+      + 'select *  '
+      + 'from   VENDEDOR '
+      + ' where UPPER( nome ) like UPPER( ' + QuotedStr('%' + descricao + '%') + ')'
+      + 'order by NOME';
+
+    TLog.d(qry);
+    qry.Open;
+
+    while not qry.Eof do
+    begin
+      Result.Add(ParamsToObject(qry));
+      qry.Next;
+    end;
+
+  except
+    on E: Exception do
+    begin
+      TLog.d(E.message);
+      raise TDaoException.Create('Falha Listar Vendedor: ' + E.message);
     end;
   end;
 
@@ -272,7 +326,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
 
   try
     qry.SQL.Text := ''
@@ -282,43 +336,33 @@ begin
       + ' UPPER( ' + campo + ') like UPPER( ' + QuotedStr(valor) + ') '
       + 'order by NOME';
 
-    qry.open;
+    TLog.d(qry);
+    qry.Open;
 
     Result := qry;
 
   except
     on E: Exception do
     begin
-      raise TDaoException.Create('Falha Listar Vendedor: ' + E.Message);
+      TLog.d(E.message);
+      raise TDaoException.Create('Falha Listar Vendedor: ' + E.message);
     end;
   end;
-
 end;
 
-procedure TDaoVendedor.ObjectToParams(ds: TFDQuery; vendedor: TVendedor);
+procedure TDaoVendedor.ObjectToParams(ds: TFDQuery;
+  vendedor:
+  TVendedor);
 begin
   try
 
     EntityToParams(ds, vendedor);
-    // if ds.Params.FindParam('CODIGO') <> nil then
-    // ds.Params.ParamByName('CODIGO').AsString := vendedor.codigo;
-    // if ds.Params.FindParam('NOME') <> nil then
-    // ds.Params.ParamByName('NOME').AsString := vendedor.nome;
-    // if ds.Params.FindParam('COMISSAOV') <> nil then
-    // ds.Params.ParamByName('COMISSAOV').AsCurrency := vendedor.COMISSAOV;
-    // if ds.Params.FindParam('COMISSAOP') <> nil then
-    // ds.Params.ParamByName('COMISSAOP').AsCurrency := vendedor.COMISSAOP;
-    // if ds.Params.FindParam('SENHA') <> nil then
-    // ds.Params.ParamByName('SENHA').AsString := vendedor.SENHA;
-    // if ds.Params.FindParam('PODERECEBERPARCELA') <> nil then
-    // ds.Params.ParamByName('PODERECEBERPARCELA').AsBoolean := vendedor.PODERECEBERPARCELA;
-    // if ds.Params.FindParam('PODECANCELARPEDIDO') <> nil then
-    // ds.Params.ParamByName('PODECANCELARPEDIDO').AsBoolean := vendedor.PODECANCELARPEDIDO;
-    // if ds.Params.FindParam('PODEACESSARCADASTROVENDEDOR') <> nil then
-    // ds.Params.ParamByName('PODEACESSARCADASTROVENDEDOR').AsBoolean := vendedor.PODEACESSARCADASTROVENDEDOR;
   except
     on E: Exception do
-      raise TDaoException.Create('Falha ao associar parâmetros TDaoVendedor: ' + E.Message);
+    begin
+      TLog.d(E.message);
+      raise TDaoException.Create('Falha ao associar parâmetros TDaoVendedor: ' + E.message);
+    end;
   end;
 end;
 
@@ -327,18 +371,12 @@ begin
   try
     Result := TVendedor.Create();
     FieldsToEntity(ds, Result);
-
-    // Result.codigo := ds.FieldByName('CODIGO').AsString;
-    // Result.nome := ds.FieldByName('NOME').AsString;
-    // Result.SENHA := ds.FieldByName('SENHA').AsString;
-    // Result.COMISSAOV := ds.FieldByName('COMISSAOV').AsCurrency;
-    // Result.COMISSAOP := ds.FieldByName('COMISSAOP').AsCurrency;
-    // Result.PODERECEBERPARCELA := ds.FieldByName('PODERECEBERPARCELA').AsInteger = 1;
-    // Result.PODECANCELARPEDIDO := ds.FieldByName('PODECANCELARPEDIDO').AsInteger = 1;
-    // Result.PODEACESSARCADASTROVENDEDOR := ds.FieldByName('PODEACESSARCADASTROVENDEDOR').AsInteger = 1;
   except
     on E: Exception do
-      raise TDaoException.Create('Falha no ParamsToObject: ' + E.Message);
+    begin
+      TLog.d(E.message);
+      raise TDaoException.Create('Falha no ParamsToObject: ' + E.message);
+    end;
   end;
 
 end;

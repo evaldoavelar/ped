@@ -3,12 +3,9 @@ inherited FrmConfiguracoes: TFrmConfiguracoes
   Caption = 'Configura'#231#245'es'
   ClientHeight = 403
   ClientWidth = 796
-  OnCreate = FormCreate
-  OnDestroy = FormDestroy
   OnShow = FormShow
-  ExplicitWidth = 802
-  ExplicitHeight = 434
-  PixelsPerInch = 96
+  ExplicitWidth = 812
+  ExplicitHeight = 442
   TextHeight = 13
   object pnl1: TPanel
     Left = 0
@@ -532,13 +529,25 @@ inherited FrmConfiguracoes: TFrmConfiguracoes
     object ts2: TTabSheet
       Caption = 'Par'#226'metros'
       ImageIndex = 1
-      ExplicitLeft = 5
       object lbl1: TLabel
         Left = 16
-        Top = 211
+        Top = 232
         Width = 155
         Height = 13
         Caption = 'Validade do Or'#231'amento em Dias:'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = 10639360
+        Font.Height = -11
+        Font.Name = 'Tahoma'
+        Font.Style = []
+        ParentFont = False
+      end
+      object Label20: TLabel
+        Left = 224
+        Top = 232
+        Width = 195
+        Height = 13
+        Caption = 'Porcentagem M'#225'xima Para Dar Desconto'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = 10639360
         Font.Height = -11
@@ -552,7 +561,7 @@ inherited FrmConfiguracoes: TFrmConfiguracoes
         Width = 217
         Height = 17
         Caption = 'Vender Para Cliente Bloqueado'
-        TabOrder = 4
+        TabOrder = 3
         OnClick = chkVenderClienteBloqueadoClick
       end
       object chkAtualizaClienteNaVenda: TCheckBox
@@ -561,61 +570,8 @@ inherited FrmConfiguracoes: TFrmConfiguracoes
         Width = 265
         Height = 17
         Caption = 'Atualizar Informa'#231#245'es do Cliente na Venda'
-        TabOrder = 2
+        TabOrder = 1
         OnClick = chkVenderClienteBloqueadoClick
-      end
-      object grp1: TGroupBox
-        Left = 518
-        Top = 16
-        Width = 249
-        Height = 121
-        Caption = 'Impressora Termica'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = 10639360
-        Font.Height = -11
-        Font.Name = 'Tahoma'
-        Font.Style = []
-        ParentFont = False
-        TabOrder = 0
-        object Label16: TLabel
-          Left = 20
-          Top = 20
-          Width = 34
-          Height = 13
-          Caption = 'Modelo'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = 10639360
-          Font.Height = -11
-          Font.Name = 'Tahoma'
-          Font.Style = []
-          ParentFont = False
-        end
-        object cbxImpressoraTermicaModelo: TComboBox
-          Left = 20
-          Top = 36
-          Width = 219
-          Height = 21
-          TabOrder = 0
-          OnChange = cbxImpressoraTermicaModeloChange
-        end
-        object chkImprimir2Vias: TCheckBox
-          Left = 20
-          Top = 71
-          Width = 265
-          Height = 17
-          Caption = 'Imprimir Comprovante em 2 Vias'
-          TabOrder = 1
-          OnClick = chkVenderClienteBloqueadoClick
-        end
-        object chkImprimirItens2Via: TCheckBox
-          Left = 20
-          Top = 94
-          Width = 265
-          Height = 17
-          Caption = 'Imprimir Via da Loja Resumido'
-          TabOrder = 2
-          OnClick = chkVenderClienteBloqueadoClick
-        end
       end
       object chkBakcup: TCheckBox
         Left = 16
@@ -623,21 +579,21 @@ inherited FrmConfiguracoes: TFrmConfiguracoes
         Width = 265
         Height = 17
         Caption = 'Fazer Backup Di'#225'rio'
-        TabOrder = 3
+        TabOrder = 2
         OnClick = chkVenderClienteBloqueadoClick
       end
       object chkBloquearClienteComAtraso: TCheckBox
         Left = 16
-        Top = 32
+        Top = 31
         Width = 313
         Height = 17
         Caption = 'Bloquear Automaticamente Cliente Com Parcelas em Atraso '
-        TabOrder = 1
+        TabOrder = 0
         OnClick = chkVenderClienteBloqueadoClick
       end
       object edtValidadeOrcamento: TEdit
         Left = 16
-        Top = 230
+        Top = 251
         Width = 121
         Height = 21
         Color = 15524818
@@ -648,12 +604,12 @@ inherited FrmConfiguracoes: TFrmConfiguracoes
         Font.Style = []
         NumbersOnly = True
         ParentFont = False
-        TabOrder = 6
+        TabOrder = 5
         OnChange = edtRazaoSocialChange
       end
       object rgPesquisaPor: TRadioGroup
         Left = 13
-        Top = 159
+        Top = 180
         Width = 265
         Height = 49
         Caption = 'Pesquisar Produto na Venda  Por:'
@@ -667,7 +623,7 @@ inherited FrmConfiguracoes: TFrmConfiguracoes
           'Descri'#231#227'o'
           'C'#243'digo/C'#243'digo Barras')
         ParentFont = False
-        TabOrder = 5
+        TabOrder = 4
         OnClick = rgPesquisaPorClick
       end
       object chkInformarParceiroNaVenda: TCheckBox
@@ -676,43 +632,33 @@ inherited FrmConfiguracoes: TFrmConfiguracoes
         Width = 217
         Height = 17
         Caption = 'Informar Parceiro Na Venda'
+        TabOrder = 6
+        OnClick = chkVenderClienteBloqueadoClick
+      end
+      object chkExibirObservacao: TCheckBox
+        Left = 16
+        Top = 149
+        Width = 217
+        Height = 17
+        Caption = 'Exibir Observa'#231#227'o'
         TabOrder = 7
         OnClick = chkVenderClienteBloqueadoClick
       end
-      object GroupBox1: TGroupBox
-        Left = 519
-        Top = 154
-        Width = 249
-        Height = 73
-        Caption = 'Impressora Tinta/Laser'
+      object edtPorcentagemMaximaDesconto: TEdit
+        Left = 224
+        Top = 251
+        Width = 121
+        Height = 21
+        Color = 15524818
         Font.Charset = DEFAULT_CHARSET
         Font.Color = 10639360
         Font.Height = -11
         Font.Name = 'Tahoma'
         Font.Style = []
+        NumbersOnly = True
         ParentFont = False
         TabOrder = 8
-        object Label18: TLabel
-          Left = 20
-          Top = 20
-          Width = 34
-          Height = 13
-          Caption = 'Modelo'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = 10639360
-          Font.Height = -11
-          Font.Name = 'Tahoma'
-          Font.Style = []
-          ParentFont = False
-        end
-        object cbbImpressoraTinta: TComboBox
-          Left = 20
-          Top = 36
-          Width = 219
-          Height = 21
-          TabOrder = 0
-          OnChange = cbxImpressoraTermicaModeloChange
-        end
+        OnChange = edtRazaoSocialChange
       end
     end
     object tsLogoMarca: TTabSheet
@@ -766,6 +712,147 @@ inherited FrmConfiguracoes: TFrmConfiguracoes
           TabOrder = 0
           OnClick = btnAnexarComprovanteClick
         end
+      end
+    end
+    object tsImpressora: TTabSheet
+      Caption = 'Impressora'
+      ImageIndex = 3
+      object grp1: TGroupBox
+        Left = 9
+        Top = 21
+        Width = 249
+        Height = 121
+        Caption = 'Impressora Termica'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = 10639360
+        Font.Height = -11
+        Font.Name = 'Tahoma'
+        Font.Style = []
+        ParentFont = False
+        TabOrder = 0
+        object Label16: TLabel
+          Left = 20
+          Top = 20
+          Width = 34
+          Height = 13
+          Caption = 'Modelo'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = 10639360
+          Font.Height = -11
+          Font.Name = 'Tahoma'
+          Font.Style = []
+          ParentFont = False
+        end
+        object cbxImpressoraTermicaModelo: TComboBox
+          Left = 20
+          Top = 36
+          Width = 219
+          Height = 21
+          TabOrder = 0
+          OnChange = cbxImpressoraTermicaModeloChange
+        end
+        object chkImprimir2Vias: TCheckBox
+          Left = 20
+          Top = 71
+          Width = 265
+          Height = 17
+          Caption = 'Imprimir Comprovante em 2 Vias'
+          TabOrder = 1
+          OnClick = chkVenderClienteBloqueadoClick
+        end
+        object chkImprimirItens2Via: TCheckBox
+          Left = 20
+          Top = 94
+          Width = 265
+          Height = 17
+          Caption = 'Imprimir Via da Loja Resumido'
+          TabOrder = 2
+          OnClick = chkVenderClienteBloqueadoClick
+        end
+      end
+      object GroupBox1: TGroupBox
+        Left = 10
+        Top = 159
+        Width = 249
+        Height = 73
+        Caption = 'Impressora Tinta/Laser'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = 10639360
+        Font.Height = -11
+        Font.Name = 'Tahoma'
+        Font.Style = []
+        ParentFont = False
+        TabOrder = 1
+        object Label18: TLabel
+          Left = 20
+          Top = 20
+          Width = 34
+          Height = 13
+          Caption = 'Modelo'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = 10639360
+          Font.Height = -11
+          Font.Name = 'Tahoma'
+          Font.Style = []
+          ParentFont = False
+        end
+        object cbbImpressoraTinta: TComboBox
+          Left = 20
+          Top = 36
+          Width = 219
+          Height = 21
+          TabOrder = 0
+          OnChange = cbxImpressoraTermicaModeloChange
+        end
+      end
+    end
+    object tsCaixa: TTabSheet
+      Caption = 'Caixa'
+      ImageIndex = 4
+      object Label19: TLabel
+        Left = 11
+        Top = 24
+        Width = 98
+        Height = 16
+        Caption = 'N'#250'mero do Caixa'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = 10639360
+        Font.Height = -13
+        Font.Name = 'Tahoma'
+        Font.Style = []
+        ParentFont = False
+      end
+      object edtNumeroDoCaixa: TEdit
+        Left = 22
+        Top = 47
+        Width = 271
+        Height = 24
+        CharCase = ecUpperCase
+        Color = 15524818
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = 10639360
+        Font.Height = -13
+        Font.Name = 'MS Sans Serif'
+        Font.Style = []
+        MaxLength = 10
+        ParentFont = False
+        TabOrder = 0
+        OnChange = edtRazaoSocialChange
+      end
+      object chkFuncionarComoCliente: TCheckBox
+        Left = 13
+        Top = 90
+        Width = 313
+        Height = 17
+        Caption = 'Funcionar Como Cliente'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = 10639360
+        Font.Height = -11
+        Font.Name = 'Tahoma'
+        Font.Style = []
+        ParentFont = False
+        TabOrder = 1
+        OnClick = chkVenderClienteBloqueadoClick
       end
     end
   end

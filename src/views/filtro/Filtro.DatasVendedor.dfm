@@ -1,5 +1,4 @@
 inherited frmFiltroDataVendedor: TfrmFiltroDataVendedor
-  OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
   inherited pnl1: TPanel

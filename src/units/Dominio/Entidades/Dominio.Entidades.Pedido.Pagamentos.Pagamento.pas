@@ -24,6 +24,9 @@ type
     Fparcelas: TObjectList<TParcelas>;
     FIDCONDICAO: integer;
     FQUANTASVEZES: integer;
+    FTROCO: Currency;
+    FDATAALTERACAO: TDateTime;
+    FNUMCAIXA: string;
     procedure SetACRESCIMO(const Value: Currency);
     procedure SetCONDICAO(const Value: string);
     procedure SetDESCRICAO(const Value: string);
@@ -38,11 +41,13 @@ type
     procedure SetTipoPagamento(const Value: TTipoPagto);
     procedure SetIDCONDICAO(const Value: integer);
     procedure SetQUANTASVEZES(const Value: integer);
+    procedure SetTROCO(const Value: Currency);
   public
     procedure ParcelarPedido(aCodigoCliente: string; NumParcelas: integer;
       VencimentoPrimeiraParcela: TDate);
     function RetornaVencimentoParcela(data: TDate; dias: integer): TDate;
   public
+    [AutoInc('AUTOINC')]
     [PrimaryKey('PKPEDIDOPAGAMENTOS', 'SEQ,IDPEDIDO')]
     [campo('SEQ', tpINTEGER, 0, 0, True)]
     property SEQ: integer read FSEQ write SetSEQ;
@@ -54,6 +59,7 @@ type
     property CONDICAO: string read FCONDICAO write SetCONDICAO;
     [campo('IDCONDICAO', tpINTEGER, 0, 0, True)]
     property IDCONDICAO: integer read FIDCONDICAO write SetIDCONDICAO;
+    [IGNORE(True)]
     [campo('TIPO', tpINTEGER, 0, 0, True)]
     property TIPOPROXY: string read getTIPOPROXY;
     property TipoPagamento: TTipoPagto read getTipoPagamento write SetTipoPagamento;
@@ -64,8 +70,14 @@ type
     property ACRESCIMO: Currency read FACRESCIMO write SetACRESCIMO;
     [campo('VALOR', tpNUMERIC, 15, 4, True, '0')]
     property Valor: Currency read FVALOR write SetVALOR;
+    [campo('TROCO', tpNUMERIC, 15, 4, True, '0')]
+    property TROCO: Currency read FTROCO write SetTROCO;
     [campo('QUANTASVEZES', tpINTEGER)]
     property QUANTASVEZES: integer read FQUANTASVEZES write SetQUANTASVEZES;
+    [campo('DATAALTERACAO', tpTIMESTAMP)]
+    property DATAALTERACAO: TDateTime read FDATAALTERACAO write FDATAALTERACAO;
+    [campo('NUMCAIXA', tpVARCHAR, 30, 0, True)]
+    property NUMCAIXA: string read FNUMCAIXA write FNUMCAIXA;
 
     property Parcelas: TObjectList<TParcelas> read Fparcelas write Setparcelas;
 
@@ -163,6 +175,7 @@ begin
   inherited;
   Self.Fparcelas := TObjectList<TParcelas>.create;
   Self.Fparcelas.OwnsObjects := True;
+  DATAALTERACAO := now;
 end;
 
 destructor TPEDIDOPAGAMENTO.destroy;
@@ -236,6 +249,11 @@ end;
 procedure TPEDIDOPAGAMENTO.SetTipoPagamento(const Value: TTipoPagto);
 begin
   FTipo := Ord(Value);
+end;
+
+procedure TPEDIDOPAGAMENTO.SetTROCO(const Value: Currency);
+begin
+  FTROCO := Value;
 end;
 
 procedure TPEDIDOPAGAMENTO.SetVALOR(const Value: Currency);

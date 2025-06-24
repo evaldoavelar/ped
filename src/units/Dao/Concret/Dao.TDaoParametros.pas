@@ -5,13 +5,14 @@ interface
 uses
   System.SysUtils, System.Classes, Vcl.Graphics, Vcl.ExtCtrls, Vcl.Imaging.jpeg,
   Data.DB, FireDAC.Comp.Client, FireDAC.Stan.Param,
-  Dao.TDaoBase, Dao.IDaoParametros,
-  Sistema.TParametros;
+  Dao.TDaoBase, Sistema.TLog, Dao.IDaoParametros,
+  Sistema.TParametros, Dao.IDaoPontoVenda;
 
 type
 
   TDaoParametros = class(TDaoBase, IDaoParametros)
   private
+    FDaoPontoVenda: IDaoPontoVenda;
     procedure ObjectToParams(ds: TFDQuery; Parametros: TParametros);
     function ParamsToObject(ds: TFDQuery): TParametros;
 
@@ -19,25 +20,28 @@ type
     procedure IncluiParametros(Parametros: TParametros);
     procedure AtualizaParametros(Parametros: TParametros);
     function GetParametros(): TParametros;
+  public
+    constructor Create(Connection: TFDConnection; aKeepConection: Boolean; aDaoPontoVenda: IDaoPontoVenda); virtual;
   end;
 
 implementation
 
 { TDaoParametros }
-uses Dominio.Entidades.TFactory, Util.Exceptions;
+uses Util.Exceptions;
 
 procedure TDaoParametros.AtualizaParametros(Parametros: TParametros);
 var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
       qry.SQL.Text := '' +
         'UPDATE parametros ' +
         'SET    vendeclientebloqueado = :VENDECLIENTEBLOQUEADO, ' +
         '       atualizaclientenavenda = :ATUALIZACLIENTENAVENDA, ' +
+        '       EXIBIROBSERVACAO = :EXIBIROBSERVACAO, ' +
         '       BLOQUEARCLIENTECOMATRASO = :BLOQUEARCLIENTECOMATRASO, ' +
         '       BACKUPDIARIO = :BACKUPDIARIO, ' +
         '       modeloimpressora = :MODELOIMPRESSORA, ' +
@@ -47,23 +51,40 @@ begin
         '       IMPRIMIR2VIAS = :IMPRIMIR2VIAS, ' +
         '       IMPRIMIRITENS2VIA = :IMPRIMIRITENS2VIA,' +
         '       VALIDADEORCAMENTO = :VALIDADEORCAMENTO, ' +
+        '       PORCENTAGEMMAXIMADESCONTO = :PORCENTAGEMMAXIMADESCONTO, ' +
         '       LOGOMARCAETIQUETA = :LOGOMARCAETIQUETA, ' +
+        '       SERVIDORDATABASE = :SERVIDORDATABASE, ' +
+        '       SERVIDORUSUARIO = :SERVIDORUSUARIO, ' +
+        '       SERVIDORSENHA = :SERVIDORSENHA, ' +
+      // '       FUNCIONARCOMOCLIENTE = :FUNCIONARCOMOCLIENTE, ' +
+        '       INFORMARPARCEIRONAVENDA = :INFORMARPARCEIRONAVENDA, ' +
+        '       DATAALTERACAO = :DATAALTERACAO, ' +
         '       PESQUISAPRODUTOPOR = :PESQUISAPRODUTOPOR ';
 
       ObjectToParams(qry, Parametros);
 
+      TLog.d(qry);
       qry.ExecSQL;
 
     except
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha AtualizaParametros: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha AtualizaParametros: ' + E.message);
       end;
     end;
   finally
     FreeAndNil(qry);
   end;
+  FDaoPontoVenda.AtualizaPontoVenda(Parametros.PontoVenda);
+end;
 
+constructor TDaoParametros.Create(Connection: TFDConnection;
+  aKeepConection: Boolean; aDaoPontoVenda: IDaoPontoVenda);
+begin
+  inherited Create(Connection, aKeepConection);
+
+  FDaoPontoVenda := aDaoPontoVenda;
 end;
 
 function TDaoParametros.GetParametros: TParametros;
@@ -71,22 +92,30 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
-      qry.SQL.Text := '' + 'select *  ' + 'from  Parametros ';
+      qry.SQL.Text := ''
+        + 'select *  '
+        + 'from  Parametros ';
 
-      qry.open;
+      TLog.d(qry);
+      qry.Open;
 
       if qry.IsEmpty then
-        Result := nil
+      begin
+        Result := TParametros.Create;
+        Result.VERSAOBD := '0.0.0.0';
+      end
       else
         Result := ParamsToObject(qry);
 
+      Result.PontoVenda := FDaoPontoVenda.GetParametros();
     except
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha GetParametros: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha GetParametros: ' + E.message);
       end;
     end;
   finally
@@ -100,7 +129,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
       qry.SQL.Text := '' +
@@ -117,6 +146,15 @@ begin
         '             VALIDADEORCAMENTO, ' +
         '             PESQUISAPRODUTOPOR, ' +
         '             LOGOMARCAETIQUETA, ' +
+      // '             FUNCIONARCOMOCLIENTE, ' +
+        '             SERVIDORUSUARIO, ' +
+        '             SERVIDORDATABASE, ' +
+        '             SERVIDORSENHA, ' +
+      // '             NUMCAIXA, ' +
+        '             DATAALTERACAO, ' +
+        '             EXIBIROBSERVACAO, ' +
+        '             INFORMARPARCEIRONAVENDA, ' +
+        '             PORCENTAGEMMAXIMADESCONTO, ' +
         '             velocidade) ' +
         'VALUES     ( :VENDECLIENTEBLOQUEADO, ' +
         '             :ATUALIZACLIENTENAVENDA, ' +
@@ -130,22 +168,33 @@ begin
         '             :VALIDADEORCAMENTO, ' +
         '             :PESQUISAPRODUTOPOR, ' +
         '             :LOGOMARCAETIQUETA, ' +
+      // '             :FUNCIONARCOMOCLIENTE, ' +
+        '             :SERVIDORUSUARIO, ' +
+        '             :SERVIDORDATABASE, ' +
+        '             :SERVIDORSENHA, ' +
+      // '             :NUMCAIXA, ' +
+        '             :DATAALTERACAO, ' +
+        '             :EXIBIROBSERVACAO, ' +
+        '             :INFORMARPARCEIRONAVENDA, ' +
+        '             :PORCENTAGEMMAXIMADESCONTO, ' +
         '             :VELOCIDADE )';
 
       ObjectToParams(qry, Parametros);
 
+      TLog.d(qry);
       qry.ExecSQL;
 
     except
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha Incluir Parametros: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha Incluir Parametros: ' + E.message);
       end;
     end;
   finally
     FreeAndNil(qry);
   end;
-
+  FDaoPontoVenda.AtualizaPontoVenda(Parametros.PontoVenda);
 end;
 
 procedure TDaoParametros.ObjectToParams(ds: TFDQuery; Parametros: TParametros);
@@ -157,6 +206,9 @@ begin
 
     if ds.Params.FindParam('ATUALIZACLIENTENAVENDA') <> nil then
       ds.Params.ParamByName('ATUALIZACLIENTENAVENDA').AsBoolean := Parametros.ATUALIZACLIENTENAVENDA;
+
+    if ds.Params.FindParam('EXIBIROBSERVACAO') <> nil then
+      ds.Params.ParamByName('EXIBIROBSERVACAO').AsBoolean := Parametros.EXIBIROBSERVACAO;
 
     if ds.Params.FindParam('BLOQUEARCLIENTECOMATRASO') <> nil then
       ds.Params.ParamByName('BLOQUEARCLIENTECOMATRASO').AsBoolean := Parametros.BLOQUEARCLIENTECOMATRASO;
@@ -186,15 +238,35 @@ begin
     if ds.Params.FindParam('VERSAOBD') <> nil then
       ds.Params.ParamByName('VERSAOBD').AsString := Parametros.VERSAOBD;
 
+    if ds.Params.FindParam('SERVIDORDATABASE') <> nil then
+      ds.Params.ParamByName('SERVIDORDATABASE').AsString := Parametros.SERVIDORDATABASE;
+    if ds.Params.FindParam('SERVIDORUSUARIO') <> nil then
+      ds.Params.ParamByName('SERVIDORUSUARIO').AsString := Parametros.SERVIDORUSUARIO;
+    if ds.Params.FindParam('SERVIDORSENHA') <> nil then
+      ds.Params.ParamByName('SERVIDORSENHA').AsString := Parametros.SERVIDORSENHA;
+    if ds.Params.FindParam('INFORMARPARCEIRONAVENDA') <> nil then
+      ds.Params.ParamByName('INFORMARPARCEIRONAVENDA').AsBoolean := Parametros.INFORMARPARCEIRONAVENDA;
+
     if ds.Params.FindParam('LOGOMARCAETIQUETA') <> nil then
     begin
       if Parametros.LOGOMARCAETIQUETA <> nil then
         ds.Params.ParamByName('LOGOMARCAETIQUETA').Assign(Parametros.LOGOMARCAETIQUETA.Picture.Graphic);
     end;
 
+    // ds.ParamByName('NUMCAIXA').AsString := Parametros.NUMCAIXA;
+
+    if ds.Params.FindParam('DATAALTERACAO') <> nil then
+      ds.Params.ParamByName('DATAALTERACAO').AsDate := Parametros.DATAALTERACAO;
+
+    if ds.Params.FindParam('PORCENTAGEMMAXIMADESCONTO') <> nil then
+      ds.Params.ParamByName('PORCENTAGEMMAXIMADESCONTO').AsCurrency := Parametros.PORCENTAGEMMAXIMADESCONTO;
+
   except
     on E: Exception do
-      raise TDaoException.Create('Falha ao associar parâmetros TDaoParametros: ' + E.Message);
+    begin
+      TLog.d(E.message);
+      raise TDaoException.Create('Falha ao associar parâmetros TDaoParametros: ' + E.message);
+    end;
   end;
 end;
 
@@ -202,10 +274,12 @@ function TDaoParametros.ParamsToObject(ds: TFDQuery): TParametros;
 begin
   try
     Result := TParametros.Create();
-
+    Result.VERSAOBD := ds.FieldByName('VERSAOBD').AsString;
     Result.VENDECLIENTEBLOQUEADO := ds.FieldByName('VENDECLIENTEBLOQUEADO').AsInteger = 1;
     Result.BLOQUEARCLIENTECOMATRASO := ds.FieldByName('BLOQUEARCLIENTECOMATRASO').AsInteger = 1;
     Result.ATUALIZACLIENTENAVENDA := ds.FieldByName('ATUALIZACLIENTENAVENDA').AsInteger = 1;
+    Result.EXIBIROBSERVACAO := ds.FieldByName('EXIBIROBSERVACAO').AsInteger = 1;
+    Result.INFORMARPARCEIRONAVENDA := ds.FieldByName('INFORMARPARCEIRONAVENDA').AsInteger = 1;
     Result.VALIDADEORCAMENTO := ds.FieldByName('VALIDADEORCAMENTO').AsInteger;
     Result.PESQUISAPRODUTOPOR := ds.FieldByName('PESQUISAPRODUTOPOR').AsInteger;
     Result.BACKUPDIARIO := ds.FieldByName('BACKUPDIARIO').AsInteger = 1;
@@ -214,8 +288,12 @@ begin
     Result.ImpressoraTermica.VELOCIDADE := ds.FieldByName('VELOCIDADE').AsString;
     Result.ImpressoraTermica.IMPRIMIR2VIAS := ds.FieldByName('IMPRIMIR2VIAS').AsInteger = 1;
     Result.ImpressoraTermica.IMPRIMIRITENS2VIA := ds.FieldByName('IMPRIMIRITENS2VIA').AsInteger = 1;
-    Result.VERSAOBD := ds.FieldByName('VERSAOBD').AsString;
 
+    Result.SERVIDORUSUARIO := ds.FieldByName('SERVIDORUSUARIO').AsString;
+    Result.SERVIDORDATABASE := ds.FieldByName('SERVIDORDATABASE').AsString;
+    Result.SERVIDORSENHA := ds.FieldByName('SERVIDORSENHA').AsString;
+    Result.PORCENTAGEMMAXIMADESCONTO := ds.FieldByName('PORCENTAGEMMAXIMADESCONTO').AsCurrency;
+    // Result.NUMCAIXA := ds.FieldByName('NUMCAIXA').AsString;
     if not ds.FieldByName('LOGOMARCAETIQUETA').IsNull then
     begin
       Result.LOGOMARCAETIQUETA := TImage.Create(nil);
@@ -225,7 +303,10 @@ begin
 
   except
     on E: Exception do
-      raise TDaoException.Create('Falha no ParamsToObject TParametros: ' + E.Message);
+    begin
+      TLog.d(E.message);
+      raise TDaoException.Create('Falha no ParamsToObject TParametros: ' + E.message);
+    end;
   end;
 end;
 

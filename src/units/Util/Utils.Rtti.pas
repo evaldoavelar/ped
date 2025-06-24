@@ -34,6 +34,7 @@ Type
 
     class procedure ForEachProperties(aObj: TObject; const aCall: TProc<string>); overload;
     class procedure ForEachProperties(aObj: TObject; const aCall: TProc<TRttiProperty>); overload;
+    class procedure ForEachProperties<T: Class>(const aCall: TProc<TRttiProperty>); overload;
 
     class function CreateInstance<T>(const Args: array of TValue): T; overload;
     class function CreateInstance<T>(aType: TClass; const Args: array of TValue): T; overload;
@@ -179,6 +180,22 @@ var
 begin
   context := TRttiContext.Create;
   rType := context.GetType(aObj.ClassType);
+
+  for prop in rType.GetProperties do
+  begin
+    aCall(prop)
+  end;
+
+end;
+
+class procedure TRttiUtil.ForEachProperties<T>(const aCall: TProc<TRttiProperty>);
+var
+  context: TRttiContext;
+  rType: TRttiType;
+  prop: TRttiProperty;
+begin
+  context := TRttiContext.Create;
+  rType := context.GetType(TypeInfo(T));
 
   for prop in rType.GetProperties do
   begin

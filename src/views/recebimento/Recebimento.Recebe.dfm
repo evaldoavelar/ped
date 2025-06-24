@@ -3,11 +3,9 @@ inherited frmRecebimento: TfrmRecebimento
   Caption = 'Recebimento'
   ClientHeight = 456
   ClientWidth = 737
-  OnCreate = FormCreate
-  OnDestroy = FormDestroy
   OnShow = FormShow
-  ExplicitWidth = 743
-  PixelsPerInch = 96
+  ExplicitWidth = 753
+  ExplicitHeight = 495
   TextHeight = 13
   object Panel1: TPanel
     Left = 0
@@ -227,6 +225,7 @@ inherited frmRecebimento: TfrmRecebimento
       Font.Style = [fsBold]
       ParentFont = False
       TabOrder = 2
+      Text = '000001'
       OnInvokeSearch = edtPesquisaInvokeSearch
     end
     object BitBtn4: TBitBtn
@@ -253,37 +252,6 @@ inherited frmRecebimento: TfrmRecebimento
       OnClick = rgFiltroClick
     end
   end
-  object strGridParcelas: TStringGrid
-    Left = 0
-    Top = 121
-    Width = 737
-    Height = 294
-    Align = alClient
-    BiDiMode = bdLeftToRight
-    ColCount = 4
-    DefaultRowHeight = 17
-    FixedCols = 0
-    RowCount = 2
-    Font.Charset = DEFAULT_CHARSET
-    Font.Color = 5259564
-    Font.Height = -11
-    Font.Name = 'Tahoma'
-    Font.Style = []
-    Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goRowMoving, goTabs, goRowSelect]
-    ParentBiDiMode = False
-    ParentFont = False
-    ParentShowHint = False
-    ShowHint = True
-    TabOrder = 1
-    ColWidths = (
-      76
-      93
-      107
-      96)
-    RowHeights = (
-      17
-      17)
-  end
   object Panel2: TPanel
     Left = 0
     Top = 415
@@ -291,7 +259,7 @@ inherited frmRecebimento: TfrmRecebimento
     Height = 41
     Align = alBottom
     BevelOuter = bvNone
-    TabOrder = 2
+    TabOrder = 1
     DesignSize = (
       737
       41)
@@ -357,6 +325,47 @@ inherited frmRecebimento: TfrmRecebimento
       Action = actPedido
       Caption = 'Ver Pedido'
       TabOrder = 2
+    end
+  end
+  object Panel3: TPanel
+    Left = 0
+    Top = 121
+    Width = 737
+    Height = 294
+    Align = alClient
+    BevelOuter = bvNone
+    TabOrder = 2
+    object strGridParcelas: TStringGrid
+      Left = 0
+      Top = 0
+      Width = 737
+      Height = 294
+      Align = alClient
+      BiDiMode = bdLeftToRight
+      ColCount = 4
+      DefaultRowHeight = 17
+      FixedCols = 0
+      RowCount = 2
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = 5259564
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goDrawFocusSelected, goRowMoving, goTabs]
+      ParentBiDiMode = False
+      ParentFont = False
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 0
+      OnDrawCell = strGridParcelasDrawCell
+      ColWidths = (
+        76
+        93
+        107
+        96)
+      RowHeights = (
+        17
+        17)
     end
   end
   object ActionList1: TActionList

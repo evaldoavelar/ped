@@ -1,8 +1,5 @@
 program PED;
 
-
-
-
 uses
   Windows,
   Vcl.Forms,
@@ -70,7 +67,7 @@ uses
   Dominio.Mapeamento.Atributos in 'units\Dominio\Mapeamento\Dominio.Mapeamento.Atributos.pas',
   Dominio.Entidades.TCliente in 'units\Dominio\Entidades\Dominio.Entidades.TCliente.pas',
   Dominio.Entidades.TEmitente in 'units\Dominio\Entidades\Dominio.Entidades.TEmitente.pas',
-  Dominio.Entidades.TFactory in 'units\Dominio\Entidades\Dominio.Entidades.TFactory.pas',
+  Factory.Dao in 'units\Factorys\Concret\Factory.Dao.pas',
   Dominio.Entidades.TFormaPagto in 'units\Dominio\Entidades\Dominio.Entidades.TFormaPagto.pas',
   Dominio.Entidades.TFornecedor in 'units\Dominio\Entidades\Dominio.Entidades.TFornecedor.pas',
   Dominio.Entidades.TItemPedido in 'units\Dominio\Entidades\Dominio.Entidades.TItemPedido.pas',
@@ -189,7 +186,43 @@ uses
   Impressao.Parametros.Impressora.Tinta in 'units\Impressao\Impressao.Parametros.Impressora.Tinta.pas',
   Impressao.Etiquetas in 'units\Impressao\Impressao.Etiquetas.pas',
   Etiquetas.Modelo4x2 in 'views\etiquetas\Etiquetas.Modelo4x2.pas' {FrmEtiquetasModelo4x2},
-  Relatorio.FREtiquetas.Modelo4x2 in 'units\relatorio\Relatorio.FREtiquetas.Modelo4x2.pas';
+  Relatorio.FREtiquetas.Modelo4x2 in 'units\relatorio\Relatorio.FREtiquetas.Modelo4x2.pas',
+  Sistema.TLog in 'units\Sistema\Sistema.TLog.pas',
+  Utils.IO in 'units\Util\Utils.IO.pas',
+  Configuracoes.Database in 'views\configuracoes\Configuracoes.Database.pas' {FrmConfiguracoesDatabase},
+  Sistema.TBancoDeDados in 'units\Sistema\Sistema.TBancoDeDados.pas',
+  Sistema.TCaixa in 'units\Sistema\Sistema.TCaixa.pas',
+  Dao.TParametrosBancoDeDados in 'units\Dao\Concret\Dao.TParametrosBancoDeDados.pas',
+  Dao.IDaoParametrosBancoDeDados in 'units\Dao\Abstract\Dao.IDaoParametrosBancoDeDados.pas',
+  IFactory.Dao in 'units\Factorys\Abstract\IFactory.Dao.pas',
+  IFactory.Entidades in 'units\Factorys\Abstract\IFactory.Entidades.pas',
+  Factory.Entidades in 'units\Factorys\Concret\Factory.Entidades.pas',
+  Sistema.Constantes in 'units\Sistema\Sistema.Constantes.pas',
+  Facades.Abstract.Importar in 'units\Facades\Abstract\Facades.Abstract.Importar.pas',
+  Facades.Abstract.Exportar in 'units\Facades\Abstract\Facades.Abstract.Exportar.pas',
+  Facade.Concret.Importar in 'units\Facades\Concret\Facade.Concret.Importar.pas',
+  Facade.Concret.Exportar in 'units\Facades\Concret\Facade.Concret.Exportar.pas',
+  Dominio.Entidades.TImportacao in 'units\Dominio\Entidades\Dominio.Entidades.TImportacao.pas',
+  Dao.TImportacao in 'units\Dao\Concret\Dao.TImportacao.pas',
+  Dao.IDaoImportacao in 'units\Dao\Abstract\Dao.IDaoImportacao.pas',
+  Dominio.Mapeamento.Atributos.Funcoes in 'units\Dominio\Mapeamento\Dominio.Mapeamento.Atributos.Funcoes.pas',
+  Facades.Abstract.Observer in 'units\Facades\Abstract\Facades.Abstract.Observer.pas',
+  Facades.Abstract.Observable in 'units\Facades\Abstract\Facades.Abstract.Observable.pas',
+  Sistema.Parametros.PontoVenda in 'units\Sistema\Sistema.Parametros.PontoVenda.pas',
+  Dao.IDaoPontoVenda in 'units\Dao\Abstract\Dao.IDaoPontoVenda.pas',
+  Dao.TDaoPontoVenda in 'units\Dao\Concret\Dao.TDaoPontoVenda.pas',
+  Vcl.AutoComplete in 'modules\autocomplete\src\Vcl.AutoComplete.pas',
+  Relatorio.TRComprovante.CreditoDebito in 'units\relatorio\Relatorio.TRComprovante.CreditoDebito.pas',
+  Dominio.Entidades.Pedido.Parcela.Pagamentos in 'units\Dominio\Entidades\Dominio.Entidades.Pedido.Parcela.Pagamentos.pas',
+  Dao.IDAOParcelaPagamento in 'units\Dao\Abstract\Dao.IDAOParcelaPagamento.pas',
+  Dao.TDAOParcelaPagamento in 'units\Dao\Concret\Dao.TDAOParcelaPagamento.pas',
+  Caixa.Abertura in 'views\caixa\Caixa.Abertura.pas' {frmCaixaAbertura},
+  Dominio.Entidades.TControleCaixa in 'units\Dominio\Entidades\Dominio.Entidades.TControleCaixa.pas',
+  Dao.IDAOControleCaixa in 'units\Dao\Abstract\Dao.IDAOControleCaixa.pas',
+  Dao.TDaoControleCaixa in 'units\Dao\Concret\Dao.TDaoControleCaixa.pas',
+  Caixa.Fechamento in 'views\caixa\Caixa.Fechamento.pas' {frmCaixaFechamento},
+  Relatorio.TRCaixa.Abertura in 'units\relatorio\Relatorio.TRCaixa.Abertura.pas',
+  Filtro.DatasNumCaixa in 'views\filtro\Filtro.DatasNumCaixa.pas' {frmFiltroDatasNumCaixa};
 
 {$R *.res}
 
@@ -200,11 +233,12 @@ var
 begin
 
   Mutex := CreateMutex(nil, True, 'PED');
-  if (Mutex = 0) or (GetLastError = ERROR_ALREADY_EXISTS) then
-  begin
-    MessageDlg('Você não pode executar outra cópia do aplicativo', mtInformation, [mbOK], 0);
-  end
-  else
+
+  // if (Mutex = 0) or (GetLastError = ERROR_ALREADY_EXISTS) then
+  // begin
+  // MessageDlg('Você não pode executar outra cópia do aplicativo', mtInformation, [mbOK], 0);
+  // end
+  // else
   begin
     Application.Initialize;
     Application.MainFormOnTaskbar := True;

@@ -54,6 +54,10 @@ type
     FVALORDESCONTO: currency;
     FVALORACRESCIMO: currency;
     FOnEstoqueBaixo: TOnEstoqueBaixo;
+    FNUMCAIXA: string;
+    FDATAALTERACAO: TDateTime;
+    FDATAHORA: TDateTime;
+    FPorcentagemMaximaDesconto: currency;
 
     function GetValorBruto: currency;
     function getValorLiquido: currency;
@@ -79,9 +83,10 @@ type
     function getTotalAcrescimoPagamentos: currency;
     procedure SetVALORACRESCIMO(const Value: currency);
     procedure SetOnEstoqueBaixo(const Value: TOnEstoqueBaixo);
+    procedure SetDATAALTERACAO(const Value: TDateTime);
 
   public
-    constructor create;
+    constructor create();
     destructor destroy; override;
     procedure VendeItem(Item: TItemPedido);
     procedure AddParceiro(const Value: TParceiro);
@@ -90,13 +95,18 @@ type
     procedure setDescontos(aTipo: TTipoDesconto; aValor: currency);
 
   published
+    [AutoInc('AUTOINC')]
     [campo('ID', tpINTEGER, 0, 0, True)]
     [PrimaryKey('PK_PEDIDO', 'ID')]
     property ID: Integer read FID write FID;
     [campo('NUMERO', tpVARCHAR, 10)]
     property NUMERO: string read FNUMERO write FNUMERO;
+    [campo('NUMCAIXA', tpVARCHAR, 10, 0, True, 'caixa-01')]
+    property NUMCAIXA: string read FNUMCAIXA write FNUMCAIXA;
     [campo('DATAPEDIDO', tpDATE)]
     property DATAPEDIDO: TDateTime read FDATAPEDIDO write FDATAPEDIDO;
+    [campo('DATAHORA', tpDATE)]
+    property DATAHORA: TDateTime read FDATAHORA write FDATAHORA;
     [campo('HORAPEDIDO', tpTIME)]
     property HORAPEDIDO: TTime read FHORAPEDIDO write FHORAPEDIDO;
     [campo('OBSERVACAO', tpVARCHAR, 1000)]
@@ -149,6 +159,11 @@ type
     [campo('COMPROVANTE', tpBLOB, 0, 9048)]
     property COMPROVANTE: TImage read FCOMPROVANTE write FCOMPROVANTE;
 
+    [campo('DATAALTERACAO', tpTIMESTAMP)]
+    property DATAALTERACAO: TDateTime read FDATAALTERACAO write SetDATAALTERACAO;
+
+  public
+    property PorcentagemMaximaDesconto: currency read FPorcentagemMaximaDesconto write FPorcentagemMaximaDesconto;
     property OnVendeItem: TOnVendeItem read FOnVendeItem write FOnVendeItem;
     property OnChange: TOnChange read FOnChange write FOnChange;
     property OnParcela: TOnParcela read FOnParcela write FOnParcela;
@@ -161,8 +176,8 @@ type
 implementation
 
 uses
-  Util.Funcoes, Util.Exceptions, Dominio.Entidades.TParceiroVenda.Pagamentos,
-  Dominio.Entidades.TFormaPagto.Tipo, Dao.TDaoPedido;
+  Util.Funcoes, Util.Exceptions,
+  Dominio.Entidades.TFormaPagto.Tipo;
 
 { TPedido }
 
@@ -179,7 +194,7 @@ begin
   Self.FItens := itens;
 end;
 
-constructor TPedido.create;
+constructor TPedido.create();
 begin
   inherited;
   Self.InicializarPropriedades(nil);
@@ -294,7 +309,7 @@ begin
   result := 0;
 
   for Pagtos in Self.Pagamentos.FormasDePagamento do
-    if Pagtos.TipoPagamento = TTipoPagto.parcelado then
+    if Pagtos.TipoPagamento = TTipoPagto.Crediario then
       for Item in Pagtos.parcelas do
         result := result + Item.VALOR;
 
@@ -352,6 +367,11 @@ begin
 
 end;
 
+procedure TPedido.SetDATAALTERACAO(const Value: TDateTime);
+begin
+  FDATAALTERACAO := Value;
+end;
+
 procedure TPedido.SetDATACANCELAMENTO(const Value: TDateTime);
 begin
 
@@ -374,19 +394,29 @@ begin
 end;
 
 procedure TPedido.setDescontos(aTipo: TTipoDesconto; aValor: currency);
+var
+  LDesconto: currency;
+  LMaxDesconto: currency;
 begin
+  LDesconto := 0;
   case aTipo of
     tpPercentual:
       begin
-        FVALORDESC := ValorBruto * (aValor / 100);
+        LDesconto := ValorBruto * (aValor / 100);
       end;
     tpValor:
       begin
-        FVALORDESC := aValor;
+        LDesconto := aValor;
       end;
   end;
 
-  FVALORDESC := TUtil.Truncar(FVALORDESC, 2);
+  // maximo valor desconto
+  LMaxDesconto := FPorcentagemMaximaDesconto * (ValorBruto / 100);
+
+  if LDesconto > LMaxDesconto then
+    raise Exception.create(Format('O valor do desconto é maior do que o valor máximo permitido de %f %%', [FPorcentagemMaximaDesconto]));
+
+  FVALORDESC := TUtil.Truncar(LDesconto, 2);
 end;
 
 procedure TPedido.setOBSERVACAO(const Value: string);

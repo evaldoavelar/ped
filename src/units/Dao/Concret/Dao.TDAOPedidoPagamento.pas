@@ -7,10 +7,12 @@ uses System.Generics.Collections,
   FireDAC.Stan.Error,
   Data.DB, FireDAC.Comp.Client,
   Dominio.Entidades.Pedido.Pagamentos.Pagamento,
-  Dao.TDaoBase,
+  Dao.TDaoBase, Sistema.TLog,
   Dao.IDAOPedidoPagamento;
 
 type
+  TArrayInterger = array of Integer;
+
   TDAOPedidoPagamento = class(TDaoBase, IDAOPedidoPagamento)
   public
   public
@@ -21,18 +23,19 @@ type
     procedure Atualiza(aPagto: TPEDIDOPAGAMENTO);
     function GetPAGTO(SEQ: Integer; idpedido: Integer): TPEDIDOPAGAMENTO;
     function ListaObject(idpedido: Integer): tLIST<TPEDIDOPAGAMENTO>;
+    function TiposPagamento(idpedido: Integer): TArray<Integer>;
   private
     procedure GravaParcelas(aPagto: TPEDIDOPAGAMENTO);
 
   public
 
-    class function New(Connection: TFDConnection): IDAOPedidoPagamento;
+    class function New(Connection: TFDConnection; aKeepConection: Boolean): IDAOPedidoPagamento;
 
   end;
 
 implementation
 
-uses Dominio.Entidades.TFactory, Util.Exceptions, Dao.TDaoParcelas, Dominio.Entidades.TParcelas;
+uses Util.Exceptions, Dao.TDaoParcelas, Dominio.Entidades.TParcelas, Utils.ArrayUtil;
 { TClasseBase }
 
 procedure TDAOPedidoPagamento.GravaParcelas(aPagto: TPEDIDOPAGAMENTO);
@@ -40,7 +43,7 @@ VAR
   DAOParcelas: TDaoParcelas;
   parcela: TParcelas;
 begin
-  DAOParcelas := TDaoParcelas.Create(Self.FConnection);
+  DAOParcelas := TDaoParcelas.Create(Self.FConnection, true);
 
   for parcela in aPagto.Parcelas do
   begin
@@ -59,7 +62,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
       qry.SQL.Text := ''
@@ -83,13 +86,15 @@ begin
       Validar(aPagto);
       EntityToParams(qry, aPagto);
 
+      TLog.d(qry);
       qry.ExecSQL;
 
       GravaParcelas(aPagto);
     except
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha Atualiza Condicao Pagtos: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha Atualiza Condicao Pagtos: ' + E.message);
       end;
     end;
   finally
@@ -102,7 +107,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
       qry.SQL.Text := ''
@@ -116,6 +121,7 @@ begin
       qry.ParamByName('ID').AsInteger := id;
 
       qry.ParamByName('id').AsInteger := id;
+      TLog.d(qry);
       qry.ExecSQL;
     except
       on E: EFDDBEngineException do
@@ -127,7 +133,8 @@ begin
       end;
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha ExcluirCliente: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha ExcluirCliente: ' + E.message);
       end;
     end;
   finally
@@ -141,7 +148,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
       qry.SQL.Text := ''
@@ -151,6 +158,7 @@ begin
         + '     idpedido = :idpedido';
 
       qry.ParamByName('idpedido').AsInteger := idpedido;
+      TLog.d(qry);
       qry.ExecSQL;
     except
       on E: EFDDBEngineException do
@@ -162,7 +170,8 @@ begin
       end;
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha ExcluirCliente: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha ExcluirCliente: ' + E.message);
       end;
     end;
   finally
@@ -176,7 +185,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
       qry.SQL.Text := ''
@@ -188,7 +197,8 @@ begin
 
       qry.ParamByName('IDPEDIDO').AsInteger := idpedido;
       qry.ParamByName('SEQ').AsInteger := SEQ;
-      qry.open;
+      TLog.d(qry);
+      qry.Open;
 
       if qry.IsEmpty then
         Result := nil
@@ -201,7 +211,8 @@ begin
     except
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha GeTPEDIDOPAGAMENTO: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha GeTPEDIDOPAGAMENTO: ' + E.message);
       end;
     end;
   finally
@@ -214,7 +225,7 @@ procedure TDAOPedidoPagamento.Inclui(aPagto: TPEDIDOPAGAMENTO);
 var
   qry: TFDQuery;
 begin
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
 
@@ -228,7 +239,10 @@ begin
         + '             CONDICAO, '
         + '             TIPO, '
         + '             QUANTASVEZES, '
+        + '             TROCO, '
+        + '             DATAALTERACAO, '
         + '             ACRESCIMO, '
+        + '             NUMCAIXA, '
         + '             VALOR ) '
         + 'VALUES      (:SEQ, '
         + '             :IDPEDIDO, '
@@ -238,18 +252,23 @@ begin
         + '             :CONDICAO, '
         + '             :TIPO, '
         + '             :QUANTASVEZES, '
+        + '             :TROCO, '
+        + '             :DATAALTERACAO, '
         + '             :ACRESCIMO, '
+        + '             :NUMCAIXA, '
         + '             :VALOR )';
 
       Validar(aPagto);
       EntityToParams(qry, aPagto);
+      TLog.d(qry);
       qry.ExecSQL;
 
       GravaParcelas(aPagto);
     except
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha Pagamento Cliente: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha Pagamento Cliente: ' + E.message);
       end;
     end;
   finally
@@ -264,9 +283,9 @@ VAR
   qry: TFDQuery;
   condicao: TPEDIDOPAGAMENTO;
 begin
-  DAOParcelas := TDaoParcelas.Create(FConnection);
+  DAOParcelas := TDaoParcelas.Create(FConnection, true);
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   Result := tLIST<TPEDIDOPAGAMENTO>.Create();
   try
     try
@@ -278,7 +297,8 @@ begin
         + 'order by QUANTASVEZES';
 
       qry.ParamByName('IDPEDIDO').AsInteger := idpedido;
-      qry.open;
+      TLog.d(qry);
+      qry.Open;
 
       while not qry.Eof do
       begin
@@ -299,14 +319,51 @@ begin
   except
     on E: Exception do
     begin
-      raise TDaoException.Create('Falha Listar Pagto: ' + E.Message);
+      TLog.d(E.message);
+      raise TDaoException.Create('Falha Listar Pagto: ' + E.message);
     end;
   end;
 end;
 
-class function TDAOPedidoPagamento.New(Connection: TFDConnection): IDAOPedidoPagamento;
+class function TDAOPedidoPagamento.New(Connection: TFDConnection; aKeepConection: Boolean): IDAOPedidoPagamento;
 begin
-  Result := TDAOPedidoPagamento.Create(Connection);
+  Result := TDAOPedidoPagamento.Create(Connection, aKeepConection);
+end;
+
+function TDAOPedidoPagamento.TiposPagamento(idpedido: Integer): TArray<Integer>;
+var
+  qry: TFDQuery;
+begin
+  qry := Self.Query();
+
+  try
+    try
+      qry.SQL.Text := ''
+        + 'select distinct tipo  '
+        + 'from  PEDIDOPAGAMENTO '
+        + 'where  '
+        + '    IDPEDIDO = :IDPEDIDO ';
+
+      qry.ParamByName('IDPEDIDO').AsInteger := idpedido;
+      TLog.d(qry);
+      qry.Open;
+
+      while not qry.Eof do
+      begin
+        TArrayUtil<Integer>.Append(Result, qry.fieldByname('tipo').AsInteger);
+        qry.next;
+      end;
+
+    finally
+      FreeAndNil(qry);
+    end;
+  except
+    on E: Exception do
+    begin
+      TLog.d(E.message);
+      raise TDaoException.Create('Falha TiposPagamento: ' + E.message);
+    end;
+  end;
 end;
 
 procedure TDAOPedidoPagamento.Validar(aPagto: TPEDIDOPAGAMENTO);

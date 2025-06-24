@@ -22,7 +22,6 @@ object FramePagamento: TFramePagamento
     ParentBackground = False
     ShowCaption = False
     TabOrder = 0
-    ExplicitHeight = 53
     object Panel12: TPanel
       AlignWithMargins = True
       Left = 100
@@ -36,7 +35,6 @@ object FramePagamento: TFramePagamento
       ParentBackground = False
       ShowCaption = False
       TabOrder = 1
-      ExplicitHeight = 47
       object lblValor: TLabel
         AlignWithMargins = True
         Left = 0
@@ -78,7 +76,6 @@ object FramePagamento: TFramePagamento
         ParentFont = False
         WordWrap = True
         ExplicitLeft = 298
-        ExplicitTop = 31
         ExplicitWidth = 37
       end
     end
@@ -95,7 +92,6 @@ object FramePagamento: TFramePagamento
       ParentBackground = False
       ShowCaption = False
       TabOrder = 0
-      ExplicitHeight = 47
       object lblForma: TLabel
         AlignWithMargins = True
         Left = 5

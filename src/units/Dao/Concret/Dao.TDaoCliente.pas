@@ -26,12 +26,14 @@ type
     procedure ExcluirCliente(codigo: string);
     function GeraID: string;
     function Listar(campo: string; valor: string): TDataSet;
+
+    destructor destroy; override;
   end;
 
 implementation
 
 uses
-  Util.Exceptions, Dominio.Entidades.TFactory, Util.Funcoes;
+  Util.Exceptions, Util.Funcoes, Sistema.TLog;
 
 { TDaoVendedor }
 
@@ -40,7 +42,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
 
   try
     try
@@ -84,17 +86,22 @@ begin
         + '       local = :LOCAL, '
         + '       profissao = :PROFISSAO, '
         + '       conjuge = :CONJUGE, '
+        + '       DATAALTERACAO = :DATAALTERACAO, '
         + '       bloqueado = :BLOQUEADO '
         + 'WHERE  codigo = :CODIGO';
 
       ObjectToParams(qry, Cliente);
 
+      TLog.d(qry);
       qry.ExecSQL;
 
     except
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha Atualizar Cliente: ' + E.Message);
+        begin
+          TLog.d(E.message);
+          raise TDaoException.Create('Falha Atualizar Cliente: ' + E.message);
+        end;
       end;
     end;
   finally
@@ -102,12 +109,19 @@ begin
   end;
 end;
 
+destructor TDaoCliente.destroy;
+begin
+  TLog.d('>>> Entrando em  TDaoCliente.destroy ');
+  inherited;
+  TLog.d('<<< Saindo de TDaoCliente.destroy ');
+end;
+
 procedure TDaoCliente.ExcluirCliente(codigo: string);
 var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
       qry.SQL.Text := ''
@@ -117,6 +131,7 @@ begin
         + '     CODIGO = :CODIGO';
 
       qry.ParamByName('CODIGO').AsString := codigo;
+      TLog.d(qry);
       qry.ExecSQL;
     except
       on E: EFDDBEngineException do
@@ -128,7 +143,8 @@ begin
       end;
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha ExcluirCliente: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha ExcluirCliente: ' + E.message);
       end;
     end;
   finally
@@ -147,7 +163,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
       qry.SQL.Text := ''
@@ -157,7 +173,8 @@ begin
         + '     CODIGO = :CODIGO';
 
       qry.ParamByName('CODIGO').AsString := codigo;
-      qry.open;
+      TLog.d(qry);
+      qry.Open;
 
       if qry.IsEmpty then
         Result := nil
@@ -167,7 +184,8 @@ begin
     except
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha GeTCliente: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha GeTCliente: ' + E.message);
       end;
     end;
   finally
@@ -181,7 +199,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
       qry.SQL.Text := ''
@@ -191,7 +209,8 @@ begin
         + '     NOME = :NOME';
 
       qry.ParamByName('NOME').AsString := nome;
-      qry.open;
+      TLog.d(qry);
+      qry.Open;
 
       if qry.IsEmpty then
         Result := nil
@@ -201,7 +220,8 @@ begin
     except
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha GeTClienteByName: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha GeTClienteByName: ' + E.message);
       end;
     end;
   finally
@@ -215,21 +235,19 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
       qry.SQL.Text := ''
         + 'select *  '
         + 'from  cliente '
         + 'WHERE '
-        + ' UPPER( NOME) like  UPPER( :NOME ) '
+        + '  UPPER( nome ) like UPPER( ' + QuotedStr(nome + '%') + ')'
         + ' order by nome ';
 
-      if Length(nome) > 60 then
-        nome := copy(nome, 0, 60);
-
-      qry.ParamByName('NOME').AsString := nome + '%';
-      qry.open;
+      // qry.ParamByName('NOME').AsString := '%' + nome + '%';
+      TLog.d(qry);
+      qry.Open;
 
       Result := TObjectList<TCliente>.Create();
 
@@ -242,7 +260,8 @@ begin
     except
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha GeTClienteByName: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha GeTClienteByName: ' + E.message);
       end;
     end;
   finally
@@ -259,7 +278,7 @@ begin
   if Self.GeTClienteByName(Cliente.nome) <> nil then
     raise Exception.Create('Já existe um cliente com este nome');
 
-  qry := TFactory.Query();
+  qry := Self.Query();
   try
     try
       qry.SQL.Text := ''
@@ -302,6 +321,7 @@ begin
         + '             local, '
         + '             profissao, '
         + '             conjuge, '
+        + '             DATAALTERACAO, '
         + '             bloqueado) '
         + 'VALUES      (:CODIGO, '
         + '             :NOME, '
@@ -341,17 +361,20 @@ begin
         + '             :LOCAL, '
         + '             :PROFISSAO, '
         + '             :CONJUGE, '
+        + '             :DATAALTERACAO, '
         + '             :BLOQUEADO);';
 
       ValidaCliente(Cliente);
       ObjectToParams(qry, Cliente);
 
+      TLog.d(qry);
       qry.ExecSQL;
 
     except
       on E: Exception do
       begin
-        raise TDaoException.Create('Falha Inserir Cliente: ' + E.Message);
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha Inserir Cliente: ' + E.message);
       end;
     end;
   finally
@@ -365,7 +388,7 @@ var
   qry: TFDQuery;
 begin
 
-  qry := TFactory.Query();
+  qry := Self.Query();
 
   try
     qry.SQL.Text := ''
@@ -375,14 +398,16 @@ begin
       + ' UPPER( ' + campo + ') like UPPER( ' + QuotedStr(valor) + ') '
       + 'order by NOME';
 
-    qry.open;
+    TLog.d(qry);
+    qry.Open;
 
     Result := qry;
 
   except
     on E: Exception do
     begin
-      raise TDaoException.Create('Falha Listar Cliente: ' + E.Message);
+      TLog.d(E.message);
+      raise TDaoException.Create('Falha Listar Cliente: ' + E.message);
     end;
   end;
 
@@ -559,7 +584,10 @@ begin
     // Result.BLOQUEADO := ds.FieldByName('BLOQUEADO').AsInteger = 1;
   except
     on E: Exception do
-      raise TDaoException.Create('Falha no ParamsToObject Cliente: ' + E.Message);
+    begin
+      TLog.d(E.message);
+      raise TDaoException.Create('Falha no ParamsToObject Cliente: ' + E.message);
+    end;
   end;
 
 end;

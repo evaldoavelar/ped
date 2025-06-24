@@ -42,7 +42,7 @@ implementation
 {$R *.dfm}
 
 
-uses Util.Funcoes;
+
 
 procedure TfrmObservacao.actEditarExecute(Sender: TObject);
 begin

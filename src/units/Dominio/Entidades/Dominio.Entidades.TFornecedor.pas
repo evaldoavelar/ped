@@ -32,6 +32,7 @@ type
     FSITUACAO: string;
     FEMAIL: string;
     FOBSERVACOES: string;
+    FDATAALTERACAO: TDateTime;
 
     function getCODIGO: string;
     procedure setCODIGO(const Value: string);
@@ -77,7 +78,9 @@ type
     procedure setTELEFONE(const Value: string);
     procedure setUF(const Value: string);
     function getCOMPLEMENTO: string;
+    procedure SetDATAALTERACAO(const Value: TDateTime);
   published
+
     [campo('CODIGO  ', tpVARCHAR, 10, 0, True)]
     [PrimaryKey('FOR_PRIMARY', 'CODIGO')]
     property CODIGO: string read getCODIGO write setCODIGO;
@@ -144,6 +147,9 @@ type
 
     [campo('OBSERVACOES', tpBLOB, 80)]
     property OBSERVACOES: string read getOBSERVACOES write setOBSERVACOES;
+
+    [campo('DATAALTERACAO', tpTIMESTAMP)]
+    property DATAALTERACAO: TDateTime read FDATAALTERACAO write SetDATAALTERACAO;
   public
     constructor create();
     destructor Destroy; override;
@@ -346,6 +352,11 @@ begin
     FCONTATO := Value;
     Notify('CONTATO');
   end;
+end;
+
+procedure TFornecedor.SetDATAALTERACAO(const Value: TDateTime);
+begin
+  FDATAALTERACAO := Value;
 end;
 
 procedure TFornecedor.setEMAIL(const Value: string);

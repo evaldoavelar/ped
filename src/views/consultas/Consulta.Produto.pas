@@ -6,9 +6,9 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Consulta.Base, Data.DB,
   Vcl.DBGrids, JvExDBGrids, JvDBGrid,
-  JvDBUltimGrid, Vcl.StdCtrls,
-  Dao.IDaoProdutos, Dominio.Entidades.TProduto, System.Actions, Vcl.ActnList, Vcl.Grids,
-  Vcl.Buttons, Vcl.Imaging.jpeg, Vcl.ExtCtrls;
+  JvDBUltimGrid,
+  Dao.IDaoProdutos, Dominio.Entidades.TProduto, System.Actions, Vcl.ActnList,
+  Vcl.Buttons, Vcl.Imaging.jpeg, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.Grids;
 
 type
   TFrmConsultaProdutos = class(TfrmConsultaBase)
@@ -34,26 +34,31 @@ implementation
 {$R *.dfm}
 
 
-uses Dominio.Entidades.TFactory;
+uses Sistema.TLog;
 
 { TProdutos }
 
 procedure TFrmConsultaProdutos.FormCreate(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TFrmConsultaProdutos.FormCreate ');
   inherited;
-  daoProduto := TFactory.daoProduto;
+  daoProduto := fFactory.daoProduto;
+  TLog.d('<<< Saindo de TFrmConsultaProdutos.FormCreate ');
 end;
 
 procedure TFrmConsultaProdutos.FormShow(Sender: TObject);
 begin
+  TLog.d('>>> Entrando em  TFrmConsultaProdutos.FormShow ');
   inherited;
   cbbPesquisa.ItemIndex := 2;
+  TLog.d('<<< Saindo de TFrmConsultaProdutos.FormShow ');
 end;
 
 procedure TFrmConsultaProdutos.Pesquisar;
 var
   campo: string;
 begin
+  TLog.d('>>> Entrando em  TFrmConsultaProdutos.Pesquisar ');
   inherited;
 
   case cbbPesquisa.ItemIndex of
@@ -67,14 +72,15 @@ begin
     campo := 'CODIGO';
   end;
 
-  dbGridResultado.DataSource.DataSet := daoProduto.Listar(campo, edtValor.Text );
+  dbGridResultado.DataSource.DataSet := daoProduto.Listar(campo, edtValor.Text);
   TCurrencyField(dbGridResultado.DataSource.DataSet.FieldByName('PRECO_VENDA')).currency := true;
-
+  TLog.d('<<< Saindo de TFrmConsultaProdutos.Pesquisar ');
 end;
 
 procedure TFrmConsultaProdutos.Selecionar;
 begin
-if (dbGridResultado.DataSource.DataSet = nil) or  dbGridResultado.DataSource.DataSet.IsEmpty then
+  TLog.d('>>> Entrando em  TFrmConsultaProdutos.Selecionar ');
+  if (dbGridResultado.DataSource.DataSet = nil) or dbGridResultado.DataSource.DataSet.IsEmpty then
     raise Exception.Create('Nenhum dado para selecionar');
 
   if Assigned(FProduto) then
@@ -83,7 +89,7 @@ if (dbGridResultado.DataSource.DataSet = nil) or  dbGridResultado.DataSource.Dat
   FProduto := daoProduto.GetProdutoPorCodigo(dbGridResultado.DataSource.DataSet.FieldByName('CODIGO').AsString);
 
   inherited;;
-
+  TLog.d('<<< Saindo de TFrmConsultaProdutos.Selecionar ');
 end;
 
 end.

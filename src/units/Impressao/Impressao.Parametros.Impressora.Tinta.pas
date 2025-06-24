@@ -3,7 +3,7 @@ unit Impressao.Parametros.Impressora.Tinta;
 interface
 
 uses
-  ACBrPosPrinter,
+
   system.SysUtils,
   Dominio.Mapeamento.Atributos,
   Dominio.Entidades.TEntity,

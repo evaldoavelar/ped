@@ -97,10 +97,6 @@ object FrmCancelarItem: TFrmCancelarItem
       Text = '0'
       OnEnter = edtItemEnter
       OnKeyPress = edtItemKeyPress
-      ExplicitLeft = 11
-      ExplicitTop = 13
-      ExplicitWidth = 209
-      ExplicitHeight = 23
     end
   end
   object Panel2: TPanel

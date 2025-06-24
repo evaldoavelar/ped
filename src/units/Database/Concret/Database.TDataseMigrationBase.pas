@@ -13,12 +13,13 @@ uses
   Database.TTabelaBDFB,
   Sistema.TParametros,
   Dao.IDaoParametros,
-  Dominio.Entidades.TEntity,
-  Dominio.Entidades.TFactory,
+
+  Factory.Dao,
   Dominio.Mapeamento.Atributos, Util.VclFuncoes,
   Dominio.Entidades.TItemOrcamento, Dominio.Entidades.TOrcamento, Dominio.Entidades.TVendedor, Dominio.Entidades.TCliente, Dominio.Entidades.TAUTOINC,
   Dominio.Entidades.TParceiro.FormaPagto,
-  Dominio.Entidades.TParceiro, Dominio.Entidades.TParceiroVenda.Pagamentos, Dominio.Entidades.TParceiroVenda, Impressao.Parametros.Impressora.Tinta;
+  Dominio.Entidades.TParceiro, Dominio.Entidades.TParceiroVenda.Pagamentos, Dominio.Entidades.TParceiroVenda, Impressao.Parametros.Impressora.Tinta,
+  IFactory.Dao;
 
 type
 
@@ -26,7 +27,9 @@ type
 
   TDataseMigrationBase = Class(TInterfacedObject, IDataseMigration)
   private
+    FFactory: IFactoryDao;
     FTipoBD: tpBds;
+    FParametros: TParametros;
     FErros: TDictionary<TClass, string>;
     function getScript(Entity: TClass): TStringList;
     procedure ExtractedAttributes(var Tabela: TTabelaBD; arAttr: TArray<TCustomAttribute>);
@@ -38,7 +41,7 @@ type
     procedure Migrate();
     function GetErros: TDictionary<TClass, string>;
     constructor create(ATipo: tpBds);
-    destructor destroy();
+    destructor destroy(); override;
   End;
 
   { TDataseMigrationFB }
@@ -49,9 +52,10 @@ uses
   Dominio.Entidades.TPedido,
   Dominio.Entidades.TItemPedido,
   Dominio.Entidades.TParcelas,
-  Impressao.Parametros.Impressora.Termica,
-  Util.Funcoes, Dominio.Entidades.TEmitente, Dominio.Entidades.TFornecedor, Dominio.Entidades.TFormaPagto, Dominio.Entidades.TProduto, Dominio.Entidades.CondicaoPagto,
-  Dominio.Entidades.Pedido.Pagamentos.Pagamento, Sangria.Suprimento.Informar, Dominio.Entidades.TSangriaSuprimento, Dominio.Entidades.TEstoqueProduto;
+  Impressao.Parametros.Impressora.Termica, Dominio.Entidades.TControleCaixa,
+  Dominio.Entidades.TEmitente, Dominio.Entidades.TFornecedor, Dominio.Entidades.TFormaPagto, Dominio.Entidades.TProduto, Dominio.Entidades.CondicaoPagto,
+  Dominio.Entidades.Pedido.Pagamentos.Pagamento, Dominio.Entidades.TSangriaSuprimento, Dominio.Entidades.TEstoqueProduto, Sistema.TLog,
+  Factory.Entidades, Dominio.Entidades.TImportacao, Dominio.Entidades.Pedido.Parcela.Pagamentos;
 
 function TDataseMigrationBase.getScript(Entity: TClass): TStringList;
 var
@@ -61,7 +65,7 @@ var
   prop: TRttiProperty;
   FTabela: TTabelaBD;
 begin
-
+  TLog.d('>>> Entrando em  TDataseMigrationBase.getScript ');
   FTabela := getTipoTabela;
 
   Rtti := TRttiContext.create;
@@ -79,12 +83,12 @@ begin
   result := FTabela.toScript();
 
   FreeAndNil(FTabela);
-
+  TLog.d('<<< Saindo de TDataseMigrationBase.getScript ');
 end;
 
 procedure TDataseMigrationBase.Migrate;
 const
-  Objetos: array [0 .. 22] of TClass = (
+  Objetos: array [0 .. 26] of TClass = (
     TAUTOINC,
     TEmitente,
     TCliente,
@@ -107,16 +111,42 @@ const
     TParceiroVenda,
     TParceiroVendaPagto,
     TSangriaSuprimento,
-    TEstoqueProduto
+    TEstoqueProduto,
+    TImportacao,
+    TPedidoParcelaPagamento,
+    TRelacParcelaPagamento,
+    TControleCaixa
     );
 var
   scripts: TStringList;
   classe: TClass;
   I: Integer;
-  Parametros: TParametros;
+  doSeed: Boolean;
   Dao: IDaoParametros;
 begin
+  TLog.d('>>> Entrando em  TDataseMigrationBase.Migrate ');
   self.FErros.clear;
+  Dao := FFactory.DaoParametros();
+  try
+
+    FParametros := Dao.GetParametros();
+    doSeed := FParametros.VERSAOBD = '0.0.0.0';
+  except
+    on E: Exception do
+    begin
+      TLog.d(E.Message);
+
+      if FParametros = nil then
+      begin
+        FParametros := TParametros.create;
+        FParametros.VERSAOBD := '0.0.0.0';
+
+        var
+        blFaltaDeCampo := pos('Falha no ParamsToObject TParametros', E.Message) < 0;
+        doSeed := blFaltaDeCampo;
+      end
+    end;
+  end;
 
   if CompareVersaoBD() then
   begin
@@ -135,30 +165,30 @@ begin
 
       if FErros.Count = 0 then
       begin
-        Parametros := TFactory.Parametros();
-        Dao := TFactory.DaoParametros();
 
-        if Parametros = nil then
+        if doSeed then
         begin
-          Parametros := TParametros.create;
-          Parametros.VERSAOBD := TVclFuncoes.VersaoEXE;
-          Dao.IncluiParametros(Parametros);
+          FParametros.VERSAOBD := TVclFuncoes.VersaoEXE;
+          Dao.IncluiParametros(FParametros);
           Seed();
         end
         else
         begin
-          Parametros.VERSAOBD := TVclFuncoes.VersaoEXE;
-          Dao.AtualizaParametros(Parametros);
+          FParametros.VERSAOBD := TVclFuncoes.VersaoEXE;
+          Dao.AtualizaParametros(FParametros);
         end;
 
       end;
 
     except
       on E: Exception do
+      begin
+        TLog.d(E.Message);
         raise Exception.create('Migrate: ' + classe.ClassName + ' - ' + E.Message);
+      end;
     end;
   end;
-
+  TLog.d('<<< Saindo de TDataseMigrationBase.Migrate ');
 end;
 
 procedure TDataseMigrationBase.Seed;
@@ -170,18 +200,20 @@ var
   Vendedor: TVendedor;
   I: Integer;
 begin
+  TLog.d('>>> Entrando em  TDataseMigrationBase.Seed ');
   try
     Emitente := TEmitente.create;
     Emitente.RAZAO_SOCIAL := 'EMPRESA DE TESTE';
     Emitente.FANTASIA := 'TESTE';
     Emitente.CNPJ := '11111111111111';
-    TFactory.DaoEmitente.IncluiEmitente(Emitente);
+    FFactory.DaoEmitente.IncluiEmitente(Emitente);
     FreeAndNil(Emitente);
 
     FormaPagto := TFormaPagto.create;
 
-    FormaPagto.ID := TFactory.DaoFormaPagto.GeraID;
+    FormaPagto.ID := FFactory.DaoFormaPagto.GeraID;
     FormaPagto.DESCRICAO := 'DINHEIRO';
+    FormaPagto.DATAALTERACAO := now;
 
     with FormaPagto.AddCondicao do
     begin
@@ -191,46 +223,50 @@ begin
       ACRESCIMO := 0;
     end;
 
-    TFactory.DaoFormaPagto.IncluiPagto(FormaPagto);
+    FFactory.DaoFormaPagto.IncluiPagto(FormaPagto);
 
     FreeAndNil(FormaPagto);
 
-    Produto := TFactory.Produto;
+    Produto := TFactoryEntidades.new.Produto;
     Produto.CODIGO := '000001';
     Produto.DESCRICAO := 'Produto de Teste';
     Produto.UND := 'UND';
     Produto.PRECO_VENDA := 11.99;
-    Produto.DATA_CADASTRO := Now;
-    Produto.ULTIMA_COMPRA := Now;
-    Produto.ULTIMA_VENDA := Now;
+    Produto.DATA_CADASTRO := now;
+    Produto.ULTIMA_COMPRA := now;
+    Produto.ULTIMA_VENDA := now;
     Produto.OBSERVACOES := 'Produto para testes';
-    Produto.QUANTIDADEFRACIONADA := False;
-    Produto.BLOQUEADO := False;
-
-    TFactory.DaoProduto.IncluiProduto(Produto);
+    Produto.QUANTIDADEFRACIONADA := false;
+    Produto.BLOQUEADO := false;
+    Produto.DATAALTERACAO := now;
+    FFactory.DaoProduto.IncluiProduto(Produto);
     FreeAndNil(Produto);
 
-    Cliente := TFactory.Cliente;
+    Cliente := TFactoryEntidades.new.Cliente;
     Cliente.Nome := 'Consumidor';
     Cliente.CODIGO := '000000';
-
-    TFactory.DaoCliente.IncluiCliente(Cliente);
+    Cliente.DATAALTERACAO := now;
+    FFactory.DaoCliente.IncluiCliente(Cliente);
     FreeAndNil(Cliente);
 
-    Vendedor := TFactory.Vendedor;
+    Vendedor := TFactoryEntidades.new.Vendedor;
     Vendedor.CODIGO := '000';
     Vendedor.Nome := 'Admin';
-    Vendedor.PODERECEBERPARCELA := True;
-    Vendedor.PODECANCELARPEDIDO := True;
-    Vendedor.PODECANCELARORCAMENTO := True;
-
-    TFactory.DaoVendedor.IncluiVendedor(Vendedor);
+    Vendedor.PODERECEBERPARCELA := true;
+    Vendedor.PODECANCELARPEDIDO := true;
+    Vendedor.PODECANCELARORCAMENTO := true;
+    Vendedor.DATAALTERACAO := now;
+    FFactory.DaoVendedor.IncluiVendedor(Vendedor);
     FreeAndNil(Vendedor);
   except
 
     on E: Exception do
+    begin
+      TLog.d(E.Message);
       raise Exception.create('SEED: ' + ' - ' + E.Message);
+    end;
   end;
+  TLog.d('<<< Saindo de TDataseMigrationBase.Seed ');
 end;
 
 function TDataseMigrationBase.Atualiza(AClasse: TClass; AScripts: TStringList): Integer;
@@ -240,16 +276,18 @@ var
 begin
   result := 0;
 
-  qry := TFactory.Query;
+  qry := FFactory.Query;
   try
     for sql in AScripts do
     begin
       try
         qry.sql.Text := sql;
+        TLog.d(qry);
         qry.ExecSQL;
       except
         on E: Exception do
         begin
+          TLog.d(E.Message);
           self.FErros.Add(AClasse, E.Message + ' - ' + sql);
           Inc(result);
         end;
@@ -264,16 +302,16 @@ function TDataseMigrationBase.CompareVersaoBD: Boolean;
 var
   VersaoEXE: string;
   VERSAOBD: string;
-  Parametros: TParametros;
 begin
 
-  result := False;
+  result := false;
   try
-    Parametros := TFactory.Parametros();
-    if (Parametros = nil) or (Parametros.VERSAOBD = '') then
+
+    if (FParametros = nil) or (FParametros.VERSAOBD = '') then
       VERSAOBD := '0.0.0.0'
     else
-      VERSAOBD := Parametros.VERSAOBD;
+      VERSAOBD := FParametros.VERSAOBD;
+
   except
     on E: Exception do
     begin
@@ -287,21 +325,27 @@ begin
   VersaoEXE := TVclFuncoes.VersaoEXE;
 
   if (TVclFuncoes.CompararVersao(VersaoEXE, VERSAOBD) < 0) or (VersaoEXE = '0.0.0.0') then
-    result := True;
+    result := true;
 
 end;
 
 constructor TDataseMigrationBase.create(ATipo: tpBds);
 begin
+  TLog.d('>>> Entrando em  TDataseMigrationBase.create ');
   self.FTipoBD := ATipo;
   self.FErros := TDictionary<TClass, string>.create();
-
+  FFactory := TFactory.new(nil, true);
+  TLog.d('<<< Saindo de TDataseMigrationBase.create ');
 end;
 
 destructor TDataseMigrationBase.destroy;
 begin
-  self.FErros.clear;
-  self.FErros.Free;
+  TLog.d('>>> Entrando em  TDataseMigrationBase.destroy ');
+  // self.FErros.clear;
+  // self.FErros.free;
+  FFactory.close;
+  inherited;
+  TLog.d('<<< Saindo de TDataseMigrationBase.destroy ');
 end;
 
 function TDataseMigrationBase.getTipoTabela: TTabelaBD;

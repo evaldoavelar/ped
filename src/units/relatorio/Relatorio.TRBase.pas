@@ -6,7 +6,7 @@ uses
   system.SysUtils, ACBrValidador, ACBrUtil,
   system.Classes, Winapi.Windows, Winapi.WinSpool,
   Dominio.Entidades.TEmitente,
-  Impressao.Parametros.Impressora.Termica;
+  Impressao.Parametros.Impressora.Termica, IFactory.Dao;
 
 type
 
@@ -20,7 +20,7 @@ type
     function GetColunasFonteCondensada: Integer;
   protected
     FParametrosImpressora: TParametrosImpressoraTermica;
-
+    FFactory: IFactoryDao;
     procedure Cabecalho(Emitente: TEmitente);
     procedure Rodape;
     procedure SobePapel;
@@ -55,7 +55,7 @@ const
   esc20Cpi = chr(27) + chr(77) + chr(49); // Font B - Small Font
   escReset = chr(27) + chr(64); // chr(27) + chr(77) + chr(48); // Reset Printer
   escFeedAndCut = chr(29) + chr(86) + chr(65); // Partial Cut and feed
-  escGS  = #29 ;
+  escGS = #29;
 
   escExpandedOn = chr(27) + 'W' + chr(1);
   escExpandedOff = chr(27) + 'W' + chr(0);
@@ -65,6 +65,9 @@ const
   escAlignRight = chr(27) + chr(97) + chr(50); // Align Text to the Right
 
 implementation
+
+uses
+  Factory.Dao, Sistema.TLog;
 
 { TRPedido }
 
@@ -107,6 +110,7 @@ procedure TRBase.Cabecalho(Emitente: TEmitente);
 var
   Cmd, LinhaCmd: String;
 begin
+  TLog.d('>>> Entrando em  TRBase.Cabecalho ');
   Buffer.Add(Self.Zera);
 
   if Length(Trim(Emitente.RAZAO_SOCIAL)) > Self.ColunasFonteNormal then
@@ -150,20 +154,26 @@ begin
     Buffer.Add(escAlignLeft + esc20Cpi + escBoldOn + 'IM: ' + Emitente.IM + escBoldOff);
 
   Buffer.Add(esc16Cpi + Self.LinhaSimples);
-
+  TLog.d('<<< Saindo de TRBase.Cabecalho ');
 end;
 
 constructor TRBase.create(ParametrosImpressora: TParametrosImpressoraTermica);
 begin
+  TLog.d('>>> Entrando em  TRBase.create ');
   FParametrosImpressora := ParametrosImpressora;
   FBuffer := TStringList.create;
   Self.FColunasFonteNormal := 48;
+  FFactory := TFactory.new(nil, True);
+  TLog.d('<<< Saindo de TRBase.create ');
 end;
 
 destructor TRBase.Destroy;
 begin
+  TLog.d('>>> Entrando em  TRBase.Destroy ');
   FreeAndNil(Self.FBuffer);
+  FFactory.close;
   inherited;
+  TLog.d('<<< Saindo de TRBase.Destroy ');
 end;
 
 procedure TRBase.imprimir;
@@ -175,6 +185,7 @@ Var
   I: Integer;
   prndata: AnsiString;
 begin
+  TLog.d('>>> Entrando em  TRBase.imprimir ');
   try
     // {$REGION 'ESC/POS COMMANDS'}
     // prndata := char(27) + char(64);
@@ -193,6 +204,7 @@ begin
     // {$ENDREGION}
 
     prndata := Self.Buffer.Text;
+    TLog.d(prndata);
     If not OpenPrinter(PChar(FParametrosImpressora.MODELOIMPRESSORA), Handle, nil) then
     Begin
       Case GetLastError of
@@ -222,6 +234,7 @@ begin
     on E: Exception do
       raise Exception.create('Falha na impressão: ' + E.Message);
   end;
+  TLog.d('<<< Saindo de TRBase.imprimir ');
 end;
 
 procedure TRBase.Rodape;

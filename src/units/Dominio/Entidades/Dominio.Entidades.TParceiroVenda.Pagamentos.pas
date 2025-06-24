@@ -3,7 +3,7 @@ unit Dominio.Entidades.TParceiroVenda.Pagamentos;
 interface
 
 uses Dominio.Entidades.TEntity, Dominio.Mapeamento.Atributos,
-  Dominio.Mapeamento.Tipos, Dominio.Entidades.TParceiro;
+  Dominio.Mapeamento.Tipos;
 
 type
 
