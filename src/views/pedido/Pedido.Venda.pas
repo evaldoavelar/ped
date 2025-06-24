@@ -17,7 +17,7 @@ uses
   Vcl.Buttons, Vcl.Imaging.pngimage, Pedido.Venda.IPart, Vcl.WinXCtrls, Pedido.Venda.Part.Item,
   Pedido.Venda.Part.ItemCancelamento, Pedido.Venda.Part.LogoItens,
   Vcl.AutoComplete, Dominio.Entidades.Pedido.Pagamentos.Pagamento,
-  IFactory.Dao, Sistema.TParametros;
+  IFactory.Dao, Sistema.TParametros, JvButton, JvTransparentButton;
 
 type
 
@@ -181,6 +181,10 @@ type
     actMinimizar: TAction;
     Label42: TLabel;
     cbbProduto: TAutoComplete;
+    Panel7: TPanel;
+    Image4: TImage;
+    btnVenderProduto: TJvTransparentButton;
+    actVendeItem: TAction;
     procedure FormCreate(Sender: TObject);
     procedure actVoltarExecute(Sender: TObject);
     procedure actFinalizaVendaExecute(Sender: TObject);
@@ -210,6 +214,7 @@ type
     procedure actMinimizarExecute(Sender: TObject);
     procedure medtQuantidadeKeyUp(Sender: TObject; var Key: Word;
       Shift: TShiftState);
+    procedure actVendeItemExecute(Sender: TObject);
 
   private
 
@@ -230,6 +235,7 @@ type
     procedure IncializaVariaveis;
     procedure IncializaComponentes;
     procedure VendeItemPorCodigo(aCodigo: string);
+    procedure VendeItem();
     procedure AbrePedido;
     function getQuantidade: Double;
     procedure setQuantidade(const Value: Double);
@@ -377,7 +383,7 @@ begin
     Pedido.NUMERO := Format('%.6d', [Pedido.ID]);
     Pedido.DATAPEDIDO := Date();
     Pedido.HORAPEDIDO := Time();
-    pedido.DATAHORA := now;
+    Pedido.DATAHORA := now;
     Pedido.STATUS := 'A';
     Pedido.Vendedor := DaoVen.GetVendedor(TFactoryEntidades.new.VendedorLogado.CODIGO);
     Pedido.Cliente := TFactoryEntidades.new.Cliente();
@@ -584,6 +590,13 @@ begin
   TLog.d('<<< Saindo de TFrmPedidoVenda.actTrocaFormaExecute ');
 end;
 
+procedure TFrmPedidoVenda.actVendeItemExecute(Sender: TObject);
+begin
+  TLog.d('>>> Entrando em  TFrmPedidoVenda.actVendeItemExecute ');
+  VendeItem;
+  TLog.d('<<< Saindo de TFrmPedidoVenda.actVendeItemExecute ');
+end;
+
 procedure TFrmPedidoVenda.actVoltarExecute(Sender: TObject);
 begin
   TLog.d('>>> Entrando em  TFrmPedidoVenda.actVoltarExecute ');
@@ -651,53 +664,59 @@ begin
   end;
 end;
 
-procedure TFrmPedidoVenda.cbbProduto1KeyPress(Sender: TObject; var Key: Char);
+procedure TFrmPedidoVenda.VendeItem;
 var
   Produto: TProduto;
 begin
-  if Key = #13 then
-  begin
-    try
-      if (cbbProduto.ItemIndex <> -1) and (trim(cbbProduto.Text) <> EmptyStr) then
-      begin
-        Produto := nil;
+  try
+    if (cbbProduto.ItemIndex <> -1) and (trim(cbbProduto.Text) <> EmptyStr) then
+    begin
+      Produto := nil;
 
-        if cbbProduto.ItemIndex > -1 then
+      if cbbProduto.ItemIndex > -1 then
+      begin
+        if cbbProduto.GetSelectObject <> nil then
         begin
-          if cbbProduto.GetSelectObject <> nil then
-          begin
-            try
-              OutputDebugString(PWideChar(cbbProduto.Items.Strings[cbbProduto.ItemIndex]));
-              Produto := cbbProduto.GetSelectObject as TProduto;
-            except
-              raise Exception.Create('Produto não selecionado');
-            end;
+          try
+            OutputDebugString(PWideChar(cbbProduto.Items.Strings[cbbProduto.ItemIndex]));
+            Produto := cbbProduto.GetSelectObject as TProduto;
+          except
+            raise Exception.Create('Produto não selecionado');
           end;
         end;
-
-        VendeItemPorDescricao(Produto);
-      end
-      else
-      begin
-        VendeItemPorCodigo(cbbProduto.Text);
-        cbbProduto.Text := StrPesquisa;
-        cbbProduto.SelectAll;
-        medtQuantidade.SelectAll;
-        // cbbProduto.SetFocus;
       end;
 
-    except
-      on E: Exception do
-      begin
-        TLog.d(E.Message);
-        MessageDlg(E.Message, mtError, [mbOK], 0);
-        try
-          cbbProduto.Text := StrPesquisa;
-          cbbProduto.SetFocus;
-        except
-        end;
+      VendeItemPorDescricao(Produto);
+    end
+    else
+    begin
+      VendeItemPorCodigo(cbbProduto.Text);
+      cbbProduto.Text := StrPesquisa;
+      cbbProduto.SelectAll;
+      medtQuantidade.SelectAll;
+      // cbbProduto.SetFocus;
+    end;
+
+  except
+    on E: Exception do
+    begin
+      TLog.d(E.Message);
+      MessageDlg(E.Message, mtError, [mbOK], 0);
+      try
+        cbbProduto.Text := StrPesquisa;
+        cbbProduto.SetFocus;
+      except
       end;
     end;
+  end;
+end;
+
+procedure TFrmPedidoVenda.cbbProduto1KeyPress(Sender: TObject; var Key: Char);
+
+begin
+  if Key = #13 then
+  begin
+    VendeItem;
     Key := #0;
   end
   else if Key = '+' then
@@ -813,6 +832,8 @@ begin
   TLog.d('>>> Entrando em  TFrmPedidoVenda.Pagamento ');
   LimpaScrollBox(scrBoxPagamentos);
   pgcEsquerdo.ActivePage := tsPagamento;
+  Pedido.PorcentagemMaximaDesconto := FParametros.PorcentagemMaximaDesconto;
+
   FrmPagamento := TFrmPagamento.Create(self);
   try
     FrmPagamento.Pagamentos := Pedido.Pagamentos;

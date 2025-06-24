@@ -940,7 +940,10 @@ begin
 
   try
     try
-      result.Add(TPair<string, string>.Create('VENDAS - ' + aNumCaixa, ''));
+      if aNumCaixa <> '' then
+        result.Add(TPair<string, string>.Create('VENDAS - ' + aNumCaixa, ''))
+      else
+        result.Add(TPair<string, string>.Create('VENDAS EM TODOS OS CAIXAS', ''));
 
       qry.SQL.Text := ''
 
@@ -1110,7 +1113,7 @@ begin
           + '         AND pg.TIPO = 1 ' // filtrar por dinheiro
           + '         AND pg.DATAALTERACAO >= :dataInicio '
           + '         AND pg.DATAALTERACAO <= :dataFim '
-          + FiltroNumCaixa(aNumCaixa, 'pa')
+          + FiltroNumCaixa(aNumCaixa, 'p')
           + '    GROUP BY descricao, tipo '
 
           + '    UNION ALL '
@@ -1181,12 +1184,12 @@ begin
         TLog.d(qry);
         qry.Open;
 
-        var
-        saidas := IncluirTotais(qry, result, true);
-        result.Add(TPair<string, string>.Create('TOTAL', FormatCurr('R$ 0.,00', saidas)));
-
-        result.Add(TPair<string, string>.Create('', ''));
-        result.Add(TPair<string, string>.Create('TOTAL EM CAIXA (ENTRADA - SAÍDAS):', FormatCurr('R$ 0.,00', entradas + saidas)));
+        IncluirTotais(qry, result, true);
+        // saidas := IncluirTotais(qry, result, true);
+        // result.Add(TPair<string, string>.Create('TOTAL', FormatCurr('R$ 0.,00', saidas)));
+        //
+        // result.Add(TPair<string, string>.Create('', ''));
+        // result.Add(TPair<string, string>.Create('TOTAL EM CAIXA (ENTRADA - SAÍDAS):', FormatCurr('R$ 0.,00', entradas + saidas)));
       end;
 
       result.Add(TPair<string, string>.Create('', ''));

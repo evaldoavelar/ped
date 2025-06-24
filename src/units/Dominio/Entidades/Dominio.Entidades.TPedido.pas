@@ -57,6 +57,7 @@ type
     FNUMCAIXA: string;
     FDATAALTERACAO: TDateTime;
     FDATAHORA: TDateTime;
+    FPorcentagemMaximaDesconto: currency;
 
     function GetValorBruto: currency;
     function getValorLiquido: currency;
@@ -85,7 +86,7 @@ type
     procedure SetDATAALTERACAO(const Value: TDateTime);
 
   public
-    constructor create;
+    constructor create();
     destructor destroy; override;
     procedure VendeItem(Item: TItemPedido);
     procedure AddParceiro(const Value: TParceiro);
@@ -104,7 +105,7 @@ type
     property NUMCAIXA: string read FNUMCAIXA write FNUMCAIXA;
     [campo('DATAPEDIDO', tpDATE)]
     property DATAPEDIDO: TDateTime read FDATAPEDIDO write FDATAPEDIDO;
-     [campo('DATAHORA', tpDATE)]
+    [campo('DATAHORA', tpDATE)]
     property DATAHORA: TDateTime read FDATAHORA write FDATAHORA;
     [campo('HORAPEDIDO', tpTIME)]
     property HORAPEDIDO: TTime read FHORAPEDIDO write FHORAPEDIDO;
@@ -161,6 +162,8 @@ type
     [campo('DATAALTERACAO', tpTIMESTAMP)]
     property DATAALTERACAO: TDateTime read FDATAALTERACAO write SetDATAALTERACAO;
 
+  public
+    property PorcentagemMaximaDesconto: currency read FPorcentagemMaximaDesconto write FPorcentagemMaximaDesconto;
     property OnVendeItem: TOnVendeItem read FOnVendeItem write FOnVendeItem;
     property OnChange: TOnChange read FOnChange write FOnChange;
     property OnParcela: TOnParcela read FOnParcela write FOnParcela;
@@ -191,7 +194,7 @@ begin
   Self.FItens := itens;
 end;
 
-constructor TPedido.create;
+constructor TPedido.create();
 begin
   inherited;
   Self.InicializarPropriedades(nil);
@@ -391,19 +394,29 @@ begin
 end;
 
 procedure TPedido.setDescontos(aTipo: TTipoDesconto; aValor: currency);
+var
+  LDesconto: currency;
+  LMaxDesconto: currency;
 begin
+  LDesconto := 0;
   case aTipo of
     tpPercentual:
       begin
-        FVALORDESC := ValorBruto * (aValor / 100);
+        LDesconto := ValorBruto * (aValor / 100);
       end;
     tpValor:
       begin
-        FVALORDESC := aValor;
+        LDesconto := aValor;
       end;
   end;
 
-  FVALORDESC := TUtil.Truncar(FVALORDESC, 2);
+  // maximo valor desconto
+  LMaxDesconto := FPorcentagemMaximaDesconto * (ValorBruto / 100);
+
+  if LDesconto > LMaxDesconto then
+    raise Exception.create(Format('O valor do desconto é maior do que o valor máximo permitido de %f %%', [FPorcentagemMaximaDesconto]));
+
+  FVALORDESC := TUtil.Truncar(LDesconto, 2);
 end;
 
 procedure TPedido.setOBSERVACAO(const Value: string);

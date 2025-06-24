@@ -64,6 +64,8 @@ begin
     FSangriaSuprimento.DATA := now;
     FSangriaSuprimento.HORA := now;
     FSangriaSuprimento.DATAALTERACAO := now;
+    FSangriaSuprimento.NUMCAIXA := TFactoryEntidades.Parametros.PontoVenda.NUMCAIXA;
+
 
     fFactory
       .DAOTSangriaSuprimento

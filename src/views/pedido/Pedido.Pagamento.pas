@@ -374,6 +374,11 @@ begin
 
       lvFormaPagto.SetFocus;
     except
+      on e: Exception do
+      begin
+        TLog.d(e.message);
+        MessageDlg(e.message, mtError, [mbOK], 0);
+      end;
     end;
     Key := #0
   end

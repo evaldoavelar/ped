@@ -77,8 +77,8 @@ inherited frmCaixaFechamento: TfrmCaixaFechamento
       AlignWithMargins = True
       Left = 88
       Top = 3
-      Width = 507
-      Height = 26
+      Width = 594
+      Height = 53
       Align = alClient
       BiDiMode = bdLeftToRight
       Caption = 'FECHAMENTO DE CAIXA - MOVIMENTA'#199#195'O DE DINHEIRO'
@@ -95,6 +95,8 @@ inherited frmCaixaFechamento: TfrmCaixaFechamento
       ShowHint = False
       Transparent = True
       Layout = tlCenter
+      ExplicitWidth = 507
+      ExplicitHeight = 26
     end
   end
   object pnl1: TPanel
@@ -119,7 +121,7 @@ inherited frmCaixaFechamento: TfrmCaixaFechamento
       Align = alBottom
       BevelOuter = bvNone
       Color = clRed
-      TabOrder = 0
+      TabOrder = 1
       object btnAbrirCaixa: TBitBtn
         AlignWithMargins = True
         Left = 351
@@ -169,7 +171,7 @@ inherited frmCaixaFechamento: TfrmCaixaFechamento
       Align = alTop
       BevelOuter = bvNone
       ParentColor = True
-      TabOrder = 1
+      TabOrder = 0
       object Label3: TLabel
         Left = 2
         Top = 8
@@ -289,7 +291,7 @@ inherited frmCaixaFechamento: TfrmCaixaFechamento
         ParentFont = False
         ReadOnly = True
         ShowButton = False
-        TabOrder = 1
+        TabOrder = 3
         DecimalPlacesAlwaysShown = False
       end
       object edtSuprimento: TJvCalcEdit
@@ -311,7 +313,7 @@ inherited frmCaixaFechamento: TfrmCaixaFechamento
         ParentFont = False
         ReadOnly = True
         ShowButton = False
-        TabOrder = 2
+        TabOrder = 1
         DecimalPlacesAlwaysShown = False
       end
       object edtSangria: TJvCalcEdit
@@ -333,7 +335,7 @@ inherited frmCaixaFechamento: TfrmCaixaFechamento
         ParentFont = False
         ReadOnly = True
         ShowButton = False
-        TabOrder = 3
+        TabOrder = 2
         DecimalPlacesAlwaysShown = False
       end
       object edtTrocos: TJvCalcEdit
@@ -355,7 +357,7 @@ inherited frmCaixaFechamento: TfrmCaixaFechamento
         ParentFont = False
         ReadOnly = True
         ShowButton = False
-        TabOrder = 4
+        TabOrder = 5
         DecimalPlacesAlwaysShown = False
       end
       object edtTotalDeCaixa: TJvCalcEdit
@@ -377,7 +379,7 @@ inherited frmCaixaFechamento: TfrmCaixaFechamento
         ParentFont = False
         ReadOnly = True
         ShowButton = False
-        TabOrder = 5
+        TabOrder = 4
         DecimalPlacesAlwaysShown = False
       end
     end

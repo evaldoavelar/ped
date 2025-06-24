@@ -134,7 +134,7 @@ end;
 
 procedure TfrmCaixaFechamento.CalculaTotalCaixa();
 begin
-  edtTotalDeCaixa.Value := edtSaldoAnteior.Value + edtPagamentos.Value + edtSuprimento.Value - edtTrocos.Value - edtSangria.Value;
+  edtTotalDeCaixa.Value := edtSaldoAnteior.Value + edtPagamentos.Value + edtSuprimento.Value - edtSangria.Value;
 end;
 
 procedure TfrmCaixaFechamento.FormShow(Sender: TObject);

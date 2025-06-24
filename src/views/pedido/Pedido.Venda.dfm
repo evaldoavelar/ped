@@ -3,7 +3,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
   Top = 0
   Caption = 'Pedido'
   ClientHeight = 699
-  ClientWidth = 988
+  ClientWidth = 1144
   Color = 15790320
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -9871,7 +9871,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
     AlignWithMargins = True
     Left = 313
     Top = 92
-    Width = 621
+    Width = 777
     Height = 569
     Margins.Left = 0
     Margins.Top = 6
@@ -9882,10 +9882,11 @@ object FrmPedidoVenda: TFrmPedidoVenda
     Color = 15790320
     ParentBackground = False
     TabOrder = 3
+    ExplicitWidth = 621
     object Panel6: TPanel
       Left = 0
       Top = 510
-      Width = 621
+      Width = 777
       Height = 59
       Align = alBottom
       BevelOuter = bvNone
@@ -9894,12 +9895,13 @@ object FrmPedidoVenda: TFrmPedidoVenda
       ParentBackground = False
       ShowCaption = False
       TabOrder = 4
+      ExplicitWidth = 621
       DesignSize = (
-        621
+        777
         59)
       object Label4: TLabel
         AlignWithMargins = True
-        Left = 505
+        Left = 661
         Top = 3
         Width = 110
         Height = 24
@@ -9917,7 +9919,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
       end
       object lblSubTotal: TLabel
         AlignWithMargins = True
-        Left = 476
+        Left = 632
         Top = 26
         Width = 134
         Height = 31
@@ -9936,7 +9938,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
       end
       object Label10: TLabel
         AlignWithMargins = True
-        Left = 366
+        Left = 522
         Top = 1
         Width = 110
         Height = 25
@@ -9954,7 +9956,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
       end
       object lblTotalItens: TLabel
         AlignWithMargins = True
-        Left = 320
+        Left = 476
         Top = 26
         Width = 86
         Height = 31
@@ -10045,7 +10047,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
     object Panel21: TPanel
       Left = 0
       Top = 50
-      Width = 621
+      Width = 777
       Height = 3
       Margins.Top = 0
       Align = alTop
@@ -10055,12 +10057,13 @@ object FrmPedidoVenda: TFrmPedidoVenda
       ParentBackground = False
       ShowCaption = False
       TabOrder = 1
+      ExplicitWidth = 621
     end
     object Panel5: TPanel
       AlignWithMargins = True
       Left = 0
       Top = 0
-      Width = 621
+      Width = 777
       Height = 50
       Margins.Left = 0
       Margins.Top = 0
@@ -10073,6 +10076,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
       ParentBackground = False
       ShowCaption = False
       TabOrder = 0
+      ExplicitWidth = 621
       object Panel4: TPanel
         AlignWithMargins = True
         Left = 10
@@ -10221,12 +10225,86 @@ object FrmPedidoVenda: TFrmPedidoVenda
           MaxRowCount = 0
         end
       end
+      object Panel7: TPanel
+        AlignWithMargins = True
+        Left = 699
+        Top = 5
+        Width = 50
+        Height = 40
+        Margins.Left = 0
+        Margins.Top = 5
+        Margins.Bottom = 5
+        Align = alLeft
+        BevelOuter = bvNone
+        Caption = 'pnl1'
+        Color = 15790320
+        ParentBackground = False
+        ShowCaption = False
+        TabOrder = 2
+        ExplicitLeft = 561
+        ExplicitHeight = 43
+        object Image4: TImage
+          Left = 0
+          Top = 0
+          Width = 50
+          Height = 40
+          Align = alClient
+          Center = True
+          Picture.Data = {
+            0954506E67496D61676589504E470D0A1A0A0000000D49484452000000200000
+            00200806000000737A7AF4000000097048597300000EC400000EC401952B0E1B
+            000001644944415478DA63641860C038EA8051078C3A60D40183D60195959509
+            BF7FFF16A186252C2C2C5F3A3A3A6690E4809A9A1A8BAF5FBFEEFDFFFF3F1745
+            3E6464FCC3C5C5E5DBDADABA83240780407575B5C7B76FDF36031DC142AE0380
+            9647B7B5B52DC3E940420600A322EAFBF7EF4BC9B19C939333BFBDBD7D12DE10
+            22C620A02372808E984C8AE51C1C1C2DC078AF25A48EE85C505151D1FCE3C78F
+            1A62D4B2B1B1CD323737CF0C0E0EFE473507AC5FBF9EE9F8F1E3537FFDFA9581
+            4F1D2B2BEB1A151595C8F4F4F43FC4984B5239307BF66C965BB76E2D0766CF10
+            6CF2C0ECB64F5252D2BBB8B8F807B166925C104D983081E3C993275BFFFCF9E3
+            842CCECCCC7C4E4444C411985E3E91621E5925213065F3BD79F366EFDFBF7F4D
+            A096DFE2E7E7B7ADABAB7B45AA596417C5CDCDCD621F3E7C380C2C2378787979
+            AD1B1B1B1F90630E4575417D7DBD02C8014D4D4D57C83563F05646A30E1875C0
+            A803461D402F000062EB7A21235928510000000049454E44AE426082}
+          ExplicitLeft = -24
+          ExplicitTop = -32
+          ExplicitWidth = 105
+          ExplicitHeight = 105
+        end
+        object btnVenderProduto: TJvTransparentButton
+          Left = 0
+          Top = 0
+          Width = 50
+          Height = 40
+          Margins.Left = 5
+          Margins.Top = 5
+          Margins.Right = 0
+          Margins.Bottom = 5
+          Action = actVendeItem
+          Align = alClient
+          BorderWidth = 0
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = 10640128
+          Font.Height = -24
+          Font.Name = 'Arial'
+          Font.Style = [fsBold]
+          HotTrack = True
+          HotTrackFont.Charset = DEFAULT_CHARSET
+          HotTrackFont.Color = clWindowText
+          HotTrackFont.Height = -24
+          HotTrackFont.Name = 'Arial'
+          HotTrackFont.Style = []
+          FrameStyle = fsNone
+          ParentFont = False
+          Spacing = 4
+          ExplicitHeight = 43
+        end
+      end
     end
     object scrItens: TScrollBox
       AlignWithMargins = True
       Left = 0
       Top = 56
-      Width = 621
+      Width = 777
       Height = 448
       Margins.Left = 0
       Margins.Right = 0
@@ -10237,11 +10315,12 @@ object FrmPedidoVenda: TFrmPedidoVenda
       Color = 15790320
       ParentColor = False
       TabOrder = 2
+      ExplicitWidth = 621
       object Panel24: TPanel
         AlignWithMargins = True
         Left = 3
         Top = 123
-        Width = 615
+        Width = 771
         Height = 21
         Align = alTop
         BevelOuter = bvNone
@@ -10250,11 +10329,12 @@ object FrmPedidoVenda: TFrmPedidoVenda
         ParentBackground = False
         ShowCaption = False
         TabOrder = 3
+        ExplicitWidth = 615
         object Label13: TLabel
           AlignWithMargins = True
           Left = 30
           Top = 3
-          Width = 582
+          Width = 738
           Height = 13
           Margins.Left = 30
           Align = alTop
@@ -10273,7 +10353,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
         AlignWithMargins = True
         Left = 3
         Top = 313
-        Width = 615
+        Width = 771
         Height = 37
         Margins.Top = 2
         Margins.Bottom = 2
@@ -10284,19 +10364,21 @@ object FrmPedidoVenda: TFrmPedidoVenda
         ParentBackground = False
         ShowCaption = False
         TabOrder = 8
+        ExplicitWidth = 615
         object Panel8: TPanel
           Left = 40
           Top = 0
-          Width = 575
+          Width = 731
           Height = 37
           Align = alClient
           BevelOuter = bvNone
           TabOrder = 1
+          ExplicitWidth = 575
           object Label1: TLabel
             AlignWithMargins = True
             Left = 10
             Top = 3
-            Width = 562
+            Width = 718
             Height = 18
             Margins.Left = 10
             Margins.Bottom = 0
@@ -10318,7 +10400,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
             AlignWithMargins = True
             Left = 30
             Top = 21
-            Width = 542
+            Width = 698
             Height = 13
             Margins.Left = 30
             Margins.Top = 0
@@ -10357,7 +10439,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
         AlignWithMargins = True
         Left = 3
         Top = 149
-        Width = 615
+        Width = 771
         Height = 37
         Margins.Top = 2
         Margins.Bottom = 2
@@ -10368,19 +10450,21 @@ object FrmPedidoVenda: TFrmPedidoVenda
         ParentBackground = False
         ShowCaption = False
         TabOrder = 4
+        ExplicitWidth = 615
         object Panel11: TPanel
           Left = 40
           Top = 0
-          Width = 575
+          Width = 731
           Height = 37
           Align = alClient
           BevelOuter = bvNone
           TabOrder = 1
+          ExplicitWidth = 575
           object Label11: TLabel
             AlignWithMargins = True
             Left = 10
             Top = 3
-            Width = 562
+            Width = 718
             Height = 18
             Margins.Left = 10
             Margins.Bottom = 0
@@ -10402,7 +10486,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
             AlignWithMargins = True
             Left = 30
             Top = 21
-            Width = 542
+            Width = 698
             Height = 13
             Margins.Left = 30
             Margins.Top = 0
@@ -10441,7 +10525,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
         AlignWithMargins = True
         Left = 3
         Top = 81
-        Width = 615
+        Width = 771
         Height = 37
         Margins.Top = 2
         Margins.Bottom = 2
@@ -10452,19 +10536,21 @@ object FrmPedidoVenda: TFrmPedidoVenda
         ParentBackground = False
         ShowCaption = False
         TabOrder = 2
+        ExplicitWidth = 615
         object Panel28: TPanel
           Left = 40
           Top = 0
-          Width = 575
+          Width = 731
           Height = 37
           Align = alClient
           BevelOuter = bvNone
           TabOrder = 1
+          ExplicitWidth = 575
           object Label15: TLabel
             AlignWithMargins = True
             Left = 10
             Top = 3
-            Width = 562
+            Width = 718
             Height = 18
             Margins.Left = 10
             Margins.Bottom = 0
@@ -10481,12 +10567,13 @@ object FrmPedidoVenda: TFrmPedidoVenda
             ParentFont = False
             WordWrap = True
             ExplicitLeft = 13
+            ExplicitWidth = 562
           end
           object Label16: TLabel
             AlignWithMargins = True
             Left = 30
             Top = 21
-            Width = 542
+            Width = 698
             Height = 13
             Margins.Left = 30
             Margins.Top = 0
@@ -10525,7 +10612,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
         AlignWithMargins = True
         Left = 3
         Top = 40
-        Width = 615
+        Width = 771
         Height = 37
         Margins.Top = 2
         Margins.Bottom = 2
@@ -10536,10 +10623,11 @@ object FrmPedidoVenda: TFrmPedidoVenda
         ParentBackground = False
         ShowCaption = False
         TabOrder = 1
+        ExplicitWidth = 615
         object Panel31: TPanel
           Left = 40
           Top = 0
-          Width = 575
+          Width = 731
           Height = 37
           Align = alClient
           BevelOuter = bvNone
@@ -10550,11 +10638,12 @@ object FrmPedidoVenda: TFrmPedidoVenda
           Font.Style = [fsItalic, fsStrikeOut]
           ParentFont = False
           TabOrder = 1
+          ExplicitWidth = 575
           object Label17: TLabel
             AlignWithMargins = True
             Left = 10
             Top = 3
-            Width = 562
+            Width = 718
             Height = 17
             Margins.Left = 10
             Margins.Bottom = 0
@@ -10576,7 +10665,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
             AlignWithMargins = True
             Left = 30
             Top = 20
-            Width = 542
+            Width = 698
             Height = 13
             Margins.Left = 30
             Margins.Top = 0
@@ -10615,7 +10704,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
         AlignWithMargins = True
         Left = 3
         Top = 2
-        Width = 615
+        Width = 771
         Height = 34
         Margins.Top = 2
         Margins.Bottom = 2
@@ -10626,21 +10715,23 @@ object FrmPedidoVenda: TFrmPedidoVenda
         ParentBackground = False
         ShowCaption = False
         TabOrder = 0
+        ExplicitWidth = 615
         object Panel34: TPanel
           Left = 40
           Top = 0
-          Width = 575
+          Width = 731
           Height = 34
           Align = alClient
           BevelOuter = bvNone
           Color = 15000804
           ParentBackground = False
           TabOrder = 1
+          ExplicitWidth = 575
           object Label26: TLabel
             AlignWithMargins = True
             Left = 10
             Top = 3
-            Width = 562
+            Width = 718
             Height = 16
             Margins.Left = 10
             Margins.Bottom = 0
@@ -10662,7 +10753,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
             AlignWithMargins = True
             Left = 30
             Top = 19
-            Width = 542
+            Width = 698
             Height = 13
             Margins.Left = 30
             Margins.Top = 0
@@ -10701,7 +10792,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
         AlignWithMargins = True
         Left = 3
         Top = 272
-        Width = 615
+        Width = 771
         Height = 37
         Margins.Top = 2
         Margins.Bottom = 2
@@ -10712,19 +10803,21 @@ object FrmPedidoVenda: TFrmPedidoVenda
         ParentBackground = False
         ShowCaption = False
         TabOrder = 7
+        ExplicitWidth = 615
         object Panel37: TPanel
           Left = 40
           Top = 0
-          Width = 575
+          Width = 731
           Height = 37
           Align = alClient
           BevelOuter = bvNone
           TabOrder = 1
+          ExplicitWidth = 575
           object Label28: TLabel
             AlignWithMargins = True
             Left = 10
             Top = 3
-            Width = 562
+            Width = 718
             Height = 18
             Margins.Left = 10
             Margins.Bottom = 0
@@ -10746,7 +10839,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
             AlignWithMargins = True
             Left = 30
             Top = 21
-            Width = 542
+            Width = 698
             Height = 13
             Margins.Left = 30
             Margins.Top = 0
@@ -10785,7 +10878,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
         AlignWithMargins = True
         Left = 3
         Top = 231
-        Width = 615
+        Width = 771
         Height = 37
         Margins.Top = 2
         Margins.Bottom = 2
@@ -10796,19 +10889,21 @@ object FrmPedidoVenda: TFrmPedidoVenda
         ParentBackground = False
         ShowCaption = False
         TabOrder = 6
+        ExplicitWidth = 615
         object Panel40: TPanel
           Left = 40
           Top = 0
-          Width = 575
+          Width = 731
           Height = 37
           Align = alClient
           BevelOuter = bvNone
           TabOrder = 1
+          ExplicitWidth = 575
           object Label30: TLabel
             AlignWithMargins = True
             Left = 10
             Top = 3
-            Width = 562
+            Width = 718
             Height = 18
             Margins.Left = 10
             Margins.Bottom = 0
@@ -10830,7 +10925,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
             AlignWithMargins = True
             Left = 30
             Top = 21
-            Width = 542
+            Width = 698
             Height = 13
             Margins.Left = 30
             Margins.Top = 0
@@ -10869,7 +10964,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
         AlignWithMargins = True
         Left = 3
         Top = 190
-        Width = 615
+        Width = 771
         Height = 37
         Margins.Top = 2
         Margins.Bottom = 2
@@ -10880,19 +10975,21 @@ object FrmPedidoVenda: TFrmPedidoVenda
         ParentBackground = False
         ShowCaption = False
         TabOrder = 5
+        ExplicitWidth = 615
         object Panel43: TPanel
           Left = 40
           Top = 0
-          Width = 575
+          Width = 731
           Height = 37
           Align = alClient
           BevelOuter = bvNone
           TabOrder = 1
+          ExplicitWidth = 575
           object Label32: TLabel
             AlignWithMargins = True
             Left = 10
             Top = 3
-            Width = 562
+            Width = 718
             Height = 18
             Margins.Left = 10
             Margins.Bottom = 0
@@ -10914,7 +11011,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
             AlignWithMargins = True
             Left = 30
             Top = 21
-            Width = 542
+            Width = 698
             Height = 13
             Margins.Left = 30
             Margins.Top = 0
@@ -10953,7 +11050,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
     object Panel2: TPanel
       Left = 0
       Top = 507
-      Width = 621
+      Width = 777
       Height = 3
       Margins.Top = 0
       Align = alBottom
@@ -10963,13 +11060,14 @@ object FrmPedidoVenda: TFrmPedidoVenda
       ParentBackground = False
       ShowCaption = False
       TabOrder = 3
+      ExplicitWidth = 621
     end
   end
   object pnlTopo: TPanel
     AlignWithMargins = True
     Left = 0
     Top = 0
-    Width = 988
+    Width = 1144
     Height = 86
     Margins.Left = 0
     Margins.Top = 0
@@ -10982,9 +11080,10 @@ object FrmPedidoVenda: TFrmPedidoVenda
     ParentBackground = False
     ShowCaption = False
     TabOrder = 0
+    ExplicitWidth = 988
     object lblStatusVenda: TLabel
       AlignWithMargins = True
-      Left = 568
+      Left = 724
       Top = 3
       Width = 417
       Height = 80
@@ -11288,7 +11387,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
     AlignWithMargins = True
     Left = 3
     Top = 665
-    Width = 985
+    Width = 1141
     Height = 34
     Margins.Top = 0
     Margins.Right = 0
@@ -11300,6 +11399,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
     ParentBackground = False
     ShowCaption = False
     TabOrder = 4
+    ExplicitWidth = 985
     object lblEmitente: TLabel
       Left = 152
       Top = 7
@@ -11322,7 +11422,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
     end
     object Panel16: TPanel
       AlignWithMargins = True
-      Left = 897
+      Left = 1053
       Top = 0
       Width = 88
       Height = 34
@@ -11336,6 +11436,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
       ParentBackground = False
       ShowCaption = False
       TabOrder = 2
+      ExplicitLeft = 897
       object lblBarraHora: TLabel
         AlignWithMargins = True
         Left = 3
@@ -11589,7 +11690,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
     end
     object pnl3: TPanel
       AlignWithMargins = True
-      Left = 866
+      Left = 1022
       Top = 0
       Width = 28
       Height = 34
@@ -11603,10 +11704,11 @@ object FrmPedidoVenda: TFrmPedidoVenda
       ParentColor = True
       ShowCaption = False
       TabOrder = 1
+      ExplicitLeft = 866
     end
   end
   object svMenuLateralEsquerdo: TSplitView
-    Left = 938
+    Left = 1094
     Top = 86
     Width = 50
     Height = 579
@@ -11614,6 +11716,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
     OpenedWidth = 50
     Placement = svpRight
     TabOrder = 2
+    ExplicitLeft = 938
     object pnl4: TPanel
       AlignWithMargins = True
       Left = 3
@@ -11929,6 +12032,9 @@ object FrmPedidoVenda: TFrmPedidoVenda
       Caption = 'actMinimizar'
       ShortCut = 123
       OnExecute = actMinimizarExecute
+    end
+    object actVendeItem: TAction
+      OnExecute = actVendeItemExecute
     end
   end
   object Timer1: TTimer

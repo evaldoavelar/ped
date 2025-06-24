@@ -57,6 +57,7 @@ begin
         + '             FORMA, '
         + '             DATAALTERACAO, '
         + '             HORA, '
+        + '             NUMCAIXA, '
         + '             DATA ) '
         + 'VALUES      (:id, '
         + '             :TIPO, '
@@ -66,6 +67,7 @@ begin
         + '             :FORMA, '
         + '             :DATAALTERACAO, '
         + '             :HORA, '
+        + '             :NUMCAIXA, '
         + '             :DATA )';
 
       EntityToParams(qry, aObj);
