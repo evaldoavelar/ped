@@ -2,7 +2,6 @@ inherited frmFiltroOrcamentos: TfrmFiltroOrcamentos
   Caption = 'Filtro Or'#231'amentos'
   ClientHeight = 598
   ExplicitHeight = 637
-  PixelsPerInch = 96
   TextHeight = 13
   inherited splEsquerda: TSplitter
     Height = 559

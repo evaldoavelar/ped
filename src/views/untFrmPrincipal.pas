@@ -1114,7 +1114,7 @@ begin
 
     ProdutosVenda := LFactory.DaoPedido.ProdutosVendidos(DataIncio, DataFim);
 
-    impressao := TRProdutosVendidos.Create(TFactoryEntidades.Parametros.ImpressoraTermica);
+    impressao := TRProdutosVendidos.Create(TFactoryEntidades.Parametros.PontoVenda.ImpressoraTermica);
 
     impressao.Imprime(DataIncio, DataFim, TFactoryEntidades.new.VendedorLogado,
       LFactory.DadosEmitente, ProdutosVenda);

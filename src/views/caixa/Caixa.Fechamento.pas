@@ -76,7 +76,7 @@ begin
     var
     LFactory := TFactory.new(nil, true);
     var
-    impressao := TRVendasDoDia.Create(TFactoryEntidades.Parametros.ImpressoraTermica);
+    impressao := TRVendasDoDia.Create(TFactoryEntidades.Parametros.PontoVenda.ImpressoraTermica);
     var
     vendedor := TFactoryEntidades.new.VendedorLogado;
 

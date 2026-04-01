@@ -302,7 +302,7 @@ begin
   try // todo: buscar dos parametros
     LFactory := TFactory.new();
 
-    Impressora := TROrcamento.create(TFactoryEntidades.Parametros.ImpressoraTermica);
+    Impressora := TROrcamento.create(TFactoryEntidades.Parametros.PontoVenda.ImpressoraTermica);
 
     try
       Impressora.ImprimeCupom(LFactory.DadosEmitente, Orcamento);

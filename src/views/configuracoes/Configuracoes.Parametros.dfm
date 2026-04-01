@@ -36,7 +36,7 @@ inherited FrmConfiguracoes: TFrmConfiguracoes
     Top = 0
     Width = 796
     Height = 362
-    ActivePage = ts2
+    ActivePage = tsImpressora
     Align = alClient
     TabOrder = 0
     object ts1: TTabSheet
@@ -604,7 +604,7 @@ inherited FrmConfiguracoes: TFrmConfiguracoes
         Font.Style = []
         NumbersOnly = True
         ParentFont = False
-        TabOrder = 5
+        TabOrder = 7
         OnChange = edtRazaoSocialChange
       end
       object rgPesquisaPor: TRadioGroup
@@ -623,7 +623,7 @@ inherited FrmConfiguracoes: TFrmConfiguracoes
           'Descri'#231#227'o'
           'C'#243'digo/C'#243'digo Barras')
         ParentFont = False
-        TabOrder = 4
+        TabOrder = 6
         OnClick = rgPesquisaPorClick
       end
       object chkInformarParceiroNaVenda: TCheckBox
@@ -632,7 +632,7 @@ inherited FrmConfiguracoes: TFrmConfiguracoes
         Width = 217
         Height = 17
         Caption = 'Informar Parceiro Na Venda'
-        TabOrder = 6
+        TabOrder = 4
         OnClick = chkVenderClienteBloqueadoClick
       end
       object chkExibirObservacao: TCheckBox
@@ -641,7 +641,7 @@ inherited FrmConfiguracoes: TFrmConfiguracoes
         Width = 217
         Height = 17
         Caption = 'Exibir Observa'#231#227'o'
-        TabOrder = 7
+        TabOrder = 5
         OnClick = chkVenderClienteBloqueadoClick
       end
       object edtPorcentagemMaximaDesconto: TEdit
@@ -668,7 +668,7 @@ inherited FrmConfiguracoes: TFrmConfiguracoes
         AlignWithMargins = True
         Left = 3
         Top = 3
-        Width = 782
+        Width = 333
         Height = 13
         Align = alTop
         Caption = 'Logo marca para Impress'#227'o em Etiquetas (130 x 43 pixels)'
@@ -678,7 +678,6 @@ inherited FrmConfiguracoes: TFrmConfiguracoes
         Font.Name = 'Tahoma'
         Font.Style = [fsBold]
         ParentFont = False
-        ExplicitWidth = 333
       end
       object imgComprovante: TImage
         AlignWithMargins = True

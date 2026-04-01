@@ -185,7 +185,7 @@ begin
   TLog.d('>>> Entrando em  TfrmFiltroParcelas.Imprimir ');
   try
 
-    impressao := TRParcela.create(TFactoryEntidades.Parametros.ImpressoraTermica);
+    impressao := TRParcela.create(TFactoryEntidades.Parametros.PontoVenda.ImpressoraTermica);
 
     if dbGridResultado.DataSource.DataSet.IsEmpty then
       raise Exception.create('Nada para imprimir');

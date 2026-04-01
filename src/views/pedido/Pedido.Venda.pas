@@ -1615,8 +1615,8 @@ var
 begin
   TLog.d('>>> Entrando em  TFrmPedidoVenda.Imprime ');
   try // todo: buscar dos parametros
-    RelPedido := TRPedido.Create(FParametros.ImpressoraTermica);
-    RelComprovanteDC := TRComprovanteCreditoDebito.Create(FParametros.ImpressoraTermica);
+    RelPedido := TRPedido.Create(FParametros.PontoVenda.ImpressoraTermica);
+    RelComprovanteDC := TRComprovanteCreditoDebito.Create(FParametros.PontoVenda.ImpressoraTermica);
     ParcelasAtrasadas := FFactory.daoParcelas.GeTParcelasVencidasPorCliente(Pedido.Cliente.CODIGO, now);
     Emitente := FFactory.DadosEmitente;
 

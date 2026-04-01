@@ -146,7 +146,7 @@ begin
   try
     ValidaGrid;
     Pedido := daoPedido.getPedido(dbGridResultado.DataSource.DataSet.FieldByName('ID').AsInteger);
-    Impressora := TRPedido.create(FParametros.ImpressoraTermica);
+    Impressora := TRPedido.create(FParametros.PontoVenda.ImpressoraTermica);
     ParcelasAtrasadas := fFactory.daoParcelas.GeTParcelasVencidasPorCliente(Pedido.Cliente.CODIGO, now);
 
     Impressora.ImprimeCupom(fFactory.DadosEmitente,

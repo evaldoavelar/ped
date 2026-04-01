@@ -66,7 +66,7 @@ begin
     FFactory.DAOControleCaixa.AbrirCaixa(LcontroleCaixa);
 
     var
-    LImpressao := TRCaixaAbertura.Create(TFactoryEntidades.Parametros.ImpressoraTermica);
+    LImpressao := TRCaixaAbertura.Create(TFactoryEntidades.Parametros.PontoVenda.ImpressoraTermica);
     var
     LTotais := TList < TPair < string, string >>.Create;
     LTotais.Add(TPair<string, string>.Create('Valor Abertura', FormatCurr('R$ ###,##0.00', LcontroleCaixa.ValorAbertura)));

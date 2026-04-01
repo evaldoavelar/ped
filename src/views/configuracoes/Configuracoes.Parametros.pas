@@ -1,4 +1,4 @@
-unit Configuracoes.Parametros;
+﻿unit Configuracoes.Parametros;
 
 interface
 
@@ -162,7 +162,7 @@ begin
   FParametros.Bind('ATUALIZACLIENTENAVENDA', chkAtualizaClienteNaVenda, 'Checked');
   FParametros.Bind('BLOQUEARCLIENTECOMATRASO', chkBloquearClienteComAtraso, 'Checked');
   FParametros.Bind('BACKUPDIARIO', chkBakcup, 'Checked');
-  FParametros.Bind('ImpressoraTermica.MODELOIMPRESSORA', cbxImpressoraTermicaModelo, 'Text');
+  //FParametros.Bind('ImpressoraTermica.MODELOIMPRESSORA', cbxImpressoraTermicaModelo, 'Text');
   FParametros.Bind('ImpressoraTermica.IMPRIMIR2VIAS', chkImprimir2Vias, 'Checked');
   FParametros.Bind('ImpressoraTermica.IMPRIMIRITENS2VIA', chkImprimirItens2Via, 'Checked');
   FParametros.Bind('VALIDADEORCAMENTO', edtValidadeOrcamento, 'Text');
@@ -178,6 +178,7 @@ begin
   FParametros.PontoVenda.ClearBindings;
   FParametros.PontoVenda.Bind('NUMCAIXA', edtNumeroDoCaixa, 'Text');
   FParametros.PontoVenda.Bind('FUNCIONARCOMOCLIENTE', chkFuncionarComoCliente, 'Checked');
+  FParametros.PontoVenda.Bind('ImpressoraTermica.MODELOIMPRESSORA', cbxImpressoraTermicaModelo, 'Text');
 
   try
     if FParametros.LOGOMARCAETIQUETA <> nil then

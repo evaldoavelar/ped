@@ -106,7 +106,7 @@ begin
     if Parcelas.Count <= 0 then
       raise Exception.Create('Nenhum dado para imprimir');
 
-    impressao := TRParcela.Create(TFactoryEntidades.Parametros.ImpressoraTermica);
+    impressao := TRParcela.Create(TFactoryEntidades.Parametros.PontoVenda.ImpressoraTermica);
 
     impressao.ImprimeLista(
       Self.Caption,

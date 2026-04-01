@@ -77,8 +77,8 @@ inherited frmCaixaFechamento: TfrmCaixaFechamento
       AlignWithMargins = True
       Left = 88
       Top = 3
-      Width = 594
-      Height = 53
+      Width = 507
+      Height = 26
       Align = alClient
       BiDiMode = bdLeftToRight
       Caption = 'FECHAMENTO DE CAIXA - MOVIMENTA'#199#195'O DE DINHEIRO'
@@ -95,8 +95,6 @@ inherited frmCaixaFechamento: TfrmCaixaFechamento
       ShowHint = False
       Transparent = True
       Layout = tlCenter
-      ExplicitWidth = 507
-      ExplicitHeight = 26
     end
   end
   object pnl1: TPanel

@@ -18,7 +18,7 @@ type
   public
     constructor Create(aArquivo: AnsiString);
     destructor Destroy; override;
-    class function New(aArquivo:string): IDaoPontoVenda;
+    class function New(aArquivo: string): IDaoPontoVenda;
   end;
 
 implementation
@@ -42,6 +42,7 @@ begin
     try
       Ini.WriteString(FNomeConfiguracao, 'NUMCAIXA', aPontoVenda.NUMCAIXA);
       Ini.WriteBool(FNomeConfiguracao, 'FUNCIONARCOMOCLIENTE', aPontoVenda.FUNCIONARCOMOCLIENTE);
+      Ini.WriteString(FNomeConfiguracao, 'MODELOIMPRESSORA', aPontoVenda.ImpressoraTermica.MODELOIMPRESSORA);
 
     except
       on E: Exception do
@@ -85,6 +86,7 @@ begin
 
       result.NUMCAIXA := Ini.ReadString(FNomeConfiguracao, 'NUMCAIXA', 'caixa-01');
       result.FUNCIONARCOMOCLIENTE := Ini.ReadBool(FNomeConfiguracao, 'FUNCIONARCOMOCLIENTE', false);
+      result.ImpressoraTermica.MODELOIMPRESSORA := Ini.ReadString(FNomeConfiguracao, 'MODELOIMPRESSORA', '');
     except
       on E: Exception do
         raise Exception.Create('Falha ao carregar ini Parametros.BancoDeDados: ' + E.message);
@@ -96,7 +98,7 @@ begin
 
 end;
 
-class function TDaoPontoVenda.New(aArquivo:string): IDaoPontoVenda;
+class function TDaoPontoVenda.New(aArquivo: string): IDaoPontoVenda;
 begin
   result := TDaoPontoVenda.Create(aArquivo);
 end;

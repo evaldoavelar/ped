@@ -220,20 +220,20 @@ begin
       ds.Params.ParamByName('PESQUISAPRODUTOPOR').AsInteger := Parametros.PESQUISAPRODUTOPOR;
 
     if ds.Params.FindParam('IMPRIMIR2VIAS') <> nil then
-      ds.Params.ParamByName('IMPRIMIR2VIAS').AsBoolean := Parametros.ImpressoraTermica.IMPRIMIR2VIAS;
+      ds.Params.ParamByName('IMPRIMIR2VIAS').AsBoolean := Parametros.PontoVenda.ImpressoraTermica.IMPRIMIR2VIAS;
 
     if ds.Params.FindParam('BACKUPDIARIO') <> nil then
       ds.Params.ParamByName('BACKUPDIARIO').AsBoolean := Parametros.BACKUPDIARIO;
 
     if ds.Params.FindParam('IMPRIMIRITENS2VIA') <> nil then
-      ds.Params.ParamByName('IMPRIMIRITENS2VIA').AsBoolean := Parametros.ImpressoraTermica.IMPRIMIRITENS2VIA;
+      ds.Params.ParamByName('IMPRIMIRITENS2VIA').AsBoolean := Parametros.PontoVenda.ImpressoraTermica.IMPRIMIRITENS2VIA;
 
     if ds.Params.FindParam('MODELOIMPRESSORA') <> nil then
-      ds.Params.ParamByName('MODELOIMPRESSORA').AsString := Parametros.ImpressoraTermica.MODELOIMPRESSORA;
+      ds.Params.ParamByName('MODELOIMPRESSORA').AsString := Parametros.PontoVenda.ImpressoraTermica.MODELOIMPRESSORA;
     if ds.Params.FindParam('PORTAIMPRESSORA') <> nil then
-      ds.Params.ParamByName('PORTAIMPRESSORA').AsString := Parametros.ImpressoraTermica.PORTAIMPRESSORA;
+      ds.Params.ParamByName('PORTAIMPRESSORA').AsString := Parametros.PontoVenda.ImpressoraTermica.PORTAIMPRESSORA;
     if ds.Params.FindParam('VELOCIDADE') <> nil then
-      ds.Params.ParamByName('VELOCIDADE').AsString := Parametros.ImpressoraTermica.VELOCIDADE;
+      ds.Params.ParamByName('VELOCIDADE').AsString := Parametros.PontoVenda.ImpressoraTermica.VELOCIDADE;
 
     if ds.Params.FindParam('VERSAOBD') <> nil then
       ds.Params.ParamByName('VERSAOBD').AsString := Parametros.VERSAOBD;

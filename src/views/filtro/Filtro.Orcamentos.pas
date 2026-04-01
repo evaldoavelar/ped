@@ -118,7 +118,7 @@ begin
   try
     ValidaGrid;
     Orcamento := daoOrcamento.getOrcamento(dbGridResultado.DataSource.DataSet.FieldByName('ID').AsInteger);
-    Impressora := TROrcamento.create(FParametros.ImpressoraTermica);
+    Impressora := TROrcamento.create(FParametros.PontoVenda.ImpressoraTermica);
     Impressora.ImprimeCupom(FFactory.DadosEmitente, Orcamento);
 
     FreeAndNil(Orcamento);
