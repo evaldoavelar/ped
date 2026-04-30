@@ -82,3 +82,4 @@ Win32
 src/modules
 src/Win32
 src/PED.delphilsp.json
+src/PED.res
