@@ -97,6 +97,7 @@
         <AppDPIAwarenessMode>PerMonitor</AppDPIAwarenessMode>
         <VerInfo_Release>1</VerInfo_Release>
         <VerInfo_MinorVer>2</VerInfo_MinorVer>
+        <DCC_MapFile>3</DCC_MapFile>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
         <VerInfo_Locale>1046</VerInfo_Locale>

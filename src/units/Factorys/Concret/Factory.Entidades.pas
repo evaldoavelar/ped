@@ -90,9 +90,9 @@ begin
 
     FPosPrinter := TACBrPosPrinter.Create(nil);
 
-    FPosPrinter.Modelo := Parametros.PontoVenda.ImpressoraTermica.ModeloAsModeloAsACBrPosPrinterModelo;
-    FPosPrinter.Device.Porta := Parametros.PontoVenda.ImpressoraTermica.PORTAIMPRESSORA;
-    FPosPrinter.Device.Baud := StrToIntDef(Parametros.PontoVenda.ImpressoraTermica.VELOCIDADE, 9600);
+    FPosPrinter.Modelo := Parametros.ImpressoraTermica.ModeloAsModeloAsACBrPosPrinterModelo;
+    FPosPrinter.Device.Porta := Parametros.ImpressoraTermica.PORTAIMPRESSORA;
+    FPosPrinter.Device.Baud := StrToIntDef(Parametros.ImpressoraTermica.VELOCIDADE, 9600);
   end;
   result := FPosPrinter;
 end;
