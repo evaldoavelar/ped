@@ -68,4 +68,19 @@ Assegurar que toda implementacao Delphi reutilize os modulos compartilhados (`br
 4. Para qualquer acesso a banco, encapsular no DAO + `TDaoBase` e medir com `TQryPerf`/`TLogPerformance`.
 5. Em integrações em tempo real ou APIs, avaliar uso das libs do diretorio `modules` (WebSocket, JSON, Google Analytics, TEF) antes de adicionar dependencias externas.
 
+## Validacao obrigatoria de build
+- Sempre que houver alteracao em codigo-fonte do projeto Delphi (`.pas`, `.dpr`, `.dproj`, `.dfm`), executar compilacao local antes de concluir a tarefa.
+- Use obrigatoriamente o script de build do repositorio: `src/build-local.ps1`.
+- Comando padrao:
+	- `Set-Location src; .\build-local.ps1`
+- Se estiver validando diagnostico de compilacao, pode usar:
+	- `Set-Location src; .\build-local.ps1 -Config Debug -Verbose`
+- Critério de aceite da tarefa:
+	- Build finalizado com `0 Error(s)`.
+	- Executavel gerado e validado pelo script.
+- Em caso de falha no build:
+	- Corrigir os erros relacionados as alteracoes realizadas.
+	- Reexecutar o script ate obter sucesso.
+	- So encerrar a tarefa apos build verde ou com bloqueio explicitamente reportado ao usuario.
+
 Seguindo estas instrucoes o agente produz codigo alinhado com o framework interno, com rastreabilidade (logs) e analises de performance consistentes.
