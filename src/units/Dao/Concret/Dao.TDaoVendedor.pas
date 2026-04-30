@@ -57,7 +57,7 @@ begin
       on E: EFDDBEngineException do
       begin
         if E.Kind = ekFKViolated then
-          raise Exception.Create('O registro não pode ser excluído porque está amarrado a outro registro.')
+          raise Exception.Create('O registro nï¿½o pode ser excluï¿½do porque estï¿½ amarrado a outro registro.')
         else
           raise;
       end;
@@ -93,7 +93,8 @@ begin
         + '     PODECANCELARPEDIDO = :PODECANCELARPEDIDO, '
         + '     PODECANCELARORCAMENTO = :PODECANCELARORCAMENTO, '
         + '     DATAALTERACAO = :DATAALTERACAO, '
-        + '     PODEACESSARPARAMETROS = :PODEACESSARPARAMETROS '
+        + '     PODEACESSARPARAMETROS = :PODEACESSARPARAMETROS, '
+        + '     PODEACESSARRELATORIOIMENSAL = :PODEACESSARRELATORIOIMENSAL '
         + 'where       '
         + '     CODIGO = :CODIGO ';
 
@@ -150,7 +151,7 @@ begin
         TLog.d(E.message);
 
         if E.message.Contains('unavailable database') then
-          raise Exception.Create('Banco de dados não disponível')
+          raise Exception.Create('Banco de dados nï¿½o disponï¿½vel')
         else
           raise TDaoException.Create('Falha GetVendedor: ' + E.message);
       end;
@@ -203,7 +204,7 @@ var
 begin
 
   if Self.GetVendedorbyNome(vendedor.nome) <> nil then
-    raise Exception.Create('Vendedor Já existe já existe');
+    raise Exception.Create('Vendedor Jï¿½ existe jï¿½ existe');
 
   vendedor.codigo := Self.GeraID;
 
@@ -220,6 +221,7 @@ begin
         + '             PODECANCELARPEDIDO, '
         + '             PODECANCELARORCAMENTO, '
         + '             PODEACESSARPARAMETROS, '
+        + '             PODEACESSARRELATORIOIMENSAL, '
         + '             DATAALTERACAO, '
         + '             COMISSAOP, '
         + '             COMISSAOV ) '
@@ -231,6 +233,7 @@ begin
         + '             :PODECANCELARPEDIDO, '
         + '             :PODECANCELARORCAMENTO, '
         + '             :PODEACESSARPARAMETROS, '
+        + '             :PODEACESSARRELATORIOIMENSAL, '
         + '             :DATAALTERACAO, '
         + '             :COMISSAOP, '
         + '             :COMISSAOV )';
@@ -361,7 +364,7 @@ begin
     on E: Exception do
     begin
       TLog.d(E.message);
-      raise TDaoException.Create('Falha ao associar parâmetros TDaoVendedor: ' + E.message);
+      raise TDaoException.Create('Falha ao associar parï¿½metros TDaoVendedor: ' + E.message);
     end;
   end;
 end;
@@ -384,7 +387,7 @@ end;
 procedure TDaoVendedor.ValidaVendedor(vendedor: TVendedor);
 begin
   if Trim(vendedor.nome) = '' then
-    raise Exception.Create('Nome não informado');
+    raise Exception.Create('Nome nï¿½o informado');
 end;
 
 end.

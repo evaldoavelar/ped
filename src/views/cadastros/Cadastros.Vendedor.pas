@@ -29,6 +29,7 @@ type
     chkPodeAcessarCadastroVendedor: TCheckBox;
     chkPodeCancelarOrcamento: TCheckBox;
     chkPodeAcessarParametros: TCheckBox;
+    chkPodeAcessarRelatorioMensal: TCheckBox;
     procedure edtCodigoChange(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -107,6 +108,7 @@ begin
   FVendedor.Bind('PODEACESSARCADASTROVENDEDOR', chkPodeAcessarCadastroVendedor, 'Checked');
   FVendedor.Bind('PODECANCELARORCAMENTO', chkPodeCancelarOrcamento, 'Checked');
   FVendedor.Bind('PODEACESSARPARAMETROS', chkPodeAcessarParametros, 'Checked');
+  FVendedor.Bind('PODEACESSARRELATORIOIMENSAL', chkPodeAcessarRelatorioMensal, 'Checked');
   TLog.d('<<< Saindo de TfrmCadastroVendedor.Bind ');
 end;
 
@@ -179,7 +181,7 @@ begin
   TLog.d('>>> Entrando em  TfrmCadastroVendedor.getEntity ');
   try
 
-    // edição
+    // ediï¿½ï¿½o
     if (aEntity = nil) and (FVendedor <> nil) then
     begin
       FVendedor := FDaoVendedor.GetVendedor(FVendedor.CODIGO);
@@ -195,7 +197,7 @@ begin
     end;
 
     if not Assigned(FVendedor) then
-      raise Exception.Create('Vendedor não encontrado');
+      raise Exception.Create('Vendedor nï¿½o encontrado');
     Bind();
     tratabotoes;
   except

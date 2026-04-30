@@ -8,6 +8,7 @@ uses
   Data.DB, FireDAC.Comp.Client, Dao.IDaoPedido,
   Dao.TDaoBase, Sistema.TLog,
   Dominio.Entidades.TItemPedido, Dominio.Entidades.TPedido,
+  Dominio.Entidades.TTotalizadorMensal,
   Helper.TProdutoVenda, Dao.TDaoParceiro,
   Dominio.Entidades.Pedido.Pagamentos.Pagamento,
   Dominio.Entidades.Pedido.Pagamentos;
@@ -42,6 +43,7 @@ type
     // function Totais(dataInicio, dataFim: TDate; CodVen: string): TList<TPair<string, string>>; overload;
     function ProdutosVendidos(dataInicio, dataFim: TDate): TList<TProdutoVenda>;
     function TotaisParceiro(dataInicio, dataFim: TDate; CodParceiro: string): TList<TPair<string, Currency>>;
+    function TotaisMensais(dataInicio, dataFim: TDate; aNumCaixa: string): TObjectList<TTotalizadorMensalItem>;
     function TotalCaixa(dataInicio: TDatetime; dataFim: TDatetime): Currency;
     function TotalTroco(dataInicio, dataFim: TDatetime): Currency;
     function TotalDinheiro(dataInicio, dataFim: TDatetime): Currency;
@@ -638,7 +640,7 @@ begin
     on E: Exception do
     begin
       TLog.d(E.message);
-      raise TDaoException.Create('Falha ao associar parâmetros Pedido: ' + E.message);
+      raise TDaoException.Create('Falha ao associar parï¿½metros Pedido: ' + E.message);
     end;
   end;
 end;
@@ -774,7 +776,7 @@ begin
 
         + 'UNION ALL '
 
-        + 'SELECT ''Total Líquido''     Titulo, '
+        + 'SELECT ''Total Lï¿½quido''     Titulo, '
         + '       Sum(p.valorbruto) -  Sum(p.VALORDESC) AS Total '
         + 'FROM   pedido p '
         + 'WHERE  p.status = ''F'' '
@@ -853,7 +855,7 @@ begin
       end;
 
       qry.SQL.Text := ''
-        + 'SELECT ''Numero de Vendas Concluídas'' AS Titulo, '
+        + 'SELECT ''Numero de Vendas Concluï¿½das'' AS Titulo, '
         + '       count(p.id)  AS Total '
         + 'FROM   pedido p '
         + 'WHERE  p.status = ''F'' '
@@ -873,7 +875,7 @@ begin
 
         + 'UNION ALL '
 
-        + 'SELECT ''Numero de Vendas Não Finalizadas'' AS Titulo, '
+        + 'SELECT ''Numero de Vendas Nï¿½o Finalizadas'' AS Titulo, '
         + '       count(p.id)  AS Total '
         + 'FROM   pedido p '
         + 'WHERE  p.status = ''A'' '
@@ -977,7 +979,7 @@ begin
 
         + 'UNION ALL '
 
-        + 'SELECT ''Total Líquido''     Titulo, '
+        + 'SELECT ''Total Lï¿½quido''     Titulo, '
         + '       Sum(p.valorliquido) AS Total '
         + 'FROM   pedido p '
         + 'WHERE  p.status = ''F'' '
@@ -1019,7 +1021,7 @@ begin
       IncluirTotais(qry, result, true);
 
       result.Add(TPair<string, string>.Create('', ''));
-      result.Add(TPair<string, string>.Create('RECEBIMENTO DE CRÉDIÁRIO', ''));
+      result.Add(TPair<string, string>.Create('RECEBIMENTO DE CRï¿½DIï¿½RIO', ''));
       qry.SQL.Text := ''
         + 'SELECT ''Parcelas Recebidas''    Titulo, '
         + '       COUNT(pa.valor) AS Total '
@@ -1040,7 +1042,7 @@ begin
       result.Add(TPair<string, string>.Create('Parcelas Recebidas', qry.FieldByName('Total').AsString));
 
       qry.SQL.Text := ''
-        + 'SELECT ''Somatório das Parcelas''    Titulo, '
+        + 'SELECT ''Somatï¿½rio das Parcelas''    Titulo, '
         + '       Sum(pa.valor) AS Total '
         + 'FROM   parcelas pa, '
         + '       pedido pe '
@@ -1086,7 +1088,7 @@ begin
       if aMovimentacaoDoCaixa then
       begin
         result.Add(TPair<string, string>.Create('', ''));
-        result.Add(TPair<string, string>.Create('MOVIMENTAÇÃO DO CAIXA', ''));
+        result.Add(TPair<string, string>.Create('MOVIMENTAï¿½ï¿½O DO CAIXA', ''));
         qry.Close;
 
         qry.SQL.Text := ''
@@ -1189,12 +1191,12 @@ begin
         // result.Add(TPair<string, string>.Create('TOTAL', FormatCurr('R$ 0.,00', saidas)));
         //
         // result.Add(TPair<string, string>.Create('', ''));
-        // result.Add(TPair<string, string>.Create('TOTAL EM CAIXA (ENTRADA - SAÍDAS):', FormatCurr('R$ 0.,00', entradas + saidas)));
+        // result.Add(TPair<string, string>.Create('TOTAL EM CAIXA (ENTRADA - SAï¿½DAS):', FormatCurr('R$ 0.,00', entradas + saidas)));
       end;
 
       result.Add(TPair<string, string>.Create('', ''));
       qry.SQL.Text := ''
-        + 'SELECT ''Numero de Vendas Concluídos'' AS Titulo, '
+        + 'SELECT ''Numero de Vendas Concluï¿½dos'' AS Titulo, '
         + '       count(p.id)  AS Total '
         + 'FROM   pedido p '
         + 'WHERE  p.status = ''F'' '
@@ -1214,7 +1216,7 @@ begin
 
         + 'UNION ALL '
 
-        + 'SELECT ''Numero de Vendas Não Finalizadas'' AS Titulo, '
+        + 'SELECT ''Numero de Vendas Nï¿½o Finalizadas'' AS Titulo, '
         + '       count(p.id)  AS Total '
         + 'FROM   pedido p '
         + 'WHERE  p.status = ''A'' '
@@ -1282,10 +1284,10 @@ end;
 procedure TDaoPedido.Valida(Pedido: TPedido);
 begin
   if Pedido.Vendedor = nil then
-    raise TValidacaoException.Create('Vendedor não associado ao pedido');
+    raise TValidacaoException.Create('Vendedor nï¿½o associado ao pedido');
 
   if Pedido.Cliente = nil then
-    raise TValidacaoException.Create('Cliente não associado ao pedido');
+    raise TValidacaoException.Create('Cliente nï¿½o associado ao pedido');
 
 end;
 
@@ -1310,7 +1312,7 @@ begin
     try
       qry.SQL.Text := ''
 
-        + 'SELECT ''CREDIÁRIO''    Titulo, '
+        + 'SELECT ''CREDIï¿½RIO''    Titulo, '
         + '       Sum(p.valorliquido) AS Total '
         + 'FROM   pedido p '
         + 'WHERE  p.status = ''F'' '
@@ -1358,7 +1360,7 @@ begin
         + '               pedido p '
         + '        WHERE  p.status = ''F'' '
         + '               AND p.id = pg.idpedido '
-        + '               AND pg.tipo <> 5 ' // não incluir crediário
+        + '               AND pg.tipo <> 5 ' // nï¿½o incluir crediï¿½rio
         + '               AND p.DATAHORA between :dataInicio AND  :dataFim '
         + '        UNION ALL '
         + '        SELECT Sum(pg.valor) AS Total '
@@ -1446,7 +1448,7 @@ begin
         + '               pedido p '
         + '        WHERE  p.status = ''F'' '
         + '               AND p.id = pg.idpedido '
-        + '               AND pg.tipo <> 5 ' // não incluir crediário
+        + '               AND pg.tipo <> 5 ' // nï¿½o incluir crediï¿½rio
         + '               AND p.DATAHORA >= :dataInicio '
         + '               AND p.DATAHORA <= :dataFim '
         + '        UNION ALL '
@@ -1473,6 +1475,68 @@ begin
       TLog.d(E.message);
       raise TDaoException.Create('Falha ao calcular Total caixa: ' + E.message);
     end;
+  end;
+end;
+
+function TDaoPedido.TotaisMensais(dataInicio, dataFim: TDate; aNumCaixa: string): TObjectList<TTotalizadorMensalItem>;
+var
+  qry: TFDQuery;
+  LFiltroNumCaixa: string;
+begin
+  result := TObjectList<TTotalizadorMensalItem>.Create(True);
+
+  LFiltroNumCaixa := FiltroNumCaixa(aNumCaixa, 'p');
+
+  qry := Self.Query();
+  try
+    qry.SQL.Text :=
+      'SELECT EXTRACT(YEAR FROM p.datapedido) AS ANO, ' +
+      '       EXTRACT(MONTH FROM p.datapedido) AS MES, ' +
+      '       pg.descricao AS DESCRICAO, ' +
+      '       COUNT(*) AS QUANTIDADE, ' +
+      '       SUM(pg.valor - pg.troco) AS TOTAL ' +
+      'FROM pedidopagamento pg ' +
+      'INNER JOIN pedido p ON p.id = pg.idpedido ' +
+      'WHERE p.status = ''F'' ' +
+      '  AND p.datapedido >= :dataInicio ' +
+      '  AND p.datapedido <= :dataFim ' +
+      LFiltroNumCaixa +
+      'GROUP BY EXTRACT(YEAR FROM p.datapedido), ' +
+      '         EXTRACT(MONTH FROM p.datapedido), ' +
+      '         pg.descricao, pg.tipo ' +
+      'ORDER BY ANO, MES, pg.tipo';
+
+    qry.ParamByName('dataInicio').AsDate := dataInicio;
+    qry.ParamByName('dataFim').AsDate := dataFim;
+
+    if aNumCaixa.Trim <> '' then
+      qry.ParamByName('numcaixa').AsString := aNumCaixa;
+
+    try
+      TLog.d(qry);
+      qry.Open;
+
+      while not qry.Eof do
+      begin
+        result.Add(TTotalizadorMensalItem.Create(
+          qry.FieldByName('ANO').AsInteger,
+          qry.FieldByName('MES').AsInteger,
+          qry.FieldByName('DESCRICAO').AsString,
+          qry.FieldByName('QUANTIDADE').AsInteger,
+          qry.FieldByName('TOTAL').AsCurrency
+        ));
+        qry.Next;
+      end;
+
+    except
+      on E: Exception do
+      begin
+        TLog.d(E.message);
+        raise TDaoException.Create('Falha ao calcular Totais Mensais: ' + E.message);
+      end;
+    end;
+  finally
+    FreeAndNil(qry);
   end;
 end;
 

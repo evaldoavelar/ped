@@ -1,4 +1,4 @@
-// JCL_DEBUG_EXPERT_GENERATEJDBG OFF
+ï»¿// JCL_DEBUG_EXPERT_GENERATEJDBG OFF
 // JCL_DEBUG_EXPERT_INSERTJDBG OFF
 program PED;
 
@@ -224,7 +224,10 @@ uses
   Dao.TDaoControleCaixa in 'units\Dao\Concret\Dao.TDaoControleCaixa.pas',
   Caixa.Fechamento in 'views\caixa\Caixa.Fechamento.pas' {frmCaixaFechamento},
   Relatorio.TRCaixa.Abertura in 'units\relatorio\Relatorio.TRCaixa.Abertura.pas',
-  Filtro.DatasNumCaixa in 'views\filtro\Filtro.DatasNumCaixa.pas' {frmFiltroDatasNumCaixa};
+  Filtro.DatasNumCaixa in 'views\filtro\Filtro.DatasNumCaixa.pas' {frmFiltroDatasNumCaixa},
+  Dominio.Entidades.TTotalizadorMensal in 'units\Dominio\Entidades\Dominio.Entidades.TTotalizadorMensal.pas',
+  Relatorio.TRTotalizadorMensal in 'units\relatorio\Relatorio.TRTotalizadorMensal.pas',
+  Filtro.MesAno in 'views\filtro\Filtro.MesAno.pas' {frmFiltroMesAno};
 
 {$R *.res}
 
@@ -238,7 +241,7 @@ begin
 
   // if (Mutex = 0) or (GetLastError = ERROR_ALREADY_EXISTS) then
   // begin
-  // MessageDlg('Você não pode executar outra cópia do aplicativo', mtInformation, [mbOK], 0);
+  // MessageDlg('Vocï¿½ nï¿½o pode executar outra cï¿½pia do aplicativo', mtInformation, [mbOK], 0);
   // end
   // else
   begin

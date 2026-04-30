@@ -1,4 +1,4 @@
-unit untFrmPrincipal;
+Ôªøunit untFrmPrincipal;
 
 interface
 
@@ -173,6 +173,7 @@ type
     FDPhysFBDriverLink1: TFDPhysFBDriverLink;
     actAbrirCaixa: TAction;
     actFecharCaixa: TAction;
+    actRelatorioMensal: TAction;
     lblCaixaStatus: TLabel;
     Image1: TImage;
     procedure actPedidoVendaExecute(Sender: TObject);
@@ -237,6 +238,7 @@ type
     procedure actImportarExecute(Sender: TObject);
     procedure actAbrirCaixaExecute(Sender: TObject);
     procedure actFecharCaixaExecute(Sender: TObject);
+    procedure actRelatorioMensalExecute(Sender: TObject);
   private
     { Private declarations }
 
@@ -291,6 +293,9 @@ uses
   Estoque.Atualizar,
   Estoque.Consultar, Etiquetas.Modelo3x2, Etiquetas.Modelo4x2, Sistema.TLog, Factory.Entidades, IFactory.Dao, IFactory.Entidades,
   Sistema.TBancoDeDados, Facade.Concret.Importar, Facades.Abstract.Importar,
+  Filtro.MesAno, Relatorio.TRTotalizadorMensal,
+  Dominio.Entidades.TTotalizadorMensal,
+  System.DateUtils,
   Utils.IO;
 
 {$R *.dfm}
@@ -350,7 +355,7 @@ begin
 
     if not ChecaCaixaAberto then
     begin
-      raise Exception.Create('Caixa n„o est· aberto.');
+      raise Exception.Create('Caixa n√£o est√° aberto.');
     end;
     try
       frmCaixaFechamento := TfrmCaixaFechamento.Create(self);
@@ -394,7 +399,7 @@ begin
     TLog.d('Checando controle caixa');
 
     if ChecaCaixaAberto() then
-      raise Exception.Create('Caixa Anterior n„o foi fechado.');
+      raise Exception.Create('Caixa Anterior n√£o foi fechado.');
 
     try
       frmCaixaAbertura := TfrmCaixaAbertura.Create(self);
@@ -592,7 +597,7 @@ begin
   try
     if not TFactoryEntidades.new.VendedorLogado.PODEACESSARCADASTROVENDEDOR then
       raise Exception.Create
-        ('Vendedor n„o tem permiss„o para acessar cadastro de vendedores');
+        ('Vendedor n√£o tem permiss√£o para acessar cadastro de vendedores');
 
     frmCadastroVendedor := TfrmCadastroVendedor.Create(self);
     try
@@ -923,7 +928,7 @@ begin
       try
         if not(Licenca.LicencaValida(RetornaNomeArquivoLicenca(),
           TFactory.new.DadosEmitente.CNPJ, Now)) then
-          raise Exception.Create('O serial n„o È v·lido!');
+          raise Exception.Create('O serial n√£o √© v√°lido!');
         CheckLicenca;
       finally
         Licenca.free;
@@ -971,7 +976,7 @@ begin
     FechaSubMenu;
 
     if not ChecaCaixaAberto() then
-      raise Exception.Create('O Caixa n„o foi aberto!');
+      raise Exception.Create('O Caixa n√£o foi aberto!');
 
     if CheckLicenca() then
     begin
@@ -994,7 +999,7 @@ begin
     end
     else
     begin
-      MessageDlg('… preciso uma licenÁa para acessar a tela de pedidos!',
+      MessageDlg('ÔøΩ preciso uma licenÔøΩa para acessar a tela de pedidos!',
         mtError, [mbOK], 0);
     end;
   except
@@ -1014,7 +1019,7 @@ begin
     FechaSubMenu;
     if not TFactoryEntidades.new.VendedorLogado.PODERECEBERPARCELA then
       raise Exception.Create
-        ('Vendedor n„o tem permiss„o para acessar recebimento de parcelas');
+        ('Vendedor n√£o tem permiss√£o para acessar recebimento de parcelas');
 
     frmRecebimento := TfrmRecebimento.Create(self);
     try
@@ -1308,7 +1313,7 @@ begin
     end;
 
     if not Assigned(Vendedor) then
-      raise Exception.Create('Vendedor N„o selecionado');
+      raise Exception.Create('Vendedor NÔøΩo selecionado');
 
     LFactory := TFactory.new(nil, true);
 
@@ -1393,6 +1398,65 @@ begin
   TLog.d('<<< Saindo de TFrmPrincipal.actFiltroVendasParceiroExecute ');
 end;
 
+procedure TFrmPrincipal.actRelatorioMensalExecute(Sender: TObject);
+var
+  LFiltro: TfrmFiltroMesAno;
+  LTotais: TObjectList<TTotalizadorMensalItem>;
+  LImpressao: TRTotalizadorMensal;
+  LDataInicio, LDataFim: TDate;
+  LFactory: IFactoryDao;
+begin
+  TLog.d('>>> Entrando em  TFrmPrincipal.actRelatorioMensalExecute ');
+  try
+    if not TFactoryEntidades.new.VendedorLogado.PODEACESSARRELATORIOIMENSAL then
+    begin
+      MessageDlg('Acesso negado. Voc√™ n√£o tem permiss√£o para acessar o Relat√≥rio Mensal.',
+        mtWarning, [mbOK], 0);
+      Exit;
+    end;
+
+    LFiltro := TfrmFiltroMesAno.Create(Self);
+    try
+      if LFiltro.ShowModal <> mrOk then
+        Exit;
+
+      LDataInicio := EncodeDate(LFiltro.AnoInicio, LFiltro.MesInicio, 1);
+      LDataFim := EncodeDate(LFiltro.AnoFim, LFiltro.MesFim,
+        DaysInAMonth(LFiltro.AnoFim, LFiltro.MesFim));
+
+      LFactory := TFactory.new(nil, true);
+      try
+        LTotais := LFactory.DaoPedido.TotaisMensais(LDataInicio, LDataFim,
+          LFiltro.NumCaixa);
+        try
+          LImpressao := TRTotalizadorMensal.Create(
+            TFactoryEntidades.Parametros.ImpressoraTermica);
+          try
+            LImpressao.Imprime(TFactoryEntidades.new.VendedorLogado,
+              LDataInicio, LDataFim, LFiltro.NumCaixa,
+              LFactory.DadosEmitente, LTotais);
+          finally
+            FreeAndNil(LImpressao);
+          end;
+        finally
+          FreeAndNil(LTotais);
+        end;
+      finally
+        LFactory.Close;
+      end;
+    finally
+      FreeAndNil(LFiltro);
+    end;
+  except
+    on E: Exception do
+    begin
+      TLog.d(E.Message);
+      MessageDlg(E.Message, mtError, [mbOK], 0);
+    end;
+  end;
+  TLog.d('<<< Saindo de TFrmPrincipal.actRelatorioMensalExecute ');
+end;
+
 procedure TFrmPrincipal.actVerVencimentoExecute(Sender: TObject);
 var
   Licenca: TLicenca;
@@ -1402,11 +1466,11 @@ begin
   try
     if (Licenca.LicencaValida(RetornaNomeArquivoLicenca(),
       TFactory.new.DadosEmitente.CNPJ, Now)) then
-      MessageDlg('LicenÁa v·lida de ' + DateToStr(Licenca.DataDeIncio) + ' atÈ '
+      MessageDlg('Licen√ßa v√°lida de ' + DateToStr(Licenca.DataDeIncio) + ' at√© '
         + DateToStr(Licenca.DataVencimento) + #13 + 'CNPJ: ' +
         TUtil.PadL(Licenca.cnpjLicenca, 14, '*'), mtInformation, [mbOK], 0)
     else
-      raise Exception.Create('O sistema n„o possui uma licenÁa v·lida');
+      raise Exception.Create('O sistema n√£o possui uma licen√ßa v√°lida');
   finally
     Licenca.free;
   end;
@@ -1419,9 +1483,9 @@ var
 begin
   TLog.d('>>> Entrando em  TFrmPrincipal.Backup ');
   try
-    // se n„o for backup forÁado
+    // se n√£o for backup for√ßado
     if not force then
-      // se arquivo existe, n„o realiza o backup
+      // se arquivo existe, n√£o realiza o backup
       if FileExists(arquivo) then
         exit;
 
@@ -1486,20 +1550,20 @@ begin
           if Licenca.DiasRestantes < 0 then
           begin
             lblLicenca.Caption :=
-              'A LicenÁa do sistema est· vencida. Clique aqui para informar uma nova licenÁa';
+              'A Licen√ßa do sistema est√° vencida. Clique aqui para informar uma nova licen√ßa';
             pnlLicenca.Visible := true;
           end
           else if Licenca.DiasRestantes < 30 then
           begin
             lblLicenca.Caption :=
-              Format('A LicenÁa do sistema estar· vencendo em %d dias. Evite o bloqueio do sistema e solicite uma nova licenÁa',
+              Format('A Licen√ßa do sistema estar√° vencendo em %d dias. Evite o bloqueio do sistema e solicite uma nova licen√ßa',
               [Licenca.DiasRestantes]);
             pnlLicenca.Visible := true;
           end
           else if not Licenca.CnpjIguais then
           begin
             lblLicenca.Caption :=
-              ('A LicenÁa n„o pertence ao CNPJ! Clique aqui para informar uma nova licenÁa');
+              ('A Licen√ßa n√£o pertence ao CNPJ! Clique aqui para informar uma nova licen√ßa');
             pnlLicenca.Visible := true;
           end
         end
@@ -1512,7 +1576,7 @@ begin
         on E: TValidacaoException do
         begin
           lblLicenca.Caption := E.Message +
-            ' - Clique aqui para informar uma nova licenÁa';
+            ' - Clique aqui para informar uma nova licen√ßa';
           pnlLicenca.Visible := true;
         end;
       end;
@@ -1520,7 +1584,7 @@ begin
     else
     begin
       lblLicenca.Caption :=
-        'O sistema n„o poss˙i uma licenÁa de uso. Clique aqui para informar uma nova licenÁa';
+        'O sistema n√£o possui uma licen√ßa de uso. Clique aqui para informar uma nova licen√ßa';
       pnlLicenca.Visible := true;
     end;
 
@@ -1639,7 +1703,7 @@ begin
   // abrir o menu
   svMenuLateralEsquerdo.Open;
   svMenuLateralEsquerdo.DisplayMode := svmDocked;
-  // exibir o caption dos botıes
+  // exibir o caption dos botÔøΩes
   catMenuItems.ButtonOptions := catMenuItems.ButtonOptions + [boShowCaptions];
   FechaSubMenu;
   TLog.d('<<< Saindo de TFrmPrincipal.AbrirMenuLateralEsquerdo ');
@@ -1652,7 +1716,7 @@ begin
   svMenuLateralEsquerdo.Close;
   svMenuLateralEsquerdo.CloseStyle := svcCompact;
   svMenuLateralEsquerdo.DisplayMode := svmOverlay;
-  // esconder o caption dos botıes
+  // esconder o caption dos botÔøΩes
   catMenuItems.ButtonOptions := catMenuItems.ButtonOptions - [boShowCaptions];
 
   FechaSubMenu;
@@ -1830,7 +1894,7 @@ begin
   begin
     ListaErros := TStringBuilder.Create;
     ListaErros.Append
-      ('Os seguintes erros foram encontrados na atualizaÁ„o do banco de dados');
+      ('Os seguintes erros foram encontrados na atualiza√ß√£o do banco de dados');
     for key in Erros.Keys do
     begin
       ListaErros.Append('Erro: ' + Erros[key]);
@@ -1908,7 +1972,7 @@ begin
         except
           on E: Exception do
           begin
-            lblBackup.Caption := 'AtenÁ„o! O Backup di·rio n„o foi feito.';
+            lblBackup.Caption := 'Aten√ß√£o! O Backup di√°rio n√£o foi feito.';
             lblBackup.Visible := true;
             lblBackup.Font.Color := $002B39C0;
           end;
@@ -1989,7 +2053,7 @@ begin
     if vencendo > 0 then
     begin
       lblVencendo.Caption :=
-        Format('%d Parcelas vencendo nos prÛximos 60 dias.', [vencendo]);
+        Format('%d Parcelas vencendo nos pr√≥ximos 60 dias.', [vencendo]);
       lblVencendo.Visible := true;
     end
     else

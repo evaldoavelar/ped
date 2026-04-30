@@ -20,6 +20,7 @@ type
     FPODECANCELARORCAMENTO: Boolean;
     FPODEACESSARCADASTROVENDEDOR: Boolean;
     FPODEACESSARPARAMETROS: Boolean;
+    FPODEACESSARRELATORIOIMENSAL: Boolean;
     FDATAALTERACAO: TDateTime;
 
     function getCODIGO: string;
@@ -36,6 +37,8 @@ type
     procedure setPODECANCELARORCAMENTO(const Value: Boolean);
     function getPODEACESSARPARAMETROS: Boolean;
     procedure setPODEACESSARPARAMETROS(const Value: Boolean);
+    function getPODEACESSARRELATORIOIMENSAL: Boolean;
+    procedure setPODEACESSARRELATORIOIMENSAL(const Value: Boolean);
     procedure SetDATAALTERACAO(const Value: TDateTime);
   published
 
@@ -69,6 +72,9 @@ type
 
     [campo('PODEACESSARPARAMETROS', tpSMALLINT, 0, 0, True, '1')]
     property PODEACESSARPARAMETROS: Boolean read getPODEACESSARPARAMETROS write setPODEACESSARPARAMETROS;
+
+    [campo('PODEACESSARRELATORIOIMENSAL', tpSMALLINT, 0, 0, True, '0')]
+    property PODEACESSARRELATORIOIMENSAL: Boolean read getPODEACESSARRELATORIOIMENSAL write setPODEACESSARRELATORIOIMENSAL;
 
     [campo('DATAALTERACAO', tpTIMESTAMP)]
     property DATAALTERACAO: TDateTime read FDATAALTERACAO write SetDATAALTERACAO;
@@ -160,6 +166,20 @@ begin
   begin
     FPODEACESSARPARAMETROS := Value;
     Notify('PODEACESSARPARAMETROS');
+  end;
+end;
+
+function TVendedor.getPODEACESSARRELATORIOIMENSAL: Boolean;
+begin
+  result := FPODEACESSARRELATORIOIMENSAL;
+end;
+
+procedure TVendedor.setPODEACESSARRELATORIOIMENSAL(const Value: Boolean);
+begin
+  if Value <> FPODEACESSARRELATORIOIMENSAL then
+  begin
+    FPODEACESSARRELATORIOIMENSAL := Value;
+    Notify('PODEACESSARRELATORIOIMENSAL');
   end;
 end;
 

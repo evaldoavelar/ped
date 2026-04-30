@@ -197,6 +197,15 @@ inherited frmCadastroVendedor: TfrmCadastroVendedor
           TabOrder = 9
           OnClick = chkPodeCancelarPedidoClick
         end
+        object chkPodeAcessarRelatorioMensal: TCheckBox
+          Left = 54
+          Top = 365
+          Width = 217
+          Height = 17
+          Caption = 'Pode Acessar Relat'#243'rio Mensal'
+          TabOrder = 10
+          OnClick = chkPodeCancelarPedidoClick
+        end
       end
     end
   end

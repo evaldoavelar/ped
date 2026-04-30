@@ -14842,6 +14842,9 @@ object FrmPrincipal: TFrmPrincipal
                     Action = actVendasPorParceiro
                   end
                   item
+                    Action = actRelatorioMensal
+                  end
+                  item
                   end>
               end>
             Font.Charset = DEFAULT_CHARSET
@@ -15108,7 +15111,7 @@ object FrmPrincipal: TFrmPrincipal
       Opened = False
       OpenedWidth = 250
       Placement = svpRight
-      TabOrder = 3
+      TabOrder = 4
       object pnlAtalhos: TPanel
         AlignWithMargins = True
         Left = 3
@@ -15450,6 +15453,11 @@ object FrmPrincipal: TFrmPrincipal
       Caption = 'Vendas Por Parceiro'
       ImageIndex = 42
       OnExecute = actVendasPorParceiroExecute
+    end
+    object actRelatorioMensal: TAction
+      Caption = 'Totalizador Mensal'
+      ImageIndex = 42
+      OnExecute = actRelatorioMensalExecute
     end
     object actCadastros: TAction
       Category = 'Menu'

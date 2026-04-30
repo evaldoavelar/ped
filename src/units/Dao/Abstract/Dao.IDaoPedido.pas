@@ -9,7 +9,7 @@ uses
   Sistema.TLog,
   Dominio.Entidades.TItemPedido,
   Dominio.Entidades.TPedido,
-
+  Dominio.Entidades.TTotalizadorMensal,
   Dominio.Entidades.Pedido.Pagamentos,
   Helper.TProdutoVenda;
 
@@ -32,6 +32,7 @@ type
     function Totais(dataInicio, dataFim: TDateTime; aNumCaixa: string; aMovimentacaoDoCaixa: boolean): TList<TPair<string, string>>; overload;
     function Totais(dataInicio, dataFim: TDateTime; CodVen: string): TList<TPair<string, string>>; overload;
     function TotaisParceiro(dataInicio, dataFim: TDate; CodParceiro: string): TList<TPair<string, Currency>>;
+    function TotaisMensais(dataInicio, dataFim: TDate; aNumCaixa: string): TObjectList<TTotalizadorMensalItem>;
     function ProdutosVendidos(dataInicio, dataFim: TDate): TList<TProdutoVenda>;
     function TotalCaixa(dataInicio: TDateTime; dataFim: TDateTime): Currency;
     function TotalDinheiro(dataInicio, dataFim: TDateTime): Currency;
